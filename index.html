@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GFS Dashboards — Credit Union Setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__content">
+      <div class="brand">
+        <div class="brand__mark" aria-hidden="true">GF</div>
+        <div class="brand__name">
+          <span class="brand__title">Goodwine Financial Services</span>
+          <span class="brand__subtitle">Lending Protection Intelligence</span>
+        </div>
+      </div>
+      <p class="hero__tagline">
+        Configure coverage tracking for each credit union partner and prepare their dashboard workspace.
+      </p>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="setup">
+      <div class="setup__card">
+        <form id="account-setup-form" class="form" autocomplete="off">
+          <h1 class="form__title">Credit Union Account Setup</h1>
+          <p class="form__subtitle">Capture the credit union details and activate the protection products that apply to their portfolio.</p>
+
+          <div class="field-group">
+            <label class="field-label" for="credit-union-name">Credit Union Name</label>
+            <input id="credit-union-name" name="creditUnionName" type="text" class="field-input" placeholder="e.g. Lakeview Federal Credit Union" required />
+            <p class="field-helper">This name will appear on dashboards, reports, and API endpoints.</p>
+          </div>
+
+          <div class="field-group">
+            <div class="field-header">
+              <label class="field-label">Products &amp; Services</label>
+              <span class="chip" id="selected-count">0 selected</span>
+            </div>
+            <p class="field-helper">Toggle each protection product that is active for this partner. Add new offerings at any time.</p>
+
+            <div id="product-groups" class="product-groups" role="group" aria-labelledby="products-label">
+              <!-- Products rendered by script.js -->
+            </div>
+
+            <div class="add-product">
+              <label for="new-product-name" class="sr-only">New product name</label>
+              <input id="new-product-name" type="text" class="field-input add-product__input" placeholder="Add a new product or service" />
+              <button type="button" id="add-product-btn" class="btn btn--secondary">Add</button>
+            </div>
+            <div id="custom-product-list" class="custom-products" hidden>
+              <div class="custom-products__header">
+                <h4>Custom additions</h4>
+                <p>Remove an item to retire it from this partner's catalog.</p>
+              </div>
+              <ul class="custom-products__items">
+                <!-- Custom products rendered dynamically -->
+              </ul>
+            </div>
+          </div>
+
+          <div class="form__actions">
+            <button type="submit" class="btn btn--primary">Save Configuration</button>
+            <button type="button" id="reset-btn" class="btn btn--ghost">Reset</button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="setup__summary" aria-live="polite">
+        <div class="summary-card">
+          <h2 class="summary-card__title">Setup Preview</h2>
+          <dl class="summary-list">
+            <div class="summary-list__item">
+              <dt>Credit Union</dt>
+              <dd id="summary-credit-union">—</dd>
+            </div>
+            <div class="summary-list__item">
+              <dt>Active Products</dt>
+              <dd>
+                <ul id="summary-products" class="summary-products">
+                  <li class="summary-products__empty">No products selected yet.</li>
+                </ul>
+              </dd>
+            </div>
+          </dl>
+          <p class="summary-card__footnote">
+            The configuration above is stored locally until connected to the core API. Revisit this setup at any time to adjust offerings as your partnership grows.
+          </p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="footer-year"></span> Goodwine Financial Services. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js" type="module"></script>
+</body>
+</html>
