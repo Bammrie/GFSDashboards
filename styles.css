@@ -100,16 +100,12 @@ textarea {
   gap: 1.1rem;
 }
 
-.site-header__mark {
-  display: grid;
-  place-items: center;
-  width: 58px;
+.site-header__logo {
   height: 58px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, var(--color-amber-500), var(--color-rose-500));
-  color: var(--color-bg-900);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  width: auto;
+  display: block;
+  border-radius: 14px;
+  box-shadow: 0 12px 24px rgba(10, 2, 3, 0.35);
 }
 
 .site-header__titles {
@@ -237,8 +233,21 @@ textarea {
   box-shadow: var(--shadow-elevated);
 }
 
-.site-hero__image-frame img {
+.site-hero__image-placeholder {
   border-radius: calc(var(--radius-lg) - 12px);
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 35% 30%, rgba(242, 179, 76, 0.35), rgba(27, 9, 11, 0.6) 68%),
+    linear-gradient(135deg, rgba(199, 72, 63, 0.4), rgba(75, 23, 25, 0.7));
+  border: 1px dashed rgba(251, 234, 215, 0.35);
+}
+
+.site-hero__image-text {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(251, 234, 215, 0.72);
 }
 
 .workspace,
