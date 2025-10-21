@@ -69,3 +69,4 @@ Document or extend new features so they reuse these formulas without re-defining
 2025-10-24: Split the setup into create-account and dashboard pages with account selector tabs; documented MOB rate components, ancillary pricing, and new product requirements.
 2025-10-21: Added reporting page with monthly loan charting, refreshed the site theme to match the uploaded dashboard screenshot, and extended loan intake fields for origination dates, officers, and coverage tracking.
 2025-10-21: Centered the header branding and moved the API connectivity tools into their own workspace tab so the loan log layout stays clean.
+2025-10-21: Ensured the site header content stays on a single row so the top bar elements no longer stack.
