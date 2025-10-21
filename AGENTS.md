@@ -29,6 +29,14 @@ Keep the following formulas and terminology consistent everywhere the data platf
 * **Ending balance (E<sub>m</sub>)**: B<sub>m</sub> − P<sub>m</sub>.
 * **Average MOB (\bar{B}<sub>m</sub>)**: (B<sub>m</sub> + E<sub>m</sub>) ÷ 2. Use \bar{B}<sub>m</sub> whenever the rate is quoted “per $100 of outstanding balance per month.”
 
+
+### MOB rate component tracking
+Whenever a Monthly Outstanding Balance rate is recorded (credit life, disability, or debt protection), capture all three parts separately:
+* **CLP rate** – the carrier-provided base cost per $1,000 of outstanding balance.
+* **GFS mark-up** – the Goodwine Financial Services commission added to the CLP rate.
+* **Credit union mark-up** – the partner's income share layered on top of the GFS mark-up.
+Store and report on each slice so premium remittance can be reconciled to its destination at month end.
+
 ### Credit Insurance (Life & Disability)
 * Premium rate inputs are stored as *per $100 MOB* values. For a given month *m* and coverage type *c* (Single Life, Joint Life, etc.):
   * **Monthly premium** = (\bar{B}<sub>m</sub> ÷ 100) × rate<sub>c</sub>.
@@ -57,3 +65,4 @@ Keep the following formulas and terminology consistent everywhere the data platf
 Document or extend new features so they reuse these formulas without re-defining them.
 ---
 2025-10-21: Expanded the setup dashboard with account operations, loan officer reporting, and API pipeline controls; updated script.js and styles.css to manage multi-account data, manual income entries, loan uploads, and coverage tracking in local storage.
+2025-10-24: Split the setup into create-account and dashboard pages with account selector tabs; documented MOB rate components, ancillary pricing, and new product requirements.

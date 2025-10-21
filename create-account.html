@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Credit Union Account — GFS Dashboards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="account-create">
+  <header class="site-header site-header--simple">
+    <div class="site-header__brand">
+      <span class="site-header__mark" aria-hidden="true">GF</span>
+      <div class="site-header__titles">
+        <span class="site-header__title">Goodwine Financial Services</span>
+        <span class="site-header__subtitle">Create a dashboard-ready account</span>
+      </div>
+    </div>
+    <a href="index.html" class="link link--accent">Back to accounts</a>
+  </header>
+
+  <main class="create-account">
+    <section class="panel-card panel-card--wide">
+      <header class="panel-card__header">
+        <h1 class="panel-card__title">Credit union profile</h1>
+        <p class="panel-card__subtitle">Store the foundational settings we will reference inside the account workspace.</p>
+      </header>
+      <form id="account-create-form" class="form form--stacked" autocomplete="off">
+        <label class="field">
+          <span class="field__label">Credit union name</span>
+          <input type="text" id="credit-union-name" name="creditUnionName" class="field__input" placeholder="e.g. Lakeview Federal Credit Union" required />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Core system</span>
+          <select id="core-system" name="coreSystem" class="field__input" required>
+            <option value="">Select a core platform</option>
+            <option value="Symitar">Symitar</option>
+            <option value="DNA">FIS DNA</option>
+            <option value="Premier">Fiserv Premier</option>
+            <option value="SymChoice">Symitar Episys (On-Prem)</option>
+            <option value="JackHenry">Jack Henry SilverLake</option>
+            <option value="Corelation">Corelation Keystone</option>
+            <option value="Other">Other / Custom</option>
+          </select>
+        </label>
+        <p class="field-helper">We tailor the integration checklist per core so implementation teams know exactly what data to publish.</p>
+
+        <fieldset class="fieldset">
+          <legend>Products &amp; services</legend>
+          <p class="field-helper">Toggle the protection offerings that apply today. You can add or remove products later inside the account settings tab.</p>
+          <div id="product-toggle-group" class="product-toggle-group"></div>
+          <div class="add-product-inline">
+            <label for="new-product-name" class="sr-only">Add another product</label>
+            <input type="text" id="new-product-name" class="field__input add-product-inline__input" placeholder="Custom product or service" />
+            <button type="button" id="add-product-btn" class="btn btn--secondary">Add</button>
+          </div>
+          <ul id="custom-product-list" class="custom-product-list" hidden></ul>
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend>Implementation checklist</legend>
+          <p class="field-helper">Outline the immediate next steps to connect the dashboard to the core and import historical data.</p>
+          <label class="field">
+            <span class="field__label">API or file delivery contact</span>
+            <input type="text" name="integrationContact" class="field__input" placeholder="Name, title, and email" />
+          </label>
+          <label class="field">
+            <span class="field__label">Kick-off notes</span>
+            <textarea name="integrationNotes" rows="4" class="field__input field__input--textarea" placeholder="Document contracts, data availability, and first-report expectations."></textarea>
+          </label>
+        </fieldset>
+
+        <div class="form__actions">
+          <button type="submit" class="btn btn--primary">Create account</button>
+          <button type="reset" class="btn btn--ghost">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="panel-card panel-card--summary">
+      <header class="panel-card__header">
+        <h2 class="panel-card__title">Account snapshot</h2>
+      </header>
+      <dl class="summary">
+        <div class="summary__item">
+          <dt>Credit union</dt>
+          <dd id="summary-credit-union">—</dd>
+        </div>
+        <div class="summary__item">
+          <dt>Core</dt>
+          <dd id="summary-core">—</dd>
+        </div>
+        <div class="summary__item">
+          <dt>Products</dt>
+          <dd>
+            <ul id="summary-products" class="summary__list">
+              <li class="summary__placeholder">No products selected yet.</li>
+            </ul>
+          </dd>
+        </div>
+      </dl>
+      <p class="summary__note">Once saved, the account will appear in the workspace dropdown where you can enter loans, build API connections, and refine pricing.</p>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="footer-year"></span> Goodwine Financial Services. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js" type="module"></script>
+</body>
+</html>
