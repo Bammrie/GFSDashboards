@@ -95,6 +95,193 @@
         </div>
       </aside>
     </section>
+
+    <section class="workspace">
+      <header class="workspace__header">
+        <div>
+          <h2 class="workspace__title">Account Operations &amp; Reporting</h2>
+          <p class="workspace__subtitle">Monitor manual income entries, uploaded loan production, and API integrations for every credit union partner.</p>
+        </div>
+        <div class="workspace__selector">
+          <label for="account-selector" class="field-label">Manage existing accounts</label>
+          <select id="account-selector" class="field-input workspace__select" aria-describedby="account-selector-helper">
+            <option value="">Select an account</option>
+          </select>
+          <p id="account-selector-helper" class="field-helper workspace__helper">Choose a credit union to add loan officers, log income entries, and track loan production uploads.</p>
+        </div>
+      </header>
+
+      <div class="workspace__grid">
+        <article class="workspace-card workspace-card--accounts">
+          <header class="workspace-card__header">
+            <h3 class="workspace-card__title">Accounts Directory</h3>
+            <p class="workspace-card__subtitle">Every account delivers two reporting pipelines: internal income and loan production sourced from the core processor.</p>
+          </header>
+          <div class="table-wrapper">
+            <table id="accounts-table" class="data-table" aria-describedby="accounts-table-caption">
+              <caption id="accounts-table-caption" class="sr-only">Configured credit unions with reporting production status.</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Credit Union</th>
+                  <th scope="col">Active Products</th>
+                  <th scope="col">Income Entries</th>
+                  <th scope="col">Loan Uploads</th>
+                  <th scope="col">Loan Officers</th>
+                  <th scope="col">Coverage Rate</th>
+                  <th scope="col">Last Sync</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <p id="accounts-empty" class="empty-state">Create a credit union configuration to see it listed here.</p>
+          </div>
+        </article>
+
+        <article class="workspace-card workspace-card--loan-officers">
+          <header class="workspace-card__header">
+            <h3 class="workspace-card__title">Loan Officer Performance</h3>
+            <p class="workspace-card__subtitle">Track how each lender protects their loans with coverage adoption metrics.</p>
+          </header>
+
+          <form id="loan-officer-form" class="form-section" autocomplete="off">
+            <div class="form-section__grid">
+              <div class="field-group">
+                <label class="field-label" for="loan-officer-name">Loan officer name</label>
+                <input id="loan-officer-name" name="loanOfficerName" type="text" class="field-input" placeholder="e.g. Jordan Ellis" required />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="loan-officer-identifier">Employee ID</label>
+                <input id="loan-officer-identifier" name="loanOfficerIdentifier" type="text" class="field-input" placeholder="Optional" />
+              </div>
+            </div>
+
+            <div class="form-section__grid">
+              <div class="field-group">
+                <label class="field-label" for="loan-officer-email">Email</label>
+                <input id="loan-officer-email" name="loanOfficerEmail" type="email" class="field-input" placeholder="Optional" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="loan-officer-covered">Loans protected</label>
+                <input id="loan-officer-covered" name="loanOfficerCovered" type="number" min="0" class="field-input" value="0" />
+              </div>
+              <div class="field-group">
+                <label class="field-label" for="loan-officer-total">Total loans</label>
+                <input id="loan-officer-total" name="loanOfficerTotal" type="number" min="0" class="field-input" value="0" />
+              </div>
+            </div>
+
+            <div class="form__actions">
+              <button type="submit" class="btn btn--primary btn--small">Add loan officer</button>
+            </div>
+          </form>
+          <p id="loan-officer-feedback" class="form-feedback" role="alert" hidden></p>
+
+          <div class="table-wrapper">
+            <table id="loan-officer-table" class="data-table" aria-describedby="loan-officer-table-caption">
+              <caption id="loan-officer-table-caption" class="sr-only">Loan officer coverage performance per account.</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Loan Officer</th>
+                  <th scope="col">Protected Loans</th>
+                  <th scope="col">Total Loans</th>
+                  <th scope="col">Coverage %</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <p id="loan-officer-empty" class="empty-state">Select an account to review and manage its lending team.</p>
+          </div>
+        </article>
+
+        <article class="workspace-card workspace-card--reporting">
+          <header class="workspace-card__header">
+            <h3 class="workspace-card__title">Reporting Pipelines</h3>
+            <p class="workspace-card__subtitle">Log income entries, track loan production files, and document API connectivity with the credit union core.</p>
+          </header>
+
+          <div class="reporting-panels">
+            <section class="reporting-panel">
+              <h4 class="reporting-panel__title">Income Report (Manual)</h4>
+              <form id="income-entry-form" class="inline-form" autocomplete="off">
+                <div class="inline-form__grid">
+                  <div class="field-group">
+                    <label class="field-label" for="income-amount">Amount</label>
+                    <input id="income-amount" name="incomeAmount" type="number" min="0" step="0.01" class="field-input" placeholder="0.00" required />
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="income-period">Period</label>
+                    <input id="income-period" name="incomePeriod" type="month" class="field-input" />
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="income-notes">Notes</label>
+                    <input id="income-notes" name="incomeNotes" type="text" class="field-input" placeholder="Optional description" />
+                  </div>
+                </div>
+                <div class="form__actions inline-form__actions">
+                  <button type="submit" class="btn btn--secondary btn--small">Log income entry</button>
+                </div>
+              </form>
+              <ul id="income-entry-list" class="record-list" aria-live="polite"></ul>
+            </section>
+
+            <section class="reporting-panel">
+              <h4 class="reporting-panel__title">Loan Production (Uploads)</h4>
+              <form id="loan-upload-form" class="inline-form" autocomplete="off">
+                <div class="inline-form__grid">
+                  <div class="field-group">
+                    <label class="field-label" for="loan-upload-name">Upload label</label>
+                    <input id="loan-upload-name" name="loanUploadName" type="text" class="field-input" placeholder="e.g. March pipeline" required />
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="loan-upload-period">Period</label>
+                    <input id="loan-upload-period" name="loanUploadPeriod" type="month" class="field-input" />
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="loan-upload-total">Total loans</label>
+                    <input id="loan-upload-total" name="loanUploadTotal" type="number" min="0" class="field-input" value="0" required />
+                  </div>
+                  <div class="field-group">
+                    <label class="field-label" for="loan-upload-covered">Loans protected</label>
+                    <input id="loan-upload-covered" name="loanUploadCovered" type="number" min="0" class="field-input" value="0" required />
+                  </div>
+                </div>
+                <div class="form__actions inline-form__actions">
+                  <button type="submit" class="btn btn--secondary btn--small">Record upload</button>
+                </div>
+              </form>
+              <ul id="loan-upload-list" class="record-list" aria-live="polite"></ul>
+            </section>
+
+            <section class="reporting-panel">
+              <h4 class="reporting-panel__title">Core API Integration</h4>
+              <form id="api-config-form" class="form-section form-section--compact" autocomplete="off">
+                <div class="field-group">
+                  <label class="field-label" for="api-endpoint">Core processor endpoint</label>
+                  <input id="api-endpoint" name="apiEndpoint" type="url" class="field-input" placeholder="https://api.core-processor.example" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label" for="api-format">Payload format</label>
+                  <select id="api-format" name="apiFormat" class="field-input">
+                    <option value="JSON">JSON</option>
+                    <option value="CSV">CSV</option>
+                    <option value="XML">XML</option>
+                  </select>
+                </div>
+                <div class="form__actions inline-form__actions">
+                  <button type="submit" class="btn btn--secondary btn--small">Save API settings</button>
+                </div>
+              </form>
+              <div class="api-status">
+                <p id="api-status" class="field-helper">No sync events recorded yet.</p>
+                <button type="button" id="api-sync-btn" class="btn btn--ghost btn--small">Log manual sync</button>
+                <p id="api-last-synced" class="field-helper field-helper--emphasis">—</p>
+              </div>
+            </section>
+          </div>
+        </article>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer">

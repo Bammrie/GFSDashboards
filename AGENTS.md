@@ -55,3 +55,5 @@ Keep the following formulas and terminology consistent everywhere the data platf
 * **Claims ratio** = claims paid ÷ earned premium (when claim data is available).
 
 Document or extend new features so they reuse these formulas without re-defining them.
+---
+2025-10-21: Expanded the setup dashboard with account operations, loan officer reporting, and API pipeline controls; updated script.js and styles.css to manage multi-account data, manual income entries, loan uploads, and coverage tracking in local storage.
