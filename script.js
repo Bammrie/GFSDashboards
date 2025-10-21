@@ -33,6 +33,28 @@ const MOB_RATE_ROWS = [
   { id: 'packageC', label: 'Debt Protection Package C' }
 ];
 
+const MOB_COVERAGE_DEFINITIONS = [
+  { key: 'creditLifeSingle', label: 'Credit Life — Single', matches: ['Credit Life (Single)'] },
+  { key: 'creditLifeJoint', label: 'Credit Life — Joint', matches: ['Credit Life (Joint)'] },
+  { key: 'creditLifeBlended', label: 'Credit Life — Blended', matches: ['Credit Life (Blended)'] },
+  { key: 'creditDisabilitySingle', label: 'Credit Disability — Single', matches: ['Credit Disability (Single)'] },
+  { key: 'creditDisabilityJoint', label: 'Credit Disability — Joint', matches: ['Credit Disability (Joint)'] },
+  { key: 'creditDisabilityBlended', label: 'Credit Disability — Blended', matches: ['Credit Disability (Blended)'] },
+  { key: 'packageA', label: 'Debt Protection — Package A', matches: ['Debt Protection Package A'] },
+  { key: 'packageB', label: 'Debt Protection — Package B', matches: ['Debt Protection Package B'] },
+  { key: 'packageC', label: 'Debt Protection — Package C', matches: ['Debt Protection Package C'] }
+];
+
+const ALWAYS_INCLUDED_COVERAGES = [
+  { key: 'gap', label: 'GAP' },
+  { key: 'vsc', label: 'VSC' }
+];
+
+const COVERAGE_LABEL_LOOKUP = Object.fromEntries([
+  ...MOB_COVERAGE_DEFINITIONS.map(({ key, label }) => [key, label]),
+  ...ALWAYS_INCLUDED_COVERAGES.map(({ key, label }) => [key, label])
+]);
+
 const CORE_LABELS = {
   Symitar: 'Symitar',
   DNA: 'FIS DNA',
@@ -118,6 +140,8 @@ function init() {
     initAccountCreatePage();
   } else if (pageId === 'dashboard') {
     initDashboardPage();
+  } else if (pageId === 'reporting') {
+    initReportingPage();
   }
 }
 
@@ -152,6 +176,50 @@ function saveActiveAccountId(id) {
   appState.activeAccountId = id;
 }
 
+function getActiveAccount() {
+  if (!appState.activeAccountId) return null;
+  return appState.accounts.find((account) => account.id === appState.activeAccountId) || null;
+}
+
+function getAccountById(id) {
+  if (!id) return null;
+  return appState.accounts.find((account) => account.id === id) || null;
+}
+
+function populateAccountSelect(select, { includeNewOption = false, selectedId = '' } = {}) {
+  if (!select) return;
+  const previousValue = selectedId || select.value;
+  select.innerHTML = '';
+
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = 'Select an account';
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  select.append(placeholder);
+
+  appState.accounts.forEach((account) => {
+    const option = document.createElement('option');
+    option.value = account.id;
+    option.textContent = account.name;
+    option.className = 'account-switcher__option';
+    select.append(option);
+  });
+
+  if (includeNewOption) {
+    const newAccountOption = document.createElement('option');
+    newAccountOption.value = '__new__';
+    newAccountOption.textContent = 'New Account';
+    newAccountOption.className = 'account-switcher__option account-switcher__option--new';
+    select.append(newAccountOption);
+  }
+
+  const resolvedValue = selectedId || previousValue;
+  if (resolvedValue) {
+    select.value = resolvedValue;
+  }
+}
+
 function normalizeAccount(account) {
   const normalized = {
     id: account.id || generateId('acct'),
@@ -159,7 +227,9 @@ function normalizeAccount(account) {
     core: account.core || 'Other',
     products: Array.isArray(account.products) ? account.products : [],
     customProducts: Array.isArray(account.customProducts) ? account.customProducts : [],
-    manualLoans: Array.isArray(account.manualLoans) ? account.manualLoans : [],
+    manualLoans: Array.isArray(account.manualLoans)
+      ? account.manualLoans.map(normalizeLoan)
+      : [],
     api: account.api || {},
     mobRates: account.mobRates || {},
     ancillaryPricing: account.ancillaryPricing || {},
@@ -181,6 +251,146 @@ function normalizeAccount(account) {
   };
 
   return normalized;
+}
+
+function normalizeLoan(loan) {
+  if (!loan || typeof loan !== 'object') {
+    return {
+      id: generateId('loan'),
+      borrower: '',
+      loanNumber: '',
+      amount: 0,
+      loanOfficer: '',
+      originationDate: '',
+      notes: '',
+      coverages: {},
+      createdAt: new Date().toISOString()
+    };
+  }
+
+  const normalizedCoverages = {};
+  if (loan.coverages && typeof loan.coverages === 'object') {
+    Object.entries(loan.coverages).forEach(([key, value]) => {
+      if (value === 'yes' || value === 'no') {
+        normalizedCoverages[key] = value;
+      } else if (typeof value === 'boolean') {
+        normalizedCoverages[key] = value ? 'yes' : 'no';
+      }
+    });
+  }
+
+  if (!Object.keys(normalizedCoverages).length && loan.coverage && typeof loan.coverage === 'string') {
+    normalizedCoverages.legacy = loan.coverage;
+  }
+
+  return {
+    id: loan.id || generateId('loan'),
+    borrower: (loan.borrower || '').toString(),
+    loanNumber: (loan.loanNumber || '').toString(),
+    amount: Number(loan.amount) || 0,
+    loanOfficer: (loan.loanOfficer || '').toString(),
+    originationDate: (loan.originationDate || '').toString(),
+    notes: (loan.notes || '').toString(),
+    coverages: normalizedCoverages,
+    createdAt: loan.createdAt || new Date().toISOString()
+  };
+}
+
+function deriveAccountCoverages(account) {
+  if (!account) return [];
+  const coverageList = [];
+  const selectedProducts = new Set([...(account?.products || []), ...(account?.customProducts || [])]);
+
+  MOB_COVERAGE_DEFINITIONS.forEach((definition) => {
+    const hasProduct = definition.matches.some((match) => selectedProducts.has(match));
+    const rate = account?.mobRates?.[definition.key];
+    const hasRates = rate
+      ? Object.values(rate).some((value) => value !== '' && value !== null && value !== undefined)
+      : false;
+    if (hasProduct || hasRates) {
+      coverageList.push({ key: definition.key, label: definition.label });
+    }
+  });
+
+  ALWAYS_INCLUDED_COVERAGES.forEach(({ key, label }) => {
+    if (!coverageList.some((item) => item.key === key)) {
+      coverageList.push({ key, label });
+    }
+  });
+
+  return coverageList;
+}
+
+function getCoverageLabel(key) {
+  return COVERAGE_LABEL_LOOKUP[key] || key;
+}
+
+function formatLoanCoverageSummary(loan) {
+  if (loan.coverages && typeof loan.coverages === 'object') {
+    const parts = Object.entries(loan.coverages)
+      .filter(([, value]) => value === 'yes' || value === 'no' || (value && value !== ''))
+      .map(([key, value]) => {
+        if (key === 'legacy') {
+          return value;
+        }
+        if (value === 'yes' || value === 'no') {
+          return `${getCoverageLabel(key)}: ${value === 'yes' ? 'Yes' : 'No'}`;
+        }
+        return `${getCoverageLabel(key)}: ${value}`;
+      });
+    if (parts.length) {
+      return parts.join(' • ');
+    }
+  }
+  return '—';
+}
+
+function aggregateLoansByMonth(loans = []) {
+  const monthlyTotals = new Map();
+  loans.forEach((loan) => {
+    const key = extractMonthKey(loan.originationDate || loan.createdAt);
+    if (!key) return;
+    const entry = monthlyTotals.get(key) || { count: 0, amount: 0 };
+    entry.count += 1;
+    entry.amount += Number(loan.amount) || 0;
+    monthlyTotals.set(key, entry);
+  });
+
+  return Array.from(monthlyTotals.entries())
+    .sort(([a], [b]) => (a > b ? 1 : a < b ? -1 : 0))
+    .map(([key, value]) => ({
+      key,
+      label: formatMonthKey(key),
+      count: value.count,
+      amount: value.amount
+    }));
+}
+
+function extractMonthKey(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
+}
+
+function formatMonthKey(key) {
+  const [year, month] = key.split('-').map((segment) => Number(segment));
+  if (!Number.isFinite(year) || !Number.isFinite(month)) return key;
+  const date = new Date(year, month - 1, 1);
+  return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(date);
+}
+
+function summarizeLoanTotals(loans = []) {
+  return loans.reduce(
+    (summary, loan) => {
+      summary.count += 1;
+      summary.amount += Number(loan.amount) || 0;
+      return summary;
+    },
+    { count: 0, amount: 0 }
+  );
 }
 
 function ensureMobRates(existing = {}) {
@@ -416,7 +626,7 @@ function initDashboardPage() {
   const settingsPanel = document.getElementById('account-settings-panel');
   const tabs = document.querySelectorAll('.tabs__tab');
   const manualLoanForm = document.getElementById('manual-loan-form');
-  const loanCoverageSelect = document.getElementById('manual-loan-coverage');
+  const loanCoverageGrid = document.getElementById('loan-coverage-grid');
   const loanLogTable = document.getElementById('loan-log-table');
   const loanLogEmpty = document.getElementById('loan-log-empty');
   const loanLogCount = document.getElementById('loan-log-count');
@@ -431,7 +641,10 @@ function initDashboardPage() {
 
   if (!accountSelector || !dataEntryPanel || !settingsPanel) return;
 
-  renderAccountSelector();
+  populateAccountSelect(accountSelector, {
+    includeNewOption: true,
+    selectedId: appState.activeAccountId
+  });
   renderMobTable();
   registerTabBehavior();
   setAccountControlsDisabled(true);
@@ -452,20 +665,23 @@ function initDashboardPage() {
     const account = getActiveAccount();
     if (!account) return;
     const formData = new FormData(manualLoanForm);
+    const amountValue = Number(formData.get('amount'));
     const loan = {
       id: generateId('loan'),
       borrower: (formData.get('borrower') || '').toString().trim(),
       loanNumber: (formData.get('loanNumber') || '').toString().trim(),
-      amount: Number(formData.get('amount') || 0),
-      coverage: (formData.get('coverage') || '').toString().trim(),
+      loanOfficer: (formData.get('loanOfficer') || '').toString().trim(),
+      amount: Number.isFinite(amountValue) ? amountValue : 0,
+      originationDate: (formData.get('originationDate') || '').toString(),
+      coverages: collectCoverageSelections(manualLoanForm),
       notes: (formData.get('notes') || '').toString().trim(),
       createdAt: new Date().toISOString()
     };
-    if (!loan.borrower || !loan.amount) return;
-    account.manualLoans.push(loan);
+    if (!loan.loanOfficer || !loan.originationDate || !loan.amount) return;
+    account.manualLoans.push(normalizeLoan(loan));
     persistAccount(account);
     manualLoanForm.reset();
-    populateCoverageOptions(account);
+    renderLoanCoverageGrid(account);
     renderLoanLog(account);
   });
 
@@ -527,35 +743,6 @@ function initDashboardPage() {
     persistAccount(account);
   });
 
-  function renderAccountSelector() {
-    accountSelector.innerHTML = '';
-    const placeholder = document.createElement('option');
-    placeholder.value = '';
-    placeholder.textContent = 'Select an account';
-    placeholder.disabled = true;
-    accountSelector.append(placeholder);
-
-    appState.accounts.forEach((account) => {
-      const option = document.createElement('option');
-      option.value = account.id;
-      option.textContent = account.name;
-      option.className = 'account-switcher__option';
-      accountSelector.append(option);
-    });
-
-    const newAccountOption = document.createElement('option');
-    newAccountOption.value = '__new__';
-    newAccountOption.textContent = 'New Account';
-    newAccountOption.className = 'account-switcher__option account-switcher__option--new';
-    accountSelector.append(newAccountOption);
-
-    if (appState.activeAccountId) {
-      accountSelector.value = appState.activeAccountId;
-    } else {
-      accountSelector.selectedIndex = 0;
-    }
-  }
-
   function registerTabBehavior() {
     tabs.forEach((tab) => {
       tab.addEventListener('click', () => {
@@ -574,8 +761,14 @@ function initDashboardPage() {
 
   function updateWorkspace() {
     const account = getActiveAccount();
+    populateAccountSelect(accountSelector, {
+      includeNewOption: true,
+      selectedId: appState.activeAccountId
+    });
+
     if (!account) {
       if (accountOverview) accountOverview.hidden = true;
+      renderLoanCoverageGrid(null);
       setAccountControlsDisabled(true);
       clearLoanLog();
       clearApiGuide();
@@ -589,7 +782,7 @@ function initDashboardPage() {
     if (accountName) accountName.textContent = account.name;
     if (accountCore) accountCore.textContent = CORE_LABELS[account.core] || account.core;
     renderProductPills(accountProducts, account);
-    populateCoverageOptions(account);
+    renderLoanCoverageGrid(account);
     renderLoanLog(account);
     renderApiDetails(account);
     renderCoreGuide(account);
@@ -651,6 +844,72 @@ function initDashboardPage() {
     ancillaryForm.elements.namedItem('afgNotes').value = afg.notes || '';
   }
 
+  function renderLoanCoverageGrid(account) {
+    if (!loanCoverageGrid) return;
+    loanCoverageGrid.innerHTML = '';
+
+    if (!account) {
+      const message = document.createElement('p');
+      message.className = 'coverage-grid__empty';
+      message.textContent = 'Select an account to capture coverage elections.';
+      loanCoverageGrid.append(message);
+      return;
+    }
+
+    const coverages = deriveAccountCoverages(account);
+    if (!coverages.length) {
+      const message = document.createElement('p');
+      message.className = 'coverage-grid__empty';
+      message.textContent = 'Configure MOB coverage selections in account settings to enable tracking.';
+      loanCoverageGrid.append(message);
+      return;
+    }
+
+    coverages.forEach(({ key, label }) => {
+      const field = document.createElement('label');
+      field.className = 'coverage-field';
+      field.dataset.coverageWrapper = key;
+
+      const span = document.createElement('span');
+      span.className = 'coverage-field__label';
+      span.textContent = label;
+
+      const select = document.createElement('select');
+      select.name = `coverage-${key}`;
+      select.dataset.coverageKey = key;
+      select.className = 'coverage-field__select';
+
+      const emptyOption = document.createElement('option');
+      emptyOption.value = '';
+      emptyOption.textContent = '—';
+      select.append(emptyOption);
+
+      ['yes', 'no'].forEach((value) => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value === 'yes' ? 'Yes' : 'No';
+        select.append(option);
+      });
+
+      field.append(span, select);
+      loanCoverageGrid.append(field);
+    });
+  }
+
+  function collectCoverageSelections(formElement) {
+    const selections = {};
+    if (!formElement) return selections;
+    formElement.querySelectorAll('[data-coverage-key]').forEach((input) => {
+      const key = input.dataset.coverageKey;
+      if (!key) return;
+      const value = (input.value || '').toString();
+      if (value === 'yes' || value === 'no') {
+        selections[key] = value;
+      }
+    });
+    return selections;
+  }
+
   function renderLoanLog(account) {
     if (!loanLogTable || !loanLogCount || !loanLogEmpty) return;
     const tbody = loanLogTable.querySelector('tbody');
@@ -668,13 +927,20 @@ function initDashboardPage() {
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .forEach((loan) => {
         const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${loan.borrower || '—'}</td>
-          <td>${loan.loanNumber || '—'}</td>
-          <td>${formatCurrency(loan.amount)}</td>
-          <td>${loan.coverage || '—'}</td>
-          <td>${formatDateTime(loan.createdAt)}</td>
-        `;
+        const cells = [
+          loan.borrower || '—',
+          loan.loanNumber || '—',
+          formatCurrency(loan.amount),
+          loan.loanOfficer || '—',
+          formatDate(loan.originationDate || loan.createdAt),
+          formatLoanCoverageSummary(loan),
+          formatDateTime(loan.createdAt)
+        ];
+        cells.forEach((value) => {
+          const cell = document.createElement('td');
+          cell.textContent = value;
+          row.append(cell);
+        });
         tbody.append(row);
       });
   }
@@ -741,34 +1007,188 @@ function initDashboardPage() {
     });
   }
 
-  function populateCoverageOptions(account) {
-    if (!loanCoverageSelect) return;
-    const existingValue = loanCoverageSelect.value;
-    loanCoverageSelect.innerHTML = '';
-    const placeholder = document.createElement('option');
-    placeholder.value = '';
-    placeholder.textContent = 'Select coverage (optional)';
-    loanCoverageSelect.append(placeholder);
-    const options = [...(account.products || []), ...(account.customProducts || [])];
-    options.sort((a, b) => a.localeCompare(b));
-    options.forEach((product) => {
-      const option = document.createElement('option');
-      option.value = product;
-      option.textContent = product;
-      loanCoverageSelect.append(option);
-    });
-    loanCoverageSelect.value = existingValue || '';
-  }
-
-  function getActiveAccount() {
-    if (!appState.activeAccountId) return null;
-    return appState.accounts.find((account) => account.id === appState.activeAccountId) || null;
-  }
-
   function persistAccount(account) {
-    const updatedAccounts = appState.accounts.map((stored) => (stored.id === account.id ? account : stored));
+    const updatedAccounts = appState.accounts.map((stored) => (stored.id === account.id ? normalizeAccount(account) : stored));
     saveAccounts(updatedAccounts);
     updateWorkspace();
+  }
+}
+
+// -----------------------
+// Reporting page
+// -----------------------
+function initReportingPage() {
+  const accountSelector = document.getElementById('reporting-account-selector');
+  const chartCanvas = document.getElementById('loan-volume-chart');
+  const emptyState = document.getElementById('reporting-empty');
+  const footnote = document.getElementById('reporting-footnote');
+  let chartInstance = null;
+
+  populateAccountSelect(accountSelector, {
+    includeNewOption: false,
+    selectedId: appState.activeAccountId
+  });
+
+  if (accountSelector) {
+    accountSelector.disabled = appState.accounts.length === 0;
+    accountSelector.addEventListener('change', (event) => {
+      const value = event.target.value;
+      if (value === '__new__') {
+        window.location.href = 'create-account.html';
+        return;
+      }
+      saveActiveAccountId(value);
+      renderReport();
+    });
+  }
+
+  renderReport();
+
+  function renderReport() {
+    const account = getActiveAccount();
+    if (accountSelector) {
+      accountSelector.disabled = appState.accounts.length === 0;
+    }
+    if (!account) {
+      toggleEmpty(true, appState.accounts.length ? 'Select an account to view reporting.' : 'Create an account to unlock reporting.');
+      destroyChart();
+      if (footnote) footnote.textContent = '';
+      return;
+    }
+
+    if (accountSelector && accountSelector.value !== account.id) {
+      accountSelector.value = account.id;
+    }
+
+    const monthly = aggregateLoansByMonth(account.manualLoans || []);
+    if (!monthly.length) {
+      toggleEmpty(true, `No manual loans recorded yet for ${account.name}.`);
+      destroyChart();
+      if (footnote) footnote.textContent = '';
+      return;
+    }
+
+    toggleEmpty(false);
+    renderChart(monthly);
+
+    if (footnote) {
+      const totals = summarizeLoanTotals(account.manualLoans || []);
+      footnote.textContent = `${account.name} • ${monthly.length} month${monthly.length === 1 ? '' : 's'} of activity • ${totals.count} loan${totals.count === 1 ? '' : 's'} totaling ${formatCurrency(totals.amount)}.`;
+    }
+  }
+
+  function toggleEmpty(show, message) {
+    if (emptyState) {
+      emptyState.hidden = !show;
+      if (typeof message === 'string') {
+        emptyState.textContent = message;
+      }
+    }
+    if (chartCanvas) {
+      chartCanvas.hidden = show;
+    }
+  }
+
+  function renderChart(points) {
+    if (!chartCanvas || typeof Chart === 'undefined') return;
+    const chart = ensureChart();
+    if (!chart) return;
+    chartCanvas.hidden = false;
+    chart.data.labels = points.map((point) => point.label);
+    chart.data.datasets[0].data = points.map((point) => ({
+      x: point.label,
+      y: point.count,
+      amount: point.amount
+    }));
+    chart.update();
+  }
+
+  function ensureChart() {
+    if (chartInstance) return chartInstance;
+    if (!chartCanvas || typeof Chart === 'undefined') return null;
+
+    chartInstance = new Chart(chartCanvas, {
+      type: 'line',
+      data: {
+        datasets: [
+          {
+            label: 'Loans per month',
+            data: [],
+            parsing: false,
+            tension: 0.35,
+            borderColor: '#c7483f',
+            backgroundColor: 'rgba(199, 72, 63, 0.25)',
+            borderWidth: 2,
+            fill: true,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#f2b34c',
+            pointBorderColor: '#2a0d10',
+            pointBorderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            ticks: {
+              color: '#fbead7'
+            },
+            grid: {
+              color: 'rgba(251, 234, 215, 0.1)'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: '#fbead7',
+              precision: 0
+            },
+            grid: {
+              color: 'rgba(251, 234, 215, 0.08)'
+            },
+            title: {
+              display: true,
+              text: 'Loans',
+              color: '#fbead7'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: 'rgba(24, 9, 10, 0.92)',
+            borderColor: 'rgba(247, 179, 76, 0.4)',
+            borderWidth: 1,
+            titleColor: '#fbead7',
+            bodyColor: '#fbead7',
+            callbacks: {
+              label(context) {
+                const count = context.parsed?.y ?? 0;
+                const rawAmount = context.raw?.amount || 0;
+                return `${count} loan${count === 1 ? '' : 's'} • ${formatCurrency(rawAmount)}`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    return chartInstance;
+  }
+
+  function destroyChart() {
+    if (chartInstance) {
+      chartInstance.destroy();
+      chartInstance = null;
+    }
+    if (chartCanvas) {
+      chartCanvas.hidden = true;
+    }
   }
 }
 
@@ -805,6 +1225,13 @@ function formatCurrency(value) {
     style: 'currency',
     currency: 'USD'
   }).format(Number(value));
+}
+
+function formatDate(value) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return new Intl.DateTimeFormat('en-US', { dateStyle: 'medium' }).format(date);
 }
 
 function formatDateTime(value) {
