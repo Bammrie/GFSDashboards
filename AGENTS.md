@@ -1,3 +1,5 @@
+REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+
 This is a dashboard for a company looking to see stats on how well a lending instituition(credit union) does on covering their loans with protection.
 
 Each credit union must have a database of loan data that can be updated by manual entry or via API.
