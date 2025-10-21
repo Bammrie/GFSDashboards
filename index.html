@@ -10,21 +10,35 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-page="dashboard">
-  <header class="site-header">
-    <div class="site-header__brand">
-      <span class="site-header__mark" aria-hidden="true">GF</span>
-      <div class="site-header__titles">
-        <span class="site-header__title">Goodwine Financial Services</span>
-        <span class="site-header__subtitle">Lending Protection Intelligence</span>
+  <header class="site-header site-header--hero">
+    <div class="site-header__background" aria-hidden="true"></div>
+    <div class="site-header__inner">
+      <div class="site-header__brand">
+        <span class="site-header__mark" aria-hidden="true">GF</span>
+        <div class="site-header__titles">
+          <span class="site-header__title">Goodwine Financial Services</span>
+          <span class="site-header__subtitle">Lending Protection Intelligence</span>
+        </div>
+      </div>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html" class="site-nav__link site-nav__link--active">Workspace</a>
+        <a href="reporting.html" class="site-nav__link">Reporting</a>
+        <a href="create-account.html" class="site-nav__link">New account</a>
+      </nav>
+      <div class="account-switcher">
+        <label for="account-selector" class="account-switcher__label">Account</label>
+        <select id="account-selector" class="account-switcher__select" aria-label="Choose an account to manage">
+          <option value="" disabled selected>Select an account</option>
+        </select>
       </div>
     </div>
-    <div class="account-switcher">
-      <label for="account-selector" class="account-switcher__label">Account</label>
-      <select id="account-selector" class="account-switcher__select" aria-label="Choose an account to manage">
-        <option value="" disabled selected>Select an account</option>
-      </select>
-    </div>
   </header>
+
+  <section class="site-hero" aria-label="Dashboard inspiration">
+    <div class="site-hero__image-frame">
+      <img src="Screenshot 2025-10-21 083441.png" alt="Goodwine Financial Services reporting dashboard preview" />
+    </div>
+  </section>
 
   <main class="workspace" aria-live="polite">
     <section class="account-overview" id="account-overview" hidden>
@@ -51,28 +65,37 @@
             <p class="panel-card__subtitle">Capture individual loans to keep coverage totals current when API syncs are pending.</p>
           </header>
           <form id="manual-loan-form" class="form" autocomplete="off" data-account-control>
-            <div class="form__grid">
+            <div class="form__grid form__grid--three">
               <label class="field">
-                <span class="field__label">Borrower</span>
-                <input type="text" name="borrower" class="field__input" placeholder="e.g. Jordan Ellis" required />
+                <span class="field__label">Borrower <span class="field__optional">(optional)</span></span>
+                <input type="text" name="borrower" class="field__input" placeholder="e.g. Jordan Ellis" />
               </label>
               <label class="field">
-                <span class="field__label">Loan number</span>
-                <input type="text" name="loanNumber" class="field__input" placeholder="Optional" />
+                <span class="field__label">Loan number <span class="field__optional">(optional)</span></span>
+                <input type="text" name="loanNumber" class="field__input" placeholder="Reference or core ID" />
               </label>
               <label class="field">
-                <span class="field__label">Loan amount</span>
+                <span class="field__label">Loan officer <span class="field__required">*</span></span>
+                <input type="text" name="loanOfficer" class="field__input" placeholder="e.g. Priya Nolan" required />
+              </label>
+              <label class="field">
+                <span class="field__label">Loan amount <span class="field__required">*</span></span>
                 <input type="number" name="amount" min="0" step="0.01" class="field__input" placeholder="0.00" required />
               </label>
               <label class="field">
-                <span class="field__label">Coverage selection</span>
-                <select name="coverage" class="field__input" id="manual-loan-coverage"></select>
+                <span class="field__label">Loan origination date <span class="field__required">*</span></span>
+                <input type="date" name="originationDate" class="field__input" required />
               </label>
-              <label class="field field--full">
-                <span class="field__label">Notes</span>
-                <textarea name="notes" class="field__input field__input--textarea" rows="2" placeholder="Optional"></textarea>
+              <label class="field">
+                <span class="field__label">Notes <span class="field__optional">(optional)</span></span>
+                <textarea name="notes" class="field__input field__input--textarea" rows="2" placeholder="Add underwriting context or follow-up tasks"></textarea>
               </label>
             </div>
+            <fieldset class="fieldset fieldset--coverage" data-account-control>
+              <legend>Coverage elections</legend>
+              <p class="field-helper">Track protection penetration with quick Yes/No responses for each active coverage.</p>
+              <div id="loan-coverage-grid" class="coverage-grid"></div>
+            </fieldset>
             <div class="form__actions">
               <button type="submit" class="btn btn--primary">Add loan</button>
             </div>
@@ -88,7 +111,9 @@
                   <th scope="col">Borrower</th>
                   <th scope="col">Loan #</th>
                   <th scope="col">Amount</th>
-                  <th scope="col">Coverage</th>
+                  <th scope="col">Loan officer</th>
+                  <th scope="col">Origination</th>
+                  <th scope="col">Coverages</th>
                   <th scope="col">Added</th>
                 </tr>
               </thead>
