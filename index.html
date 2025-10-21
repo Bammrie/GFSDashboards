@@ -54,6 +54,7 @@
 
     <nav class="tabs" role="tablist" aria-label="Account views">
       <button class="tabs__tab" type="button" role="tab" aria-selected="true" aria-controls="data-entry-panel" id="data-entry-tab">Data Entry</button>
+      <button class="tabs__tab" type="button" role="tab" aria-selected="false" aria-controls="integration-panel" id="integration-tab">API Integration</button>
       <button class="tabs__tab" type="button" role="tab" aria-selected="false" aria-controls="account-settings-panel" id="account-settings-tab">Account Settings</button>
     </nav>
 
@@ -123,38 +124,41 @@
           </div>
         </article>
 
-        <article class="panel-card">
-          <header class="panel-card__header">
-            <h2 class="panel-card__title">Core API connectivity</h2>
-            <p class="panel-card__subtitle">Document how the credit union core exchanges data with the dashboard.</p>
-          </header>
-          <form id="api-config-form" class="form form--split" autocomplete="off" data-account-control>
-            <label class="field">
-              <span class="field__label">API endpoint</span>
-              <input type="url" name="endpoint" class="field__input" placeholder="https://" />
-            </label>
-            <label class="field">
-              <span class="field__label">Authentication</span>
-              <input type="text" name="auth" class="field__input" placeholder="Token, key, or certificate details" />
-            </label>
-            <label class="field field--full">
-              <span class="field__label">Integration notes</span>
-              <textarea name="notes" rows="3" class="field__input field__input--textarea" placeholder="Document the mapping from the core to dashboard fields."></textarea>
-            </label>
-            <div class="form__actions">
-              <button type="submit" class="btn btn--secondary">Save API details</button>
-              <button type="button" id="api-sync-btn" class="btn btn--ghost" data-account-control>Log manual sync</button>
-            </div>
-          </form>
-          <div class="api-guide">
-            <h3 class="api-guide__title">Integration playbook</h3>
-            <p id="api-core-overview" class="api-guide__overview">Select an account to load the connection steps for its core.</p>
-            <ol id="api-core-steps" class="api-guide__steps"></ol>
-            <p class="api-guide__footnote">Update this checklist as new reports launch so data fields stay aligned with the dashboard requirements.</p>
-          </div>
-          <p id="api-last-sync" class="api-status">No sync events recorded yet.</p>
-        </article>
       </div>
+    </section>
+
+    <section id="integration-panel" class="tab-panel" role="tabpanel" aria-labelledby="integration-tab" hidden>
+      <article class="panel-card panel-card--wide">
+        <header class="panel-card__header">
+          <h2 class="panel-card__title">Core API connectivity</h2>
+          <p class="panel-card__subtitle">Document how the credit union core exchanges data with the dashboard.</p>
+        </header>
+        <form id="api-config-form" class="form form--split" autocomplete="off" data-account-control>
+          <label class="field">
+            <span class="field__label">API endpoint</span>
+            <input type="url" name="endpoint" class="field__input" placeholder="https://" />
+          </label>
+          <label class="field">
+            <span class="field__label">Authentication</span>
+            <input type="text" name="auth" class="field__input" placeholder="Token, key, or certificate details" />
+          </label>
+          <label class="field field--full">
+            <span class="field__label">Integration notes</span>
+            <textarea name="notes" rows="3" class="field__input field__input--textarea" placeholder="Document the mapping from the core to dashboard fields."></textarea>
+          </label>
+          <div class="form__actions">
+            <button type="submit" class="btn btn--secondary">Save API details</button>
+            <button type="button" id="api-sync-btn" class="btn btn--ghost" data-account-control>Log manual sync</button>
+          </div>
+        </form>
+        <div class="api-guide">
+          <h3 class="api-guide__title">Integration playbook</h3>
+          <p id="api-core-overview" class="api-guide__overview">Select an account to load the connection steps for its core.</p>
+          <ol id="api-core-steps" class="api-guide__steps"></ol>
+          <p class="api-guide__footnote">Update this checklist as new reports launch so data fields stay aligned with the dashboard requirements.</p>
+        </div>
+        <p id="api-last-sync" class="api-status">No sync events recorded yet.</p>
+      </article>
     </section>
 
     <section id="account-settings-panel" class="tab-panel" role="tabpanel" aria-labelledby="account-settings-tab" hidden>

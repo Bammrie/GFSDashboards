@@ -84,14 +84,19 @@ textarea {
 
 .site-header__inner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 2.5rem;
+  justify-content: center;
+  gap: 1.75rem;
+  text-align: center;
+  margin: 0 auto;
+  width: min(1100px, 100%);
 }
 
 .site-header__brand {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1.1rem;
 }
 
@@ -111,6 +116,7 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  text-align: center;
 }
 
 .site-header__title {
@@ -129,6 +135,7 @@ textarea {
 .site-nav {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1.75rem;
   flex-wrap: wrap;
 }
@@ -172,6 +179,7 @@ textarea {
 .site-header__cta {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.5rem;
 }
 
