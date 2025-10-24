@@ -19,6 +19,7 @@ const DEFAULT_PRODUCTS = [
   'VSC',
   'Collateral Protection Insurance (CPI)',
   'Fidelity Bond',
+  'Mortgage Life Insurance for 1st Lien mortgages',
   'AFG Balloon Loans'
 ];
 
@@ -31,7 +32,8 @@ const MOB_RATE_ROWS = [
   { id: 'creditDisabilityBlended', label: 'Credit Disability — Blended' },
   { id: 'packageA', label: 'Debt Protection Package A' },
   { id: 'packageB', label: 'Debt Protection Package B' },
-  { id: 'packageC', label: 'Debt Protection Package C' }
+  { id: 'packageC', label: 'Debt Protection Package C' },
+  { id: 'mortgageLifeFirstLien', label: 'Mortgage Life — 1st Lien' }
 ];
 
 const MOB_COVERAGE_DEFINITIONS = [
@@ -43,7 +45,12 @@ const MOB_COVERAGE_DEFINITIONS = [
   { key: 'creditDisabilityBlended', label: 'Credit Disability — Blended', matches: ['Credit Disability (Blended)'] },
   { key: 'packageA', label: 'Debt Protection — Package A', matches: ['Debt Protection Package A'] },
   { key: 'packageB', label: 'Debt Protection — Package B', matches: ['Debt Protection Package B'] },
-  { key: 'packageC', label: 'Debt Protection — Package C', matches: ['Debt Protection Package C'] }
+  { key: 'packageC', label: 'Debt Protection — Package C', matches: ['Debt Protection Package C'] },
+  {
+    key: 'mortgageLifeFirstLien',
+    label: 'Mortgage Life — 1st Lien',
+    matches: ['Mortgage Life Insurance for 1st Lien mortgages']
+  }
 ];
 
 const ALWAYS_INCLUDED_COVERAGES = [
@@ -152,150 +159,10 @@ function formatProspectCurrency(value) {
   return formatCurrency(value, PROSPECT_CURRENCY_FORMAT);
 }
 
-const PROSPECT_REPORTS = [
-  {
-    id: 'inspire-2025-q2',
-    name: 'Inspire Federal Credit Union',
-    charter: '1759',
-    asOf: 'June 30, 2025',
-    periodMonths: 6,
-    totalAssets: 389295778,
-    totalLoans: 276737013,
-    loanCount: 14978,
-    allowance: 1038769,
-    accruedInterestLoans: 1202440,
-    loansGrantedYtdCount: 1040,
-    loansGrantedYtdAmount: 31527898,
-    interestOnLoansYtd: 8906034,
-    creditLossExpenseLoansYtd: -90000,
-    delinquencyTotal60Plus: 1642549,
-    delinquencyTotal60PlusLoans: 149,
-    nonAccrualLoans: 1158703,
-    bankruptcyOutstanding: 238637,
-    tdrLoans: 6,
-    tdrBalance: 402595,
-    delinquencySources: {
-      participations: 1265556,
-      indirect: 1462904,
-      purchased: 181690
-    },
-    indirect: {
-      auto: { count: 1850, balance: 22596814 },
-      other: { count: 10193, balance: 80923451 },
-      total: { count: 12043, balance: 103520265 }
-    },
-    loanMix: {
-      creditCard: { label: 'Unsecured credit card', count: 0, balance: 0, rate: 0.0 },
-      student: { label: 'Non-federally guaranteed student', count: 351, balance: 395316, rate: 7.16 },
-      otherUnsecured: { label: 'All other unsecured', count: 9974, balance: 72523736, rate: 6.65 },
-      newVehicle: { label: 'New vehicle', count: 863, balance: 13526378, rate: 6.31 },
-      usedVehicle: { label: 'Used vehicle', count: 1575, balance: 18753929, rate: 6.79 },
-      leases: { label: 'Leases receivable', count: 0, balance: 0, rate: 0.0 },
-      otherSecured: { label: 'Other secured non-real estate', count: 642, balance: 11237335, rate: 6.66 },
-      firstMortgage: { label: '1st lien residential real estate', count: 474, balance: 62758834, rate: 4.48 },
-      juniorMortgage: { label: 'Junior lien residential real estate', count: 956, balance: 50509811, rate: 7.23 },
-      otherNonCommercialRE: { label: 'Other non-commercial real estate', count: 0, balance: 0, rate: 0.0 },
-      commercialRE: { label: 'Commercial real estate', count: 107, balance: 44745758, rate: 6.01 },
-      commercialOther: { label: 'Commercial & industrial', count: 36, balance: 2285917, rate: 7.96 }
-    },
-    delinquency60PlusDetail: {
-      student: { label: 'Student loans', balance: 1469, loans: 2 },
-      otherUnsecured: { label: 'All other unsecured', balance: 1400661, loans: 139 },
-      usedVehicle: { label: 'Used vehicle', balance: 31204, loans: 2 },
-      otherSecured: { label: 'Other secured non-real estate', balance: 32139, loans: 4 },
-      juniorMortgage: { label: 'Junior lien residential real estate', balance: 177076, loans: 2 }
-    },
-    chargeOffs: {
-      total: { chargeOffs: 293602, recoveries: 120865 },
-      otherUnsecured: { label: 'All other unsecured', chargeOffs: 221992, recoveries: 92329 },
-      student: { label: 'Student loans', chargeOffs: 3121, recoveries: 2448 },
-      newVehicle: { label: 'New vehicle', chargeOffs: 14248, recoveries: 11356 },
-      usedVehicle: { label: 'Used vehicle', chargeOffs: 48799, recoveries: 8201 },
-      otherSecured: { label: 'Other secured non-real estate', chargeOffs: 5442, recoveries: 0 }
-    },
-    riskHighlights: [
-      'Indirect loans contribute $1.46M of 60+ delinquency (Schedule A, Section 2 line 22b), indicating dealer follow-up gaps.',
-      'Unsecured installment balances carry $1.40M in 60+ delinquency across 139 loans, dwarfing other categories.'
-    ],
-    insights: [
-      'Unsecured lending totals $72.5M (62% of consumer installment balances) and generates 85% of 60+ delinquency ($1.40M), making credit life and debt protection penetration a high-impact hedge.',
-      'Indirect channel balances reach $103.5M (37% of loans) across 12,043 contracts, providing scale for bundled GAP, VSC, and payment protection programs with dealer partners.',
-      'Net charge-offs annualize to roughly 0.12% against an allowance equal to 0.38% of loans, so new coverage-driven fee income can bolster reserves while protecting members from payment shock.'
-    ]
-  },
-  {
-    id: 'lion-share-2023-q3',
-    name: "Lion's Share Federal Credit Union",
-    charter: '24813',
-    asOf: 'September 30, 2023',
-    periodMonths: 9,
-    totalAssets: 71890603,
-    totalLoans: 56651960,
-    loanCount: 8113,
-    allowance: 940961,
-    accruedInterestLoans: 248547,
-    loansGrantedYtdCount: 1461,
-    loansGrantedYtdAmount: 19350538,
-    interestOnLoansYtd: 3385301,
-    creditLossExpenseLoansYtd: 456691,
-    delinquencyTotal60Plus: 1934216,
-    delinquencyTotal60PlusLoans: 345,
-    nonAccrualLoans: 1242372,
-    bankruptcyOutstanding: 174690,
-    tdrLoans: 5,
-    tdrBalance: 26912,
-    delinquencySources: {
-      participations: 62628,
-      indirect: 91037,
-      purchased: 0
-    },
-    indirect: {
-      auto: { count: 680, balance: 6377744 },
-      other: { count: 0, balance: 0 },
-      total: { count: 680, balance: 6377744 }
-    },
-    loanMix: {
-      creditCard: { label: 'Unsecured credit card', count: 1285, balance: 2888967, rate: 9.9 },
-      student: { label: 'Non-federally guaranteed student', count: 0, balance: 0, rate: 0.0 },
-      otherUnsecured: { label: 'All other unsecured', count: 4376, balance: 9630112, rate: 12.0 },
-      newVehicle: { label: 'New vehicle', count: 338, balance: 8529839, rate: 5.5 },
-      usedVehicle: { label: 'Used vehicle', count: 1759, balance: 25727537, rate: 5.75 },
-      leases: { label: 'Leases receivable', count: 0, balance: 0, rate: 0.0 },
-      otherSecured: { label: 'Other secured non-real estate', count: 195, balance: 2399140, rate: 6.5 },
-      firstMortgage: { label: '1st lien residential real estate', count: 0, balance: 0, rate: 0.0 },
-      juniorMortgage: { label: 'Junior lien residential real estate', count: 160, balance: 7476365, rate: 5.25 },
-      otherNonCommercialRE: { label: 'Other non-commercial real estate', count: 0, balance: 0, rate: 0.0 },
-      commercialRE: { label: 'Commercial real estate', count: 0, balance: 0, rate: 0.0 },
-      commercialOther: { label: 'Commercial & industrial', count: 0, balance: 0, rate: 0.0 }
-    },
-    delinquency60PlusDetail: {
-      creditCard: { label: 'Credit card', balance: 87157, loans: 37 },
-      otherUnsecured: { label: 'All other unsecured', balance: 533500, loans: 231 },
-      newVehicle: { label: 'New vehicle', balance: 50253, loans: 2 },
-      usedVehicle: { label: 'Used vehicle', balance: 1178773, loans: 69 },
-      otherSecured: { label: 'Other secured non-real estate', balance: 35481, loans: 5 },
-      juniorMortgage: { label: 'Junior lien residential real estate', balance: 49052, loans: 1 }
-    },
-    chargeOffs: {
-      total: { chargeOffs: 786256, recoveries: 89702 },
-      creditCard: { label: 'Credit card', chargeOffs: 32097, recoveries: 964 },
-      otherUnsecured: { label: 'All other unsecured', chargeOffs: 504602, recoveries: 80055 },
-      usedVehicle: { label: 'Used vehicle', chargeOffs: 246134, recoveries: 8658 },
-      otherSecured: { label: 'Other secured non-real estate', chargeOffs: 3423, recoveries: 25 }
-    },
-    riskHighlights: [
-      'Auto loans hold $1.23M of 60+ delinquency (64% of total) and $246k of year-to-date charge-offs.',
-      'Credit cards and signature loans contribute $533k of 60+ delinquency alongside $505k in year-to-date charge-offs.'
-    ],
-    insights: [
-      'Auto lending totals $34.3M (60% of loans) with $1.23M of 60+ delinquency and $246k in charge-offs, so payment protection, GAP, and CPI can stabilize performance.',
-      'Unsecured lending ($12.5M) posts $533k of 60+ delinquency and $505k of charge-offs; bundling debt protection would improve loss absorption and fee income.',
-      'Allowance coverage stands at 1.66% versus a 3.41% 60+ delinquency ratio, underscoring the need for new premium revenue to rebuild reserves.'
-    ]
-  }
-];
-
-const PROSPECT_LOOKUP = Object.fromEntries(PROSPECT_REPORTS.map((report) => [report.id, report]));
+let PROSPECT_REPORTS = [];
+let PROSPECT_LOOKUP = {};
+const prospectsDataUrl = document.body?.dataset?.prospectsDataUrl || 'prospects-data.json';
+let prospectDataPromise = null;
 
 const PROSPECT_PRODUCT_MODELS = [
   {
@@ -321,6 +188,14 @@ const PROSPECT_PRODUCT_MODELS = [
     eligibleBalanceKeys: ['otherUnsecured', 'newVehicle', 'usedVehicle', 'otherSecured'],
     penetration: 0.25,
     rates: { clp: 0.85, gfsMarkup: 0.3, creditUnionMarkup: 0.2 }
+  },
+  {
+    id: 'mortgage-life-first-lien',
+    label: 'Mortgage Life Insurance — 1st Lien',
+    type: 'mob',
+    eligibleBalanceKeys: ['firstMortgage'],
+    penetration: 0.12,
+    rates: { clp: 0.38, gfsMarkup: 0.18, creditUnionMarkup: 0.14 }
   },
   {
     id: 'gap',
@@ -349,13 +224,43 @@ const PROSPECT_PRODUCT_MODELS = [
 ];
 
 const PROSPECT_PRODUCT_FOOTNOTE =
-  'Credit life: $0.45 CLP + $0.18 GFS + $0.12 CU per $100 MOB • Credit disability: $0.65 CLP + $0.22 GFS + $0.18 CU • Debt protection Package A: $0.85 CLP + $0.30 GFS + $0.20 CU • GAP $550 retail ($210 GFS / $140 CU) • VSC $1,300 retail ($320 GFS / $260 CU) • CPI $90 billed ($25 GFS / $20 CU).';
+  'Credit life: $0.45 CLP + $0.18 GFS + $0.12 CU per $100 MOB • Credit disability: $0.65 CLP + $0.22 GFS + $0.18 CU • Debt protection Package A: $0.85 CLP + $0.30 GFS + $0.20 CU • Mortgage life (1st lien): $0.38 CLP + $0.18 GFS + $0.14 CU • GAP $550 retail ($210 GFS / $140 CU) • VSC $1,300 retail ($320 GFS / $260 CU) • CPI $90 billed ($25 GFS / $20 CU).';
 
 const prospectState = {
   activeProspectId: '',
   logEntries: loadProspectLog(),
   logSelectTouched: false
 };
+
+function loadProspectReports() {
+  if (prospectDataPromise) return prospectDataPromise;
+  if (!prospectsDataUrl) {
+    prospectDataPromise = Promise.resolve([]);
+    return prospectDataPromise;
+  }
+
+  prospectDataPromise = fetch(prospectsDataUrl)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to load prospects data (${response.status})`);
+      }
+      return response.json();
+    })
+    .then((payload) => {
+      const reports = Array.isArray(payload?.reports) ? payload.reports : [];
+      PROSPECT_REPORTS = reports;
+      PROSPECT_LOOKUP = Object.fromEntries(reports.map((report) => [report.id, report]));
+      return reports;
+    })
+    .catch((error) => {
+      console.error('Unable to load prospect data', error);
+      PROSPECT_REPORTS = [];
+      PROSPECT_LOOKUP = {};
+      return [];
+    });
+
+  return prospectDataPromise;
+}
 
 const pageId = document.body?.dataset?.page || '';
 
@@ -377,6 +282,8 @@ function init() {
     initReportingPage();
   } else if (pageId === 'prospects') {
     initProspectsPage();
+  } else if (pageId === 'prospect-detail') {
+    initProspectDetailPage();
   }
 }
 
@@ -1441,56 +1348,110 @@ function initProspectsPage() {
     productFootnote.textContent = PROSPECT_PRODUCT_FOOTNOTE;
   }
 
-  prospectSelector.innerHTML = '';
-  if (logSelector) {
-    logSelector.innerHTML = '';
-  }
-
-  PROSPECT_REPORTS.forEach((report) => {
-    const option = document.createElement('option');
-    option.value = report.id;
-    option.textContent = `${report.name} — ${report.asOf}`;
-    prospectSelector.append(option);
+  loadProspectReports().then((reports) => {
+    prospectSelector.innerHTML = '';
     if (logSelector) {
-      logSelector.append(option.cloneNode(true));
+      logSelector.innerHTML = '';
     }
-  });
 
-  const initialId = PROSPECT_REPORTS[0]?.id || '';
-  if (initialId) {
-    prospectState.activeProspectId = initialId;
-    prospectSelector.value = initialId;
-    if (logSelector) {
-      logSelector.value = initialId;
+    reports.forEach((report) => {
+      const option = document.createElement('option');
+      option.value = report.id;
+      option.textContent = `${report.name} — ${report.asOf}`;
+      prospectSelector.append(option);
+      if (logSelector) {
+        logSelector.append(option.cloneNode(true));
+      }
+    });
+
+    const initialId = reports[0]?.id || '';
+    if (initialId) {
+      prospectState.activeProspectId = initialId;
+      prospectSelector.value = initialId;
+      if (logSelector) {
+        logSelector.value = initialId;
+      }
+      renderProspect(initialId);
     }
-    renderProspect(initialId);
-  }
 
-  prospectSelector.addEventListener('change', (event) => {
-    const id = event.target.value;
-    if (!id) return;
-    prospectState.activeProspectId = id;
-    if (logSelector && !prospectState.logSelectTouched) {
-      logSelector.value = id;
-    }
-    renderProspect(id);
-  });
-
-  if (logSelector) {
-    logSelector.addEventListener('change', (event) => {
+    prospectSelector.addEventListener('change', (event) => {
       const id = event.target.value;
-      prospectState.logSelectTouched = true;
       if (!id) return;
       prospectState.activeProspectId = id;
-      if (prospectSelector.value !== id) {
-        prospectSelector.value = id;
+      if (logSelector && !prospectState.logSelectTouched) {
+        logSelector.value = id;
       }
       renderProspect(id);
     });
+
+    if (logSelector) {
+      logSelector.addEventListener('change', (event) => {
+        const id = event.target.value;
+        prospectState.logSelectTouched = true;
+        if (!id) return;
+        prospectState.activeProspectId = id;
+        if (prospectSelector.value !== id) {
+          prospectSelector.value = id;
+        }
+        renderProspect(id);
+      });
+    }
+
+    setupProspectLogForm();
+    renderProspectLog();
+  });
+}
+
+function initProspectDetailPage() {
+  const logSelector = document.getElementById('prospect-log-prospect');
+  const productFootnote = document.getElementById('prospect-product-footnote');
+  const requestedId = document.body?.dataset?.prospectId || '';
+
+  if (productFootnote) {
+    productFootnote.textContent = PROSPECT_PRODUCT_FOOTNOTE;
   }
 
-  setupProspectLogForm();
-  renderProspectLog();
+  loadProspectReports().then((reports) => {
+    if (logSelector) {
+      logSelector.innerHTML = '';
+      reports.forEach((report) => {
+        const option = document.createElement('option');
+        option.value = report.id;
+        option.textContent = `${report.name} — ${report.asOf}`;
+        logSelector.append(option);
+      });
+    }
+
+    const initialId = (requestedId && PROSPECT_LOOKUP[requestedId])
+      ? requestedId
+      : reports[0]?.id || '';
+
+    if (logSelector) {
+      logSelector.value = initialId;
+      logSelector.disabled = Boolean(requestedId);
+    }
+
+    if (initialId) {
+      prospectState.activeProspectId = initialId;
+      if (requestedId) {
+        prospectState.logSelectTouched = true;
+      }
+      renderProspect(initialId);
+    }
+
+    if (logSelector && !logSelector.disabled) {
+      logSelector.addEventListener('change', (event) => {
+        const id = event.target.value;
+        if (!id) return;
+        prospectState.logSelectTouched = true;
+        prospectState.activeProspectId = id;
+        renderProspect(id);
+      });
+    }
+
+    setupProspectLogForm();
+    renderProspectLog();
+  });
 }
 
 function renderProspect(id) {
@@ -1498,13 +1459,18 @@ function renderProspect(id) {
   if (!report) return;
   prospectState.activeProspectId = id;
   const metrics = computeProspectMetrics(report);
+  const opportunities = PROSPECT_PRODUCT_MODELS.map((model) => ({
+    model,
+    opportunity: calculateProductOpportunity(report, metrics, model)
+  }));
   renderProspectSummary(report, metrics);
+  renderProspectRankings(report, metrics, opportunities);
   renderProspectChannels(report, metrics);
   renderLoanMixTable(report, metrics);
   renderRiskTable(report, metrics);
   renderProspectRiskHighlights(report);
   renderProspectInsights(report);
-  renderProductTable(report, metrics);
+  renderProductTable(report, metrics, opportunities);
   renderProspectLog();
 }
 
@@ -1562,7 +1528,38 @@ function computeProspectMetrics(report) {
 }
 
 function renderProspectSummary(report, metrics) {
-  setText('prospect-reporting-date', `Call report as of ${report.asOf}`);
+  setText('prospect-title', report.name || 'Prospect intelligence');
+  const subtitle = document.getElementById('prospect-subtitle');
+  if (subtitle) {
+    const summary = report.name
+      ? `Call report intelligence and protection modeling for ${report.name}.`
+      : 'Load a 5300 call report to review consumer lending exposure and protection revenue opportunities.';
+    subtitle.textContent = summary;
+  }
+
+  const asOfEl = document.getElementById('prospect-reporting-date');
+  if (asOfEl) {
+    asOfEl.textContent = '';
+    if (report.asOf) {
+      asOfEl.append(`Call report as of ${report.asOf}`);
+    }
+    if (report.callReportUrl) {
+      if (asOfEl.textContent) {
+        asOfEl.append(' • ');
+      }
+      const link = document.createElement('a');
+      let href = report.callReportUrl;
+      try {
+        link.href = new URL(href, `${window.location.origin}/`).href;
+      } catch (error) {
+        link.href = href;
+      }
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = 'View filing';
+      asOfEl.append(link);
+    }
+  }
   setText('prospect-total-loans', formatProspectCurrency(report.totalLoans));
   const loanNotes = [
     `${formatPercent(metrics.loanToAsset)} of assets`,
@@ -1619,6 +1616,78 @@ function renderProspectSummary(report, metrics) {
     ? `${formatNumber(report.tdrLoans)} loans • ${formatProspectCurrency(report.tdrBalance)}`
     : formatProspectCurrency(report.tdrBalance);
   setText('prospect-tdr', tdrText);
+}
+
+function renderProspectRankings(report, metrics, opportunityRows = []) {
+  const section = document.getElementById('prospect-rankings-section');
+  const list = document.getElementById('prospect-rankings-list');
+  const note = document.getElementById('prospect-rankings-note');
+  if (!section || !list) return;
+
+  const rows = (opportunityRows.length
+    ? opportunityRows
+    : PROSPECT_PRODUCT_MODELS.map((model) => ({
+        model,
+        opportunity: calculateProductOpportunity(report, metrics, model)
+      })))
+    .map((item) => ({
+      ...item,
+      grossAnnual: Number(item.opportunity?.grossAnnual || 0)
+    }))
+    .filter((item) => item.grossAnnual > 0);
+
+  rows.sort((a, b) => b.grossAnnual - a.grossAnnual);
+
+  list.innerHTML = '';
+
+  if (!rows.length) {
+    section.hidden = true;
+    if (note) note.hidden = true;
+    return;
+  }
+
+  section.hidden = false;
+  if (note) {
+    note.hidden = false;
+    note.textContent = 'Rankings are based on modeled gross annual revenue for each product or service.';
+  }
+
+  const totalGross = rows.reduce((sum, item) => sum + item.grossAnnual, 0);
+
+  rows.forEach((item, index) => {
+    const entry = document.createElement('li');
+    entry.className = 'prospects__rankings-item';
+
+    const label = document.createElement('span');
+    label.className = 'prospects__rankings-label';
+    label.textContent = `${index + 1}. ${item.model.label}`;
+    entry.append(label);
+
+    const value = document.createElement('span');
+    value.className = 'prospects__rankings-value';
+    value.textContent = formatProspectCurrency(item.grossAnnual);
+    entry.append(value);
+
+    const metaParts = [];
+    if (item.opportunity?.eligibleBalance) {
+      metaParts.push(`${formatProspectCurrency(item.opportunity.eligibleBalance)} eligible balance`);
+    } else if (item.opportunity?.annualEligible) {
+      metaParts.push(`${formatNumber(Math.round(item.opportunity.annualEligible))} loans / yr`);
+    }
+    const share = totalGross ? item.grossAnnual / totalGross : 0;
+    if (share > 0) {
+      metaParts.push(`${formatPercent(share, { decimals: 0 })} of modeled revenue`);
+    }
+
+    if (metaParts.length) {
+      const meta = document.createElement('span');
+      meta.className = 'prospects__rankings-meta';
+      meta.textContent = metaParts.join(' • ');
+      entry.append(meta);
+    }
+
+    list.append(entry);
+  });
 }
 
 function renderProspectChannels(report, metrics) {
@@ -1820,7 +1889,7 @@ function renderProspectInsights(report) {
   });
 }
 
-function renderProductTable(report, metrics) {
+function renderProductTable(report, metrics, opportunityRows) {
   const table = document.getElementById('prospect-product-table');
   if (!table) return;
   const tbody = table.querySelector('tbody');
@@ -1831,8 +1900,14 @@ function renderProductTable(report, metrics) {
   let totalGfs = 0;
   let totalCreditUnion = 0;
 
-  PROSPECT_PRODUCT_MODELS.forEach((model) => {
-    const opportunity = calculateProductOpportunity(report, metrics, model);
+  const rows = opportunityRows && opportunityRows.length
+    ? opportunityRows
+    : PROSPECT_PRODUCT_MODELS.map((model) => ({
+        model,
+        opportunity: calculateProductOpportunity(report, metrics, model)
+      }));
+
+  rows.forEach(({ model, opportunity }) => {
     totalGross += opportunity.grossAnnual;
     totalGfs += opportunity.gfsAnnual;
     totalCreditUnion += opportunity.creditUnionAnnual;
@@ -1847,7 +1922,7 @@ function renderProductTable(report, metrics) {
     tbody.append(row);
   });
 
-  if (PROSPECT_PRODUCT_MODELS.length) {
+  if (rows.length) {
     const totalRow = document.createElement('tr');
     totalRow.className = 'table-total';
     appendTableCell(totalRow, 'Total', true);
@@ -1871,7 +1946,10 @@ function calculateProductOpportunity(report, metrics, model) {
       baseDisplay: `${formatProspectCurrency(eligibleBalance)} outstanding`,
       grossAnnual,
       gfsAnnual,
-      creditUnionAnnual
+      creditUnionAnnual,
+      eligibleBalance,
+      annualEligible: null,
+      unitsSold: null
     };
   }
 
@@ -1884,7 +1962,10 @@ function calculateProductOpportunity(report, metrics, model) {
     baseDisplay: `${formatNumber(Math.round(annualEligible))} loans / yr`,
     grossAnnual,
     gfsAnnual,
-    creditUnionAnnual
+    creditUnionAnnual,
+    eligibleBalance: null,
+    annualEligible,
+    unitsSold
   };
 }
 

@@ -1,0 +1,71 @@
+{
+  "id": "lion-share-2023-q3",
+  "name": "Lion's Share Federal Credit Union",
+  "charter": "24813",
+  "asOf": "September 30, 2023",
+  "periodMonths": 9,
+  "totalAssets": 71890603,
+  "totalLoans": 56651960,
+  "loanCount": 8113,
+  "allowance": 940961,
+  "accruedInterestLoans": 248547,
+  "loansGrantedYtdCount": 1461,
+  "loansGrantedYtdAmount": 19350538,
+  "interestOnLoansYtd": 3385301,
+  "creditLossExpenseLoansYtd": 456691,
+  "delinquencyTotal60Plus": 1934216,
+  "delinquencyTotal60PlusLoans": 345,
+  "nonAccrualLoans": 1242372,
+  "bankruptcyOutstanding": 174690,
+  "tdrLoans": 5,
+  "tdrBalance": 26912,
+  "delinquencySources": {
+    "participations": 62628,
+    "indirect": 91037,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": { "count": 680, "balance": 6377744 },
+    "other": { "count": 0, "balance": 0 },
+    "total": { "count": 680, "balance": 6377744 }
+  },
+  "loanMix": {
+    "creditCard": { "label": "Unsecured credit card", "count": 1285, "balance": 2888967, "rate": 9.9 },
+    "student": { "label": "Non-federally guaranteed student", "count": 0, "balance": 0, "rate": 0 },
+    "otherUnsecured": { "label": "All other unsecured", "count": 4376, "balance": 9630112, "rate": 12 },
+    "newVehicle": { "label": "New vehicle", "count": 338, "balance": 8529839, "rate": 5.5 },
+    "usedVehicle": { "label": "Used vehicle", "count": 1759, "balance": 25727537, "rate": 5.75 },
+    "leases": { "label": "Leases receivable", "count": 0, "balance": 0, "rate": 0 },
+    "otherSecured": { "label": "Other secured non-real estate", "count": 195, "balance": 2399140, "rate": 6.5 },
+    "firstMortgage": { "label": "1st lien residential real estate", "count": 0, "balance": 0, "rate": 0 },
+    "juniorMortgage": { "label": "Junior lien residential real estate", "count": 160, "balance": 7476365, "rate": 5.25 },
+    "otherNonCommercialRE": { "label": "Other non-commercial real estate", "count": 0, "balance": 0, "rate": 0 },
+    "commercialRE": { "label": "Commercial real estate", "count": 0, "balance": 0, "rate": 0 },
+    "commercialOther": { "label": "Commercial & industrial", "count": 0, "balance": 0, "rate": 0 }
+  },
+  "delinquency60PlusDetail": {
+    "creditCard": { "label": "Credit card", "balance": 87157, "loans": 37 },
+    "otherUnsecured": { "label": "All other unsecured", "balance": 533500, "loans": 231 },
+    "newVehicle": { "label": "New vehicle", "balance": 50253, "loans": 2 },
+    "usedVehicle": { "label": "Used vehicle", "balance": 1178773, "loans": 69 },
+    "otherSecured": { "label": "Other secured non-real estate", "balance": 35481, "loans": 5 },
+    "juniorMortgage": { "label": "Junior lien residential real estate", "balance": 49052, "loans": 1 }
+  },
+  "chargeOffs": {
+    "total": { "chargeOffs": 786256, "recoveries": 89702 },
+    "creditCard": { "label": "Credit card", "chargeOffs": 32097, "recoveries": 964 },
+    "otherUnsecured": { "label": "All other unsecured", "chargeOffs": 504602, "recoveries": 80055 },
+    "usedVehicle": { "label": "Used vehicle", "chargeOffs": 246134, "recoveries": 8658 },
+    "otherSecured": { "label": "Other secured non-real estate", "chargeOffs": 3423, "recoveries": 25 }
+  },
+  "riskHighlights": [
+    "Auto loans hold $1.23M of 60+ delinquency (64% of total) and $246k of year-to-date charge-offs.",
+    "Credit cards and signature loans contribute $533k of 60+ delinquency alongside $505k in year-to-date charge-offs."
+  ],
+  "insights": [
+    "Auto lending totals $34.3M (60% of loans) with $1.23M of 60+ delinquency and $246k in charge-offs, so payment protection, GAP, and CPI can stabilize performance.",
+    "Unsecured lending ($12.5M) posts $533k of 60+ delinquency and $505k of charge-offs; bundling debt protection would improve loss absorption and fee income.",
+    "Allowance coverage stands at 1.66% versus a 3.41% 60+ delinquency ratio, underscoring the need for new premium revenue to rebuild reserves."
+  ],
+  "callReportFile": "CallReport5300_September-2023_LION'S SHARE.pdf"
+}

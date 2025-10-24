@@ -1,0 +1,8 @@
+{
+  "name": "gfs-dashboards",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate:prospects": "node scripts/generateProspects.mjs"
+  }
+}
