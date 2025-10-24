@@ -864,6 +864,95 @@ textarea {
   color: var(--color-text-muted);
 }
 
+.section-header--compact {
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.prospects__breadcrumb {
+  align-self: flex-start;
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+}
+
+.prospects__breadcrumb-link {
+  color: var(--color-amber-400);
+  text-decoration: none;
+}
+
+.prospects__breadcrumb-link:hover,
+.prospects__breadcrumb-link:focus {
+  text-decoration: underline;
+}
+
+.prospects__rankings {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.75rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: rgba(27, 9, 11, 0.55);
+}
+
+.prospects__rankings-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.prospects__rankings-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.35rem 1.25rem;
+  align-items: baseline;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.prospects__rankings-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.prospects__rankings-label {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.prospects__rankings-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.prospects__rankings-meta {
+  grid-column: 1 / -1;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.prospects__rankings-note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 720px) {
+  .prospects__rankings-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.35rem;
+  }
+
+  .prospects__rankings-value {
+    justify-self: flex-start;
+  }
+}
+
 .section-header {
   display: flex;
   flex-direction: column;

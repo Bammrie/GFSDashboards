@@ -75,4 +75,5 @@ Document or extend new features so they reuse these formulas without re-defining
 2026-07-19: Removed the temporary dashboard preview hero section from all pages now that the placeholder is no longer needed.
 2025-10-21: Ensured the site header content stays on a single row so the top bar elements no longer stack.
 2025-10-24: Rounded prospect call-report dollar displays to whole numbers and tightened typography so metric cards and tables keep text within their boxes.
+2026-09-21: Automated prospect detail page generation from CallReports JSON uploads, added revenue opportunity rankings, and expanded product modeling with Mortgage Life Insurance for 1st lien mortgages.
 2026-08-26: Added a competitor tracking input to the prospects engagement log to capture current providers per interaction.

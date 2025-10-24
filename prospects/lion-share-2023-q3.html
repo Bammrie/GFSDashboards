@@ -7,24 +7,24 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="../styles.css" />
 </head>
-<body data-page="prospects" data-prospects-data-url="prospects-data.json">
+<body data-page="prospect-detail" data-prospects-data-url="../prospects-data.json" data-prospect-id="lion-share-2023-q3">
   <header class="site-header">
     <div class="site-header__background" aria-hidden="true"></div>
     <div class="site-header__inner">
       <div class="site-header__brand">
-        <img src="GFS Logo.png" class="site-header__logo" alt="Goodwine Financial Services" />
+        <img src="../GFS Logo.png" class="site-header__logo" alt="Goodwine Financial Services" />
         <div class="site-header__titles">
           <span class="site-header__title">Goodwine Financial Services</span>
           <span class="site-header__subtitle">Lending Protection Intelligence</span>
         </div>
       </div>
       <nav class="site-nav" aria-label="Primary">
-        <a href="index.html" class="site-nav__link">Workspace</a>
-        <a href="reporting.html" class="site-nav__link">Reporting</a>
-        <a href="prospects.html" class="site-nav__link site-nav__link--active">Prospects</a>
-        <a href="create-account.html" class="site-nav__link">New account</a>
+        <a href="../index.html" class="site-nav__link">Workspace</a>
+        <a href="../reporting.html" class="site-nav__link">Reporting</a>
+        <a href="../prospects.html" class="site-nav__link site-nav__link--active">Prospects</a>
+        <a href="../create-account.html" class="site-nav__link">New account</a>
       </nav>
     </div>
   </header>
@@ -32,12 +32,9 @@
   <main class="prospects" aria-live="polite">
     <section class="prospects__intro">
       <div class="prospects__intro-copy">
-        <h1 class="prospects__title" id="prospect-title">Prospect intelligence</h1>
-        <p class="prospects__subtitle" id="prospect-subtitle">Load a 5300 call report to review consumer lending exposure and protection revenue opportunities.</p>
-      </div>
-      <div class="prospects__controls">
-        <label for="prospect-selector" class="prospects__label">Prospect</label>
-        <select id="prospect-selector" class="prospects__select" aria-label="Choose a call report to review"></select>
+        <p class="prospects__breadcrumb"><a href="../prospects.html" class="prospects__breadcrumb-link">← Back to all prospects</a></p>
+        <h1 class="prospects__title" id="prospect-title">Lion&#39;s Share Federal Credit Union</h1>
+        <p class="prospects__subtitle" id="prospect-subtitle">Call report intelligence and protection modeling for Lion&#39;s Share Federal Credit Union.</p>
       </div>
       <p class="prospects__as-of" id="prospect-reporting-date">Call report as of —</p>
     </section>
@@ -295,6 +292,6 @@
     <p>&copy; <span id="footer-year"></span> Goodwine Financial Services. All rights reserved.</p>
   </footer>
 
-  <script src="script.js" defer></script>
+  <script src="../script.js" defer></script>
 </body>
 </html>
