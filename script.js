@@ -146,6 +146,12 @@ const PROSPECT_DELINQUENCY_SOURCE_LABELS = {
   purchased: 'Purchased loans (NCUA 701.23)'
 };
 
+const PROSPECT_CURRENCY_FORMAT = { decimals: 0 };
+
+function formatProspectCurrency(value) {
+  return formatCurrency(value, PROSPECT_CURRENCY_FORMAT);
+}
+
 const PROSPECT_REPORTS = [
   {
     id: 'inspire-2025-q2',
@@ -1557,7 +1563,7 @@ function computeProspectMetrics(report) {
 
 function renderProspectSummary(report, metrics) {
   setText('prospect-reporting-date', `Call report as of ${report.asOf}`);
-  setText('prospect-total-loans', formatCurrency(report.totalLoans));
+  setText('prospect-total-loans', formatProspectCurrency(report.totalLoans));
   const loanNotes = [
     `${formatPercent(metrics.loanToAsset)} of assets`,
     `${formatNumber(report.loanCount)} loans`
@@ -1567,7 +1573,7 @@ function renderProspectSummary(report, metrics) {
   }
   setText('prospect-total-loans-note', loanNotes.filter(Boolean).join(' • '));
 
-  setText('prospect-installment-balance', formatCurrency(metrics.installmentBalance));
+  setText('prospect-installment-balance', formatProspectCurrency(metrics.installmentBalance));
   setText(
     'prospect-installment-note',
     [`${formatPercent(metrics.consumerShare)} of total`, `${formatNumber(metrics.installmentCount)} loans`]
@@ -1575,7 +1581,7 @@ function renderProspectSummary(report, metrics) {
       .join(' • ')
   );
 
-  setText('prospect-real-estate-balance', formatCurrency(metrics.realEstateBalance));
+  setText('prospect-real-estate-balance', formatProspectCurrency(metrics.realEstateBalance));
   const realEstateNote = metrics.realEstateBalance
     ? [`${formatPercent(metrics.realEstateShare)} of total`, `${formatNumber(metrics.realEstateCount)} loans`]
         .filter(Boolean)
@@ -1583,7 +1589,7 @@ function renderProspectSummary(report, metrics) {
     : 'Minimal residential exposure';
   setText('prospect-real-estate-note', realEstateNote);
 
-  setText('prospect-delinquency', formatCurrency(report.delinquencyTotal60Plus));
+  setText('prospect-delinquency', formatProspectCurrency(report.delinquencyTotal60Plus));
   setText(
     'prospect-delinquency-note',
     [`${formatPercent(metrics.delinquencyRatio)} of loans`, `${formatNumber(report.delinquencyTotal60PlusLoans)} loans 60+ days`]
@@ -1591,15 +1597,15 @@ function renderProspectSummary(report, metrics) {
       .join(' • ')
   );
 
-  setText('prospect-chargeoffs', formatCurrency(metrics.netChargeOffAnnualized));
+  setText('prospect-chargeoffs', formatProspectCurrency(metrics.netChargeOffAnnualized));
   setText(
     'prospect-chargeoffs-note',
-    [`Annualized ${formatPercent(metrics.netChargeOffRatio, { decimals: 2 })}`, `YTD net ${formatCurrency(metrics.netChargeOff)}`]
+    [`Annualized ${formatPercent(metrics.netChargeOffRatio, { decimals: 2 })}`, `YTD net ${formatProspectCurrency(metrics.netChargeOff)}`]
       .filter(Boolean)
       .join(' • ')
   );
 
-  setText('prospect-allowance', formatCurrency(report.allowance));
+  setText('prospect-allowance', formatProspectCurrency(report.allowance));
   setText(
     'prospect-allowance-note',
     [`Coverage ${formatPercent(metrics.allowanceCoverage, { decimals: 2 })}`, `Loan yield ${formatPercent(metrics.loanYieldAnnualized, { decimals: 1 })}`]
@@ -1607,11 +1613,11 @@ function renderProspectSummary(report, metrics) {
       .join(' • ')
   );
 
-  setText('prospect-nonaccrual', formatCurrency(report.nonAccrualLoans));
-  setText('prospect-bankruptcy', formatCurrency(report.bankruptcyOutstanding));
+  setText('prospect-nonaccrual', formatProspectCurrency(report.nonAccrualLoans));
+  setText('prospect-bankruptcy', formatProspectCurrency(report.bankruptcyOutstanding));
   const tdrText = report.tdrLoans
-    ? `${formatNumber(report.tdrLoans)} loans • ${formatCurrency(report.tdrBalance)}`
-    : formatCurrency(report.tdrBalance);
+    ? `${formatNumber(report.tdrLoans)} loans • ${formatProspectCurrency(report.tdrBalance)}`
+    : formatProspectCurrency(report.tdrBalance);
   setText('prospect-tdr', tdrText);
 }
 
@@ -1664,7 +1670,7 @@ function renderIndirectTable(report, metrics) {
 
     appendTableCell(row, rowDef.label, true);
     appendTableCell(row, count ? formatNumber(count) : '—');
-    appendTableCell(row, formatCurrency(balance));
+    appendTableCell(row, formatProspectCurrency(balance));
     appendTableCell(row, balance ? formatPercent(share, { decimals: 1 }) : '—');
     tbody.append(row);
   });
@@ -1699,7 +1705,7 @@ function renderDelinquencySourceTable(report) {
     const share = total ? value / total : 0;
     const row = document.createElement('tr');
     appendTableCell(row, label, true);
-    appendTableCell(row, formatCurrency(value));
+    appendTableCell(row, formatProspectCurrency(value));
     appendTableCell(row, value ? formatPercent(share, { decimals: 1 }) : '—');
     tbody.append(row);
   });
@@ -1707,7 +1713,7 @@ function renderDelinquencySourceTable(report) {
   const totalRow = document.createElement('tr');
   totalRow.className = 'table-total';
   appendTableCell(totalRow, 'Total 60+ delinquency', true);
-  appendTableCell(totalRow, formatCurrency(total));
+  appendTableCell(totalRow, formatProspectCurrency(total));
   appendTableCell(totalRow, total ? formatPercent(1) : '—');
   tbody.append(totalRow);
 }
@@ -1729,7 +1735,7 @@ function renderLoanMixTable(report, metrics) {
     appendTableCell(row, mix.label || key, true);
     appendTableCell(row, rateDisplay);
     appendTableCell(row, mix.count ? formatNumber(mix.count) : '—');
-    appendTableCell(row, formatCurrency(mix.balance));
+    appendTableCell(row, formatProspectCurrency(mix.balance));
     appendTableCell(row, mix.balance ? formatPercent(share) : '—');
     tbody.append(row);
   });
@@ -1769,11 +1775,11 @@ function renderRiskTable(report, metrics) {
 
     const row = document.createElement('tr');
     appendTableCell(row, label, true);
-    appendTableCell(row, formatCurrency(balance));
+    appendTableCell(row, formatProspectCurrency(balance));
     appendTableCell(row, loans ? formatNumber(loans) : '—');
     appendTableCell(row, balance ? formatPercent(share, { decimals: 1 }) : '—');
-    appendTableCell(row, chargeOff ? formatCurrency(chargeOff.chargeOffs || 0) : '$0.00');
-    appendTableCell(row, chargeOff ? formatCurrency(chargeOff.recoveries || 0) : '$0.00');
+    appendTableCell(row, chargeOff ? formatProspectCurrency(chargeOff.chargeOffs || 0) : formatProspectCurrency(0));
+    appendTableCell(row, chargeOff ? formatProspectCurrency(chargeOff.recoveries || 0) : formatProspectCurrency(0));
     tbody.append(row);
   });
 }
@@ -1835,9 +1841,9 @@ function renderProductTable(report, metrics) {
     appendTableCell(row, model.label, true);
     appendTableCell(row, opportunity.baseDisplay);
     appendTableCell(row, formatPercent(model.penetration, { decimals: 0 }));
-    appendTableCell(row, formatCurrency(opportunity.grossAnnual));
-    appendTableCell(row, formatCurrency(opportunity.gfsAnnual));
-    appendTableCell(row, formatCurrency(opportunity.creditUnionAnnual));
+    appendTableCell(row, formatProspectCurrency(opportunity.grossAnnual));
+    appendTableCell(row, formatProspectCurrency(opportunity.gfsAnnual));
+    appendTableCell(row, formatProspectCurrency(opportunity.creditUnionAnnual));
     tbody.append(row);
   });
 
@@ -1847,9 +1853,9 @@ function renderProductTable(report, metrics) {
     appendTableCell(totalRow, 'Total', true);
     appendTableCell(totalRow, '—');
     appendTableCell(totalRow, '—');
-    appendTableCell(totalRow, formatCurrency(totalGross));
-    appendTableCell(totalRow, formatCurrency(totalGfs));
-    appendTableCell(totalRow, formatCurrency(totalCreditUnion));
+    appendTableCell(totalRow, formatProspectCurrency(totalGross));
+    appendTableCell(totalRow, formatProspectCurrency(totalGfs));
+    appendTableCell(totalRow, formatProspectCurrency(totalCreditUnion));
     tbody.append(totalRow);
   }
 }
@@ -1862,7 +1868,7 @@ function calculateProductOpportunity(report, metrics, model) {
     const gfsAnnual = eligibleBalance * model.penetration * ((model.rates?.gfsMarkup || 0) / 100) * 12;
     const creditUnionAnnual = eligibleBalance * model.penetration * ((model.rates?.creditUnionMarkup || 0) / 100) * 12;
     return {
-      baseDisplay: `${formatCurrency(eligibleBalance)} outstanding`,
+      baseDisplay: `${formatProspectCurrency(eligibleBalance)} outstanding`,
       grossAnnual,
       gfsAnnual,
       creditUnionAnnual
@@ -2045,12 +2051,18 @@ function valueOrEmpty(value) {
   return value === '' || value === null || value === undefined ? '' : Number(value);
 }
 
-function formatCurrency(value) {
-  if (!Number.isFinite(Number(value))) return '$0.00';
-  return new Intl.NumberFormat('en-US', {
+function formatCurrency(value, { decimals = 2 } = {}) {
+  const numberValue = Number(value);
+  const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'USD'
-  }).format(Number(value));
+    currency: 'USD',
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  });
+  if (!Number.isFinite(numberValue)) {
+    return formatter.format(0);
+  }
+  return formatter.format(numberValue);
 }
 
 function formatNumber(value, { decimals = 0 } = {}) {

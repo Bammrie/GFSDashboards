@@ -74,3 +74,4 @@ Document or extend new features so they reuse these formulas without re-defining
 2025-10-21: Centered the header branding and moved the API connectivity tools into their own workspace tab so the loan log layout stays clean.
 2026-07-19: Removed the temporary dashboard preview hero section from all pages now that the placeholder is no longer needed.
 2025-10-21: Ensured the site header content stays on a single row so the top bar elements no longer stack.
+2025-10-24: Rounded prospect call-report dollar displays to whole numbers and tightened typography so metric cards and tables keep text within their boxes.
