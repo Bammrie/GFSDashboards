@@ -1,5 +1,8 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
 
+2025-01-14: Added channel exposure tables (indirect production and delinquency source mix) to the Prospects analytics experience, tying Inspire FCU (6/30/25) and Lion's Share FCU (9/30/23) call reports to revenue modeling.
+2025-01-13: Launched the Prospects page with structured call-report analytics, revenue modeling for protection products, and a manual engagement log tied to parsed 5300 datasets.
+
 This is a dashboard for a company looking to see stats on how well a lending instituition(credit union) does on covering their loans with protection.
 
 Each credit union must have a database of loan data that can be updated by manual entry or via API.
