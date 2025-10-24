@@ -789,6 +789,257 @@ textarea {
   border: 0;
 }
 
+/* Prospects page */
+.prospects {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+  padding: 2.5rem 0 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.75rem;
+}
+
+.prospects__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.prospects__title {
+  font-size: clamp(1.8rem, 2.4vw + 1rem, 2.4rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.prospects__subtitle {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--color-text-muted);
+}
+
+.prospects__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.prospects__label {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.prospects__select {
+  min-width: 260px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: rgba(27, 9, 11, 0.6);
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.prospects__select:focus {
+  outline: 2px solid var(--color-amber-500);
+  outline-offset: 2px;
+}
+
+.prospects__as-of {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.section-header__subtitle {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.metric-card-grid {
+  display: grid;
+  gap: 1.35rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.metric-card {
+  background: rgba(27, 9, 11, 0.72);
+  border: 1px solid rgba(247, 179, 76, 0.18);
+  border-radius: var(--radius-md);
+  padding: 1.35rem 1.5rem;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.metric-card__title {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-text-muted);
+}
+
+.metric-card__value {
+  margin: 0;
+  font-size: clamp(1.4rem, 2vw + 1rem, 1.8rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.metric-card__note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.prospects__channels-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 960px) {
+  .prospects__channels-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+.table-scroll {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(247, 179, 76, 0.15);
+  overflow-x: auto;
+}
+
+.table-scroll .data-table {
+  min-width: 720px;
+}
+
+.prospects__risk-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .prospects__risk-grid {
+    grid-template-columns: 2fr 1fr;
+    align-items: start;
+  }
+}
+
+.prospects__risk-summary {
+  background: rgba(27, 9, 11, 0.7);
+  border: 1px solid rgba(247, 179, 76, 0.18);
+  border-radius: var(--radius-md);
+  padding: 1.3rem 1.5rem;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.prospects__risk-title {
+  margin: 0;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.prospects__risk-meta {
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.prospects__risk-meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.prospects__risk-meta dt {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.prospects__risk-meta dd {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.prospects__list {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--color-text);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.prospects__list--bullets {
+  list-style: disc;
+}
+
+.prospects__list:not(.prospects__list--bullets) {
+  list-style: none;
+  padding-left: 0;
+}
+
+.prospects__footnote {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.prospects__log-form {
+  background: rgba(27, 9, 11, 0.7);
+  border: 1px solid rgba(247, 179, 76, 0.18);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.table-actions {
+  text-align: right;
+}
+
+.table-total {
+  background: rgba(247, 179, 76, 0.08);
+  font-weight: 600;
+}
+
+.table-total th,
+.table-total td {
+  border-top: 1px solid rgba(247, 179, 76, 0.22);
+}
+
+.btn--small {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.65rem;
+}
+
 @media (max-width: 900px) {
   .site-header__inner {
     flex-direction: column;
