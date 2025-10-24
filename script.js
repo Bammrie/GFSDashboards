@@ -1905,6 +1905,7 @@ function setupProspectLogForm() {
     const eventDate = (formData.get('eventDate') || '').toString();
     const eventType = (formData.get('eventType') || '').toString();
     const summary = (formData.get('summary') || '').toString().trim();
+    const currentProvider = (formData.get('currentProvider') || '').toString().trim();
     if (!prospectId || !eventDate || !eventType || !summary) return;
 
     const entry = {
@@ -1912,6 +1913,7 @@ function setupProspectLogForm() {
       prospectId,
       eventDate,
       eventType,
+      currentProvider,
       owner: (formData.get('owner') || '').toString().trim(),
       nextStepDate: (formData.get('nextStepDate') || '').toString(),
       summary,
@@ -1974,6 +1976,7 @@ function renderProspectLog() {
     const row = document.createElement('tr');
     appendTableCell(row, formatDate(entry.eventDate || entry.createdAt), true);
     appendTableCell(row, entry.eventType || '—');
+    appendTableCell(row, entry.currentProvider || '—');
     appendTableCell(row, entry.summary || '—');
     appendTableCell(row, entry.owner || '—');
     appendTableCell(row, entry.nextStepDate ? formatDate(entry.nextStepDate) : '—');
@@ -2117,6 +2120,7 @@ function loadProspectLog() {
         prospectId: (entry.prospectId || '').toString(),
         eventDate: (entry.eventDate || '').toString(),
         eventType: (entry.eventType || '').toString(),
+        currentProvider: (entry.currentProvider || '').toString(),
         summary: (entry.summary || '').toString(),
         owner: (entry.owner || '').toString(),
         nextStepDate: (entry.nextStepDate || '').toString(),
