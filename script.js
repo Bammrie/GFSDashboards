@@ -1,6 +1,6 @@
 
 const STORAGE_KEYS = {
-  ACCOUNTS: 'gfs.accounts.v2',
+  ACCOUNT_PRODUCTS: 'gfs.accountProducts.v1',
   ACTIVE_ACCOUNT: 'gfs.activeAccountId',
   PROSPECT_LOG: 'gfs.prospectLog.v1'
 };
@@ -232,6 +232,207 @@ const prospectState = {
   logSelectTouched: false
 };
 
+function loadAccountProductState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.ACCOUNT_PRODUCTS);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return {};
+    const normalized = {};
+    Object.entries(parsed).forEach(([id, record]) => {
+      if (!record || typeof record !== 'object') return;
+      normalized[id] = {
+        accountId: record.accountId || id,
+        charter: typeof record.charter === 'string' ? record.charter : '',
+        name: typeof record.name === 'string' ? record.name : '',
+        updatedAt: record.updatedAt || null,
+        products: record.products && typeof record.products === 'object' ? { ...record.products } : {},
+        customProducts: Array.isArray(record.customProducts) ? record.customProducts.slice() : []
+      };
+    });
+    return normalized;
+  } catch (error) {
+    console.error('Failed to parse account product state', error);
+    return {};
+  }
+}
+
+function saveAccountProductState(state) {
+  try {
+    localStorage.setItem(STORAGE_KEYS.ACCOUNT_PRODUCTS, JSON.stringify(state));
+  } catch (error) {
+    console.error('Failed to save account product state', error);
+  }
+  appState.accountProducts = state;
+}
+
+function prepareAccountData() {
+  return loadProspectReports().then((reports) => {
+    const accounts = buildAccountRegistry(reports);
+    appState.accounts = accounts;
+    normalizeAccountProducts(accounts);
+    return accounts;
+  });
+}
+
+function buildAccountRegistry(reports) {
+  const registry = new Map();
+
+  reports.forEach((report) => {
+    const charter = (report?.charter || '').toString().trim();
+    const id = charter || report.id || generateId('acct');
+    if (!registry.has(id)) {
+      registry.set(id, {
+        id,
+        charter,
+        name: report?.name || '',
+        reports: []
+      });
+    }
+    const entry = registry.get(id);
+    entry.reports.push(report);
+    if (report?.name) {
+      const existingTimestamp = parseReportDate(entry.latestAsOf);
+      const nextTimestamp = parseReportDate(report.asOf);
+      if (!entry.name || nextTimestamp >= existingTimestamp) {
+        entry.name = report.name;
+      }
+    }
+    if (!entry.charter && charter) {
+      entry.charter = charter;
+    }
+    if (report?.asOf) {
+      const nextTimestamp = parseReportDate(report.asOf);
+      const existingTimestamp = parseReportDate(entry.latestAsOf);
+      if (nextTimestamp > existingTimestamp) {
+        entry.latestAsOf = report.asOf;
+      }
+    }
+  });
+
+  const accounts = Array.from(registry.values()).map((account) => {
+    account.reports.sort((a, b) => parseReportDate(b.asOf) - parseReportDate(a.asOf));
+    account.latestReport = account.reports[0] || null;
+    account.latestAsOf = account.latestReport?.asOf || account.latestAsOf || '';
+    if (!account.name && account.latestReport?.name) {
+      account.name = account.latestReport.name;
+    }
+    return account;
+  });
+
+  accounts.sort((a, b) => {
+    const nameA = (a.name || '').toString().toLowerCase();
+    const nameB = (b.name || '').toString().toLowerCase();
+    if (nameA === nameB) {
+      return (a.charter || '').localeCompare(b.charter || '');
+    }
+    return nameA.localeCompare(nameB);
+  });
+
+  return accounts;
+}
+
+function normalizeAccountProducts(accounts) {
+  const nextState = {};
+  accounts.forEach((account) => {
+    const existing = appState.accountProducts[account.id];
+    nextState[account.id] = normalizeAccountProductRecord(existing || {}, account);
+  });
+  saveAccountProductState(nextState);
+  return nextState;
+}
+
+function normalizeAccountProductRecord(record, account) {
+  const normalizedProducts = {};
+  const sourceProducts = record?.products && typeof record.products === 'object' ? record.products : {};
+  DEFAULT_PRODUCTS.forEach((product) => {
+    normalizedProducts[product] = sanitizeProductValue(sourceProducts[product]);
+  });
+
+  const customNames = new Set();
+  const sourceCustom = Array.isArray(record?.customProducts) ? record.customProducts : [];
+  sourceCustom.forEach((name) => {
+    const trimmed = (name || '').toString().trim();
+    if (trimmed && !DEFAULT_PRODUCTS.includes(trimmed)) {
+      customNames.add(trimmed);
+    }
+  });
+  Object.keys(sourceProducts || {}).forEach((name) => {
+    const trimmed = (name || '').toString().trim();
+    if (trimmed && !DEFAULT_PRODUCTS.includes(trimmed)) {
+      customNames.add(trimmed);
+    }
+  });
+
+  const customProducts = Array.from(customNames).sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
+  customProducts.forEach((name) => {
+    normalizedProducts[name] = sanitizeProductValue(sourceProducts[name]);
+  });
+
+  return {
+    accountId: account.id,
+    charter: account.charter || '',
+    name: account.name || '',
+    updatedAt: record?.updatedAt || null,
+    products: normalizedProducts,
+    customProducts
+  };
+}
+
+function cloneProductRecord(record) {
+  return {
+    accountId: record.accountId,
+    charter: record.charter,
+    name: record.name,
+    updatedAt: record.updatedAt || null,
+    products: { ...(record.products || {}) },
+    customProducts: Array.isArray(record.customProducts) ? record.customProducts.slice() : []
+  };
+}
+
+function sanitizeProductValue(value) {
+  if (value === 'yes' || value === 'no') return value;
+  return '';
+}
+
+function updateAccountProductRecord(account, updater) {
+  const current = appState.accountProducts[account.id] || normalizeAccountProductRecord({}, account);
+  const working = cloneProductRecord(current);
+  const result = updater ? updater(working) || working : working;
+  result.accountId = account.id;
+  result.charter = account.charter || '';
+  result.name = account.name || '';
+  result.updatedAt = new Date().toISOString();
+  const normalized = normalizeAccountProductRecord(result, account);
+  normalized.updatedAt = result.updatedAt;
+  const nextState = { ...appState.accountProducts, [account.id]: normalized };
+  saveAccountProductState(nextState);
+  return normalized;
+}
+
+function getAccountProductNames(record) {
+  const defaults = DEFAULT_PRODUCTS.slice();
+  const customList = Array.isArray(record?.customProducts) ? record.customProducts : [];
+  const custom = customList
+    .map((name) => (name || '').toString().trim())
+    .filter((name) => name && !DEFAULT_PRODUCTS.includes(name));
+  const extras = Object.keys(record?.products || {})
+    .map((name) => (name || '').toString().trim())
+    .filter((name) => name && !DEFAULT_PRODUCTS.includes(name) && !custom.includes(name));
+
+  const orderedCustom = custom.sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
+  const orderedExtras = extras.sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
+
+  const combined = [...defaults, ...orderedCustom, ...orderedExtras];
+  return combined.filter((name, index, array) => array.indexOf(name) === index);
+}
+
+function parseReportDate(value) {
+  if (!value) return 0;
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 function loadProspectReports() {
   if (prospectDataPromise) return prospectDataPromise;
   if (!prospectsDataUrl) {
@@ -265,7 +466,8 @@ function loadProspectReports() {
 const pageId = document.body?.dataset?.page || '';
 
 const appState = {
-  accounts: loadAccounts(),
+  accounts: [],
+  accountProducts: loadAccountProductState(),
   activeAccountId: loadActiveAccountId()
 };
 
@@ -759,272 +961,192 @@ function initAccountCreatePage() {
 // Dashboard page
 // -----------------------
 function initDashboardPage() {
-  const accountSelector = document.getElementById('account-selector');
-  const accountOverview = document.getElementById('account-overview');
-  const accountName = document.getElementById('account-name');
-  const accountCore = document.getElementById('account-core');
-  const accountProducts = document.getElementById('account-products');
-  const dataEntryPanel = document.getElementById('data-entry-panel');
-  const settingsPanel = document.getElementById('account-settings-panel');
-  const tabs = document.querySelectorAll('.tabs__tab');
-  const manualLoanForm = document.getElementById('manual-loan-form');
-  const loanCoverageGrid = document.getElementById('loan-coverage-grid');
-  const loanLogTable = document.getElementById('loan-log-table');
-  const loanLogEmpty = document.getElementById('loan-log-empty');
-  const loanLogCount = document.getElementById('loan-log-count');
-  const apiConfigForm = document.getElementById('api-config-form');
-  const apiLastSync = document.getElementById('api-last-sync');
-  const apiSyncBtn = document.getElementById('api-sync-btn');
-  const apiCoreOverview = document.getElementById('api-core-overview');
-  const apiCoreSteps = document.getElementById('api-core-steps');
-  const mobRateBody = document.getElementById('mob-rate-body');
-  const mobRateForm = document.getElementById('mob-rate-form');
-  const ancillaryForm = document.getElementById('ancillary-form');
+  const accountSelector = document.getElementById('account-hub-selector');
+  const accountName = document.getElementById('account-hub-name');
+  const accountCharter = document.getElementById('account-hub-charter');
+  const latestDate = document.getElementById('account-hub-latest-date');
+  const reportCount = document.getElementById('account-hub-report-count');
+  const reportList = document.getElementById('account-hub-report-list');
+  const productsContainer = document.getElementById('account-products-container');
+  const productsEmpty = document.getElementById('account-products-empty');
+  const productsUpdated = document.getElementById('account-products-updated');
+  const addForm = document.getElementById('account-products-add-form');
+  const addInput = document.getElementById('account-products-add-input');
+  const addButton = addForm?.querySelector('button[type="submit"]');
 
-  if (!accountSelector || !dataEntryPanel || !settingsPanel) return;
+  if (!accountSelector) return;
 
-  populateAccountSelect(accountSelector, {
-    includeNewOption: true,
-    selectedId: appState.activeAccountId
+  let currentAccount = null;
+
+  prepareAccountData().then((accounts) => {
+    const initialId = populateAccountSelector(accountSelector, accounts, appState.activeAccountId);
+    if (initialId) {
+      saveActiveAccountId(initialId);
+    }
+    renderAccount(initialId || '');
   });
-  renderMobTable();
-  registerTabBehavior();
-  setAccountControlsDisabled(true);
-  updateWorkspace();
 
   accountSelector.addEventListener('change', (event) => {
-    const value = event.target.value;
-    if (value === '__new__') {
-      window.location.href = 'create-account.html';
-      return;
-    }
-    saveActiveAccountId(value);
-    updateWorkspace();
+    const id = event.target.value;
+    saveActiveAccountId(id);
+    renderAccount(id);
   });
 
-  manualLoanForm?.addEventListener('submit', (event) => {
+  addForm?.addEventListener('submit', (event) => {
     event.preventDefault();
-    const account = getActiveAccount();
-    if (!account) return;
-    const formData = new FormData(manualLoanForm);
-    const amountValue = Number(formData.get('amount'));
-    const loan = {
-      id: generateId('loan'),
-      borrower: (formData.get('borrower') || '').toString().trim(),
-      loanNumber: (formData.get('loanNumber') || '').toString().trim(),
-      loanOfficer: (formData.get('loanOfficer') || '').toString().trim(),
-      amount: Number.isFinite(amountValue) ? amountValue : 0,
-      originationDate: (formData.get('originationDate') || '').toString(),
-      coverages: collectCoverageSelections(manualLoanForm),
-      notes: (formData.get('notes') || '').toString().trim(),
-      createdAt: new Date().toISOString()
-    };
-    if (!loan.loanOfficer || !loan.originationDate || !loan.amount) return;
-    account.manualLoans.push(normalizeLoan(loan));
-    persistAccount(account);
-    manualLoanForm.reset();
-    renderLoanCoverageGrid(account);
-    renderLoanLog(account);
-  });
-
-  apiConfigForm?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const account = getActiveAccount();
-    if (!account) return;
-    const formData = new FormData(apiConfigForm);
-    account.api.endpoint = (formData.get('endpoint') || '').toString().trim();
-    account.api.auth = (formData.get('auth') || '').toString().trim();
-    account.api.notes = (formData.get('notes') || '').toString();
-    persistAccount(account);
-  });
-
-  apiSyncBtn?.addEventListener('click', () => {
-    const account = getActiveAccount();
-    if (!account) return;
-    account.api.lastSync = new Date().toISOString();
-    persistAccount(account);
-    renderApiDetails(account);
-  });
-
-  mobRateForm?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const account = getActiveAccount();
-    if (!account) return;
-    const formData = new FormData(mobRateForm);
-    MOB_RATE_ROWS.forEach(({ id }) => {
-      account.mobRates[id] = {
-        clp: parseNumericField(formData.get(`${id}-clp`)),
-        gfs: parseNumericField(formData.get(`${id}-gfs`)),
-        creditUnion: parseNumericField(formData.get(`${id}-creditUnion`))
-      };
-    });
-    persistAccount(account);
-  });
-
-  ancillaryForm?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const account = getActiveAccount();
-    if (!account) return;
-    const formData = new FormData(ancillaryForm);
-    account.ancillaryPricing = {
-      vsc: {
-        gfs: parseNumericField(formData.get('vscGfs')),
-        creditUnion: parseNumericField(formData.get('vscCreditUnion'))
-      },
-      gap: {
-        clp: parseNumericField(formData.get('gapClp')),
-        gfs: parseNumericField(formData.get('gapGfs')),
-        creditUnion: parseNumericField(formData.get('gapCreditUnion')),
-        balloon: parseNumericField(formData.get('gapBalloon'))
-      },
-      afg: {
-        markup: parseNumericField(formData.get('afgMarkup')),
-        notes: (formData.get('afgNotes') || '').toString().trim()
+    if (!currentAccount) return;
+    const value = (addInput?.value || '').toString().trim();
+    if (!value) return;
+    const name = value.replace(/\s+/g, ' ').trim();
+    const updated = updateAccountProductRecord(currentAccount, (draft) => {
+      if (!(name in draft.products)) {
+        draft.products[name] = '';
       }
-    };
-    persistAccount(account);
+      if (!draft.customProducts.includes(name)) {
+        draft.customProducts.push(name);
+        draft.customProducts.sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
+      }
+      return draft;
+    });
+    if (addInput) addInput.value = '';
+    renderProducts(currentAccount, updated);
+    renderProductsUpdated(updated);
   });
 
-  function registerTabBehavior() {
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        tabs.forEach((button) => {
-          const isActive = button === tab;
-          button.setAttribute('aria-selected', isActive ? 'true' : 'false');
-          const panelId = button.getAttribute('aria-controls');
-          const panel = document.getElementById(panelId);
-          if (panel) {
-            panel.hidden = !isActive;
-          }
-        });
-      });
-    });
-  }
-
-  function updateWorkspace() {
-    const account = getActiveAccount();
-    populateAccountSelect(accountSelector, {
-      includeNewOption: true,
-      selectedId: appState.activeAccountId
-    });
+  function renderAccount(id) {
+    const account = appState.accounts.find((item) => item.id === id) || null;
+    currentAccount = account;
 
     if (!account) {
-      if (accountOverview) accountOverview.hidden = true;
-      renderLoanCoverageGrid(null);
-      setAccountControlsDisabled(true);
-      clearLoanLog();
-      clearApiGuide();
+      if (accountName) accountName.textContent = 'Select a call report';
+      if (accountCharter) accountCharter.textContent = '—';
+      if (latestDate) latestDate.textContent = '—';
+      if (reportCount) reportCount.textContent = '0';
+      renderReportList(null);
+      renderProducts(null, null);
+      renderProductsUpdated(null);
+      setAddControlsDisabled(true);
       return;
     }
 
-    if (accountOverview) {
-      accountOverview.hidden = false;
-    }
-
-    if (accountName) accountName.textContent = account.name;
-    if (accountCore) accountCore.textContent = CORE_LABELS[account.core] || account.core;
-    renderProductPills(accountProducts, account);
-    renderLoanCoverageGrid(account);
-    renderLoanLog(account);
-    renderApiDetails(account);
-    renderCoreGuide(account);
-    renderMobInputs(account);
-    renderAncillaryInputs(account);
-    setAccountControlsDisabled(false);
+    if (accountName) accountName.textContent = account.name || 'Unnamed credit union';
+    if (accountCharter) accountCharter.textContent = account.charter || '—';
+    if (latestDate) latestDate.textContent = account.latestAsOf || '—';
+    if (reportCount) reportCount.textContent = account.reports.length.toString();
+    renderReportList(account);
+    const record = appState.accountProducts[account.id] || normalizeAccountProductRecord({}, account);
+    renderProducts(account, record);
+    renderProductsUpdated(record);
+    setAddControlsDisabled(false);
   }
 
-  function renderMobTable() {
-    if (!mobRateBody) return;
-    mobRateBody.innerHTML = '';
-    MOB_RATE_ROWS.forEach(({ id, label }) => {
-      const row = document.createElement('tr');
-      const selectionCell = document.createElement('th');
-      selectionCell.scope = 'row';
-      selectionCell.textContent = label;
-      row.append(selectionCell);
+  function renderReportList(account) {
+    if (!reportList) return;
+    reportList.innerHTML = '';
+    if (!account || !account.reports.length) {
+      const item = document.createElement('li');
+      item.className = 'account-hub__report-empty';
+      item.textContent = account
+        ? 'No call reports available for this credit union yet.'
+        : 'Upload call reports to build the account list.';
+      reportList.append(item);
+      return;
+    }
 
-      ['clp', 'gfs', 'creditUnion'].forEach((field) => {
-        const cell = document.createElement('td');
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.step = '0.01';
-        input.min = '0';
-        input.className = 'field__input';
-        input.name = `${id}-${field}`;
-        cell.append(input);
-        row.append(cell);
-      });
+    account.reports.forEach((report) => {
+      const item = document.createElement('li');
+      item.className = 'account-hub__report-item';
 
-      mobRateBody.append(row);
+      const topRow = document.createElement('div');
+      topRow.className = 'account-hub__report-row';
+
+      const dateLabel = document.createElement('span');
+      dateLabel.className = 'account-hub__report-date';
+      dateLabel.textContent = report.asOf || 'Call report';
+      topRow.append(dateLabel);
+
+      const links = document.createElement('div');
+      links.className = 'account-hub__report-links';
+
+      const detailLink = document.createElement('a');
+      detailLink.className = 'account-hub__report-link';
+      detailLink.href = `prospects/${report.id}.html`;
+      detailLink.textContent = 'Open dashboard';
+      links.append(detailLink);
+
+      if (report.callReportUrl) {
+        const pdfLink = document.createElement('a');
+        pdfLink.className = 'account-hub__report-link';
+        pdfLink.href = report.callReportUrl;
+        pdfLink.target = '_blank';
+        pdfLink.rel = 'noopener';
+        pdfLink.textContent = 'Call report PDF';
+        links.append(pdfLink);
+      }
+
+      topRow.append(links);
+      item.append(topRow);
+
+      const notes = [];
+      if (report.totalLoans) {
+        notes.push(`Loans ${formatProspectCurrency(report.totalLoans)}`);
+      }
+      if (report.loansGrantedYtdCount) {
+        notes.push(`YTD originations ${formatNumber(report.loansGrantedYtdCount)}`);
+      }
+
+      if (notes.length) {
+        const meta = document.createElement('p');
+        meta.className = 'account-hub__report-meta';
+        meta.textContent = notes.join(' • ');
+        item.append(meta);
+      }
+
+      reportList.append(item);
     });
   }
 
-  function renderMobInputs(account) {
-    if (!mobRateBody) return;
-    MOB_RATE_ROWS.forEach(({ id }) => {
-      const rate = account.mobRates[id] || { clp: '', gfs: '', creditUnion: '' };
-      ['clp', 'gfs', 'creditUnion'].forEach((field) => {
-        const input = mobRateBody.querySelector(`input[name="${id}-${field}"]`);
-        if (input) {
-          const value = rate[field];
-          input.value = value === '' ? '' : Number(value);
-        }
-      });
-    });
-  }
+  function renderProducts(account, record) {
+    if (!productsContainer || !productsEmpty) return;
+    productsContainer.innerHTML = '';
 
-  function renderAncillaryInputs(account) {
-    if (!ancillaryForm) return;
-    const { vsc, gap, afg } = account.ancillaryPricing;
-    ancillaryForm.elements.namedItem('vscGfs').value = valueOrEmpty(vsc.gfs);
-    ancillaryForm.elements.namedItem('vscCreditUnion').value = valueOrEmpty(vsc.creditUnion);
-    ancillaryForm.elements.namedItem('gapClp').value = valueOrEmpty(gap.clp);
-    ancillaryForm.elements.namedItem('gapGfs').value = valueOrEmpty(gap.gfs);
-    ancillaryForm.elements.namedItem('gapCreditUnion').value = valueOrEmpty(gap.creditUnion);
-    ancillaryForm.elements.namedItem('gapBalloon').value = valueOrEmpty(gap.balloon);
-    ancillaryForm.elements.namedItem('afgMarkup').value = valueOrEmpty(afg.markup);
-    ancillaryForm.elements.namedItem('afgNotes').value = afg.notes || '';
-  }
-
-  function renderLoanCoverageGrid(account) {
-    if (!loanCoverageGrid) return;
-    loanCoverageGrid.innerHTML = '';
-
-    if (!account) {
-      const message = document.createElement('p');
-      message.className = 'coverage-grid__empty';
-      message.textContent = 'Select an account to capture coverage elections.';
-      loanCoverageGrid.append(message);
+    if (!account || !record) {
+      productsContainer.hidden = true;
+      productsEmpty.hidden = false;
+      productsEmpty.textContent = 'Select an account to manage product coverage.';
       return;
     }
 
-    const coverages = deriveAccountCoverages(account);
-    if (!coverages.length) {
-      const message = document.createElement('p');
-      message.className = 'coverage-grid__empty';
-      message.textContent = 'Configure MOB coverage selections in account settings to enable tracking.';
-      loanCoverageGrid.append(message);
+    const names = getAccountProductNames(record);
+    if (!names.length) {
+      productsContainer.hidden = true;
+      productsEmpty.hidden = false;
+      productsEmpty.textContent = 'No products configured for this account yet.';
       return;
     }
 
-    coverages.forEach(({ key, label }) => {
+    productsContainer.hidden = false;
+    productsEmpty.hidden = true;
+
+    names.forEach((name) => {
       const field = document.createElement('label');
       field.className = 'coverage-field';
-      field.dataset.coverageWrapper = key;
+      field.dataset.productName = name;
 
-      const span = document.createElement('span');
-      span.className = 'coverage-field__label';
-      span.textContent = label;
+      const labelEl = document.createElement('span');
+      labelEl.className = 'coverage-field__label';
+      labelEl.textContent = name;
+      field.append(labelEl);
 
       const select = document.createElement('select');
-      select.name = `coverage-${key}`;
-      select.dataset.coverageKey = key;
       select.className = 'coverage-field__select';
+      select.name = `product-${name}`;
+      select.dataset.productName = name;
 
-      const emptyOption = document.createElement('option');
-      emptyOption.value = '';
-      emptyOption.textContent = '—';
-      select.append(emptyOption);
+      const blank = document.createElement('option');
+      blank.value = '';
+      blank.textContent = '—';
+      select.append(blank);
 
       ['yes', 'no'].forEach((value) => {
         const option = document.createElement('option');
@@ -1033,307 +1155,189 @@ function initDashboardPage() {
         select.append(option);
       });
 
-      field.append(span, select);
-      loanCoverageGrid.append(field);
-    });
-  }
-
-  function collectCoverageSelections(formElement) {
-    const selections = {};
-    if (!formElement) return selections;
-    formElement.querySelectorAll('[data-coverage-key]').forEach((input) => {
-      const key = input.dataset.coverageKey;
-      if (!key) return;
-      const value = (input.value || '').toString();
-      if (value === 'yes' || value === 'no') {
-        selections[key] = value;
-      }
-    });
-    return selections;
-  }
-
-  function renderLoanLog(account) {
-    if (!loanLogTable || !loanLogCount || !loanLogEmpty) return;
-    const tbody = loanLogTable.querySelector('tbody');
-    if (!tbody) return;
-    tbody.innerHTML = '';
-    if (!account.manualLoans.length) {
-      loanLogEmpty.hidden = false;
-      loanLogCount.textContent = '0 loans';
-      return;
-    }
-    loanLogEmpty.hidden = true;
-    loanLogCount.textContent = `${account.manualLoans.length} loan${account.manualLoans.length === 1 ? '' : 's'}`;
-    account.manualLoans
-      .slice()
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .forEach((loan) => {
-        const row = document.createElement('tr');
-        const cells = [
-          loan.borrower || '—',
-          loan.loanNumber || '—',
-          formatCurrency(loan.amount),
-          loan.loanOfficer || '—',
-          formatDate(loan.originationDate || loan.createdAt),
-          formatLoanCoverageSummary(loan),
-          formatDateTime(loan.createdAt)
-        ];
-        cells.forEach((value) => {
-          const cell = document.createElement('td');
-          cell.textContent = value;
-          row.append(cell);
+      select.value = record.products[name] || '';
+      select.addEventListener('change', () => {
+        const updated = updateAccountProductRecord(account, (draft) => {
+          draft.products[name] = sanitizeProductValue(select.value);
+          if (!DEFAULT_PRODUCTS.includes(name) && !draft.customProducts.includes(name)) {
+            draft.customProducts.push(name);
+            draft.customProducts.sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
+          }
+          return draft;
         });
-        tbody.append(row);
+        renderProducts(account, updated);
+        renderProductsUpdated(updated);
       });
-  }
 
-  function clearLoanLog() {
-    if (!loanLogTable || !loanLogCount || !loanLogEmpty) return;
-    const tbody = loanLogTable.querySelector('tbody');
-    if (tbody) tbody.innerHTML = '';
-    loanLogCount.textContent = '0 loans';
-    loanLogEmpty.hidden = false;
-  }
+      field.append(select);
 
-  function renderApiDetails(account) {
-    if (!apiConfigForm || !apiLastSync) return;
-    apiConfigForm.elements.namedItem('endpoint').value = account.api.endpoint || '';
-    apiConfigForm.elements.namedItem('auth').value = account.api.auth || '';
-    apiConfigForm.elements.namedItem('notes').value = account.api.notes || '';
-    apiLastSync.textContent = account.api.lastSync
-      ? `Last sync: ${formatDateTime(account.api.lastSync)}`
-      : 'No sync events recorded yet.';
-  }
+      if (!DEFAULT_PRODUCTS.includes(name)) {
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'coverage-field__remove';
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => {
+          const updated = updateAccountProductRecord(account, (draft) => {
+            delete draft.products[name];
+            draft.customProducts = draft.customProducts.filter((product) => product !== name);
+            return draft;
+          });
+          renderProducts(account, updated);
+          renderProductsUpdated(updated);
+        });
+        field.append(removeBtn);
+      }
 
-  function renderCoreGuide(account) {
-    if (!apiCoreOverview || !apiCoreSteps) return;
-    const guide = CORE_GUIDES[account.core] || CORE_GUIDES.Other;
-    apiCoreOverview.textContent = guide.overview;
-    apiCoreSteps.innerHTML = '';
-    const productList = [...account.products, ...account.customProducts];
-    guide.steps.forEach((step) => {
-      const item = document.createElement('li');
-      item.textContent = step;
-      apiCoreSteps.append(item);
+      productsContainer.append(field);
     });
-    if (productList.length) {
-      const item = document.createElement('li');
-      item.textContent = `Confirm feeds include coverage indicators for: ${productList.join(', ')}.`;
-      apiCoreSteps.append(item);
-    }
   }
 
-  function clearApiGuide() {
-    if (!apiCoreOverview || !apiCoreSteps) return;
-    apiCoreOverview.textContent = 'Select an account to load the connection steps for its core.';
-    apiCoreSteps.innerHTML = '';
-    if (apiLastSync) {
-      apiLastSync.textContent = 'No sync events recorded yet.';
-    }
-  }
-
-  function renderProductPills(container, account) {
-    if (!container) return;
-    container.innerHTML = '';
-    const products = [...(account.products || []), ...(account.customProducts || [])];
-    if (!products.length) {
-      const item = document.createElement('li');
-      item.textContent = 'No products selected';
-      container.append(item);
+  function renderProductsUpdated(record) {
+    if (!productsUpdated) return;
+    if (!record || !record.updatedAt) {
+      productsUpdated.textContent = 'Select an account to manage product coverage.';
       return;
     }
-    products.forEach((product) => {
-      const item = document.createElement('li');
-      item.textContent = product;
-      container.append(item);
-    });
+    productsUpdated.textContent = `Updated ${formatDateTime(record.updatedAt)}.`;
   }
 
-  function persistAccount(account) {
-    const updatedAccounts = appState.accounts.map((stored) => (stored.id === account.id ? normalizeAccount(account) : stored));
-    saveAccounts(updatedAccounts);
-    updateWorkspace();
+  function setAddControlsDisabled(disabled) {
+    if (addInput) addInput.disabled = disabled;
+    if (addButton) addButton.disabled = disabled;
+  }
+
+  function populateAccountSelector(select, accounts, selectedId) {
+    if (!select) return '';
+    const previous = select.value;
+    select.innerHTML = '';
+
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = accounts.length ? 'Select a credit union' : 'No call reports available';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    select.append(placeholder);
+
+    accounts.forEach((account) => {
+      const option = document.createElement('option');
+      option.value = account.id;
+      option.textContent = account.charter
+        ? `${account.name} (Charter ${account.charter})`
+        : account.name || account.id;
+      select.append(option);
+    });
+
+    let resolved = '';
+    if (selectedId && accounts.some((account) => account.id === selectedId)) {
+      resolved = selectedId;
+    } else if (previous && accounts.some((account) => account.id === previous)) {
+      resolved = previous;
+    } else if (accounts[0]) {
+      resolved = accounts[0].id;
+    }
+
+    if (resolved) {
+      select.value = resolved;
+      placeholder.selected = false;
+    }
+
+    select.disabled = accounts.length === 0;
+    return resolved;
   }
 }
-
 // -----------------------
 // Reporting page
 // -----------------------
 function initReportingPage() {
-  const accountSelector = document.getElementById('reporting-account-selector');
-  const chartCanvas = document.getElementById('loan-volume-chart');
-  const emptyState = document.getElementById('reporting-empty');
-  const footnote = document.getElementById('reporting-footnote');
-  let chartInstance = null;
+  const tableBody = document.querySelector('#account-coverage-table tbody');
+  const emptyState = document.getElementById('account-coverage-empty');
 
-  populateAccountSelect(accountSelector, {
-    includeNewOption: false,
-    selectedId: appState.activeAccountId
+  if (!tableBody) return;
+
+  prepareAccountData().then((accounts) => {
+    renderCoverageTable(accounts);
   });
 
-  if (accountSelector) {
-    accountSelector.disabled = appState.accounts.length === 0;
-    accountSelector.addEventListener('change', (event) => {
-      const value = event.target.value;
-      if (value === '__new__') {
-        window.location.href = 'create-account.html';
-        return;
+  function renderCoverageTable(accounts) {
+    tableBody.innerHTML = '';
+    if (!accounts.length) {
+      if (emptyState) {
+        emptyState.hidden = false;
+        emptyState.textContent = 'Upload call reports to populate the account list.';
       }
-      saveActiveAccountId(value);
-      renderReport();
-    });
-  }
-
-  renderReport();
-
-  function renderReport() {
-    const account = getActiveAccount();
-    if (accountSelector) {
-      accountSelector.disabled = appState.accounts.length === 0;
-    }
-    if (!account) {
-      toggleEmpty(true, appState.accounts.length ? 'Select an account to view reporting.' : 'Create an account to unlock reporting.');
-      destroyChart();
-      if (footnote) footnote.textContent = '';
       return;
     }
 
-    if (accountSelector && accountSelector.value !== account.id) {
-      accountSelector.value = account.id;
-    }
-
-    const monthly = aggregateLoansByMonth(account.manualLoans || []);
-    if (!monthly.length) {
-      toggleEmpty(true, `No manual loans recorded yet for ${account.name}.`);
-      destroyChart();
-      if (footnote) footnote.textContent = '';
-      return;
-    }
-
-    toggleEmpty(false);
-    renderChart(monthly);
-
-    if (footnote) {
-      const totals = summarizeLoanTotals(account.manualLoans || []);
-      footnote.textContent = `${account.name} • ${monthly.length} month${monthly.length === 1 ? '' : 's'} of activity • ${totals.count} loan${totals.count === 1 ? '' : 's'} totaling ${formatCurrency(totals.amount)}.`;
-    }
-  }
-
-  function toggleEmpty(show, message) {
     if (emptyState) {
-      emptyState.hidden = !show;
-      if (typeof message === 'string') {
-        emptyState.textContent = message;
-      }
+      emptyState.hidden = true;
     }
-    if (chartCanvas) {
-      chartCanvas.hidden = show;
-    }
-  }
 
-  function renderChart(points) {
-    if (!chartCanvas || typeof Chart === 'undefined') return;
-    const chart = ensureChart();
-    if (!chart) return;
-    chartCanvas.hidden = false;
-    chart.data.labels = points.map((point) => point.label);
-    chart.data.datasets[0].data = points.map((point) => ({
-      x: point.label,
-      y: point.count,
-      amount: point.amount
-    }));
-    chart.update();
-  }
+    accounts.forEach((account) => {
+      const record = appState.accountProducts[account.id] || normalizeAccountProductRecord({}, account);
+      const counts = summarizeProductStatuses(record);
+      const row = document.createElement('tr');
 
-  function ensureChart() {
-    if (chartInstance) return chartInstance;
-    if (!chartCanvas || typeof Chart === 'undefined') return null;
+      const cells = [
+        account.name || 'Unnamed credit union',
+        account.charter || '—',
+        counts.yes.toString(),
+        counts.no.toString(),
+        counts.pending.toString(),
+        record.updatedAt ? formatDateTime(record.updatedAt) : 'Not set',
+        account.latestAsOf || '—'
+      ];
 
-    chartInstance = new Chart(chartCanvas, {
-      type: 'line',
-      data: {
-        datasets: [
-          {
-            label: 'Loans per month',
-            data: [],
-            parsing: false,
-            tension: 0.35,
-            borderColor: '#c7483f',
-            backgroundColor: 'rgba(199, 72, 63, 0.25)',
-            borderWidth: 2,
-            fill: true,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            pointBackgroundColor: '#f2b34c',
-            pointBorderColor: '#2a0d10',
-            pointBorderWidth: 2
+      cells.forEach((value, index) => {
+        const cell = document.createElement('td');
+        if (index === 6 && account.latestReport) {
+          const label = document.createElement('div');
+          label.textContent = value;
+          cell.append(label);
+
+          const linkGroup = document.createElement('div');
+          linkGroup.className = 'account-hub__report-links';
+
+          const detailLink = document.createElement('a');
+          detailLink.href = `prospects/${account.latestReport.id}.html`;
+          detailLink.className = 'account-hub__report-link';
+          detailLink.textContent = 'Open dashboard';
+          linkGroup.append(detailLink);
+
+          if (account.latestReport.callReportUrl) {
+            const pdfLink = document.createElement('a');
+            pdfLink.href = account.latestReport.callReportUrl;
+            pdfLink.target = '_blank';
+            pdfLink.rel = 'noopener';
+            pdfLink.className = 'account-hub__report-link';
+            pdfLink.textContent = 'Call report PDF';
+            linkGroup.append(pdfLink);
           }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            ticks: {
-              color: '#fbead7'
-            },
-            grid: {
-              color: 'rgba(251, 234, 215, 0.1)'
-            }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: {
-              color: '#fbead7',
-              precision: 0
-            },
-            grid: {
-              color: 'rgba(251, 234, 215, 0.08)'
-            },
-            title: {
-              display: true,
-              text: 'Loans',
-              color: '#fbead7'
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            backgroundColor: 'rgba(24, 9, 10, 0.92)',
-            borderColor: 'rgba(247, 179, 76, 0.4)',
-            borderWidth: 1,
-            titleColor: '#fbead7',
-            bodyColor: '#fbead7',
-            callbacks: {
-              label(context) {
-                const count = context.parsed?.y ?? 0;
-                const rawAmount = context.raw?.amount || 0;
-                return `${count} loan${count === 1 ? '' : 's'} • ${formatCurrency(rawAmount)}`;
-              }
-            }
-          }
+
+          cell.append(linkGroup);
+        } else {
+          cell.textContent = value;
         }
-      }
-    });
+        row.append(cell);
+      });
 
-    return chartInstance;
+      tableBody.append(row);
+    });
   }
 
-  function destroyChart() {
-    if (chartInstance) {
-      chartInstance.destroy();
-      chartInstance = null;
-    }
-    if (chartCanvas) {
-      chartCanvas.hidden = true;
-    }
+  function summarizeProductStatuses(record) {
+    const names = getAccountProductNames(record);
+    let yes = 0;
+    let no = 0;
+    let pending = 0;
+    names.forEach((name) => {
+      const value = record.products?.[name] || '';
+      if (value === 'yes') yes += 1;
+      else if (value === 'no') no += 1;
+      else pending += 1;
+    });
+    return { yes, no, pending };
   }
 }
-
 // -----------------------
 // Prospects page
 // -----------------------
