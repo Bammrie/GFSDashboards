@@ -1,11 +1,16 @@
+import fs from 'fs';
 import http from 'http';
-import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { buildProspectArtifacts } from './scripts/lib/prospectBuilder.mjs';
+
+const fsp = fs.promises;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const publicDir = __dirname;
+const callReportsDir = path.join(publicDir, 'CallReports');
+const templatesDir = path.join(publicDir, 'templates');
 
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -21,6 +26,9 @@ const mimeTypes = {
 };
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+
+await synchronizeProspects();
+setupProspectWatchers();
 
 const server = http.createServer(async (req, res) => {
   try {
@@ -39,14 +47,14 @@ const server = http.createServer(async (req, res) => {
     let fileData;
 
     try {
-      fileData = await fs.readFile(filePath);
+      fileData = await fsp.readFile(filePath);
     } catch (error) {
       if (error.code === 'EISDIR') {
         filePath = path.join(filePath, 'index.html');
-        fileData = await fs.readFile(filePath);
+        fileData = await fsp.readFile(filePath);
       } else if (error.code === 'ENOENT' && !basePath.endsWith('index.html')) {
         filePath = path.join(publicDir, 'index.html');
-        fileData = await fs.readFile(filePath);
+        fileData = await fsp.readFile(filePath);
       } else {
         throw error;
       }
@@ -71,3 +79,56 @@ const server = http.createServer(async (req, res) => {
 server.listen(port, () => {
   console.log(`GFS Dashboards server running at http://localhost:${port}`);
 });
+
+async function synchronizeProspects() {
+  try {
+    await buildProspectArtifacts({ rootDir: publicDir, logger: console });
+  } catch (error) {
+    console.error('Failed to synchronize call reports:', error);
+  }
+}
+
+function setupProspectWatchers() {
+  const scheduleSync = createSyncScheduler();
+
+  if (fs.existsSync(callReportsDir)) {
+    fs.watch(callReportsDir, { persistent: false }, () => scheduleSync());
+  }
+
+  if (fs.existsSync(templatesDir)) {
+    fs.watch(templatesDir, { persistent: false }, () => scheduleSync());
+  }
+}
+
+function createSyncScheduler() {
+  let timer = null;
+  let running = false;
+  let queued = false;
+
+  const run = async () => {
+    if (running) {
+      queued = true;
+      return;
+    }
+    running = true;
+    try {
+      await synchronizeProspects();
+    } finally {
+      running = false;
+      if (queued) {
+        queued = false;
+        run();
+      }
+    }
+  };
+
+  return () => {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      timer = null;
+      run();
+    }, 250);
+  };
+}
