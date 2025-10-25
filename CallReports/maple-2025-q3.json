@@ -1,0 +1,178 @@
+{
+  "id": "maple-2025-q3",
+  "name": "Maple",
+  "charter": "10241",
+  "asOf": "September 30, 2025",
+  "periodMonths": 9,
+  "totalAssets": 71983787,
+  "totalLoans": 52990288,
+  "loanCount": 4505,
+  "allowance": 470866,
+  "accruedInterestLoans": 98352,
+  "loansGrantedYtdCount": 703,
+  "loansGrantedYtdAmount": 15305065,
+  "interestOnLoansYtd": 2249391,
+  "creditLossExpenseLoansYtd": 78819,
+  "delinquencyTotal60Plus": 329467,
+  "delinquencyTotal60PlusLoans": 43,
+  "nonAccrualLoans": 362605,
+  "bankruptcyOutstanding": 338566,
+  "tdrLoans": 5,
+  "tdrBalance": 60422,
+  "delinquencySources": {
+    "participations": 0,
+    "indirect": 0,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": {
+      "count": 0,
+      "balance": 0
+    },
+    "other": {
+      "count": 0,
+      "balance": 0
+    },
+    "total": {
+      "count": 0,
+      "balance": 0
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 1319,
+      "balance": 1258048,
+      "rate": 7.9
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 1037,
+      "balance": 3648390,
+      "rate": 12.25
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 879,
+      "balance": 24412926,
+      "rate": 5.15
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 926,
+      "balance": 18345873,
+      "rate": 5.6
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 344,
+      "balance": 5325051,
+      "rate": 5.9
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    }
+  },
+  "delinquency60PlusDetail": {
+    "creditCard": {
+      "label": "Credit card",
+      "balance": 1448,
+      "loans": 3
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 63144,
+      "loans": 23
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 246368,
+      "loans": 16
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "balance": 18507,
+      "loans": 1
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 204114,
+      "recoveries": 52143
+    },
+    "creditCard": {
+      "label": "Credit card",
+      "chargeOffs": 30335,
+      "recoveries": 3
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 45655,
+      "recoveries": 8876
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 40096,
+      "recoveries": 23568
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 0,
+      "recoveries": 0
+    }
+  },
+  "riskHighlights": [
+    "Used vehicles account for $246k of 60+ delinquency across 16 loans and $40k of charge-offs even as they make up nearly half of the portfolio.",
+    "Nonaccrual loans of $363k—including $339k tied to bankruptcies—sit just below the $471k allowance, leaving little room for error."
+  ],
+  "insights": [
+    "Vehicle lending totals $46.4M across new, used, and leases—packaging GAP, VSC, and payment protection can blunt the recurring auto losses.",
+    "703 loans and $15.3M booked year-to-date create steady touchpoints to enroll members in protection plans at origination.",
+    "Card and signature balances with $63k of 60+ delinquency need debt protection to stabilize payments and keep losses from eroding margin."
+  ],
+  "callReportFile": "maple-2025-q3.pdf"
+}
