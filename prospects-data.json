@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2025-10-25T17:48:22.306Z",
+  "generatedAt": "2025-10-25T21:14:02.357Z",
   "reports": [
     {
-      "id": "callreport5300-september-2025-ascension-pdf",
+      "id": "ascension-2025-q3",
       "name": "Ascension",
       "charter": "",
       "asOf": "September 30, 2025",
@@ -122,12 +122,12 @@
       "insights": [
         "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
       ],
-      "callReportFile": "CallReport5300_September-2025_ASCENSION.pdf",
-      "callReportUrl": "CallReports/CallReport5300_September-2025_ASCENSION.pdf",
+      "callReportFile": "ascension-2025-q3.pdf",
+      "callReportUrl": "CallReports/ascension-2025-q3.pdf",
       "dataStatus": "call-report-pdf-only"
     },
     {
-      "id": "callreport5300-june-2025-efcu-financial-pdf",
+      "id": "efcu-financial-2025-q2",
       "name": "EFCU Financial",
       "charter": "",
       "asOf": "June 30, 2025",
@@ -247,12 +247,12 @@
       "insights": [
         "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
       ],
-      "callReportFile": "CallReport5300_June-2025_EFCU FINANCIAL.pdf",
-      "callReportUrl": "CallReports/CallReport5300_June-2025_EFCU FINANCIAL.pdf",
+      "callReportFile": "efcu-financial-2025-q2.pdf",
+      "callReportUrl": "CallReports/efcu-financial-2025-q2.pdf",
       "dataStatus": "call-report-pdf-only"
     },
     {
-      "id": "callreport5300-june-2025-financial-center-first-pdf",
+      "id": "financial-center-first-2025-q2",
       "name": "Financial Center First",
       "charter": "",
       "asOf": "June 30, 2025",
@@ -372,12 +372,12 @@
       "insights": [
         "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
       ],
-      "callReportFile": "CallReport5300_June-2025_FINANCIAL CENTER FIRST.pdf",
-      "callReportUrl": "CallReports/CallReport5300_June-2025_FINANCIAL CENTER FIRST.pdf",
+      "callReportFile": "financial-center-first-2025-q2.pdf",
+      "callReportUrl": "CallReports/financial-center-first-2025-q2.pdf",
       "dataStatus": "call-report-pdf-only"
     },
     {
-      "id": "callreport5300-september-2025-gulf-pdf",
+      "id": "gulf-2025-q3",
       "name": "Gulf",
       "charter": "",
       "asOf": "September 30, 2025",
@@ -497,8 +497,8 @@
       "insights": [
         "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
       ],
-      "callReportFile": "CallReport5300_September-2025_GULF.pdf",
-      "callReportUrl": "CallReports/CallReport5300_September-2025_GULF.pdf",
+      "callReportFile": "gulf-2025-q3.pdf",
+      "callReportUrl": "CallReports/gulf-2025-q3.pdf",
       "dataStatus": "call-report-pdf-only"
     },
     {
@@ -870,7 +870,7 @@
       "callReportUrl": "CallReports/CallReport5300_September-2023_LION'S SHARE.pdf"
     },
     {
-      "id": "callreport5300-september-2025-maple-pdf",
+      "id": "maple-2025-q3",
       "name": "Maple",
       "charter": "",
       "asOf": "September 30, 2025",
@@ -990,12 +990,12 @@
       "insights": [
         "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
       ],
-      "callReportFile": "CallReport5300_September-2025_MAPLE.pdf",
-      "callReportUrl": "CallReports/CallReport5300_September-2025_MAPLE.pdf",
+      "callReportFile": "maple-2025-q3.pdf",
+      "callReportUrl": "CallReports/maple-2025-q3.pdf",
       "dataStatus": "call-report-pdf-only"
     },
     {
-      "id": "callreport5300-september-2025-rave-financial-pdf",
+      "id": "rave-financial-2025-q3",
       "name": "Rave Financial",
       "charter": "",
       "asOf": "September 30, 2025",
@@ -1115,8 +1115,8 @@
       "insights": [
         "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
       ],
-      "callReportFile": "CallReport5300_September-2025_RAVE FINANCIAL .pdf",
-      "callReportUrl": "CallReports/CallReport5300_September-2025_RAVE FINANCIAL .pdf",
+      "callReportFile": "rave-financial-2025-q3.pdf",
+      "callReportUrl": "CallReports/rave-financial-2025-q3.pdf",
       "dataStatus": "call-report-pdf-only"
     }
   ]
