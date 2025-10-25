@@ -4,6 +4,8 @@ REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log w
 
 2026-12-10: Merged the manual account workspace into a call-report-driven coverage tracker. Accounts now auto-create from uploaded 5300 data, product adoption is captured with Yes/No toggles, and the reporting view summarizes coverage status by charter.
 
+2026-12-15: Documented consumer coverage opportunity heuristics (Life $1.00, Disability $2.25, IUI $1.40 per $1,000 with 38% penetration) and updated the prospects fetch to bypass caches so new call reports are always ingested on refresh.
+
 2026-11-25: Added a lightweight Node static file server (server.mjs) and wired an npm start script so Railway can boot the dashboard without manual commands.
 
 2025-01-14: Added channel exposure tables (indirect production and delinquency source mix) to the Prospects analytics experience, tying Inspire FCU (6/30/25) and Lion's Share FCU (9/30/23) call reports to revenue modeling.
@@ -59,6 +61,17 @@ Store and report on each slice so premium remittance can be reconciled to its de
 * For loan *i* in month *m* with package *p*:
   * **Monthly charge** = (\bar{B}<sub>m,i</sub> ÷ 100) × rate<sub>p</sub>.
 * Penetration and coverage ratio mirror the credit insurance definitions, but are tracked separately per package.
+
+### Prospect opportunity heuristics (credit insurance & debt protection)
+* When modeling **Credit Life**, **Credit Disability**, or **Debt Protection / IUI** performance for call-report prospects:
+  * **Monthly full-coverage premium** = (total consumer loans ÷ $1,000) × rate, where Life = $1.00, Disability = $2.25, IUI = $1.40 per $1,000.
+  * **Modeled penetration** = 38%. Multiply the full-coverage premium by 0.38 to estimate the monthly remittance the credit union would see.
+  * Current tables focus on the credit union share; GFS income is set to zero until markup guidance is provided.
+* **Vehicle Service Contracts (VSC)** and **GAP** opportunities are estimated from direct auto production:
+  * **Direct auto loans outstanding** = (new auto count + used auto count) − indirect auto count (never below zero).
+  * **Monthly direct originations** = direct auto loans outstanding ÷ 24 (average term).
+  * Apply 40% penetration with a $400 GFS margin for VSC and 70% penetration with a $50 GFS margin for GAP to forecast income.
+  * Credit union income inputs remain zero until partner markups are defined.
 
 ### Ancillary products
 * **GAP** – Treat as a per-loan flat premium. Store the amount sold (flat fee) and financed amount. Penetration = # GAP contracts ÷ # eligible auto loans. Loss ratio = claims paid ÷ GAP premium.
