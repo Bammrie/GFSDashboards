@@ -1,0 +1,183 @@
+{
+  "id": "financial-center-first-2025-q2",
+  "name": "Financial Center First",
+  "charter": "68658",
+  "asOf": "June 30, 2025",
+  "periodMonths": 6,
+  "totalAssets": 920631825,
+  "totalLoans": 553685851,
+  "loanCount": 24775,
+  "allowance": 7986791,
+  "accruedInterestLoans": 2021644,
+  "loansGrantedYtdCount": 3044,
+  "loansGrantedYtdAmount": 101998313,
+  "interestOnLoansYtd": 15784147,
+  "creditLossExpenseLoansYtd": 1468111,
+  "delinquencyTotal60Plus": 3809969,
+  "delinquencyTotal60PlusLoans": 189,
+  "nonAccrualLoans": 2989825,
+  "bankruptcyOutstanding": 4919689,
+  "tdrLoans": 3,
+  "tdrBalance": 197286,
+  "delinquencySources": {
+    "participations": 0,
+    "indirect": 860694,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": {
+      "count": 0,
+      "balance": 0
+    },
+    "other": {
+      "count": 0,
+      "balance": 0
+    },
+    "total": {
+      "count": 0,
+      "balance": 0
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 3992,
+      "balance": 10951384,
+      "rate": 15.75
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 48,
+      "balance": 60940,
+      "rate": 7.85
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 6814,
+      "balance": 10263091,
+      "rate": 15.25
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 456,
+      "balance": 11784814,
+      "rate": 7.24
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 8794,
+      "balance": 213267358,
+      "rate": 7.74
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 1140,
+      "balance": 19104811,
+      "rate": 7.09
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 1948,
+      "balance": 199264669,
+      "rate": 5.1
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 1461,
+      "balance": 54576757,
+      "rate": 4.86
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 1,
+      "balance": 30527,
+      "rate": 4.88
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 64,
+      "balance": 33698272,
+      "rate": 6.03
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 57,
+      "balance": 683228,
+      "rate": 8.87
+    }
+  },
+  "delinquency60PlusDetail": {
+    "creditCard": {
+      "label": "Credit card",
+      "balance": 43505,
+      "loans": 11
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 135051,
+      "loans": 47
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 2561575,
+      "loans": 113
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "balance": 91333,
+      "loans": 4
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "balance": 978505,
+      "loans": 14
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 2680739,
+      "recoveries": 1120123
+    },
+    "creditCard": {
+      "label": "Credit card",
+      "chargeOffs": 180143,
+      "recoveries": 76734
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 344168,
+      "recoveries": 100679
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 404582,
+      "recoveries": 301282
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 1450632,
+      "recoveries": 572557
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 140543,
+      "recoveries": 30370
+    }
+  },
+  "riskHighlights": [
+    "Used vehicle loans post $2.56M of 60+ delinquency across 113 accounts alongside $1.45M of charge-offs year-to-date.",
+    "Junior lien mortgages carry $978k of 60+ delinquency (14 loans) even as bankruptcy-related balances total $4.92M."
+  ],
+  "insights": [
+    "The $225M auto portfolio plus $860k of delinquent indirect balances is primed for bundled GAP, VSC, and payment protection coverage to arrest losses.",
+    "Unsecured lending of $21.9M generates $315k of 60+ delinquency and $524k in charge-offs—debt protection can soften the hit while preserving fee income.",
+    "Year-to-date production of 3,044 loans totaling $102.0M gives ample volume to make protection enrollment part of every closing."
+  ],
+  "callReportFile": "financial-center-first-2025-q2.pdf"
+}
