@@ -273,26 +273,29 @@ const PROSPECT_PRODUCT_MODELS = [
   {
     id: 'credit-life-single',
     label: 'Credit Life (Single)',
-    type: 'mob',
-    eligibleBalanceKeys: ['otherUnsecured', 'newVehicle', 'usedVehicle', 'otherSecured'],
-    penetration: 0.3,
-    rates: { clp: 0.45, gfsMarkup: 0.18, creditUnionMarkup: 0.12 }
+    type: 'consumer-coverage',
+    ratePerThousand: 1,
+    penetration: 0.38,
+    creditUnionShare: 1,
+    gfsShare: 0
   },
   {
     id: 'credit-disability-single',
     label: 'Credit Disability (Single)',
-    type: 'mob',
-    eligibleBalanceKeys: ['newVehicle', 'usedVehicle', 'otherSecured'],
-    penetration: 0.2,
-    rates: { clp: 0.65, gfsMarkup: 0.22, creditUnionMarkup: 0.18 }
+    type: 'consumer-coverage',
+    ratePerThousand: 2.25,
+    penetration: 0.38,
+    creditUnionShare: 1,
+    gfsShare: 0
   },
   {
     id: 'debt-protection-package-a',
-    label: 'Debt Protection Package A',
-    type: 'mob',
-    eligibleBalanceKeys: ['otherUnsecured', 'newVehicle', 'usedVehicle', 'otherSecured'],
-    penetration: 0.25,
-    rates: { clp: 0.85, gfsMarkup: 0.3, creditUnionMarkup: 0.2 }
+    label: 'Debt Protection (IUI)',
+    type: 'consumer-coverage',
+    ratePerThousand: 1.4,
+    penetration: 0.38,
+    creditUnionShare: 1,
+    gfsShare: 0
   },
   {
     id: 'mortgage-life-first-lien',
@@ -305,18 +308,20 @@ const PROSPECT_PRODUCT_MODELS = [
   {
     id: 'gap',
     label: 'GAP',
-    type: 'flat',
-    eligibleCountKeys: ['newVehicle', 'usedVehicle'],
-    penetration: 0.35,
-    pricing: { retail: 550, gfsShare: 210, creditUnionShare: 140 }
+    type: 'direct-auto-ancillary',
+    penetration: 0.7,
+    averageTermMonths: 24,
+    gfsIncomePerUnit: 50,
+    creditUnionIncomePerUnit: 0
   },
   {
     id: 'vsc',
     label: 'Vehicle Service Contract',
-    type: 'flat',
-    eligibleCountKeys: ['newVehicle', 'usedVehicle'],
-    penetration: 0.22,
-    pricing: { retail: 1300, gfsShare: 320, creditUnionShare: 260 }
+    type: 'direct-auto-ancillary',
+    penetration: 0.4,
+    averageTermMonths: 24,
+    gfsIncomePerUnit: 400,
+    creditUnionIncomePerUnit: 0
   },
   {
     id: 'cpi',
@@ -329,7 +334,7 @@ const PROSPECT_PRODUCT_MODELS = [
 ];
 
 const PROSPECT_PRODUCT_FOOTNOTE =
-  'Credit life: $0.45 CLP + $0.18 GFS + $0.12 CU per $100 MOB • Credit disability: $0.65 CLP + $0.22 GFS + $0.18 CU • Debt protection Package A: $0.85 CLP + $0.30 GFS + $0.20 CU • Mortgage life (1st lien): $0.38 CLP + $0.18 GFS + $0.14 CU • GAP $550 retail ($210 GFS / $140 CU) • VSC $1,300 retail ($320 GFS / $260 CU) • CPI $90 billed ($25 GFS / $20 CU).';
+  'Credit life, disability, and IUI estimates: (consumer loans ÷ $1,000) × rate × 38% monthly CU remittance (rates — Life $1.00, Disability $2.25, IUI $1.40). VSC & GAP assume direct auto loans outstanding ÷ 24 for monthly production (40% VSC @ $400 GFS, 70% GAP @ $50 GFS). CPI modeling: $90 billed ($25 GFS / $20 CU).';
 
 const prospectState = {
   activeProspectId: '',
@@ -586,7 +591,7 @@ function loadProspectReports() {
     return prospectDataPromise;
   }
 
-  prospectDataPromise = fetch(prospectsDataUrl)
+  prospectDataPromise = fetch(prospectsDataUrl, { cache: 'no-store' })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Failed to load prospects data (${response.status})`);
@@ -2204,6 +2209,68 @@ function renderProductTable(report, metrics, opportunityRows) {
 }
 
 function calculateProductOpportunity(report, metrics, model) {
+  if (model.type === 'consumer-coverage') {
+    const consumerBalance = metrics.installmentBalance || 0;
+    const ratePerThousand = Number(model.ratePerThousand) || 0;
+    const penetration = Number(model.penetration) || 0;
+    const creditUnionShare =
+      typeof model.creditUnionShare === 'number' ? model.creditUnionShare : 0;
+    const gfsShare = typeof model.gfsShare === 'number' ? model.gfsShare : 0;
+    const grossShare =
+      typeof model.grossShare === 'number'
+        ? model.grossShare
+        : creditUnionShare + gfsShare || 1;
+
+    const monthlyFullCoverage = (consumerBalance / 1000) * ratePerThousand;
+    const monthlyModeled = monthlyFullCoverage * penetration;
+    const creditUnionMonthly = monthlyModeled * creditUnionShare;
+    const gfsMonthly = monthlyModeled * gfsShare;
+    const grossMonthly = monthlyModeled * grossShare;
+
+    return {
+      baseDisplay: `${formatProspectCurrency(consumerBalance)} consumer loans`,
+      grossAnnual: grossMonthly * 12,
+      gfsAnnual: gfsMonthly * 12,
+      creditUnionAnnual: creditUnionMonthly * 12,
+      eligibleBalance: consumerBalance,
+      annualEligible: null,
+      unitsSold: null
+    };
+  }
+
+  if (model.type === 'direct-auto-ancillary') {
+    const newVehicleCount = report.loanMix?.newVehicle?.count || 0;
+    const usedVehicleCount = report.loanMix?.usedVehicle?.count || 0;
+    const indirectAutoCount = report.indirect?.auto?.count || 0;
+    const outstandingDirect = Math.max(newVehicleCount + usedVehicleCount - indirectAutoCount, 0);
+    const averageTermMonths = Number(model.averageTermMonths) || 0;
+    const penetration = Number(model.penetration) || 0;
+    const monthlyEligible = averageTermMonths > 0 ? outstandingDirect / averageTermMonths : 0;
+    const annualEligible = monthlyEligible * 12;
+    const monthlyUnitsSold = monthlyEligible * penetration;
+    const unitsSold = monthlyUnitsSold * 12;
+    const gfsIncomePerUnit = Number(model.gfsIncomePerUnit) || 0;
+    const creditUnionIncomePerUnit = Number(model.creditUnionIncomePerUnit) || 0;
+    const retailPerUnit =
+      typeof model.retailPerUnit === 'number'
+        ? model.retailPerUnit
+        : gfsIncomePerUnit + creditUnionIncomePerUnit;
+
+    const grossAnnual = monthlyUnitsSold * retailPerUnit * 12;
+    const gfsAnnual = monthlyUnitsSold * gfsIncomePerUnit * 12;
+    const creditUnionAnnual = monthlyUnitsSold * creditUnionIncomePerUnit * 12;
+
+    return {
+      baseDisplay: `${formatNumber(Math.round(annualEligible))} loans / yr`,
+      grossAnnual,
+      gfsAnnual,
+      creditUnionAnnual,
+      eligibleBalance: null,
+      annualEligible,
+      unitsSold
+    };
+  }
+
   if (model.type === 'mob') {
     const eligibleBalance = sumBalances(report, model.eligibleBalanceKeys || []);
     const totalRate = (model.rates?.clp || 0) + (model.rates?.gfsMarkup || 0) + (model.rates?.creditUnionMarkup || 0);
