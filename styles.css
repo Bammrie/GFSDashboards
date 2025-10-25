@@ -769,6 +769,11 @@ textarea {
   background: rgba(42, 13, 16, 0.7);
 }
 
+.coverage-field--invalid {
+  border-color: rgba(247, 122, 108, 0.6);
+  box-shadow: 0 0 0 1px rgba(247, 122, 108, 0.25);
+}
+
 .coverage-field__label {
   font-size: 0.8rem;
   text-transform: uppercase;
@@ -788,6 +793,45 @@ textarea {
   outline: none;
   border-color: var(--color-amber-500);
   box-shadow: 0 0 0 3px rgba(242, 179, 76, 0.22);
+}
+
+.coverage-field__parameters {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.coverage-parameter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.coverage-parameter__label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.coverage-parameter__input {
+  padding: 0.5rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(251, 234, 215, 0.18);
+  background: rgba(27, 9, 11, 0.72);
+  color: var(--color-text);
+}
+
+.coverage-parameter__input:focus {
+  outline: none;
+  border-color: var(--color-amber-500);
+  box-shadow: 0 0 0 3px rgba(242, 179, 76, 0.22);
+}
+
+.coverage-field__validation {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-rose-300);
+  min-height: 1em;
 }
 
 .coverage-grid__empty {

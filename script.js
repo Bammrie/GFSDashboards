@@ -23,6 +23,111 @@ const DEFAULT_PRODUCTS = [
   'AFG Balloon Loans'
 ];
 
+const RATE_PARAMETER_SET = [
+  { id: 'clpRate', label: 'CLP Rate', requiredWhenActive: true },
+  { id: 'gfsMarkup', label: 'GFS Mark-Up', requiredWhenActive: true },
+  { id: 'creditUnionMarkup', label: 'Credit Union Mark-Up', requiredWhenActive: true }
+];
+
+const PRODUCT_PARAMETER_DEFINITIONS = {
+  'Credit Life (Single)': RATE_PARAMETER_SET,
+  'Credit Life (Joint)': RATE_PARAMETER_SET,
+  'Credit Life (Blended)': RATE_PARAMETER_SET,
+  'Credit Disability (Single)': RATE_PARAMETER_SET,
+  'Credit Disability (Joint)': RATE_PARAMETER_SET,
+  'Credit Disability (Blended)': RATE_PARAMETER_SET,
+  'Debt Protection Package A': RATE_PARAMETER_SET,
+  'Debt Protection Package B': RATE_PARAMETER_SET,
+  'Debt Protection Package C': RATE_PARAMETER_SET,
+  GAP: [
+    { id: 'clpRate', label: 'CLP Rate', requiredWhenActive: true },
+    { id: 'gfsMarkup', label: 'GFS Mark-Up', requiredWhenActive: true },
+    { id: 'creditUnionMarkup', label: 'Credit Union Mark-Up', requiredWhenActive: true }
+  ],
+  VSC: [
+    { id: 'creditUnionMarkup', label: 'Credit Union Mark-Up', requiredWhenActive: true },
+    { id: 'gfsMarkup', label: 'GFS Mark-Up', requiredWhenActive: true }
+  ],
+  'Collateral Protection Insurance (CPI)': [
+    { id: 'billingRate', label: 'Carrier Billing Rate', requiredWhenActive: true },
+    { id: 'gfsMarkup', label: 'GFS Mark-Up', requiredWhenActive: true },
+    { id: 'creditUnionMarkup', label: 'Credit Union Mark-Up', requiredWhenActive: true }
+  ],
+  'Fidelity Bond': [
+    { id: 'coverageLimit', label: 'Coverage Limit', requiredWhenActive: true },
+    { id: 'annualPremium', label: 'Annual Premium', requiredWhenActive: true },
+    { id: 'effectiveDate', label: 'Effective Date', inputType: 'date', requiredWhenActive: true }
+  ],
+  'Mortgage Life Insurance for 1st Lien mortgages': RATE_PARAMETER_SET,
+  'AFG Balloon Loans': [
+    { id: 'programRate', label: 'Program Rate', requiredWhenActive: true },
+    { id: 'gfsMarkup', label: 'GFS Mark-Up', requiredWhenActive: true },
+    { id: 'creditUnionMarkup', label: 'Credit Union Mark-Up', requiredWhenActive: true }
+  ]
+};
+
+function getProductParameterDefinitions(productName) {
+  const definitions = PRODUCT_PARAMETER_DEFINITIONS[productName];
+  if (!definitions) return [];
+  return definitions.map((definition) => ({ ...definition }));
+}
+
+function sanitizeParameterValue(definition, value) {
+  if (value === undefined || value === null) return '';
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value.toString();
+  }
+  const stringValue = value.toString().trim();
+  if (!stringValue) return '';
+  if (definition?.inputType === 'date') {
+    const timestamp = Date.parse(stringValue);
+    return Number.isNaN(timestamp) ? '' : new Date(timestamp).toISOString().slice(0, 10);
+  }
+  return stringValue;
+}
+
+function sanitizeProductParameters(productName, values) {
+  const definitions = PRODUCT_PARAMETER_DEFINITIONS[productName];
+  const sanitized = {};
+  if (definitions && definitions.length) {
+    definitions.forEach((definition) => {
+      const sanitizedValue = sanitizeParameterValue(definition, values ? values[definition.id] : '');
+      if (sanitizedValue) {
+        sanitized[definition.id] = sanitizedValue;
+      }
+    });
+  } else if (values && typeof values === 'object') {
+    Object.entries(values).forEach(([key, value]) => {
+      const sanitizedValue = sanitizeParameterValue({}, value);
+      if (sanitizedValue) {
+        sanitized[key] = sanitizedValue;
+      }
+    });
+  }
+  return sanitized;
+}
+
+function collectMissingRequiredParameters(definitions, values) {
+  if (!definitions || !definitions.length) return [];
+  return definitions.filter((definition) => {
+    if (!definition.requiredWhenActive) return false;
+    const rawValue = values?.[definition.id];
+    return !rawValue || !rawValue.toString().trim();
+  });
+}
+
+function getMissingRequiredParameters(record, productName) {
+  if (!record || record.products?.[productName] !== 'yes') return [];
+  const definitions = PRODUCT_PARAMETER_DEFINITIONS[productName];
+  if (!definitions || !definitions.length) return [];
+  const values = record.parameters?.[productName] || {};
+  return collectMissingRequiredParameters(definitions, values);
+}
+
+function productActivationIsValid(record, productName) {
+  return getMissingRequiredParameters(record, productName).length === 0;
+}
+
 const MOB_RATE_ROWS = [
   { id: 'creditLifeSingle', label: 'Credit Life — Single' },
   { id: 'creditLifeJoint', label: 'Credit Life — Joint' },
@@ -247,7 +352,18 @@ function loadAccountProductState() {
         name: typeof record.name === 'string' ? record.name : '',
         updatedAt: record.updatedAt || null,
         products: record.products && typeof record.products === 'object' ? { ...record.products } : {},
-        customProducts: Array.isArray(record.customProducts) ? record.customProducts.slice() : []
+        customProducts: Array.isArray(record.customProducts) ? record.customProducts.slice() : [],
+        parameters:
+          record.parameters && typeof record.parameters === 'object'
+            ? Object.fromEntries(
+                Object.entries(record.parameters)
+                  .filter((entry) => entry[0])
+                  .map(([productName, values]) => [
+                    productName,
+                    values && typeof values === 'object' ? { ...values } : {}
+                  ])
+              )
+            : {}
       };
     });
     return normalized;
@@ -369,13 +485,31 @@ function normalizeAccountProductRecord(record, account) {
     normalizedProducts[name] = sanitizeProductValue(sourceProducts[name]);
   });
 
+  const sourceParameters = record?.parameters && typeof record.parameters === 'object' ? record.parameters : {};
+  const normalizedParameters = {};
+  const parameterNames = new Set([
+    ...DEFAULT_PRODUCTS,
+    ...customProducts,
+    ...Object.keys(sourceProducts || {}),
+    ...Object.keys(sourceParameters || {})
+  ]);
+
+  parameterNames.forEach((name) => {
+    if (!name) return;
+    const sanitized = sanitizeProductParameters(name, sourceParameters[name]);
+    if (Object.keys(sanitized).length) {
+      normalizedParameters[name] = sanitized;
+    }
+  });
+
   return {
     accountId: account.id,
     charter: account.charter || '',
     name: account.name || '',
     updatedAt: record?.updatedAt || null,
     products: normalizedProducts,
-    customProducts
+    customProducts,
+    parameters: normalizedParameters
   };
 }
 
@@ -386,7 +520,16 @@ function cloneProductRecord(record) {
     name: record.name,
     updatedAt: record.updatedAt || null,
     products: { ...(record.products || {}) },
-    customProducts: Array.isArray(record.customProducts) ? record.customProducts.slice() : []
+    customProducts: Array.isArray(record.customProducts) ? record.customProducts.slice() : [],
+    parameters:
+      record.parameters && typeof record.parameters === 'object'
+        ? Object.fromEntries(
+            Object.entries(record.parameters).map(([name, values]) => [
+              name,
+              values && typeof values === 'object' ? { ...values } : {}
+            ])
+          )
+        : {}
   };
 }
 
@@ -403,6 +546,9 @@ function updateAccountProductRecord(account, updater) {
   result.charter = account.charter || '';
   result.name = account.name || '';
   result.updatedAt = new Date().toISOString();
+  if (!result.parameters || typeof result.parameters !== 'object') {
+    result.parameters = {};
+  }
   const normalized = normalizeAccountProductRecord(result, account);
   normalized.updatedAt = result.updatedAt;
   const nextState = { ...appState.accountProducts, [account.id]: normalized };
@@ -1128,8 +1274,29 @@ function initDashboardPage() {
     productsContainer.hidden = false;
     productsEmpty.hidden = true;
 
+    const applyFieldValidation = (fieldEl, productName, currentRecord, { statusOverride, missing } = {}) => {
+      if (!fieldEl) return;
+      const validationEl = fieldEl.querySelector('.coverage-field__validation');
+      if (!validationEl) return;
+      const status = statusOverride ?? currentRecord.products?.[productName] || '';
+      let missingDefs = missing || [];
+      if (!missingDefs.length && status === 'yes') {
+        const definitions = getProductParameterDefinitions(productName);
+        const values = currentRecord.parameters?.[productName] || {};
+        missingDefs = collectMissingRequiredParameters(definitions, values);
+      }
+      if (status === 'yes' && missingDefs.length) {
+        fieldEl.classList.add('coverage-field--invalid');
+        const labelList = missingDefs.map((definition) => definition.label).join(', ');
+        validationEl.textContent = `Add required details: ${labelList}.`;
+      } else {
+        fieldEl.classList.remove('coverage-field--invalid');
+        validationEl.textContent = '';
+      }
+    };
+
     names.forEach((name) => {
-      const field = document.createElement('label');
+      const field = document.createElement('div');
       field.className = 'coverage-field';
       field.dataset.productName = name;
 
@@ -1155,10 +1322,85 @@ function initDashboardPage() {
         select.append(option);
       });
 
-      select.value = record.products[name] || '';
+      const currentValue = record.products[name] || '';
+      select.value = currentValue;
+
+      const parameterDefinitions = getProductParameterDefinitions(name);
+      const parameterValues = record.parameters?.[name] || {};
+
+      const parametersWrapper = document.createElement('div');
+      parametersWrapper.className = 'coverage-field__parameters';
+
+      parameterDefinitions.forEach((definition) => {
+        const parameterField = document.createElement('label');
+        parameterField.className = 'coverage-parameter';
+        parameterField.dataset.parameterId = definition.id;
+
+        const parameterLabel = document.createElement('span');
+        parameterLabel.className = 'coverage-parameter__label';
+        parameterLabel.textContent = definition.requiredWhenActive
+          ? `${definition.label} *`
+          : definition.label;
+        parameterField.append(parameterLabel);
+
+        const input = document.createElement('input');
+        input.className = 'coverage-parameter__input';
+        input.type = definition.inputType || 'text';
+        if (definition.placeholder) {
+          input.placeholder = definition.placeholder;
+        }
+        if (definition.inputMode) {
+          input.setAttribute('inputmode', definition.inputMode);
+        }
+        input.value = parameterValues[definition.id] || '';
+        input.addEventListener('change', () => {
+          const sanitizedValue = sanitizeParameterValue(definition, input.value);
+          const updated = updateAccountProductRecord(account, (draft) => {
+            if (!draft.parameters[name]) {
+              draft.parameters[name] = {};
+            }
+            if (sanitizedValue) {
+              draft.parameters[name][definition.id] = sanitizedValue;
+            } else if (draft.parameters[name]) {
+              delete draft.parameters[name][definition.id];
+            }
+            if (draft.parameters[name] && !Object.keys(draft.parameters[name]).length) {
+              delete draft.parameters[name];
+            }
+            return draft;
+          });
+          renderProducts(account, updated);
+          renderProductsUpdated(updated);
+        });
+
+        parameterField.append(input);
+        parametersWrapper.append(parameterField);
+      });
+
       select.addEventListener('change', () => {
+        const nextValue = sanitizeProductValue(select.value);
+        if (nextValue === 'yes') {
+          const definitions = getProductParameterDefinitions(name);
+          const values = record.parameters?.[name] || {};
+          const missing = collectMissingRequiredParameters(definitions, values);
+          if (missing.length) {
+            select.value = currentValue;
+            applyFieldValidation(field, name, { ...record, products: { ...record.products, [name]: 'yes' } }, {
+              statusOverride: 'yes',
+              missing
+            });
+            const firstMissing = field.querySelector(
+              `.coverage-parameter[data-parameter-id="${missing[0]?.id}"] .coverage-parameter__input`
+            );
+            if (firstMissing) {
+              firstMissing.focus();
+            }
+            return;
+          }
+        }
+
         const updated = updateAccountProductRecord(account, (draft) => {
-          draft.products[name] = sanitizeProductValue(select.value);
+          draft.products[name] = nextValue;
           if (!DEFAULT_PRODUCTS.includes(name) && !draft.customProducts.includes(name)) {
             draft.customProducts.push(name);
             draft.customProducts.sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
@@ -1171,6 +1413,16 @@ function initDashboardPage() {
 
       field.append(select);
 
+      if (parameterDefinitions.length) {
+        field.append(parametersWrapper);
+      }
+
+      const validationMessage = document.createElement('p');
+      validationMessage.className = 'coverage-field__validation';
+      validationMessage.setAttribute('role', 'status');
+      validationMessage.setAttribute('aria-live', 'polite');
+      field.append(validationMessage);
+
       if (!DEFAULT_PRODUCTS.includes(name)) {
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
@@ -1180,6 +1432,9 @@ function initDashboardPage() {
           const updated = updateAccountProductRecord(account, (draft) => {
             delete draft.products[name];
             draft.customProducts = draft.customProducts.filter((product) => product !== name);
+            if (draft.parameters) {
+              delete draft.parameters[name];
+            }
             return draft;
           });
           renderProducts(account, updated);
@@ -1188,6 +1443,7 @@ function initDashboardPage() {
         field.append(removeBtn);
       }
 
+      applyFieldValidation(field, name, record);
       productsContainer.append(field);
     });
   }
@@ -1331,9 +1587,17 @@ function initReportingPage() {
     let pending = 0;
     names.forEach((name) => {
       const value = record.products?.[name] || '';
-      if (value === 'yes') yes += 1;
-      else if (value === 'no') no += 1;
-      else pending += 1;
+      if (value === 'yes') {
+        if (productActivationIsValid(record, name)) {
+          yes += 1;
+        } else {
+          pending += 1;
+        }
+      } else if (value === 'no') {
+        no += 1;
+      } else {
+        pending += 1;
+      }
     });
     return { yes, no, pending };
   }
