@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prestart": "npm run generate:prospects",
     "start": "node server.mjs",
     "generate:prospects": "node scripts/generateProspects.mjs"
   }
