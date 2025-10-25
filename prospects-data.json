@@ -1,6 +1,506 @@
 {
-  "generatedAt": "2025-10-25T03:10:57.185Z",
+  "generatedAt": "2025-10-25T13:42:35.615Z",
   "reports": [
+    {
+      "id": "callreport5300-september-2025-ascension-pdf",
+      "name": "Ascension",
+      "charter": "",
+      "asOf": "September 30, 2025",
+      "periodMonths": 9,
+      "totalAssets": 0,
+      "totalLoans": 0,
+      "loanCount": 0,
+      "allowance": 0,
+      "accruedInterestLoans": 0,
+      "loansGrantedYtdCount": 0,
+      "loansGrantedYtdAmount": 0,
+      "interestOnLoansYtd": 0,
+      "creditLossExpenseLoansYtd": 0,
+      "delinquencyTotal60Plus": 0,
+      "delinquencyTotal60PlusLoans": 0,
+      "nonAccrualLoans": 0,
+      "bankruptcyOutstanding": 0,
+      "tdrLoans": 0,
+      "tdrBalance": 0,
+      "delinquencySources": {},
+      "indirect": {
+        "auto": {
+          "count": 0,
+          "balance": 0
+        },
+        "other": {
+          "count": 0,
+          "balance": 0
+        },
+        "total": {
+          "count": 0,
+          "balance": 0
+        }
+      },
+      "loanMix": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "student": {
+          "label": "Non-federally guaranteed student",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherNonCommercialRE": {
+          "label": "Other non-commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialRE": {
+          "label": "Commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        }
+      },
+      "delinquency60PlusDetail": {},
+      "chargeOffs": {
+        "total": {
+          "chargeOffs": 0,
+          "recoveries": 0
+        }
+      },
+      "riskHighlights": [],
+      "insights": [
+        "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
+      ],
+      "callReportFile": "CallReport5300_September-2025_ASCENSION.pdf",
+      "callReportUrl": "CallReports/CallReport5300_September-2025_ASCENSION.pdf",
+      "dataStatus": "call-report-pdf-only"
+    },
+    {
+      "id": "callreport5300-june-2025-efcu-financial-pdf",
+      "name": "EFCU Financial",
+      "charter": "",
+      "asOf": "June 30, 2025",
+      "periodMonths": 6,
+      "totalAssets": 0,
+      "totalLoans": 0,
+      "loanCount": 0,
+      "allowance": 0,
+      "accruedInterestLoans": 0,
+      "loansGrantedYtdCount": 0,
+      "loansGrantedYtdAmount": 0,
+      "interestOnLoansYtd": 0,
+      "creditLossExpenseLoansYtd": 0,
+      "delinquencyTotal60Plus": 0,
+      "delinquencyTotal60PlusLoans": 0,
+      "nonAccrualLoans": 0,
+      "bankruptcyOutstanding": 0,
+      "tdrLoans": 0,
+      "tdrBalance": 0,
+      "delinquencySources": {},
+      "indirect": {
+        "auto": {
+          "count": 0,
+          "balance": 0
+        },
+        "other": {
+          "count": 0,
+          "balance": 0
+        },
+        "total": {
+          "count": 0,
+          "balance": 0
+        }
+      },
+      "loanMix": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "student": {
+          "label": "Non-federally guaranteed student",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherNonCommercialRE": {
+          "label": "Other non-commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialRE": {
+          "label": "Commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        }
+      },
+      "delinquency60PlusDetail": {},
+      "chargeOffs": {
+        "total": {
+          "chargeOffs": 0,
+          "recoveries": 0
+        }
+      },
+      "riskHighlights": [],
+      "insights": [
+        "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
+      ],
+      "callReportFile": "CallReport5300_June-2025_EFCU FINANCIAL.pdf",
+      "callReportUrl": "CallReports/CallReport5300_June-2025_EFCU FINANCIAL.pdf",
+      "dataStatus": "call-report-pdf-only"
+    },
+    {
+      "id": "callreport5300-june-2025-financial-center-first-pdf",
+      "name": "Financial Center First",
+      "charter": "",
+      "asOf": "June 30, 2025",
+      "periodMonths": 6,
+      "totalAssets": 0,
+      "totalLoans": 0,
+      "loanCount": 0,
+      "allowance": 0,
+      "accruedInterestLoans": 0,
+      "loansGrantedYtdCount": 0,
+      "loansGrantedYtdAmount": 0,
+      "interestOnLoansYtd": 0,
+      "creditLossExpenseLoansYtd": 0,
+      "delinquencyTotal60Plus": 0,
+      "delinquencyTotal60PlusLoans": 0,
+      "nonAccrualLoans": 0,
+      "bankruptcyOutstanding": 0,
+      "tdrLoans": 0,
+      "tdrBalance": 0,
+      "delinquencySources": {},
+      "indirect": {
+        "auto": {
+          "count": 0,
+          "balance": 0
+        },
+        "other": {
+          "count": 0,
+          "balance": 0
+        },
+        "total": {
+          "count": 0,
+          "balance": 0
+        }
+      },
+      "loanMix": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "student": {
+          "label": "Non-federally guaranteed student",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherNonCommercialRE": {
+          "label": "Other non-commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialRE": {
+          "label": "Commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        }
+      },
+      "delinquency60PlusDetail": {},
+      "chargeOffs": {
+        "total": {
+          "chargeOffs": 0,
+          "recoveries": 0
+        }
+      },
+      "riskHighlights": [],
+      "insights": [
+        "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
+      ],
+      "callReportFile": "CallReport5300_June-2025_FINANCIAL CENTER FIRST.pdf",
+      "callReportUrl": "CallReports/CallReport5300_June-2025_FINANCIAL CENTER FIRST.pdf",
+      "dataStatus": "call-report-pdf-only"
+    },
+    {
+      "id": "callreport5300-september-2025-gulf-pdf",
+      "name": "Gulf",
+      "charter": "",
+      "asOf": "September 30, 2025",
+      "periodMonths": 9,
+      "totalAssets": 0,
+      "totalLoans": 0,
+      "loanCount": 0,
+      "allowance": 0,
+      "accruedInterestLoans": 0,
+      "loansGrantedYtdCount": 0,
+      "loansGrantedYtdAmount": 0,
+      "interestOnLoansYtd": 0,
+      "creditLossExpenseLoansYtd": 0,
+      "delinquencyTotal60Plus": 0,
+      "delinquencyTotal60PlusLoans": 0,
+      "nonAccrualLoans": 0,
+      "bankruptcyOutstanding": 0,
+      "tdrLoans": 0,
+      "tdrBalance": 0,
+      "delinquencySources": {},
+      "indirect": {
+        "auto": {
+          "count": 0,
+          "balance": 0
+        },
+        "other": {
+          "count": 0,
+          "balance": 0
+        },
+        "total": {
+          "count": 0,
+          "balance": 0
+        }
+      },
+      "loanMix": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "student": {
+          "label": "Non-federally guaranteed student",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherNonCommercialRE": {
+          "label": "Other non-commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialRE": {
+          "label": "Commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        }
+      },
+      "delinquency60PlusDetail": {},
+      "chargeOffs": {
+        "total": {
+          "chargeOffs": 0,
+          "recoveries": 0
+        }
+      },
+      "riskHighlights": [],
+      "insights": [
+        "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
+      ],
+      "callReportFile": "CallReport5300_September-2025_GULF.pdf",
+      "callReportUrl": "CallReports/CallReport5300_September-2025_GULF.pdf",
+      "dataStatus": "call-report-pdf-only"
+    },
     {
       "id": "inspire-2025-q2",
       "name": "Inspire Federal Credit Union",
@@ -368,6 +868,256 @@
       ],
       "callReportFile": "CallReport5300_September-2023_LION'S SHARE.pdf",
       "callReportUrl": "CallReports/CallReport5300_September-2023_LION'S SHARE.pdf"
+    },
+    {
+      "id": "callreport5300-september-2025-maple-pdf",
+      "name": "Maple",
+      "charter": "",
+      "asOf": "September 30, 2025",
+      "periodMonths": 9,
+      "totalAssets": 0,
+      "totalLoans": 0,
+      "loanCount": 0,
+      "allowance": 0,
+      "accruedInterestLoans": 0,
+      "loansGrantedYtdCount": 0,
+      "loansGrantedYtdAmount": 0,
+      "interestOnLoansYtd": 0,
+      "creditLossExpenseLoansYtd": 0,
+      "delinquencyTotal60Plus": 0,
+      "delinquencyTotal60PlusLoans": 0,
+      "nonAccrualLoans": 0,
+      "bankruptcyOutstanding": 0,
+      "tdrLoans": 0,
+      "tdrBalance": 0,
+      "delinquencySources": {},
+      "indirect": {
+        "auto": {
+          "count": 0,
+          "balance": 0
+        },
+        "other": {
+          "count": 0,
+          "balance": 0
+        },
+        "total": {
+          "count": 0,
+          "balance": 0
+        }
+      },
+      "loanMix": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "student": {
+          "label": "Non-federally guaranteed student",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherNonCommercialRE": {
+          "label": "Other non-commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialRE": {
+          "label": "Commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        }
+      },
+      "delinquency60PlusDetail": {},
+      "chargeOffs": {
+        "total": {
+          "chargeOffs": 0,
+          "recoveries": 0
+        }
+      },
+      "riskHighlights": [],
+      "insights": [
+        "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
+      ],
+      "callReportFile": "CallReport5300_September-2025_MAPLE.pdf",
+      "callReportUrl": "CallReports/CallReport5300_September-2025_MAPLE.pdf",
+      "dataStatus": "call-report-pdf-only"
+    },
+    {
+      "id": "callreport5300-september-2025-rave-financial-pdf",
+      "name": "Rave Financial",
+      "charter": "",
+      "asOf": "September 30, 2025",
+      "periodMonths": 9,
+      "totalAssets": 0,
+      "totalLoans": 0,
+      "loanCount": 0,
+      "allowance": 0,
+      "accruedInterestLoans": 0,
+      "loansGrantedYtdCount": 0,
+      "loansGrantedYtdAmount": 0,
+      "interestOnLoansYtd": 0,
+      "creditLossExpenseLoansYtd": 0,
+      "delinquencyTotal60Plus": 0,
+      "delinquencyTotal60PlusLoans": 0,
+      "nonAccrualLoans": 0,
+      "bankruptcyOutstanding": 0,
+      "tdrLoans": 0,
+      "tdrBalance": 0,
+      "delinquencySources": {},
+      "indirect": {
+        "auto": {
+          "count": 0,
+          "balance": 0
+        },
+        "other": {
+          "count": 0,
+          "balance": 0
+        },
+        "total": {
+          "count": 0,
+          "balance": 0
+        }
+      },
+      "loanMix": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "student": {
+          "label": "Non-federally guaranteed student",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherNonCommercialRE": {
+          "label": "Other non-commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialRE": {
+          "label": "Commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        }
+      },
+      "delinquency60PlusDetail": {},
+      "chargeOffs": {
+        "total": {
+          "chargeOffs": 0,
+          "recoveries": 0
+        }
+      },
+      "riskHighlights": [],
+      "insights": [
+        "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
+      ],
+      "callReportFile": "CallReport5300_September-2025_RAVE FINANCIAL .pdf",
+      "callReportUrl": "CallReports/CallReport5300_September-2025_RAVE FINANCIAL .pdf",
+      "dataStatus": "call-report-pdf-only"
     }
   ]
 }
