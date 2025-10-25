@@ -586,6 +586,14 @@ function parseReportDate(value) {
 
 function loadProspectReports() {
   if (prospectDataPromise) return prospectDataPromise;
+  const staticPayload = window.GFS_PROSPECTS;
+  if (staticPayload && Array.isArray(staticPayload.reports)) {
+    const reports = staticPayload.reports;
+    PROSPECT_REPORTS = reports;
+    PROSPECT_LOOKUP = Object.fromEntries(reports.map((report) => [report.id, report]));
+    prospectDataPromise = Promise.resolve(reports);
+    return prospectDataPromise;
+  }
   if (!prospectsDataUrl) {
     prospectDataPromise = Promise.resolve([]);
     return prospectDataPromise;
