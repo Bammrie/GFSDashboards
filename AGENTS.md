@@ -1,5 +1,7 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
 
+2026-12-17: Added a GitHub Pages deployment workflow that re-runs `npm run generate:prospects` on call-report changes and publishes the refreshed `prospects-data.json` plus generated prospect pages with the static bundle so browsers always fetch the latest accounts.
+
 2026-12-16: Regenerated prospect artifacts after importing new call report PDFs/JSON, and wired the generator into the npm prestart hook so deployments automatically refresh prospects data.
 
 2025-10-25: Added product activation parameter requirements on the account dashboard so that ancillary coverage toggles now collect GAP, VSC, and credit insurance markup inputs before saving an active status. Updated styling to surface parameter inputs and validation feedback.
