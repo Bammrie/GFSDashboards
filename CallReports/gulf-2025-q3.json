@@ -1,0 +1,173 @@
+{
+  "id": "gulf-2025-q3",
+  "name": "Gulf",
+  "charter": "60205",
+  "asOf": "September 30, 2025",
+  "periodMonths": 9,
+  "totalAssets": 328098364,
+  "totalLoans": 183716852,
+  "loanCount": 10965,
+  "allowance": 879417,
+  "accruedInterestLoans": 681329,
+  "loansGrantedYtdCount": 4377,
+  "loansGrantedYtdAmount": 63774444,
+  "interestOnLoansYtd": 8306736,
+  "creditLossExpenseLoansYtd": 1187149,
+  "delinquencyTotal60Plus": 371955,
+  "delinquencyTotal60PlusLoans": 81,
+  "nonAccrualLoans": 219288,
+  "bankruptcyOutstanding": 0,
+  "tdrLoans": 5,
+  "tdrBalance": 72690,
+  "delinquencySources": {
+    "participations": 0,
+    "indirect": 12785,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": {
+      "count": 0,
+      "balance": 0
+    },
+    "other": {
+      "count": 0,
+      "balance": 0
+    },
+    "total": {
+      "count": 0,
+      "balance": 0
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 20,
+      "balance": 18104,
+      "rate": 12.0
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 3050,
+      "balance": 13825626,
+      "rate": 9.59
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 1866,
+      "balance": 35895233,
+      "rate": 4.15
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 4467,
+      "balance": 58941208,
+      "rate": 4.24
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 1166,
+      "balance": 15853932,
+      "rate": 5.66
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 288,
+      "balance": 28872798,
+      "rate": 4.98
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 34,
+      "balance": 2204758,
+      "rate": 5.56
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 20,
+      "balance": 1197710,
+      "rate": 6.19
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 41,
+      "balance": 26536256,
+      "rate": 6.08
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 13,
+      "balance": 371227,
+      "rate": 6.43
+    }
+  },
+  "delinquency60PlusDetail": {
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 75684,
+      "loans": 31
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 204840,
+      "loans": 43
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "balance": 91431,
+      "loans": 7
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 1798268,
+      "recoveries": 229145
+    },
+    "creditCard": {
+      "label": "Credit card",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 437258,
+      "recoveries": 188954
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 85621,
+      "recoveries": 2268
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 325388,
+      "recoveries": 24806
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 21265,
+      "recoveries": 13117
+    }
+  },
+  "riskHighlights": [
+    "Allowance reserves sit at $879k while charge-offs have already reached $1.80M this year, leaving little cushion for additional losses.",
+    "Used autos show $205k in 60+ delinquency across 43 loans and $325k of charge-offs; unsecured installment balances add $76k of 60+ delinquency with $437k in losses."
+  ],
+  "insights": [
+    "$94.8M in new and used autos plus $15.9M in other secured loans create a prime audience for GAP, VSC, and payment protection to protect margin and curb roll rates.",
+    "The $13.8M unsecured portfolio is producing outsized charge-offs—debt protection can stabilize member payments and reduce net loss exposure.",
+    "4,377 loans totaling $63.8M booked year-to-date offer consistent touchpoints to package coverage alongside every origination."
+  ],
+  "callReportFile": "gulf-2025-q3.pdf"
+}
