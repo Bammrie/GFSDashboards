@@ -58,11 +58,18 @@ export async function buildProspectArtifacts({
   writePages = true
 } = {}) {
   const outputDataPath = path.join(rootDir, 'prospects-data.json');
+  const staticBundlePath = path.join(rootDir, 'prospect-data.js');
   const templatePath = path.join(rootDir, 'templates', 'prospect-page.html');
   const outputPagesDir = path.join(rootDir, 'prospects');
 
   const reports = await loadProspectReports({ rootDir, logger });
-  await writeAggregatedData(reports, outputDataPath);
+  const payload = {
+    generatedAt: new Date().toISOString(),
+    reports
+  };
+
+  await writeAggregatedData(payload, outputDataPath);
+  await writeStaticBundle(payload, staticBundlePath);
 
   let generatedPages = 0;
   if (writePages) {
@@ -70,7 +77,7 @@ export async function buildProspectArtifacts({
   }
 
   logger.info?.(`Synchronized ${reports.length} prospect record${reports.length === 1 ? '' : 's'}.`);
-  return { reports, outputDataPath, generatedPages };
+  return { reports, outputDataPath, staticBundlePath, generatedPages };
 }
 
 async function normalizeReport(report, fileName, { rootDir }) {
@@ -144,7 +151,7 @@ function createStubReportFromPdf(fileName) {
 
 function createIdFromFileName(fileName) {
   return fileName
-    .replace(/\.json$/i, '')
+    .replace(/\.(json|pdf)$/i, '')
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-');
@@ -162,16 +169,54 @@ function parseCallReportFileName(fileName) {
     };
   }
 
-  const segments = withoutPrefix.split('_');
-  let periodToken = '';
-  let nameSegments = segments;
-  if (segments.length > 1) {
-    periodToken = segments.shift();
-    nameSegments = segments;
+  const tokens = withoutPrefix
+    .replace(/[-\s]+/g, '_')
+    .split('_')
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+  if (!tokens.length) {
+    return {
+      name: titleCase(base.replace(/[-_]+/g, ' ')),
+      asOf: '',
+      periodMonths: null,
+      charter: ''
+    };
   }
 
-  const nameRaw = nameSegments.join(' ').replace(/[-_]+/g, ' ').trim();
-  const { asOf, periodMonths } = parsePeriodToken(periodToken);
+  let asOf = '';
+  let periodMonths = null;
+  let nameTokens = tokens.slice();
+
+  if (tokens.length >= 2) {
+    const last = tokens[tokens.length - 1];
+    const prev = tokens[tokens.length - 2];
+    const quarterMatch = last.match(/^q([1-4])$/i);
+    if (quarterMatch && /^\d{4}$/.test(prev)) {
+      const quarter = Number(quarterMatch[1]);
+      const quarterLookup = createQuarterLookup();
+      const quarterInfo = quarterLookup[quarter];
+      if (quarterInfo) {
+        const monthLookup = createMonthLookup();
+        const monthInfo = monthLookup[quarterInfo.monthKey];
+        if (monthInfo) {
+          asOf = `${monthInfo.label} ${monthInfo.days}, ${prev}`;
+          periodMonths = monthInfo.number;
+        }
+        nameTokens = tokens.slice(0, -2);
+      }
+    } else {
+      const periodToken = tokens[0];
+      const derived = parsePeriodToken(periodToken);
+      if (derived.asOf || derived.periodMonths) {
+        asOf = derived.asOf;
+        periodMonths = derived.periodMonths;
+        nameTokens = tokens.slice(1);
+      }
+    }
+  }
+
+  const nameRaw = nameTokens.join(' ').replace(/[-_]+/g, ' ').trim();
 
   return {
     name: nameRaw ? titleCase(nameRaw) : titleCase(base.replace(/[-_]+/g, ' ')),
@@ -216,6 +261,15 @@ function createMonthLookup() {
   };
 }
 
+function createQuarterLookup() {
+  return {
+    1: { monthKey: 'march' },
+    2: { monthKey: 'june' },
+    3: { monthKey: 'september' },
+    4: { monthKey: 'december' }
+  };
+}
+
 function createEmptyLoanMix() {
   const labels = {
     creditCard: 'Unsecured credit card',
@@ -255,16 +309,20 @@ function titleCase(value = '') {
       if (!word.length) return word;
       const normalized = word.replace(/[^A-Za-z0-9.]/g, '');
       const upper = word.toUpperCase();
+      const normalizedUpper = normalized.toUpperCase();
       if (upper === word) {
-        if (ALWAYS_UPPERCASE_TOKENS.has(normalized.toUpperCase())) {
+        if (ALWAYS_UPPERCASE_TOKENS.has(normalizedUpper)) {
           return upper;
         }
-        if (normalized.toUpperCase().endsWith('FCU')) {
+        if (normalizedUpper.endsWith('FCU')) {
           return upper;
         }
         if (normalized.length <= 3) {
           return upper;
         }
+      }
+      if (normalizedUpper.endsWith('FCU')) {
+        return normalizedUpper;
       }
       const lower = word.toLowerCase();
       return lower.charAt(0).toUpperCase() + lower.slice(1);
@@ -282,12 +340,13 @@ async function reportHasMatchingPdf(pdfFileName, rootDir) {
   }
 }
 
-async function writeAggregatedData(reports, outputDataPath) {
-  const payload = {
-    generatedAt: new Date().toISOString(),
-    reports
-  };
+async function writeAggregatedData(payload, outputDataPath) {
   await fsp.writeFile(outputDataPath, JSON.stringify(payload, null, 2));
+}
+
+async function writeStaticBundle(payload, outputPath) {
+  const script = `(function() {\n  window.GFS_PROSPECTS = ${JSON.stringify(payload, null, 2)};\n})();\n`;
+  await fsp.writeFile(outputPath, script);
 }
 
 async function generateProspectPages(reports, templatePath, outputPagesDir, rootDir, logger) {

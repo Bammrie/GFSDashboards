@@ -1,5 +1,7 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
 
+2026-12-19: Renamed newly added call report PDFs to slugified year/quarter filenames and taught the prospect generator to publish the synced `prospect-data.js` bundle alongside `prospects-data.json` so the frontend can read the refreshed prospect list without manual copying.
+
 2026-12-18: Inlined a manual `prospect-data.js` bundle and updated prospect pages to read from it so call report dashboards keep working without fetching `prospects-data.json`.
 
 2026-12-17: Added a GitHub Pages deployment workflow that re-runs `npm run generate:prospects` on call-report changes and publishes the refreshed `prospects-data.json` plus generated prospect pages with the static bundle so browsers always fetch the latest accounts.
