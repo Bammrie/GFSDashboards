@@ -5,6 +5,7 @@
   "scripts": {
     "prestart": "npm run generate:prospects",
     "start": "node server.mjs",
-    "generate:prospects": "node scripts/generateProspects.mjs"
+    "generate:prospects": "node scripts/generateProspects.mjs",
+    "build": "npm run generate:prospects"
   }
 }

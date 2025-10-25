@@ -1,0 +1,83 @@
+name: Build and Deploy Prospects Dashboard
+
+on:
+  push:
+    paths:
+      - 'CallReports/**'
+      - 'scripts/**'
+      - 'templates/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'index.html'
+      - 'prospects.html'
+      - 'reporting.html'
+      - 'create-account.html'
+      - 'prospects/**'
+      - 'prospects-data.json'
+      - 'styles.css'
+      - 'script.js'
+      - 'GFS Logo.png'
+  workflow_dispatch:
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Regenerate prospects from call reports
+        run: npm run generate:prospects
+
+      - name: Prepare static site bundle
+        run: |
+          rm -rf dist
+          mkdir -p dist
+          cp index.html dist/
+          cp prospects.html dist/
+          cp reporting.html dist/
+          cp create-account.html dist/
+          cp script.js dist/
+          cp styles.css dist/
+          cp prospects-data.json dist/
+          cp "GFS Logo.png" dist/
+          cp package.json dist/
+          cp package-lock.json dist/
+          cp server.mjs dist/
+          cp -r prospects dist/
+          cp -r templates dist/
+
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
