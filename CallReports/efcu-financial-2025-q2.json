@@ -1,0 +1,183 @@
+{
+  "id": "efcu-financial-2025-q2",
+  "name": "Efcu Financial",
+  "charter": "13",
+  "asOf": "June 30, 2025",
+  "periodMonths": 6,
+  "totalAssets": 1225768731,
+  "totalLoans": 1066626282,
+  "loanCount": 38283,
+  "allowance": 3718742,
+  "accruedInterestLoans": 4229405,
+  "loansGrantedYtdCount": 3953,
+  "loansGrantedYtdAmount": 214869204,
+  "interestOnLoansYtd": 31054531,
+  "creditLossExpenseLoansYtd": 1858374,
+  "delinquencyTotal60Plus": 1971268,
+  "delinquencyTotal60PlusLoans": 114,
+  "nonAccrualLoans": 2195858,
+  "bankruptcyOutstanding": 1940213,
+  "tdrLoans": 125,
+  "tdrBalance": 3077515,
+  "delinquencySources": {
+    "participations": 0,
+    "indirect": 316281,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": {
+      "count": 0,
+      "balance": 0
+    },
+    "other": {
+      "count": 0,
+      "balance": 0
+    },
+    "total": {
+      "count": 0,
+      "balance": 0
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 5824,
+      "balance": 10114531,
+      "rate": 11.0
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 5428,
+      "balance": 23364852,
+      "rate": 8.75
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 9553,
+      "balance": 315788567,
+      "rate": 6.99
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 12853,
+      "balance": 309097171,
+      "rate": 6.99
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 1000,
+      "balance": 11474425,
+      "rate": 2.5
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 1974,
+      "balance": 310249682,
+      "rate": 6.0
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 1648,
+      "balance": 85455461,
+      "rate": 9.5
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 3,
+      "balance": 1081593,
+      "rate": 5.5
+    }
+  },
+  "delinquency60PlusDetail": {
+    "creditCard": {
+      "label": "Credit card",
+      "balance": 76142,
+      "loans": 18
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 144202,
+      "loans": 25
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 1402017,
+      "loans": 58
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "balance": 62515,
+      "loans": 7
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "balance": 286392,
+      "loans": 6
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 2115642,
+      "recoveries": 420908
+    },
+    "creditCard": {
+      "label": "Credit card",
+      "chargeOffs": 109220,
+      "recoveries": 9940
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 433832,
+      "recoveries": 64150
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 615976,
+      "recoveries": 132835
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 0,
+      "recoveries": 0
+    }
+  },
+  "riskHighlights": [
+    "Used vehicle contracts carry $1.40M of 60+ delinquency across 58 loans and $616k of year-to-date charge-offs, dominating portfolio losses.",
+    "Junior lien mortgages total $310.2M with $286k in 60+ delinquency and 125 troubled restructures worth $3.08M, signaling sustained credit stress."
+  ],
+  "insights": [
+    "Auto and lease balances exceed $878M and have generated over $1.05M in charge-offs this year—ripe for layered GAP, VSC, and payment protection programs.",
+    "The 5,824-card, $10.1M credit card book already posts $76k of 60+ delinquency; debt protection can curb net losses and improve recovery.",
+    "3,953 loans totaling $214.9M booked year-to-date provide a large funnel to embed protection products at the point of origination."
+  ],
+  "callReportFile": "efcu-financial-2025-q2.pdf"
+}
