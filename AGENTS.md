@@ -6,6 +6,8 @@ REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log w
 
 2026-12-15: Documented consumer coverage opportunity heuristics (Life $1.00, Disability $2.25, IUI $1.40 per $1,000 with 38% penetration) and updated the prospects fetch to bypass caches so new call reports are always ingested on refresh.
 
+2026-12-16: Added automatic placeholder prospect generation for PDF-only call report uploads so the dashboard lists accounts even before JSON extracts are available, keeping links to the source filings intact.
+
 2026-11-25: Added a lightweight Node static file server (server.mjs) and wired an npm start script so Railway can boot the dashboard without manual commands.
 
 2025-01-14: Added channel exposure tables (indirect production and delinquency source mix) to the Prospects analytics experience, tying Inspire FCU (6/30/25) and Lion's Share FCU (9/30/23) call reports to revenue modeling.
@@ -96,3 +98,4 @@ Document or extend new features so they reuse these formulas without re-defining
 2025-10-24: Rounded prospect call-report dollar displays to whole numbers and tightened typography so metric cards and tables keep text within their boxes.
 2026-09-21: Automated prospect detail page generation from CallReports JSON uploads, added revenue opportunity rankings, and expanded product modeling with Mortgage Life Insurance for 1st lien mortgages.
 2026-08-26: Added a competitor tracking input to the prospects engagement log to capture current providers per interaction.
+2025-10-25: Automated call report ingestion from the /CallReports directory on server start and file changes so account and prospect data regenerate whenever new JSON uploads arrive. Shared the generator logic in scripts/lib/prospectBuilder.mjs.
