@@ -302,8 +302,8 @@ const PROSPECT_PRODUCT_MODELS = [
     label: 'Mortgage Life Insurance — 1st Lien',
     type: 'mob',
     eligibleBalanceKeys: ['firstMortgage'],
-    penetration: 0.12,
-    rates: { clp: 0.38, gfsMarkup: 0.18, creditUnionMarkup: 0.14 }
+    penetration: 0.05,
+    rates: { clp: 3.8, gfsMarkup: 0.2, gfsUnderwriting: 0, creditUnionMarkup: 0 }
   },
   {
     id: 'gap',
@@ -334,7 +334,7 @@ const PROSPECT_PRODUCT_MODELS = [
 ];
 
 const PROSPECT_PRODUCT_FOOTNOTE =
-  'Credit life, disability, and IUI estimates: (consumer loans ÷ $1,000) × rate × 38% monthly CU remittance (rates — Life $1.00, Disability $2.25, IUI $1.40). VSC & GAP assume direct auto loans outstanding ÷ 24 for monthly production (40% VSC @ $400 GFS, 70% GAP @ $50 GFS). CPI modeling: $90 billed ($25 GFS / $20 CU).';
+  'Credit life, disability, and IUI estimates: (consumer loans ÷ $1,000) × rate × 38% monthly CU remittance (rates — Life $1.00, Disability $2.25, IUI $1.40; assuming 38% penetration). Mortgage Life models 5% of 1st lien balances at a $4.00 total premium with a 5% GFS share. VSC & GAP assume direct auto loans outstanding ÷ 24 for monthly production (40% VSC @ $400 GFS, 70% GAP @ $50 GFS). CPI modeling: $90 billed ($25 GFS / $20 CU).';
 
 const prospectState = {
   activeProspectId: '',
@@ -2198,7 +2198,7 @@ function renderProductTable(report, metrics, opportunityRows) {
     appendTableCell(row, opportunity.baseDisplay);
     appendTableCell(row, formatPercent(model.penetration, { decimals: 0 }));
     appendTableCell(row, formatProspectCurrency(opportunity.grossAnnual));
-    appendTableCell(row, formatProspectCurrency(opportunity.gfsAnnual));
+    appendTableCell(row, formatGfsShare(opportunity));
     appendTableCell(row, formatProspectCurrency(opportunity.creditUnionAnnual));
     tbody.append(row);
   });
@@ -2223,22 +2223,33 @@ function calculateProductOpportunity(report, metrics, model) {
     const penetration = Number(model.penetration) || 0;
     const creditUnionShare =
       typeof model.creditUnionShare === 'number' ? model.creditUnionShare : 0;
-    const gfsShare = typeof model.gfsShare === 'number' ? model.gfsShare : 0;
+    const gfsMarkupShare =
+      typeof model.gfsMarkupShare === 'number'
+        ? model.gfsMarkupShare
+        : typeof model.gfsShare === 'number'
+          ? model.gfsShare
+          : 0;
+    const gfsUnderwritingShare =
+      typeof model.gfsUnderwritingShare === 'number' ? model.gfsUnderwritingShare : 0;
     const grossShare =
       typeof model.grossShare === 'number'
         ? model.grossShare
-        : creditUnionShare + gfsShare || 1;
+        : creditUnionShare + gfsMarkupShare + gfsUnderwritingShare || 1;
 
     const monthlyFullCoverage = (consumerBalance / 1000) * ratePerThousand;
     const monthlyModeled = monthlyFullCoverage * penetration;
     const creditUnionMonthly = monthlyModeled * creditUnionShare;
-    const gfsMonthly = monthlyModeled * gfsShare;
+    const gfsMonthlyMarkup = monthlyModeled * gfsMarkupShare;
+    const gfsMonthlyUnderwriting = monthlyModeled * gfsUnderwritingShare;
+    const gfsMonthly = gfsMonthlyMarkup + gfsMonthlyUnderwriting;
     const grossMonthly = monthlyModeled * grossShare;
 
     return {
       baseDisplay: `${formatProspectCurrency(consumerBalance)} consumer loans`,
       grossAnnual: grossMonthly * 12,
       gfsAnnual: gfsMonthly * 12,
+      gfsMarkupAnnual: gfsMonthlyMarkup * 12,
+      gfsUnderwritingAnnual: gfsMonthlyUnderwriting * 12,
       creditUnionAnnual: creditUnionMonthly * 12,
       eligibleBalance: consumerBalance,
       annualEligible: null,
@@ -2272,6 +2283,8 @@ function calculateProductOpportunity(report, metrics, model) {
       baseDisplay: `${formatNumber(Math.round(annualEligible))} loans / yr`,
       grossAnnual,
       gfsAnnual,
+      gfsMarkupAnnual: gfsAnnual,
+      gfsUnderwritingAnnual: 0,
       creditUnionAnnual,
       eligibleBalance: null,
       annualEligible,
@@ -2281,14 +2294,22 @@ function calculateProductOpportunity(report, metrics, model) {
 
   if (model.type === 'mob') {
     const eligibleBalance = sumBalances(report, model.eligibleBalanceKeys || []);
-    const totalRate = (model.rates?.clp || 0) + (model.rates?.gfsMarkup || 0) + (model.rates?.creditUnionMarkup || 0);
+    const gfsMarkupRate = model.rates?.gfsMarkup || 0;
+    const gfsUnderwritingRate = model.rates?.gfsUnderwriting || 0;
+    const creditUnionRate = model.rates?.creditUnionMarkup || 0;
+    const totalRate =
+      (model.rates?.clp || 0) + gfsMarkupRate + gfsUnderwritingRate + creditUnionRate;
     const grossAnnual = eligibleBalance * model.penetration * (totalRate / 100) * 12;
-    const gfsAnnual = eligibleBalance * model.penetration * ((model.rates?.gfsMarkup || 0) / 100) * 12;
-    const creditUnionAnnual = eligibleBalance * model.penetration * ((model.rates?.creditUnionMarkup || 0) / 100) * 12;
+    const gfsMarkupAnnual = eligibleBalance * model.penetration * (gfsMarkupRate / 100) * 12;
+    const gfsUnderwritingAnnual = eligibleBalance * model.penetration * (gfsUnderwritingRate / 100) * 12;
+    const gfsAnnual = gfsMarkupAnnual + gfsUnderwritingAnnual;
+    const creditUnionAnnual = eligibleBalance * model.penetration * (creditUnionRate / 100) * 12;
     return {
       baseDisplay: `${formatProspectCurrency(eligibleBalance)} outstanding`,
       grossAnnual,
       gfsAnnual,
+      gfsMarkupAnnual,
+      gfsUnderwritingAnnual,
       creditUnionAnnual,
       eligibleBalance,
       annualEligible: null,
@@ -2305,11 +2326,32 @@ function calculateProductOpportunity(report, metrics, model) {
     baseDisplay: `${formatNumber(Math.round(annualEligible))} loans / yr`,
     grossAnnual,
     gfsAnnual,
+    gfsMarkupAnnual: gfsAnnual,
+    gfsUnderwritingAnnual: 0,
     creditUnionAnnual,
     eligibleBalance: null,
     annualEligible,
     unitsSold
   };
+}
+
+function formatGfsShare(opportunity) {
+  const total = formatProspectCurrency(opportunity.gfsAnnual);
+  const markup = Number(opportunity.gfsMarkupAnnual) || 0;
+  const underwriting = Number(opportunity.gfsUnderwritingAnnual) || 0;
+  if (markup > 0 || underwriting > 0) {
+    const parts = [];
+    if (markup > 0) {
+      parts.push(`${formatProspectCurrency(markup)} markup`);
+    }
+    if (underwriting > 0) {
+      parts.push(`${formatProspectCurrency(underwriting)} underwriting`);
+    }
+    if (parts.length) {
+      return `${total} (${parts.join(' / ')})`;
+    }
+  }
+  return total;
 }
 
 function setupProspectLogForm() {
