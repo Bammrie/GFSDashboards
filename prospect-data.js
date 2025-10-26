@@ -1,6 +1,6 @@
 (function() {
   window.GFS_PROSPECTS = {
-  "generatedAt": "2025-10-26T12:20:16.384Z",
+  "generatedAt": "2025-10-26T13:25:17.582Z",
   "reports": [
     {
       "id": "callreport5300-june2025-financial-center-first",
