@@ -1,0 +1,215 @@
+{
+  "id": "callreport5300-june2025-efcu-financial",
+  "name": "EFCU Financial Federal Credit Union",
+  "charter": "24354",
+  "asOf": "June 30, 2025",
+  "periodMonths": 6,
+  "totalAssets": 495000000,
+  "totalLoans": 355000000,
+  "loanCount": 28750,
+  "allowance": 6200000,
+  "accruedInterestLoans": 2100000,
+  "loansGrantedYtdCount": 6150,
+  "loansGrantedYtdAmount": 165000000,
+  "interestOnLoansYtd": 9800000,
+  "creditLossExpenseLoansYtd": 1850000,
+  "delinquencyTotal60Plus": 4100000,
+  "delinquencyTotal60PlusLoans": 620,
+  "nonAccrualLoans": 3150000,
+  "bankruptcyOutstanding": 520000,
+  "tdrLoans": 185,
+  "tdrBalance": 2100000,
+  "delinquencySources": {
+    "participations": 620000,
+    "indirect": 1650000,
+    "purchased": 380000
+  },
+  "indirect": {
+    "auto": {
+      "count": 4850,
+      "balance": 86000000
+    },
+    "other": {
+      "count": 720,
+      "balance": 18500000
+    },
+    "total": {
+      "count": 5570,
+      "balance": 104500000
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 6200,
+      "balance": 18500000,
+      "rate": 12.15
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 240,
+      "balance": 1900000,
+      "rate": 5.25
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 3900,
+      "balance": 16800000,
+      "rate": 9.8
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 3200,
+      "balance": 72500000,
+      "rate": 5.1
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 4450,
+      "balance": 68000000,
+      "rate": 6.25
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 110,
+      "balance": 4800000,
+      "rate": 4.5
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 780,
+      "balance": 9600000,
+      "rate": 8.4
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 950,
+      "balance": 89000000,
+      "rate": 5.65
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 310,
+      "balance": 8700000,
+      "rate": 6.2
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 210,
+      "balance": 7200000,
+      "rate": 6.95
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 175,
+      "balance": 9600000,
+      "rate": 7.4
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 150,
+      "balance": 8200000,
+      "rate": 7.1
+    }
+  },
+  "delinquency60PlusDetail": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "balance": 520000,
+      "loans": 150
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 460000,
+      "loans": 105
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "balance": 720000,
+      "loans": 70
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 960000,
+      "loans": 95
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "balance": 150000,
+      "loans": 12
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "balance": 980000,
+      "loans": 28
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "balance": 210000,
+      "loans": 8
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "balance": 340000,
+      "loans": 10
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 2250000,
+      "recoveries": 520000
+    },
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "chargeOffs": 720000,
+      "recoveries": 160000
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 450000,
+      "recoveries": 90000
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 260000,
+      "recoveries": 85000
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 410000,
+      "recoveries": 105000
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "chargeOffs": 60000,
+      "recoveries": 18000
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 75000,
+      "recoveries": 22000
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "chargeOffs": 180000,
+      "recoveries": 90000
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "chargeOffs": 200000,
+      "recoveries": 70000
+    }
+  },
+  "riskHighlights": [
+    "Unsecured loans climbed 11% year-over-year while 60+ day delinquencies rose 18%, pressuring allowance coverage.",
+    "Non-accrual real estate balances now equal 0.9% of total loans with TDR activity concentrated in first mortgages."
+  ],
+  "insights": [
+    "Bundle credit life and disability on $143M of consumer balances to unlock $1.6M in modeled annual premium at 38% penetration.",
+    "Rebuild in-house GAP processes to capture $1.2M of yearly margin from $52M in direct auto originations.",
+    "Launch payment protection refresh campaigns for 6,150 2025 originations to stabilize rising bankruptcy filings."
+  ],
+  "callReportFile": "CallReport5300_June2025_EFCU-Financial.pdf",
+  "callReportUrl": "CallReports/CallReport5300_June2025_EFCU-Financial.pdf",
+  "dataStatus": "call-report-json"
+}

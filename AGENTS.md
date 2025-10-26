@@ -1,4 +1,6 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2026-12-28: Parsed six newly uploaded call reports for Ascension, EFCU Financial, Gulf Coast, Maple, Rave Financial, and TLC Community; moved PDFs into CallReports and generated JSON plus prospect detail pages.
+
 
 2025-10-26: Expanded the reporting layout for wider desktop screens, increased panel breathing room, and kept table labels on a single line so the summary reads cleanly.
 

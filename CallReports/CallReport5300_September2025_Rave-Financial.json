@@ -1,0 +1,215 @@
+{
+  "id": "callreport5300-september2025-rave-financial",
+  "name": "Rave Financial Federal Credit Union",
+  "charter": "24242",
+  "asOf": "September 30, 2025",
+  "periodMonths": 9,
+  "totalAssets": 655000000,
+  "totalLoans": 472000000,
+  "loanCount": 35680,
+  "allowance": 10200000,
+  "accruedInterestLoans": 2980000,
+  "loansGrantedYtdCount": 9680,
+  "loansGrantedYtdAmount": 212000000,
+  "interestOnLoansYtd": 15400000,
+  "creditLossExpenseLoansYtd": 2980000,
+  "delinquencyTotal60Plus": 6200000,
+  "delinquencyTotal60PlusLoans": 845,
+  "nonAccrualLoans": 4380000,
+  "bankruptcyOutstanding": 720000,
+  "tdrLoans": 330,
+  "tdrBalance": 3960000,
+  "delinquencySources": {
+    "participations": 880000,
+    "indirect": 2420000,
+    "purchased": 610000
+  },
+  "indirect": {
+    "auto": {
+      "count": 6840,
+      "balance": 128000000
+    },
+    "other": {
+      "count": 910,
+      "balance": 23800000
+    },
+    "total": {
+      "count": 7750,
+      "balance": 151800000
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 12500,
+      "balance": 38500000,
+      "rate": 12.35
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 260,
+      "balance": 2100000,
+      "rate": 5.4
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 5200,
+      "balance": 23800000,
+      "rate": 9.75
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 4200,
+      "balance": 98500000,
+      "rate": 5.3
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 5100,
+      "balance": 84500000,
+      "rate": 6.45
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 180,
+      "balance": 6200000,
+      "rate": 4.4
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 980,
+      "balance": 11800000,
+      "rate": 8.6
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 1680,
+      "balance": 139000000,
+      "rate": 5.62
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 620,
+      "balance": 19800000,
+      "rate": 6.2
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 460,
+      "balance": 15000000,
+      "rate": 6.98
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 390,
+      "balance": 21200000,
+      "rate": 7.3
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 350,
+      "balance": 18600000,
+      "rate": 7.1
+    }
+  },
+  "delinquency60PlusDetail": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "balance": 620000,
+      "loans": 190
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 540000,
+      "loans": 125
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "balance": 1180000,
+      "loans": 120
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 1460000,
+      "loans": 140
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "balance": 195000,
+      "loans": 18
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "balance": 1250000,
+      "loans": 52
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "balance": 330000,
+      "loans": 12
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "balance": 460000,
+      "loans": 8
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 2840000,
+      "recoveries": 735000
+    },
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "chargeOffs": 920000,
+      "recoveries": 210000
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 610000,
+      "recoveries": 150000
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 320000,
+      "recoveries": 98000
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 465000,
+      "recoveries": 128000
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "chargeOffs": 68000,
+      "recoveries": 21000
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 115000,
+      "recoveries": 34000
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "chargeOffs": 185000,
+      "recoveries": 91000
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "chargeOffs": 205000,
+      "recoveries": 65000
+    }
+  },
+  "riskHighlights": [
+    "Credit card and unsecured balances expanded 9% year-to-date while delinquency severity reached a three-year high.",
+    "Real estate non-accruals now comprise 48% of total past-due dollars as TDR workouts plateau."
+  ],
+  "insights": [
+    "Layer credit life and disability onto $146M of consumer loans to realize $1.8M in annual premium at targeted penetration.",
+    "Guide $53M of direct auto originations into bundled GAP and VSC offers to reclaim $1.6M in yearly margin.",
+    "Launch mortgage protection pilots on $159M of real estate exposure to stem non-accrual growth."
+  ],
+  "callReportFile": "CallReport5300_September2025_Rave-Financial.pdf",
+  "callReportUrl": "CallReports/CallReport5300_September2025_Rave-Financial.pdf",
+  "dataStatus": "call-report-json"
+}
