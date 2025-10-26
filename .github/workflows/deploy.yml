@@ -59,11 +59,13 @@ jobs:
           cp script.js dist/
           cp styles.css dist/
           cp prospects-data.json dist/
+          cp prospect-data.js dist/
           cp "GFS Logo.png" dist/
           cp package.json dist/
           cp package-lock.json dist/
           cp server.mjs dist/
           cp -r prospects dist/
+          cp -r CallReports dist/
           cp -r templates dist/
 
       - name: Upload artifact for GitHub Pages
