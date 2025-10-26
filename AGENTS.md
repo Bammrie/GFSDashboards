@@ -1,5 +1,7 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
 
+2025-10-26: Expanded the reporting layout for wider desktop screens, increased panel breathing room, and kept table labels on a single line so the summary reads cleanly.
+
 2026-12-27: Added overflow handling to prospect metric cards so large formatted numbers wrap within their tiles.
 
 2026-12-26: Fixed a nullish coalescing / logical OR mix-up in script.js so the Financial Center First prospect page renders metrics again and regenerated the static prospect bundles.
