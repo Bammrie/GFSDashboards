@@ -1186,6 +1186,9 @@ textarea {
   font-size: clamp(1.2rem, 1.6vw + 0.9rem, 1.6rem);
   font-weight: 600;
   letter-spacing: 0.04em;
+  line-height: 1.2;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .metric-card__note {

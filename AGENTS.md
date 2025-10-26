@@ -1,5 +1,7 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
 
+2026-12-27: Added overflow handling to prospect metric cards so large formatted numbers wrap within their tiles.
+
 2026-12-26: Fixed a nullish coalescing / logical OR mix-up in script.js so the Financial Center First prospect page renders metrics again and regenerated the static prospect bundles.
 
 2026-12-24: Enabled automatic GitHub Pages provisioning in the deployment workflow by passing `enablement: true` to the configure-pages action to resolve the job failure when the site was not already set up.
