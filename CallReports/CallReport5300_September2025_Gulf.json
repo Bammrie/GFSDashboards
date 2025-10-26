@@ -1,0 +1,215 @@
+{
+  "id": "callreport5300-september2025-gulf",
+  "name": "Gulf Coast Federal Credit Union",
+  "charter": "27491",
+  "asOf": "September 30, 2025",
+  "periodMonths": 9,
+  "totalAssets": 1250000000,
+  "totalLoans": 910000000,
+  "loanCount": 70500,
+  "allowance": 18200000,
+  "accruedInterestLoans": 6850000,
+  "loansGrantedYtdCount": 14250,
+  "loansGrantedYtdAmount": 448000000,
+  "interestOnLoansYtd": 25800000,
+  "creditLossExpenseLoansYtd": 6850000,
+  "delinquencyTotal60Plus": 15800000,
+  "delinquencyTotal60PlusLoans": 1985,
+  "nonAccrualLoans": 11200000,
+  "bankruptcyOutstanding": 1860000,
+  "tdrLoans": 880,
+  "tdrBalance": 10200000,
+  "delinquencySources": {
+    "participations": 2950000,
+    "indirect": 6200000,
+    "purchased": 2100000
+  },
+  "indirect": {
+    "auto": {
+      "count": 18600,
+      "balance": 335000000
+    },
+    "other": {
+      "count": 2450,
+      "balance": 61500000
+    },
+    "total": {
+      "count": 21050,
+      "balance": 396500000
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 23400,
+      "balance": 82000000,
+      "rate": 12.75
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 720,
+      "balance": 6200000,
+      "rate": 5.85
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 12600,
+      "balance": 56500000,
+      "rate": 9.95
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 9300,
+      "balance": 208000000,
+      "rate": 5.15
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 11800,
+      "balance": 196000000,
+      "rate": 6.4
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 540,
+      "balance": 16800000,
+      "rate": 4.35
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 2680,
+      "balance": 31200000,
+      "rate": 8.75
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 3100,
+      "balance": 268000000,
+      "rate": 5.42
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 1120,
+      "balance": 44200000,
+      "rate": 6.18
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 870,
+      "balance": 29800000,
+      "rate": 6.88
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 690,
+      "balance": 38500000,
+      "rate": 7.25
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 640,
+      "balance": 45500000,
+      "rate": 7.1
+    }
+  },
+  "delinquency60PlusDetail": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "balance": 1980000,
+      "loans": 520
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 1650000,
+      "loans": 330
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "balance": 3320000,
+      "loans": 360
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 4280000,
+      "loans": 415
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "balance": 520000,
+      "loans": 44
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "balance": 2680000,
+      "loans": 110
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "balance": 780000,
+      "loans": 32
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "balance": 960000,
+      "loans": 27
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 9720000,
+      "recoveries": 2480000
+    },
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "chargeOffs": 3280000,
+      "recoveries": 620000
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 1950000,
+      "recoveries": 430000
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 890000,
+      "recoveries": 275000
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 1320000,
+      "recoveries": 360000
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "chargeOffs": 210000,
+      "recoveries": 68000
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 265000,
+      "recoveries": 82000
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "chargeOffs": 420000,
+      "recoveries": 210000
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "chargeOffs": 470000,
+      "recoveries": 165000
+    }
+  },
+  "riskHighlights": [
+    "Indirect portfolios now exceed $396M and account for 55% of 60+ day delinquency pressure.",
+    "Charge-offs accelerated 18% year-to-date with allowance coverage falling to 2.0% as growth outpaces reserves."
+  ],
+  "insights": [
+    "Reintroduce payment protection packaging on $369M of consumer loans to unlock $4.9M in modeled annual premium.",
+    "Transition $139M of direct auto originations to bundled GAP and VSC offers targeting $4.6M in yearly margin.",
+    "Coordinate mortgage life outreach across $312M in real estate exposure to counter rising non-accrual balances."
+  ],
+  "callReportFile": "CallReport5300_September2025_Gulf.pdf",
+  "callReportUrl": "CallReports/CallReport5300_September2025_Gulf.pdf",
+  "dataStatus": "call-report-json"
+}
