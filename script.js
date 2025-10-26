@@ -1291,7 +1291,7 @@ function initDashboardPage() {
       if (!fieldEl) return;
       const validationEl = fieldEl.querySelector('.coverage-field__validation');
       if (!validationEl) return;
-      const status = statusOverride ?? currentRecord.products?.[productName] || '';
+      const status = statusOverride ?? currentRecord.products?.[productName] ?? '';
       let missingDefs = missing || [];
       if (!missingDefs.length && status === 'yes') {
         const definitions = getProductParameterDefinitions(productName);
