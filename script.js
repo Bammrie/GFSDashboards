@@ -1546,48 +1546,56 @@ function initReportingPage() {
       const counts = summarizeProductStatuses(record);
       const row = document.createElement('tr');
 
-      const cells = [
-        account.name || 'Unnamed credit union',
-        account.charter || '—',
-        counts.yes.toString(),
-        counts.no.toString(),
-        counts.pending.toString(),
-        record.updatedAt ? formatDateTime(record.updatedAt) : 'Not set',
-        account.latestAsOf || '—'
-      ];
+      const nameCell = document.createElement('td');
+      const accountName = account.name || 'Unnamed credit union';
+      if (account.latestReport) {
+        const link = document.createElement('a');
+        link.href = `prospects/${account.latestReport.id}.html`;
+        link.className = 'data-table__link';
+        link.textContent = accountName;
+        nameCell.append(link);
+      } else {
+        nameCell.textContent = accountName;
+      }
+      row.append(nameCell);
 
-      cells.forEach((value, index) => {
-        const cell = document.createElement('td');
-        if (index === 6 && account.latestReport) {
-          const label = document.createElement('div');
-          label.textContent = value;
-          cell.append(label);
+      const charterCell = document.createElement('td');
+      charterCell.textContent = account.charter || '—';
+      row.append(charterCell);
 
-          const linkGroup = document.createElement('div');
-          linkGroup.className = 'account-hub__report-links';
+      const liveCell = document.createElement('td');
+      liveCell.textContent = counts.yes.toString();
+      row.append(liveCell);
 
-          const detailLink = document.createElement('a');
-          detailLink.href = `prospects/${account.latestReport.id}.html`;
-          detailLink.className = 'account-hub__report-link';
-          detailLink.textContent = 'Open dashboard';
-          linkGroup.append(detailLink);
+      const declinedCell = document.createElement('td');
+      declinedCell.textContent = counts.no.toString();
+      row.append(declinedCell);
 
-          if (account.latestReport.callReportUrl) {
-            const pdfLink = document.createElement('a');
-            pdfLink.href = account.latestReport.callReportUrl;
-            pdfLink.target = '_blank';
-            pdfLink.rel = 'noopener';
-            pdfLink.className = 'account-hub__report-link';
-            pdfLink.textContent = 'Call report PDF';
-            linkGroup.append(pdfLink);
-          }
+      const pendingCell = document.createElement('td');
+      pendingCell.textContent = counts.pending.toString();
+      row.append(pendingCell);
 
-          cell.append(linkGroup);
-        } else {
-          cell.textContent = value;
-        }
-        row.append(cell);
-      });
+      const updatedCell = document.createElement('td');
+      updatedCell.textContent = record.updatedAt ? formatDateTime(record.updatedAt) : 'Not set';
+      row.append(updatedCell);
+
+      const reportCell = document.createElement('td');
+      reportCell.textContent = account.latestAsOf || '—';
+      if (account.latestReport?.callReportUrl) {
+        const linkGroup = document.createElement('div');
+        linkGroup.className = 'account-hub__report-links';
+
+        const pdfLink = document.createElement('a');
+        pdfLink.href = account.latestReport.callReportUrl;
+        pdfLink.target = '_blank';
+        pdfLink.rel = 'noopener';
+        pdfLink.className = 'account-hub__report-link';
+        pdfLink.textContent = 'Call report PDF';
+        linkGroup.append(pdfLink);
+
+        reportCell.append(linkGroup);
+      }
+      row.append(reportCell);
 
       tableBody.append(row);
     });
