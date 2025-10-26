@@ -1,5 +1,6 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
 
+2026-12-22: Recreated the CallReports workspace with the June 2025 Financial Center First PDF and regenerated prospect artifacts so placeholder accounts build automatically from uploads.
 2026-12-21: Parsed six newly uploaded CallReports PDFs into structured JSON, regenerated prospects-data bundles, and added risk/insight narratives so dashboards render full analytics for Ascension, EFCU Financial, Financial Center First, Gulf, Maple, and Rave Financial.
 
 2026-12-20: Added the configure-pages step to the deployment workflow so GitHub Actions can enable Pages deployments without manual settings changes.
