@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2026-12-30: Hyperlinked coverage summary account names directly to dashboards and removed the duplicate "Open dashboard" link from the latest report column to tighten each row layout.
 2026-12-29: Parsed Matagorda County and CommonCents call reports, generated JSON plus prospect detail pages, and published updated data bundles with placeholder PDFs so dashboard links remain live.
 2026-12-28: Parsed six newly uploaded call reports for Ascension, EFCU Financial, Gulf Coast, Maple, Rave Financial, and TLC Community; moved PDFs into CallReports and generated JSON plus prospect detail pages.
 

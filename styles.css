@@ -895,6 +895,16 @@ textarea {
   background: rgba(199, 72, 63, 0.08);
 }
 
+.data-table__link {
+  color: var(--color-amber-300);
+  font-weight: 600;
+}
+
+.data-table__link:hover,
+.data-table__link:focus {
+  color: var(--color-amber-100);
+}
+
 .table-form__helper {
   margin: 0.5rem 0 0;
   color: var(--color-text-muted);
