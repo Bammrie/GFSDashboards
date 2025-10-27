@@ -1,220 +1,560 @@
 (function() {
   window.GFS_PROSPECTS = {
-  "generatedAt": "2026-12-29T15:00:00Z",
+  "generatedAt": "2025-10-27T00:49:35.188Z",
   "reports": [
     {
-      "id": "callreport5300-june2025-financial-center-first",
-      "name": "Financial Center First Credit Union",
-      "charter": "3169",
-      "asOf": "June 30, 2025",
-      "periodMonths": 6,
-      "totalAssets": 890000000,
-      "totalLoans": 640000000,
-      "loanCount": 48125,
-      "allowance": 12500000,
-      "accruedInterestLoans": 5150000,
-      "loansGrantedYtdCount": 9450,
-      "loansGrantedYtdAmount": 305000000,
-      "interestOnLoansYtd": 17850000,
-      "creditLossExpenseLoansYtd": 4250000,
-      "delinquencyTotal60Plus": 9800000,
-      "delinquencyTotal60PlusLoans": 1345,
-      "nonAccrualLoans": 6900000,
-      "bankruptcyOutstanding": 1150000,
-      "tdrLoans": 620,
-      "tdrBalance": 5400000,
+      "id": "callreport5300-september2025-ascension",
+      "name": "Ascension Credit Union",
+      "charter": "64461",
+      "asOf": "September 30, 2025",
+      "periodMonths": 9,
+      "totalAssets": 310000000,
+      "totalLoans": 205000000,
+      "loanCount": 17420,
+      "allowance": 4100000,
+      "accruedInterestLoans": 1150000,
+      "loansGrantedYtdCount": 3890,
+      "loansGrantedYtdAmount": 102000000,
+      "interestOnLoansYtd": 6150000,
+      "creditLossExpenseLoansYtd": 1120000,
+      "delinquencyTotal60Plus": 2100000,
+      "delinquencyTotal60PlusLoans": 265,
+      "nonAccrualLoans": 1580000,
+      "bankruptcyOutstanding": 245000,
+      "tdrLoans": 95,
+      "tdrBalance": 980000,
       "delinquencySources": {
-        "participations": 1850000,
-        "indirect": 3900000,
-        "purchased": 1450000
+        "participations": 250000,
+        "indirect": 740000,
+        "purchased": 180000
       },
       "indirect": {
         "auto": {
-          "count": 10250,
-          "balance": 185000000
+          "count": 1860,
+          "balance": 34500000
         },
         "other": {
-          "count": 1450,
-          "balance": 42000000
+          "count": 220,
+          "balance": 5800000
         },
         "total": {
-          "count": 11700,
-          "balance": 227000000
+          "count": 2080,
+          "balance": 40300000
         }
       },
       "loanMix": {
         "creditCard": {
           "label": "Unsecured credit card",
-          "count": 17350,
-          "balance": 52000000,
-          "rate": 11.45
+          "count": 3200,
+          "balance": 9800000,
+          "rate": 12.05
         },
         "student": {
           "label": "Non-federally guaranteed student",
-          "count": 1050,
-          "balance": 8500000,
-          "rate": 6.05
+          "count": 120,
+          "balance": 880000,
+          "rate": 5.1
         },
         "otherUnsecured": {
           "label": "All other unsecured",
-          "count": 9000,
-          "balance": 39000000,
-          "rate": 9.35
+          "count": 2100,
+          "balance": 9400000,
+          "rate": 9.6
         },
         "newVehicle": {
           "label": "New vehicle",
-          "count": 6600,
-          "balance": 148000000,
-          "rate": 5.04
+          "count": 1600,
+          "balance": 38000000,
+          "rate": 5.45
         },
         "usedVehicle": {
           "label": "Used vehicle",
-          "count": 8200,
-          "balance": 125000000,
-          "rate": 6.12
+          "count": 2300,
+          "balance": 36500000,
+          "rate": 6.35
         },
         "leases": {
           "label": "Leases receivable",
-          "count": 365,
-          "balance": 12000000,
-          "rate": 4.21
+          "count": 60,
+          "balance": 2100000,
+          "rate": 4.4
         },
         "otherSecured": {
           "label": "Other secured non-real estate",
-          "count": 1950,
-          "balance": 21500000,
-          "rate": 8.55
+          "count": 520,
+          "balance": 6100000,
+          "rate": 8.1
         },
         "firstMortgage": {
           "label": "1st lien residential real estate",
-          "count": 1600,
-          "balance": 150000000,
-          "rate": 5.38
+          "count": 780,
+          "balance": 53000000,
+          "rate": 5.75
         },
         "juniorMortgage": {
           "label": "Junior lien residential real estate",
-          "count": 720,
-          "balance": 24000000,
-          "rate": 6.11
+          "count": 260,
+          "balance": 6900000,
+          "rate": 6.28
         },
         "otherNonCommercialRE": {
           "label": "Other non-commercial real estate",
-          "count": 540,
-          "balance": 16000000,
-          "rate": 6.82
+          "count": 185,
+          "balance": 5200000,
+          "rate": 6.9
         },
         "commercialRE": {
           "label": "Commercial real estate",
-          "count": 410,
-          "balance": 18000000,
-          "rate": 7.05
+          "count": 140,
+          "balance": 8100000,
+          "rate": 7.35
         },
         "commercialOther": {
           "label": "Commercial & industrial",
-          "count": 340,
-          "balance": 26000000,
-          "rate": 6.95
+          "count": 125,
+          "balance": 6200000,
+          "rate": 7.05
         }
       },
       "delinquency60PlusDetail": {
         "creditCard": {
           "label": "Unsecured credit card",
-          "balance": 950000,
-          "loans": 410
+          "balance": 210000,
+          "loans": 62
         },
         "otherUnsecured": {
           "label": "All other unsecured",
-          "balance": 780000,
-          "loans": 220
+          "balance": 185000,
+          "loans": 48
         },
         "newVehicle": {
           "label": "New vehicle",
-          "balance": 2100000,
-          "loans": 240
+          "balance": 360000,
+          "loans": 40
         },
         "usedVehicle": {
           "label": "Used vehicle",
-          "balance": 3200000,
-          "loans": 350
+          "balance": 480000,
+          "loans": 55
         },
         "otherSecured": {
           "label": "Other secured non-real estate",
-          "balance": 350000,
-          "loans": 28
+          "balance": 72000,
+          "loans": 6
         },
         "firstMortgage": {
           "label": "1st lien residential real estate",
-          "balance": 1400000,
-          "loans": 65
+          "balance": 390000,
+          "loans": 15
         },
         "juniorMortgage": {
           "label": "Junior lien residential real estate",
-          "balance": 450000,
-          "loans": 12
+          "balance": 98000,
+          "loans": 5
         },
         "commercialOther": {
           "label": "Commercial & industrial",
-          "balance": 550000,
-          "loans": 20
+          "balance": 165000,
+          "loans": 4
         }
       },
       "chargeOffs": {
         "total": {
-          "chargeOffs": 6080000,
-          "recoveries": 1550000
+          "chargeOffs": 1280000,
+          "recoveries": 340000
         },
         "creditCard": {
           "label": "Unsecured credit card",
-          "chargeOffs": 2200000,
-          "recoveries": 420000
+          "chargeOffs": 420000,
+          "recoveries": 95000
         },
         "otherUnsecured": {
           "label": "All other unsecured",
-          "chargeOffs": 1250000,
-          "recoveries": 280000
+          "chargeOffs": 260000,
+          "recoveries": 65000
         },
         "newVehicle": {
           "label": "New vehicle",
-          "chargeOffs": 680000,
-          "recoveries": 210000
+          "chargeOffs": 150000,
+          "recoveries": 52000
         },
         "usedVehicle": {
           "label": "Used vehicle",
-          "chargeOffs": 940000,
-          "recoveries": 260000
+          "chargeOffs": 210000,
+          "recoveries": 68000
         },
         "leases": {
           "label": "Leases receivable",
-          "chargeOffs": 120000,
-          "recoveries": 40000
+          "chargeOffs": 28000,
+          "recoveries": 9000
         },
         "otherSecured": {
           "label": "Other secured non-real estate",
-          "chargeOffs": 180000,
-          "recoveries": 60000
+          "chargeOffs": 46000,
+          "recoveries": 14000
         },
         "firstMortgage": {
           "label": "1st lien residential real estate",
-          "chargeOffs": 350000,
-          "recoveries": 160000
+          "chargeOffs": 82000,
+          "recoveries": 38000
         },
         "commercialOther": {
           "label": "Commercial & industrial",
-          "chargeOffs": 360000,
-          "recoveries": 120000
+          "chargeOffs": 90000,
+          "recoveries": 29000
         }
       },
       "riskHighlights": [
-        "Indirect auto partners now represent 40% of outstanding loans and 53% of 60+ day delinquency, adding loss volatility.",
-        "Allowance coverage of 1.95% trails peer medians given elevated unsecured charge-offs and growing non-accrual balances."
+        "Consumer delinquencies improved quarter-over-quarter, yet indirect partners still drive 35% of charge-offs.",
+        "Allowance coverage of 2.0% masks concentrated risk in new auto loans where recoveries lag 35% of charge-offs."
       ],
       "insights": [
-        "Position credit life and disability packaging to recapture over $3.0M in modeled annual premium tied to $243M of consumer balances.",
-        "Direct auto originations can support $3.1M in combined GAP and VSC margin annually if dealer buyouts shift to in-house products.",
-        "Mortgage life coverage remains an untapped $150M opportunity with delinquencies held below 1%."
+        "Embed credit life and disability on $69M in consumer balances to produce $760K in modeled annual premium.",
+        "Roll out direct GAP/VSC packaging across 1,860 indirect refinances to capture $540K in annual margin.",
+        "Pilot payment protection on 780 first mortgages to extend coverage to $53M of real estate exposure."
       ],
-      "callReportFile": "CallReport5300_June2025_Financial-Center-First.pdf",
-      "callReportUrl": "CallReports/CallReport5300_June2025_Financial-Center-First.pdf",
+      "callReportFile": "CallReport5300_September2025_Ascension.pdf",
+      "callReportUrl": "CallReports/CallReport5300_September2025_Ascension.pdf",
+      "dataStatus": "call-report-json"
+    },
+    {
+      "id": "callreport5300-june2025-building-trades-credit-union",
+      "name": "Building Trades Credit Union",
+      "charter": "",
+      "asOf": "June 30, 2025",
+      "periodMonths": 6,
+      "totalAssets": 0,
+      "totalLoans": 0,
+      "loanCount": 0,
+      "allowance": 0,
+      "accruedInterestLoans": 0,
+      "loansGrantedYtdCount": 0,
+      "loansGrantedYtdAmount": 0,
+      "interestOnLoansYtd": 0,
+      "creditLossExpenseLoansYtd": 0,
+      "delinquencyTotal60Plus": 0,
+      "delinquencyTotal60PlusLoans": 0,
+      "nonAccrualLoans": 0,
+      "bankruptcyOutstanding": 0,
+      "tdrLoans": 0,
+      "tdrBalance": 0,
+      "delinquencySources": {},
+      "indirect": {
+        "auto": {
+          "count": 0,
+          "balance": 0
+        },
+        "other": {
+          "count": 0,
+          "balance": 0
+        },
+        "total": {
+          "count": 0,
+          "balance": 0
+        }
+      },
+      "loanMix": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "student": {
+          "label": "Non-federally guaranteed student",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherNonCommercialRE": {
+          "label": "Other non-commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialRE": {
+          "label": "Commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        }
+      },
+      "delinquency60PlusDetail": {},
+      "chargeOffs": {
+        "total": {
+          "chargeOffs": 0,
+          "recoveries": 0
+        }
+      },
+      "riskHighlights": [],
+      "insights": [
+        "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
+      ],
+      "callReportFile": "CallReport5300_June2025_Building-Trades-Credit-Union.pdf",
+      "callReportUrl": "CallReports/CallReport5300_June2025_Building-Trades-Credit-Union.pdf",
+      "dataStatus": "call-report-pdf-only"
+    },
+    {
+      "id": "callreport5300-september2025-commoncents",
+      "name": "CommonCents Credit Union",
+      "charter": "68412",
+      "asOf": "September 30, 2025",
+      "periodMonths": 9,
+      "totalAssets": 428000000,
+      "totalLoans": 298000000,
+      "loanCount": 24850,
+      "allowance": 5950000,
+      "accruedInterestLoans": 1680000,
+      "loansGrantedYtdCount": 7250,
+      "loansGrantedYtdAmount": 198000000,
+      "interestOnLoansYtd": 9250000,
+      "creditLossExpenseLoansYtd": 1850000,
+      "delinquencyTotal60Plus": 3920000,
+      "delinquencyTotal60PlusLoans": 520,
+      "nonAccrualLoans": 2860000,
+      "bankruptcyOutstanding": 415000,
+      "tdrLoans": 210,
+      "tdrBalance": 2280000,
+      "delinquencySources": {
+        "participations": 420000,
+        "indirect": 1480000,
+        "purchased": 365000
+      },
+      "indirect": {
+        "auto": {
+          "count": 4280,
+          "balance": 86500000
+        },
+        "other": {
+          "count": 620,
+          "balance": 15800000
+        },
+        "total": {
+          "count": 4900,
+          "balance": 102300000
+        }
+      },
+      "loanMix": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "count": 5200,
+          "balance": 19200000,
+          "rate": 12.25
+        },
+        "student": {
+          "label": "Non-federally guaranteed student",
+          "count": 240,
+          "balance": 2100000,
+          "rate": 5.05
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "count": 4180,
+          "balance": 17600000,
+          "rate": 9.85
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "count": 3420,
+          "balance": 73500000,
+          "rate": 5.35
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "count": 4120,
+          "balance": 68800000,
+          "rate": 6.3
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "count": 210,
+          "balance": 6400000,
+          "rate": 4.5
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "count": 960,
+          "balance": 10800000,
+          "rate": 8.45
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "count": 1820,
+          "balance": 92500000,
+          "rate": 5.9
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 540,
+          "balance": 14800000,
+          "rate": 6.4
+        },
+        "otherNonCommercialRE": {
+          "label": "Other non-commercial real estate",
+          "count": 320,
+          "balance": 11200000,
+          "rate": 6.95
+        },
+        "commercialRE": {
+          "label": "Commercial real estate",
+          "count": 280,
+          "balance": 15800000,
+          "rate": 7.25
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "count": 260,
+          "balance": 13600000,
+          "rate": 7.05
+        }
+      },
+      "delinquency60PlusDetail": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "balance": 480000,
+          "loans": 135
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "balance": 360000,
+          "loans": 95
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "balance": 720000,
+          "loans": 80
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "balance": 910000,
+          "loans": 102
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "balance": 128000,
+          "loans": 14
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "balance": 740000,
+          "loans": 32
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "balance": 185000,
+          "loans": 11
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "balance": 310000,
+          "loans": 7
+        }
+      },
+      "chargeOffs": {
+        "total": {
+          "chargeOffs": 2680000,
+          "recoveries": 630000
+        },
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "chargeOffs": 780000,
+          "recoveries": 170000
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "chargeOffs": 520000,
+          "recoveries": 110000
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "chargeOffs": 310000,
+          "recoveries": 98000
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "chargeOffs": 420000,
+          "recoveries": 118000
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "chargeOffs": 62000,
+          "recoveries": 17000
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "chargeOffs": 88000,
+          "recoveries": 24000
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "chargeOffs": 210000,
+          "recoveries": 96000
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "chargeOffs": 220000,
+          "recoveries": 65000
+        }
+      },
+      "riskHighlights": [
+        "60+ delinquency remains above 1.3% of loans with 56% tied to indirect auto pools.",
+        "TDR balances climbed 12% year-to-date as bankruptcies accelerate in unsecured segments."
+      ],
+      "insights": [
+        "Layer credit life and disability packaging on $118M of consumer loans to model $1.3M in annual premium.",
+        "Shift 4,280 indirect auto partners into in-house GAP/VSC bundles to capture $1.1M in yearly margin.",
+        "Align payment protection refresh with 1,820 first mortgages to defend $92M of real estate exposure."
+      ],
+      "callReportFile": "CallReport5300_September2025_CommonCents.pdf",
+      "callReportUrl": "CallReports/CallReport5300_September2025_CommonCents.pdf",
       "dataStatus": "call-report-json"
     },
     {
@@ -433,433 +773,218 @@
       "dataStatus": "call-report-json"
     },
     {
-      "id": "callreport5300-june2025-tlc-community",
-      "name": "TLC Community Credit Union",
-      "charter": "62049",
+      "id": "callreport5300-june2025-financial-center-first",
+      "name": "Financial Center First Credit Union",
+      "charter": "3169",
       "asOf": "June 30, 2025",
       "periodMonths": 6,
-      "totalAssets": 780000000,
-      "totalLoans": 525000000,
-      "loanCount": 39210,
-      "allowance": 9400000,
-      "accruedInterestLoans": 3650000,
-      "loansGrantedYtdCount": 8125,
-      "loansGrantedYtdAmount": 248000000,
-      "interestOnLoansYtd": 14250000,
-      "creditLossExpenseLoansYtd": 3450000,
-      "delinquencyTotal60Plus": 7600000,
-      "delinquencyTotal60PlusLoans": 980,
-      "nonAccrualLoans": 5400000,
-      "bankruptcyOutstanding": 890000,
-      "tdrLoans": 410,
-      "tdrBalance": 4700000,
+      "totalAssets": 890000000,
+      "totalLoans": 640000000,
+      "loanCount": 48125,
+      "allowance": 12500000,
+      "accruedInterestLoans": 5150000,
+      "loansGrantedYtdCount": 9450,
+      "loansGrantedYtdAmount": 305000000,
+      "interestOnLoansYtd": 17850000,
+      "creditLossExpenseLoansYtd": 4250000,
+      "delinquencyTotal60Plus": 9800000,
+      "delinquencyTotal60PlusLoans": 1345,
+      "nonAccrualLoans": 6900000,
+      "bankruptcyOutstanding": 1150000,
+      "tdrLoans": 620,
+      "tdrBalance": 5400000,
       "delinquencySources": {
-        "participations": 980000,
-        "indirect": 2850000,
-        "purchased": 650000
+        "participations": 1850000,
+        "indirect": 3900000,
+        "purchased": 1450000
       },
       "indirect": {
         "auto": {
-          "count": 7850,
-          "balance": 146000000
+          "count": 10250,
+          "balance": 185000000
         },
         "other": {
-          "count": 980,
-          "balance": 27500000
+          "count": 1450,
+          "balance": 42000000
         },
         "total": {
-          "count": 8830,
-          "balance": 173500000
+          "count": 11700,
+          "balance": 227000000
         }
       },
       "loanMix": {
         "creditCard": {
           "label": "Unsecured credit card",
-          "count": 9100,
-          "balance": 31000000,
-          "rate": 12.9
+          "count": 17350,
+          "balance": 52000000,
+          "rate": 11.45
         },
         "student": {
           "label": "Non-federally guaranteed student",
-          "count": 380,
-          "balance": 3200000,
-          "rate": 5.6
+          "count": 1050,
+          "balance": 8500000,
+          "rate": 6.05
         },
         "otherUnsecured": {
           "label": "All other unsecured",
-          "count": 6550,
-          "balance": 28500000,
-          "rate": 10.2
+          "count": 9000,
+          "balance": 39000000,
+          "rate": 9.35
         },
         "newVehicle": {
           "label": "New vehicle",
-          "count": 5100,
-          "balance": 112000000,
-          "rate": 5.3
+          "count": 6600,
+          "balance": 148000000,
+          "rate": 5.04
         },
         "usedVehicle": {
           "label": "Used vehicle",
-          "count": 6200,
-          "balance": 104000000,
-          "rate": 6.45
+          "count": 8200,
+          "balance": 125000000,
+          "rate": 6.12
         },
         "leases": {
           "label": "Leases receivable",
-          "count": 290,
-          "balance": 8800000,
-          "rate": 4.6
+          "count": 365,
+          "balance": 12000000,
+          "rate": 4.21
         },
         "otherSecured": {
           "label": "Other secured non-real estate",
-          "count": 1480,
-          "balance": 18200000,
-          "rate": 8.9
+          "count": 1950,
+          "balance": 21500000,
+          "rate": 8.55
         },
         "firstMortgage": {
           "label": "1st lien residential real estate",
-          "count": 2200,
-          "balance": 168000000,
-          "rate": 5.52
+          "count": 1600,
+          "balance": 150000000,
+          "rate": 5.38
         },
         "juniorMortgage": {
           "label": "Junior lien residential real estate",
-          "count": 860,
-          "balance": 29500000,
-          "rate": 6.3
+          "count": 720,
+          "balance": 24000000,
+          "rate": 6.11
         },
         "otherNonCommercialRE": {
           "label": "Other non-commercial real estate",
-          "count": 640,
-          "balance": 19800000,
-          "rate": 7.1
+          "count": 540,
+          "balance": 16000000,
+          "rate": 6.82
         },
         "commercialRE": {
           "label": "Commercial real estate",
-          "count": 500,
-          "balance": 27500000,
-          "rate": 7.45
+          "count": 410,
+          "balance": 18000000,
+          "rate": 7.05
         },
         "commercialOther": {
           "label": "Commercial & industrial",
-          "count": 410,
-          "balance": 22500000,
-          "rate": 7.3
+          "count": 340,
+          "balance": 26000000,
+          "rate": 6.95
         }
       },
       "delinquency60PlusDetail": {
         "creditCard": {
           "label": "Unsecured credit card",
-          "balance": 880000,
-          "loans": 230
+          "balance": 950000,
+          "loans": 410
         },
         "otherUnsecured": {
           "label": "All other unsecured",
-          "balance": 640000,
-          "loans": 160
+          "balance": 780000,
+          "loans": 220
         },
         "newVehicle": {
           "label": "New vehicle",
-          "balance": 1350000,
-          "loans": 160
+          "balance": 2100000,
+          "loans": 240
         },
         "usedVehicle": {
           "label": "Used vehicle",
-          "balance": 1800000,
-          "loans": 195
+          "balance": 3200000,
+          "loans": 350
         },
         "otherSecured": {
           "label": "Other secured non-real estate",
-          "balance": 260000,
-          "loans": 24
+          "balance": 350000,
+          "loans": 28
         },
         "firstMortgage": {
           "label": "1st lien residential real estate",
-          "balance": 1600000,
-          "loans": 70
+          "balance": 1400000,
+          "loans": 65
         },
         "juniorMortgage": {
           "label": "Junior lien residential real estate",
-          "balance": 420000,
-          "loans": 18
+          "balance": 450000,
+          "loans": 12
         },
         "commercialOther": {
           "label": "Commercial & industrial",
-          "balance": 520000,
-          "loans": 15
+          "balance": 550000,
+          "loans": 20
         }
       },
       "chargeOffs": {
         "total": {
-          "chargeOffs": 3950000,
-          "recoveries": 1020000
+          "chargeOffs": 6080000,
+          "recoveries": 1550000
         },
         "creditCard": {
           "label": "Unsecured credit card",
+          "chargeOffs": 2200000,
+          "recoveries": 420000
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
           "chargeOffs": 1250000,
+          "recoveries": 280000
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "chargeOffs": 680000,
+          "recoveries": 210000
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "chargeOffs": 940000,
           "recoveries": 260000
         },
-        "otherUnsecured": {
-          "label": "All other unsecured",
-          "chargeOffs": 760000,
-          "recoveries": 180000
-        },
-        "newVehicle": {
-          "label": "New vehicle",
-          "chargeOffs": 420000,
-          "recoveries": 135000
-        },
-        "usedVehicle": {
-          "label": "Used vehicle",
-          "chargeOffs": 580000,
-          "recoveries": 165000
-        },
         "leases": {
           "label": "Leases receivable",
-          "chargeOffs": 95000,
-          "recoveries": 30000
+          "chargeOffs": 120000,
+          "recoveries": 40000
         },
         "otherSecured": {
           "label": "Other secured non-real estate",
-          "chargeOffs": 130000,
-          "recoveries": 45000
+          "chargeOffs": 180000,
+          "recoveries": 60000
         },
         "firstMortgage": {
           "label": "1st lien residential real estate",
-          "chargeOffs": 320000,
-          "recoveries": 150000
+          "chargeOffs": 350000,
+          "recoveries": 160000
         },
         "commercialOther": {
           "label": "Commercial & industrial",
-          "chargeOffs": 260000,
-          "recoveries": 85000
+          "chargeOffs": 360000,
+          "recoveries": 120000
         }
       },
       "riskHighlights": [
-        "Indirect share climbed to 33% of balances yet drives 46% of 60+ day delinquency exposure.",
-        "Allowance coverage at 1.79% lags peers amid accelerating charge-offs on unsecured and auto portfolios."
+        "Indirect auto partners now represent 40% of outstanding loans and 53% of 60+ day delinquency, adding loss volatility.",
+        "Allowance coverage of 1.95% trails peer medians given elevated unsecured charge-offs and growing non-accrual balances."
       ],
       "insights": [
-        "Embed payment protection with onboarding for 8,125 year-to-date loans to reclaim $2.9M in annual premium potential.",
-        "Deploy dealer GAP and VSC conversion teams to steer $61M of direct auto flow toward in-house contracts.",
-        "Offer mortgage life pilots targeting $197M in real estate balances with delinquency contained at 0.95%."
+        "Position credit life and disability packaging to recapture over $3.0M in modeled annual premium tied to $243M of consumer balances.",
+        "Direct auto originations can support $3.1M in combined GAP and VSC margin annually if dealer buyouts shift to in-house products.",
+        "Mortgage life coverage remains an untapped $150M opportunity with delinquencies held below 1%."
       ],
-      "callReportFile": "CallReport5300_June2025_TLC-Community.pdf",
-      "callReportUrl": "CallReports/CallReport5300_June2025_TLC-Community.pdf",
-      "dataStatus": "call-report-json"
-    },
-    {
-      "id": "callreport5300-september2025-ascension",
-      "name": "Ascension Credit Union",
-      "charter": "64461",
-      "asOf": "September 30, 2025",
-      "periodMonths": 9,
-      "totalAssets": 310000000,
-      "totalLoans": 205000000,
-      "loanCount": 17420,
-      "allowance": 4100000,
-      "accruedInterestLoans": 1150000,
-      "loansGrantedYtdCount": 3890,
-      "loansGrantedYtdAmount": 102000000,
-      "interestOnLoansYtd": 6150000,
-      "creditLossExpenseLoansYtd": 1120000,
-      "delinquencyTotal60Plus": 2100000,
-      "delinquencyTotal60PlusLoans": 265,
-      "nonAccrualLoans": 1580000,
-      "bankruptcyOutstanding": 245000,
-      "tdrLoans": 95,
-      "tdrBalance": 980000,
-      "delinquencySources": {
-        "participations": 250000,
-        "indirect": 740000,
-        "purchased": 180000
-      },
-      "indirect": {
-        "auto": {
-          "count": 1860,
-          "balance": 34500000
-        },
-        "other": {
-          "count": 220,
-          "balance": 5800000
-        },
-        "total": {
-          "count": 2080,
-          "balance": 40300000
-        }
-      },
-      "loanMix": {
-        "creditCard": {
-          "label": "Unsecured credit card",
-          "count": 3200,
-          "balance": 9800000,
-          "rate": 12.05
-        },
-        "student": {
-          "label": "Non-federally guaranteed student",
-          "count": 120,
-          "balance": 880000,
-          "rate": 5.1
-        },
-        "otherUnsecured": {
-          "label": "All other unsecured",
-          "count": 2100,
-          "balance": 9400000,
-          "rate": 9.6
-        },
-        "newVehicle": {
-          "label": "New vehicle",
-          "count": 1600,
-          "balance": 38000000,
-          "rate": 5.45
-        },
-        "usedVehicle": {
-          "label": "Used vehicle",
-          "count": 2300,
-          "balance": 36500000,
-          "rate": 6.35
-        },
-        "leases": {
-          "label": "Leases receivable",
-          "count": 60,
-          "balance": 2100000,
-          "rate": 4.4
-        },
-        "otherSecured": {
-          "label": "Other secured non-real estate",
-          "count": 520,
-          "balance": 6100000,
-          "rate": 8.1
-        },
-        "firstMortgage": {
-          "label": "1st lien residential real estate",
-          "count": 780,
-          "balance": 53000000,
-          "rate": 5.75
-        },
-        "juniorMortgage": {
-          "label": "Junior lien residential real estate",
-          "count": 260,
-          "balance": 6900000,
-          "rate": 6.28
-        },
-        "otherNonCommercialRE": {
-          "label": "Other non-commercial real estate",
-          "count": 185,
-          "balance": 5200000,
-          "rate": 6.9
-        },
-        "commercialRE": {
-          "label": "Commercial real estate",
-          "count": 140,
-          "balance": 8100000,
-          "rate": 7.35
-        },
-        "commercialOther": {
-          "label": "Commercial & industrial",
-          "count": 125,
-          "balance": 6200000,
-          "rate": 7.05
-        }
-      },
-      "delinquency60PlusDetail": {
-        "creditCard": {
-          "label": "Unsecured credit card",
-          "balance": 210000,
-          "loans": 62
-        },
-        "otherUnsecured": {
-          "label": "All other unsecured",
-          "balance": 185000,
-          "loans": 48
-        },
-        "newVehicle": {
-          "label": "New vehicle",
-          "balance": 360000,
-          "loans": 40
-        },
-        "usedVehicle": {
-          "label": "Used vehicle",
-          "balance": 480000,
-          "loans": 55
-        },
-        "otherSecured": {
-          "label": "Other secured non-real estate",
-          "balance": 72000,
-          "loans": 6
-        },
-        "firstMortgage": {
-          "label": "1st lien residential real estate",
-          "balance": 390000,
-          "loans": 15
-        },
-        "juniorMortgage": {
-          "label": "Junior lien residential real estate",
-          "balance": 98000,
-          "loans": 5
-        },
-        "commercialOther": {
-          "label": "Commercial & industrial",
-          "balance": 165000,
-          "loans": 4
-        }
-      },
-      "chargeOffs": {
-        "total": {
-          "chargeOffs": 1280000,
-          "recoveries": 340000
-        },
-        "creditCard": {
-          "label": "Unsecured credit card",
-          "chargeOffs": 420000,
-          "recoveries": 95000
-        },
-        "otherUnsecured": {
-          "label": "All other unsecured",
-          "chargeOffs": 260000,
-          "recoveries": 65000
-        },
-        "newVehicle": {
-          "label": "New vehicle",
-          "chargeOffs": 150000,
-          "recoveries": 52000
-        },
-        "usedVehicle": {
-          "label": "Used vehicle",
-          "chargeOffs": 210000,
-          "recoveries": 68000
-        },
-        "leases": {
-          "label": "Leases receivable",
-          "chargeOffs": 28000,
-          "recoveries": 9000
-        },
-        "otherSecured": {
-          "label": "Other secured non-real estate",
-          "chargeOffs": 46000,
-          "recoveries": 14000
-        },
-        "firstMortgage": {
-          "label": "1st lien residential real estate",
-          "chargeOffs": 82000,
-          "recoveries": 38000
-        },
-        "commercialOther": {
-          "label": "Commercial & industrial",
-          "chargeOffs": 90000,
-          "recoveries": 29000
-        }
-      },
-      "riskHighlights": [
-        "Consumer delinquencies improved quarter-over-quarter, yet indirect partners still drive 35% of charge-offs.",
-        "Allowance coverage of 2.0% masks concentrated risk in new auto loans where recoveries lag 35% of charge-offs."
-      ],
-      "insights": [
-        "Embed credit life and disability on $69M in consumer balances to produce $760K in modeled annual premium.",
-        "Roll out direct GAP/VSC packaging across 1,860 indirect refinances to capture $540K in annual margin.",
-        "Pilot payment protection on 780 first mortgages to extend coverage to $53M of real estate exposure."
-      ],
-      "callReportFile": "CallReport5300_September2025_Ascension.pdf",
-      "callReportUrl": "CallReports/CallReport5300_September2025_Ascension.pdf",
+      "callReportFile": "CallReport5300_June2025_Financial-Center-First.pdf",
+      "callReportUrl": "CallReports/CallReport5300_June2025_Financial-Center-First.pdf",
       "dataStatus": "call-report-json"
     },
     {
@@ -1078,6 +1203,131 @@
       "dataStatus": "call-report-json"
     },
     {
+      "id": "callreport5300-september2025-instep-credit-union",
+      "name": "InStep Credit Union",
+      "charter": "",
+      "asOf": "September 30, 2025",
+      "periodMonths": 9,
+      "totalAssets": 0,
+      "totalLoans": 0,
+      "loanCount": 0,
+      "allowance": 0,
+      "accruedInterestLoans": 0,
+      "loansGrantedYtdCount": 0,
+      "loansGrantedYtdAmount": 0,
+      "interestOnLoansYtd": 0,
+      "creditLossExpenseLoansYtd": 0,
+      "delinquencyTotal60Plus": 0,
+      "delinquencyTotal60PlusLoans": 0,
+      "nonAccrualLoans": 0,
+      "bankruptcyOutstanding": 0,
+      "tdrLoans": 0,
+      "tdrBalance": 0,
+      "delinquencySources": {},
+      "indirect": {
+        "auto": {
+          "count": 0,
+          "balance": 0
+        },
+        "other": {
+          "count": 0,
+          "balance": 0
+        },
+        "total": {
+          "count": 0,
+          "balance": 0
+        }
+      },
+      "loanMix": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "student": {
+          "label": "Non-federally guaranteed student",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "otherNonCommercialRE": {
+          "label": "Other non-commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialRE": {
+          "label": "Commercial real estate",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "count": 0,
+          "balance": 0,
+          "rate": 0
+        }
+      },
+      "delinquency60PlusDetail": {},
+      "chargeOffs": {
+        "total": {
+          "chargeOffs": 0,
+          "recoveries": 0
+        }
+      },
+      "riskHighlights": [],
+      "insights": [
+        "Upload the matching JSON extract for this call report to populate consumer lending analytics and opportunity modeling."
+      ],
+      "callReportFile": "CallReport5300_September2025_InStep-Credit-Union.pdf",
+      "callReportUrl": "CallReports/CallReport5300_September2025_InStep-Credit-Union.pdf",
+      "dataStatus": "call-report-pdf-only"
+    },
+    {
       "id": "callreport5300-september2025-maple",
       "name": "Maple Federal Credit Union",
       "charter": "63805",
@@ -1128,7 +1378,7 @@
           "label": "Non-federally guaranteed student",
           "count": 90,
           "balance": 620000,
-          "rate": 5.0
+          "rate": 5
         },
         "otherUnsecured": {
           "label": "All other unsecured",
@@ -1158,7 +1408,7 @@
           "label": "Other secured non-real estate",
           "count": 430,
           "balance": 4900000,
-          "rate": 8.0
+          "rate": 8
         },
         "firstMortgage": {
           "label": "1st lien residential real estate",
@@ -1188,7 +1438,7 @@
           "label": "Commercial & industrial",
           "count": 110,
           "balance": 4300000,
-          "rate": 7.0
+          "rate": 7
         }
       },
       "delinquency60PlusDetail": {
@@ -1290,6 +1540,221 @@
       ],
       "callReportFile": "CallReport5300_September2025_Maple.pdf",
       "callReportUrl": "CallReports/CallReport5300_September2025_Maple.pdf",
+      "dataStatus": "call-report-json"
+    },
+    {
+      "id": "callreport5300-september2025-matagorda-county",
+      "name": "Matagorda County Credit Union",
+      "charter": "67680",
+      "asOf": "September 30, 2025",
+      "periodMonths": 9,
+      "totalAssets": 198000000,
+      "totalLoans": 136500000,
+      "loanCount": 11280,
+      "allowance": 2450000,
+      "accruedInterestLoans": 840000,
+      "loansGrantedYtdCount": 3185,
+      "loansGrantedYtdAmount": 87500000,
+      "interestOnLoansYtd": 4150000,
+      "creditLossExpenseLoansYtd": 720000,
+      "delinquencyTotal60Plus": 1650000,
+      "delinquencyTotal60PlusLoans": 215,
+      "nonAccrualLoans": 1120000,
+      "bankruptcyOutstanding": 185000,
+      "tdrLoans": 72,
+      "tdrBalance": 640000,
+      "delinquencySources": {
+        "participations": 150000,
+        "indirect": 520000,
+        "purchased": 120000
+      },
+      "indirect": {
+        "auto": {
+          "count": 980,
+          "balance": 18200000
+        },
+        "other": {
+          "count": 140,
+          "balance": 3600000
+        },
+        "total": {
+          "count": 1120,
+          "balance": 21800000
+        }
+      },
+      "loanMix": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "count": 1850,
+          "balance": 5800000,
+          "rate": 11.95
+        },
+        "student": {
+          "label": "Non-federally guaranteed student",
+          "count": 45,
+          "balance": 420000,
+          "rate": 4.85
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "count": 1430,
+          "balance": 5100000,
+          "rate": 9.35
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "count": 1280,
+          "balance": 28500000,
+          "rate": 5.4
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "count": 1680,
+          "balance": 31200000,
+          "rate": 6.4
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "count": 35,
+          "balance": 1180000,
+          "rate": 4.2
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "count": 380,
+          "balance": 4200000,
+          "rate": 8
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "count": 620,
+          "balance": 41000000,
+          "rate": 5.85
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 190,
+          "balance": 5400000,
+          "rate": 6.35
+        },
+        "otherNonCommercialRE": {
+          "label": "Other non-commercial real estate",
+          "count": 95,
+          "balance": 3800000,
+          "rate": 6.9
+        },
+        "commercialRE": {
+          "label": "Commercial real estate",
+          "count": 80,
+          "balance": 5200000,
+          "rate": 7.2
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "count": 70,
+          "balance": 3600000,
+          "rate": 6.95
+        }
+      },
+      "delinquency60PlusDetail": {
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "balance": 145000,
+          "loans": 42
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "balance": 138000,
+          "loans": 36
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "balance": 290000,
+          "loans": 34
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "balance": 360000,
+          "loans": 41
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "balance": 56000,
+          "loans": 5
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "balance": 265000,
+          "loans": 12
+        },
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "balance": 64000,
+          "loans": 4
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "balance": 98000,
+          "loans": 3
+        }
+      },
+      "chargeOffs": {
+        "total": {
+          "chargeOffs": 910000,
+          "recoveries": 245000
+        },
+        "creditCard": {
+          "label": "Unsecured credit card",
+          "chargeOffs": 260000,
+          "recoveries": 62000
+        },
+        "otherUnsecured": {
+          "label": "All other unsecured",
+          "chargeOffs": 185000,
+          "recoveries": 48000
+        },
+        "newVehicle": {
+          "label": "New vehicle",
+          "chargeOffs": 110000,
+          "recoveries": 36000
+        },
+        "usedVehicle": {
+          "label": "Used vehicle",
+          "chargeOffs": 170000,
+          "recoveries": 54000
+        },
+        "leases": {
+          "label": "Leases receivable",
+          "chargeOffs": 18000,
+          "recoveries": 5000
+        },
+        "otherSecured": {
+          "label": "Other secured non-real estate",
+          "chargeOffs": 34000,
+          "recoveries": 9000
+        },
+        "firstMortgage": {
+          "label": "1st lien residential real estate",
+          "chargeOffs": 72000,
+          "recoveries": 31000
+        },
+        "commercialOther": {
+          "label": "Commercial & industrial",
+          "chargeOffs": 61000,
+          "recoveries": 17000
+        }
+      },
+      "riskHighlights": [
+        "Net charge-off rates improved 40 bps year-over-year, yet delinquency remains concentrated in indirect auto pools.",
+        "Allowance coverage at 1.8% trails peers as non-accrual mortgages inch toward 0.8% of total loans."
+      ],
+      "insights": [
+        "Deploy credit life and disability bundles on $48M of consumer loans to unlock $530K in modeled annual premium.",
+        "Reintroduce dealer GAP packaging on $18M in direct auto originations to recapture $360K of margin.",
+        "Layer payment protection cross-sell on 620 first mortgages to safeguard $41M in balances."
+      ],
+      "callReportFile": "CallReport5300_September2025_Matagorda-County.pdf",
+      "callReportUrl": "CallReports/CallReport5300_September2025_Matagorda-County.pdf",
       "dataStatus": "call-report-json"
     },
     {
@@ -1508,435 +1973,220 @@
       "dataStatus": "call-report-json"
     },
     {
-      "id": "callreport5300-september2025-matagorda-county",
-      "name": "Matagorda County Credit Union",
-      "charter": "67680",
-      "asOf": "September 30, 2025",
-      "periodMonths": 9,
-      "totalAssets": 198000000,
-      "totalLoans": 136500000,
-      "loanCount": 11280,
-      "allowance": 2450000,
-      "accruedInterestLoans": 840000,
-      "loansGrantedYtdCount": 3185,
-      "loansGrantedYtdAmount": 87500000,
-      "interestOnLoansYtd": 4150000,
-      "creditLossExpenseLoansYtd": 720000,
-      "delinquencyTotal60Plus": 1650000,
-      "delinquencyTotal60PlusLoans": 215,
-      "nonAccrualLoans": 1120000,
-      "bankruptcyOutstanding": 185000,
-      "tdrLoans": 72,
-      "tdrBalance": 640000,
+      "id": "callreport5300-june2025-tlc-community",
+      "name": "TLC Community Credit Union",
+      "charter": "62049",
+      "asOf": "June 30, 2025",
+      "periodMonths": 6,
+      "totalAssets": 780000000,
+      "totalLoans": 525000000,
+      "loanCount": 39210,
+      "allowance": 9400000,
+      "accruedInterestLoans": 3650000,
+      "loansGrantedYtdCount": 8125,
+      "loansGrantedYtdAmount": 248000000,
+      "interestOnLoansYtd": 14250000,
+      "creditLossExpenseLoansYtd": 3450000,
+      "delinquencyTotal60Plus": 7600000,
+      "delinquencyTotal60PlusLoans": 980,
+      "nonAccrualLoans": 5400000,
+      "bankruptcyOutstanding": 890000,
+      "tdrLoans": 410,
+      "tdrBalance": 4700000,
       "delinquencySources": {
-        "participations": 150000,
-        "indirect": 520000,
-        "purchased": 120000
+        "participations": 980000,
+        "indirect": 2850000,
+        "purchased": 650000
       },
       "indirect": {
         "auto": {
+          "count": 7850,
+          "balance": 146000000
+        },
+        "other": {
           "count": 980,
-          "balance": 18200000
-        },
-        "other": {
-          "count": 140,
-          "balance": 3600000
+          "balance": 27500000
         },
         "total": {
-          "count": 1120,
-          "balance": 21800000
+          "count": 8830,
+          "balance": 173500000
         }
       },
       "loanMix": {
         "creditCard": {
           "label": "Unsecured credit card",
-          "count": 1850,
-          "balance": 5800000,
-          "rate": 11.95
+          "count": 9100,
+          "balance": 31000000,
+          "rate": 12.9
         },
         "student": {
           "label": "Non-federally guaranteed student",
-          "count": 45,
-          "balance": 420000,
-          "rate": 4.85
-        },
-        "otherUnsecured": {
-          "label": "All other unsecured",
-          "count": 1430,
-          "balance": 5100000,
-          "rate": 9.35
-        },
-        "newVehicle": {
-          "label": "New vehicle",
-          "count": 1280,
-          "balance": 28500000,
-          "rate": 5.4
-        },
-        "usedVehicle": {
-          "label": "Used vehicle",
-          "count": 1680,
-          "balance": 31200000,
-          "rate": 6.4
-        },
-        "leases": {
-          "label": "Leases receivable",
-          "count": 35,
-          "balance": 1180000,
-          "rate": 4.2
-        },
-        "otherSecured": {
-          "label": "Other secured non-real estate",
           "count": 380,
-          "balance": 4200000,
-          "rate": 8.0
-        },
-        "firstMortgage": {
-          "label": "1st lien residential real estate",
-          "count": 620,
-          "balance": 41000000,
-          "rate": 5.85
-        },
-        "juniorMortgage": {
-          "label": "Junior lien residential real estate",
-          "count": 190,
-          "balance": 5400000,
-          "rate": 6.35
-        },
-        "otherNonCommercialRE": {
-          "label": "Other non-commercial real estate",
-          "count": 95,
-          "balance": 3800000,
-          "rate": 6.9
-        },
-        "commercialRE": {
-          "label": "Commercial real estate",
-          "count": 80,
-          "balance": 5200000,
-          "rate": 7.2
-        },
-        "commercialOther": {
-          "label": "Commercial & industrial",
-          "count": 70,
-          "balance": 3600000,
-          "rate": 6.95
-        }
-      },
-      "delinquency60PlusDetail": {
-        "creditCard": {
-          "label": "Unsecured credit card",
-          "balance": 145000,
-          "loans": 42
+          "balance": 3200000,
+          "rate": 5.6
         },
         "otherUnsecured": {
           "label": "All other unsecured",
-          "balance": 138000,
-          "loans": 36
+          "count": 6550,
+          "balance": 28500000,
+          "rate": 10.2
         },
         "newVehicle": {
           "label": "New vehicle",
-          "balance": 290000,
-          "loans": 34
+          "count": 5100,
+          "balance": 112000000,
+          "rate": 5.3
         },
         "usedVehicle": {
           "label": "Used vehicle",
-          "balance": 360000,
-          "loans": 41
-        },
-        "otherSecured": {
-          "label": "Other secured non-real estate",
-          "balance": 56000,
-          "loans": 5
-        },
-        "firstMortgage": {
-          "label": "1st lien residential real estate",
-          "balance": 265000,
-          "loans": 12
-        },
-        "juniorMortgage": {
-          "label": "Junior lien residential real estate",
-          "balance": 64000,
-          "loans": 4
-        },
-        "commercialOther": {
-          "label": "Commercial & industrial",
-          "balance": 98000,
-          "loans": 3
-        }
-      },
-      "chargeOffs": {
-        "total": {
-          "chargeOffs": 910000,
-          "recoveries": 245000
-        },
-        "creditCard": {
-          "label": "Unsecured credit card",
-          "chargeOffs": 260000,
-          "recoveries": 62000
-        },
-        "otherUnsecured": {
-          "label": "All other unsecured",
-          "chargeOffs": 185000,
-          "recoveries": 48000
-        },
-        "newVehicle": {
-          "label": "New vehicle",
-          "chargeOffs": 110000,
-          "recoveries": 36000
-        },
-        "usedVehicle": {
-          "label": "Used vehicle",
-          "chargeOffs": 170000,
-          "recoveries": 54000
+          "count": 6200,
+          "balance": 104000000,
+          "rate": 6.45
         },
         "leases": {
           "label": "Leases receivable",
-          "chargeOffs": 18000,
-          "recoveries": 5000
+          "count": 290,
+          "balance": 8800000,
+          "rate": 4.6
         },
         "otherSecured": {
           "label": "Other secured non-real estate",
-          "chargeOffs": 34000,
-          "recoveries": 9000
+          "count": 1480,
+          "balance": 18200000,
+          "rate": 8.9
         },
         "firstMortgage": {
           "label": "1st lien residential real estate",
-          "chargeOffs": 72000,
-          "recoveries": 31000
+          "count": 2200,
+          "balance": 168000000,
+          "rate": 5.52
         },
-        "commercialOther": {
-          "label": "Commercial & industrial",
-          "chargeOffs": 61000,
-          "recoveries": 17000
-        }
-      },
-      "riskHighlights": [
-        "Net charge-off rates improved 40 bps year-over-year, yet delinquency remains concentrated in indirect auto pools.",
-        "Allowance coverage at 1.8% trails peers as non-accrual mortgages inch toward 0.8% of total loans."
-      ],
-      "insights": [
-        "Deploy credit life and disability bundles on $48M of consumer loans to unlock $530K in modeled annual premium.",
-        "Reintroduce dealer GAP packaging on $18M in direct auto originations to recapture $360K of margin.",
-        "Layer payment protection cross-sell on 620 first mortgages to safeguard $41M in balances."
-      ],
-      "callReportFile": "CallReport5300_September2025_Matagorda-County.pdf",
-      "callReportUrl": "CallReports/CallReport5300_September2025_Matagorda-County.pdf",
-      "dataStatus": "call-report-json"
-    },
-    {
-      "id": "callreport5300-september2025-commoncents",
-      "name": "CommonCents Credit Union",
-      "charter": "68412",
-      "asOf": "September 30, 2025",
-      "periodMonths": 9,
-      "totalAssets": 428000000,
-      "totalLoans": 298000000,
-      "loanCount": 24850,
-      "allowance": 5950000,
-      "accruedInterestLoans": 1680000,
-      "loansGrantedYtdCount": 7250,
-      "loansGrantedYtdAmount": 198000000,
-      "interestOnLoansYtd": 9250000,
-      "creditLossExpenseLoansYtd": 1850000,
-      "delinquencyTotal60Plus": 3920000,
-      "delinquencyTotal60PlusLoans": 520,
-      "nonAccrualLoans": 2860000,
-      "bankruptcyOutstanding": 415000,
-      "tdrLoans": 210,
-      "tdrBalance": 2280000,
-      "delinquencySources": {
-        "participations": 420000,
-        "indirect": 1480000,
-        "purchased": 365000
-      },
-      "indirect": {
-        "auto": {
-          "count": 4280,
-          "balance": 86500000
-        },
-        "other": {
-          "count": 620,
-          "balance": 15800000
-        },
-        "total": {
-          "count": 4900,
-          "balance": 102300000
-        }
-      },
-      "loanMix": {
-        "creditCard": {
-          "label": "Unsecured credit card",
-          "count": 5200,
-          "balance": 19200000,
-          "rate": 12.25
-        },
-        "student": {
-          "label": "Non-federally guaranteed student",
-          "count": 240,
-          "balance": 2100000,
-          "rate": 5.05
-        },
-        "otherUnsecured": {
-          "label": "All other unsecured",
-          "count": 4180,
-          "balance": 17600000,
-          "rate": 9.85
-        },
-        "newVehicle": {
-          "label": "New vehicle",
-          "count": 3420,
-          "balance": 73500000,
-          "rate": 5.35
-        },
-        "usedVehicle": {
-          "label": "Used vehicle",
-          "count": 4120,
-          "balance": 68800000,
+        "juniorMortgage": {
+          "label": "Junior lien residential real estate",
+          "count": 860,
+          "balance": 29500000,
           "rate": 6.3
         },
-        "leases": {
-          "label": "Leases receivable",
-          "count": 210,
-          "balance": 6400000,
-          "rate": 4.5
-        },
-        "otherSecured": {
-          "label": "Other secured non-real estate",
-          "count": 960,
-          "balance": 10800000,
-          "rate": 8.45
-        },
-        "firstMortgage": {
-          "label": "1st lien residential real estate",
-          "count": 1820,
-          "balance": 92500000,
-          "rate": 5.9
-        },
-        "juniorMortgage": {
-          "label": "Junior lien residential real estate",
-          "count": 540,
-          "balance": 14800000,
-          "rate": 6.4
-        },
         "otherNonCommercialRE": {
           "label": "Other non-commercial real estate",
-          "count": 320,
-          "balance": 11200000,
-          "rate": 6.95
+          "count": 640,
+          "balance": 19800000,
+          "rate": 7.1
         },
         "commercialRE": {
           "label": "Commercial real estate",
-          "count": 280,
-          "balance": 15800000,
-          "rate": 7.25
+          "count": 500,
+          "balance": 27500000,
+          "rate": 7.45
         },
         "commercialOther": {
           "label": "Commercial & industrial",
-          "count": 260,
-          "balance": 13600000,
-          "rate": 7.05
+          "count": 410,
+          "balance": 22500000,
+          "rate": 7.3
         }
       },
       "delinquency60PlusDetail": {
         "creditCard": {
           "label": "Unsecured credit card",
-          "balance": 480000,
-          "loans": 135
+          "balance": 880000,
+          "loans": 230
         },
         "otherUnsecured": {
           "label": "All other unsecured",
-          "balance": 360000,
-          "loans": 95
+          "balance": 640000,
+          "loans": 160
         },
         "newVehicle": {
           "label": "New vehicle",
-          "balance": 720000,
-          "loans": 80
+          "balance": 1350000,
+          "loans": 160
         },
         "usedVehicle": {
           "label": "Used vehicle",
-          "balance": 910000,
-          "loans": 102
+          "balance": 1800000,
+          "loans": 195
         },
         "otherSecured": {
           "label": "Other secured non-real estate",
-          "balance": 128000,
-          "loans": 14
+          "balance": 260000,
+          "loans": 24
         },
         "firstMortgage": {
           "label": "1st lien residential real estate",
-          "balance": 740000,
-          "loans": 32
+          "balance": 1600000,
+          "loans": 70
         },
         "juniorMortgage": {
           "label": "Junior lien residential real estate",
-          "balance": 185000,
-          "loans": 11
+          "balance": 420000,
+          "loans": 18
         },
         "commercialOther": {
           "label": "Commercial & industrial",
-          "balance": 310000,
-          "loans": 7
+          "balance": 520000,
+          "loans": 15
         }
       },
       "chargeOffs": {
         "total": {
-          "chargeOffs": 2680000,
-          "recoveries": 630000
+          "chargeOffs": 3950000,
+          "recoveries": 1020000
         },
         "creditCard": {
           "label": "Unsecured credit card",
-          "chargeOffs": 780000,
-          "recoveries": 170000
+          "chargeOffs": 1250000,
+          "recoveries": 260000
         },
         "otherUnsecured": {
           "label": "All other unsecured",
-          "chargeOffs": 520000,
-          "recoveries": 110000
+          "chargeOffs": 760000,
+          "recoveries": 180000
         },
         "newVehicle": {
           "label": "New vehicle",
-          "chargeOffs": 310000,
-          "recoveries": 98000
+          "chargeOffs": 420000,
+          "recoveries": 135000
         },
         "usedVehicle": {
           "label": "Used vehicle",
-          "chargeOffs": 420000,
-          "recoveries": 118000
+          "chargeOffs": 580000,
+          "recoveries": 165000
         },
         "leases": {
           "label": "Leases receivable",
-          "chargeOffs": 62000,
-          "recoveries": 17000
+          "chargeOffs": 95000,
+          "recoveries": 30000
         },
         "otherSecured": {
           "label": "Other secured non-real estate",
-          "chargeOffs": 88000,
-          "recoveries": 24000
+          "chargeOffs": 130000,
+          "recoveries": 45000
         },
         "firstMortgage": {
           "label": "1st lien residential real estate",
-          "chargeOffs": 210000,
-          "recoveries": 96000
+          "chargeOffs": 320000,
+          "recoveries": 150000
         },
         "commercialOther": {
           "label": "Commercial & industrial",
-          "chargeOffs": 220000,
-          "recoveries": 65000
+          "chargeOffs": 260000,
+          "recoveries": 85000
         }
       },
       "riskHighlights": [
-        "60+ delinquency remains above 1.3% of loans with 56% tied to indirect auto pools.",
-        "TDR balances climbed 12% year-to-date as bankruptcies accelerate in unsecured segments."
+        "Indirect share climbed to 33% of balances yet drives 46% of 60+ day delinquency exposure.",
+        "Allowance coverage at 1.79% lags peers amid accelerating charge-offs on unsecured and auto portfolios."
       ],
       "insights": [
-        "Layer credit life and disability packaging on $118M of consumer loans to model $1.3M in annual premium.",
-        "Shift 4,280 indirect auto partners into in-house GAP/VSC bundles to capture $1.1M in yearly margin.",
-        "Align payment protection refresh with 1,820 first mortgages to defend $92M of real estate exposure."
+        "Embed payment protection with onboarding for 8,125 year-to-date loans to reclaim $2.9M in annual premium potential.",
+        "Deploy dealer GAP and VSC conversion teams to steer $61M of direct auto flow toward in-house contracts.",
+        "Offer mortgage life pilots targeting $197M in real estate balances with delinquency contained at 0.95%."
       ],
-      "callReportFile": "CallReport5300_September2025_CommonCents.pdf",
-      "callReportUrl": "CallReports/CallReport5300_September2025_CommonCents.pdf",
+      "callReportFile": "CallReport5300_June2025_TLC-Community.pdf",
+      "callReportUrl": "CallReports/CallReport5300_June2025_TLC-Community.pdf",
       "dataStatus": "call-report-json"
     }
   ]
-}
+};
 })();
