@@ -1822,7 +1822,7 @@ function renderProspectSummary(report, metrics) {
   if (subtitle) {
     const summary = report.name
       ? `Call report intelligence and protection modeling for ${report.name}.`
-      : 'Load a 5300 call report to review consumer lending exposure and protection revenue opportunities.';
+      : 'Load a 5300 call report to review consumer lending exposure and production potential.';
     subtitle.textContent = summary;
   }
 
