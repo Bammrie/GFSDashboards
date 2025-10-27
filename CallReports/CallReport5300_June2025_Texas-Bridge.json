@@ -1,0 +1,166 @@
+{
+  "id": "callreport5300-june2025-texas-bridge",
+  "name": "Texas Bridge",
+  "charter": "61306",
+  "asOf": "June 30, 2025",
+  "periodMonths": 6,
+  "totalAssets": 88804472,
+  "totalLoans": 63077347,
+  "loanCount": 3539,
+  "allowance": 114277,
+  "accruedInterestLoans": 162913,
+  "loansGrantedYtdCount": 911,
+  "loansGrantedYtdAmount": 13014597,
+  "interestOnLoansYtd": 1768978,
+  "creditLossExpenseLoansYtd": 10000,
+  "delinquencyTotal60Plus": 35272,
+  "delinquencyTotal60PlusLoans": 17,
+  "nonAccrualLoans": 26826,
+  "bankruptcyOutstanding": 0,
+  "tdrLoans": 0,
+  "tdrBalance": 0,
+  "delinquencySources": {
+    "participations": 0,
+    "indirect": 0,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": {
+      "count": 0,
+      "balance": 0
+    },
+    "other": {
+      "count": 0,
+      "balance": 0
+    },
+    "total": {
+      "count": 0,
+      "balance": 0
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 595,
+      "balance": 561818,
+      "rate": 9.9
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 1019,
+      "balance": 5059985,
+      "rate": 10.75
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 866,
+      "balance": 26960795,
+      "rate": 4.7
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 613,
+      "balance": 12781299,
+      "rate": 6.26
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 230,
+      "balance": 3408995,
+      "rate": 5.71
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 176,
+      "balance": 12094480,
+      "rate": 4.62
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 2,
+      "balance": 118949,
+      "rate": 5.2
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 38,
+      "balance": 2091026,
+      "rate": 5.86
+    }
+  },
+  "delinquency60PlusDetail": {
+    "creditCard": {
+      "label": "Credit card",
+      "balance": 27662,
+      "loans": 13
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 5916,
+      "loans": 3
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 1694,
+      "loans": 1
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 30760,
+      "recoveries": 9712
+    },
+    "creditCard": {
+      "label": "Credit card",
+      "chargeOffs": 2810,
+      "recoveries": 5838
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 21851,
+      "recoveries": 2749
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 0,
+      "recoveries": 75
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 6099,
+      "recoveries": 1025
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 0,
+      "recoveries": 25
+    }
+  },
+  "riskHighlights": [],
+  "insights": [],
+  "callReportFile": "CallReport5300_June2025_Texas-Bridge.pdf"
+}

@@ -52,6 +52,18 @@ QUARTER_LOOKUP = {
     'q4': ('December 31', 12),
 }
 
+MONTH_LOOKUP = {
+    'march': ('March 31', 3),
+    'june': ('June 30', 6),
+    'september': ('September 30', 9),
+    'december': ('December 31', 12),
+}
+
+
+def slugify_file_stem(file_stem: str) -> str:
+    slug = re.sub(r'[^a-z0-9]+', '-', file_stem.lower()).strip('-')
+    return slug
+
 
 def parse_number(value: str) -> int:
     if value is None:
@@ -378,15 +390,27 @@ def parse_nonaccrual_sources(pdf: pdfplumber.PDF) -> Dict[str, int]:
 
 
 def quarter_info(file_stem: str) -> Tuple[str, int]:
-    parts = file_stem.split('-')
-    if len(parts) >= 3 and parts[-1].lower() in QUARTER_LOOKUP:
-        quarter = parts[-1].lower()
-        year = parts[-2]
+    normalized = file_stem.lower()
+    quarter_match = re.search(r'(20\d{2})[-_]?q([1-4])', normalized)
+    if quarter_match:
+        year = quarter_match.group(1)
+        quarter = f"q{quarter_match.group(2)}"
         month_label, months = QUARTER_LOOKUP[quarter]
         return f"{month_label}, {year}", months
-    if len(parts) >= 2:
-        year = parts[-1]
-        return f"December 31, {year}", 12
+
+    month_match = re.search(r'(march|june|september|december)[-_]?(20\d{2})', normalized)
+    if month_match:
+        month = month_match.group(1)
+        year = month_match.group(2)
+        month_label, months = MONTH_LOOKUP[month]
+        return f"{month_label}, {year}", months
+
+    year_match = re.search(r'20\d{2}', normalized)
+    if year_match:
+        year = year_match.group(0)
+        month_label, months = MONTH_LOOKUP['december']
+        return f"{month_label}, {year}", months
+
     return '', 0
 
 
@@ -407,7 +431,7 @@ def create_report(pdf_path: Path) -> Dict:
 
     as_of, period_months = quarter_info(pdf_path.stem)
     report = {
-        'id': pdf_path.stem,
+        'id': slugify_file_stem(pdf_path.stem),
         'name': name,
         'charter': charter,
         'asOf': as_of,

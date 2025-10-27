@@ -1,0 +1,166 @@
+{
+  "id": "callreport5300-june2025-coastlife",
+  "name": "Coastlife",
+  "charter": "68482",
+  "asOf": "June 30, 2025",
+  "periodMonths": 6,
+  "totalAssets": 512187826,
+  "totalLoans": 325994905,
+  "loanCount": 13674,
+  "allowance": 4728190,
+  "accruedInterestLoans": 1124886,
+  "loansGrantedYtdCount": 1435,
+  "loansGrantedYtdAmount": 45772604,
+  "interestOnLoansYtd": 9797183,
+  "creditLossExpenseLoansYtd": 2430312,
+  "delinquencyTotal60Plus": 3182360,
+  "delinquencyTotal60PlusLoans": 208,
+  "nonAccrualLoans": 3304176,
+  "bankruptcyOutstanding": 14360,
+  "tdrLoans": 84,
+  "tdrBalance": 1936935,
+  "delinquencySources": {
+    "participations": 0,
+    "indirect": 60509,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": {
+      "count": 0,
+      "balance": 0
+    },
+    "other": {
+      "count": 0,
+      "balance": 0
+    },
+    "total": {
+      "count": 0,
+      "balance": 0
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 3085,
+      "balance": 9291507,
+      "rate": 9.99
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 3102,
+      "balance": 97839587,
+      "rate": 5.5
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 5551,
+      "balance": 126776786,
+      "rate": 5.5
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 1384,
+      "balance": 39893210,
+      "rate": 8.51
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 424,
+      "balance": 32535039,
+      "rate": 6.25
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 88,
+      "balance": 4265808,
+      "rate": 6.25
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 17,
+      "balance": 14517940,
+      "rate": 6.25
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 23,
+      "balance": 875028,
+      "rate": 6.25
+    }
+  },
+  "delinquency60PlusDetail": {
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 115919,
+      "loans": 33
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 2278591,
+      "loans": 138
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "balance": 787850,
+      "loans": 37
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 3488976,
+      "recoveries": 258415
+    },
+    "creditCard": {
+      "label": "Credit card",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 328242,
+      "recoveries": 44897
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 571465,
+      "recoveries": 21333
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 1680540,
+      "recoveries": 136587
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 908729,
+      "recoveries": 55598
+    }
+  },
+  "riskHighlights": [],
+  "insights": [],
+  "callReportFile": "CallReport5300_June2025_CoastLife.pdf"
+}

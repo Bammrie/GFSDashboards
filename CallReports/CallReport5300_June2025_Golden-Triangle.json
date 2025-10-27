@@ -1,0 +1,161 @@
+{
+  "id": "callreport5300-june2025-golden-triangle",
+  "name": "Golden Triangle",
+  "charter": "8298",
+  "asOf": "June 30, 2025",
+  "periodMonths": 6,
+  "totalAssets": 37820082,
+  "totalLoans": 15851744,
+  "loanCount": 1578,
+  "allowance": 101592,
+  "accruedInterestLoans": 42967,
+  "loansGrantedYtdCount": 205,
+  "loansGrantedYtdAmount": 3226287,
+  "interestOnLoansYtd": 533539,
+  "creditLossExpenseLoansYtd": 11146,
+  "delinquencyTotal60Plus": 61363,
+  "delinquencyTotal60PlusLoans": 6,
+  "nonAccrualLoans": 24856,
+  "bankruptcyOutstanding": 4738,
+  "tdrLoans": 1,
+  "tdrBalance": 4738,
+  "delinquencySources": {
+    "participations": 0,
+    "indirect": 0,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": {
+      "count": 0,
+      "balance": 0
+    },
+    "other": {
+      "count": 0,
+      "balance": 0
+    },
+    "total": {
+      "count": 0,
+      "balance": 0
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 578,
+      "balance": 538751,
+      "rate": 9.9
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 363,
+      "balance": 1868809,
+      "rate": 12.5
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 142,
+      "balance": 4052818,
+      "rate": 5.5
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 316,
+      "balance": 5867822,
+      "rate": 5.5
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 161,
+      "balance": 2527379,
+      "rate": 6.5
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 18,
+      "balance": 996165,
+      "rate": 4.5
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    }
+  },
+  "delinquency60PlusDetail": {
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 18709,
+      "loans": 4
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 42654,
+      "loans": 2
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 9703,
+      "recoveries": 12290
+    },
+    "creditCard": {
+      "label": "Credit card",
+      "chargeOffs": 0,
+      "recoveries": 1092
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 670,
+      "recoveries": 9928
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 0,
+      "recoveries": 0
+    }
+  },
+  "riskHighlights": [],
+  "insights": [],
+  "callReportFile": "CallReport5300_June2025_Golden-Triangle.pdf"
+}

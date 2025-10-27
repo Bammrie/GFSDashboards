@@ -1,0 +1,150 @@
+{
+  "id": "callreport5300-september2025-jct",
+  "name": "J.c.t.",
+  "charter": "20581",
+  "asOf": "September 30, 2025",
+  "periodMonths": 9,
+  "totalAssets": 10702788,
+  "totalLoans": 4537805,
+  "loanCount": 244,
+  "allowance": 2494,
+  "accruedInterestLoans": 8990,
+  "loansGrantedYtdCount": 86,
+  "loansGrantedYtdAmount": 1486115,
+  "interestOnLoansYtd": 173955,
+  "creditLossExpenseLoansYtd": 1877,
+  "delinquencyTotal60Plus": 0,
+  "delinquencyTotal60PlusLoans": 0,
+  "nonAccrualLoans": 0,
+  "bankruptcyOutstanding": 0,
+  "tdrLoans": 0,
+  "tdrBalance": 0,
+  "delinquencySources": {
+    "participations": 0,
+    "indirect": 0,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": {
+      "count": 0,
+      "balance": 0
+    },
+    "other": {
+      "count": 0,
+      "balance": 0
+    },
+    "total": {
+      "count": 0,
+      "balance": 0
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 88,
+      "balance": 491990,
+      "rate": 8.79
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 86,
+      "balance": 2552927,
+      "rate": 4.66
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 53,
+      "balance": 1172737,
+      "rate": 5.34
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 16,
+      "balance": 278103,
+      "rate": 7.01
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 1,
+      "balance": 42048,
+      "rate": 4.91
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    }
+  },
+  "delinquency60PlusDetail": {},
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 2267,
+      "recoveries": 0
+    },
+    "creditCard": {
+      "label": "Credit card",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 2267,
+      "recoveries": 0
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 0,
+      "recoveries": 0
+    }
+  },
+  "riskHighlights": [],
+  "insights": [],
+  "callReportFile": "CallReport5300_September2025_JCT.pdf"
+}

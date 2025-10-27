@@ -1,0 +1,166 @@
+{
+  "id": "callreport5300-september2025-old-ocean",
+  "name": "Old Ocean",
+  "charter": "6175",
+  "asOf": "September 30, 2025",
+  "periodMonths": 9,
+  "totalAssets": 40303910,
+  "totalLoans": 15679064,
+  "loanCount": 2784,
+  "allowance": 360410,
+  "accruedInterestLoans": 33929,
+  "loansGrantedYtdCount": 340,
+  "loansGrantedYtdAmount": 5694471,
+  "interestOnLoansYtd": 811363,
+  "creditLossExpenseLoansYtd": 41738,
+  "delinquencyTotal60Plus": 13132,
+  "delinquencyTotal60PlusLoans": 40,
+  "nonAccrualLoans": 8728,
+  "bankruptcyOutstanding": 0,
+  "tdrLoans": 0,
+  "tdrBalance": 0,
+  "delinquencySources": {
+    "participations": 0,
+    "indirect": 0,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": {
+      "count": 0,
+      "balance": 0
+    },
+    "other": {
+      "count": 0,
+      "balance": 0
+    },
+    "total": {
+      "count": 0,
+      "balance": 0
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 498,
+      "balance": 605612,
+      "rate": 10.86
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 1798,
+      "balance": 2725655,
+      "rate": 8.94
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 86,
+      "balance": 2496987,
+      "rate": 5.75
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 312,
+      "balance": 8450406,
+      "rate": 6.48
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 90,
+      "balance": 1400404,
+      "rate": 8.13
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    }
+  },
+  "delinquency60PlusDetail": {
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 6770,
+      "loans": 38
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 4636,
+      "loans": 1
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "balance": 1726,
+      "loans": 1
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 92399,
+      "recoveries": 27591
+    },
+    "creditCard": {
+      "label": "Credit card",
+      "chargeOffs": 7737,
+      "recoveries": 0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 84662,
+      "recoveries": 27591
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 0,
+      "recoveries": 0
+    }
+  },
+  "riskHighlights": [],
+  "insights": [],
+  "callReportFile": "CallReport5300_September2025_Old-Ocean.pdf"
+}
