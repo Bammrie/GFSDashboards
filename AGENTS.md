@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2027-01-04: Expanded the prospect detail layout width so the production potential table displays without horizontal scrolling on desktop.
 2027-01-03: Renamed the prospect production section to "Production potential", moved it to the top of the page, and regenerated dashboards so every call report exposes an active workspace.
 2027-01-02: Removed the June/September 2025 call report PDFs for Coastal Community, CoastLife, Jackson County, Matagorda County, FedFinancial, J.C.T., Met Tran, and CommonCents plus nulled their callReportUrl entries so the repo stays binary-free for GitHub submission.
 2027-01-01: Added placeholder prospects and detail pages for Coastal Community, CoastLife, Jackson County, Matagorda County, FedFinancial, J.C.T., and Met Tran June/September 2025 call report PDFs and moved the uploaded filings into CallReports to keep the root tidy.
