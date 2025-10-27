@@ -756,46 +756,132 @@ textarea {
   color: var(--color-text-muted);
 }
 
-.coverage-grid {
+.coverage-summary {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 1.25rem;
 }
 
-.coverage-field {
+.coverage-summary__item {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
-  padding: 0.85rem 1rem;
+  gap: 0.35rem;
+  padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(251, 234, 215, 0.18);
   background: rgba(42, 13, 16, 0.7);
 }
 
-.coverage-field--invalid {
-  border-color: rgba(247, 122, 108, 0.6);
-  box-shadow: 0 0 0 1px rgba(247, 122, 108, 0.25);
-}
-
-.coverage-field__label {
-  font-size: 0.8rem;
+.coverage-summary__label {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
   color: var(--color-text-muted);
 }
 
-.coverage-field__header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.75rem;
+.coverage-summary__value {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
 }
 
-.coverage-field__potential {
+.coverage-summary__item--on .coverage-summary__value {
+  color: var(--color-emerald-400);
+}
+
+.coverage-summary__item--tbd .coverage-summary__value {
+  color: var(--color-amber-300);
+}
+
+.coverage-summary__item--off .coverage-summary__value {
+  color: var(--color-rose-300);
+}
+
+.coverage-table-container {
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(251, 234, 215, 0.18);
+  background: rgba(42, 13, 16, 0.7);
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.coverage-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+}
+
+.coverage-table thead th {
+  padding: 0.65rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background: rgba(27, 9, 11, 0.6);
+  border-bottom: 1px solid rgba(251, 234, 215, 0.18);
+}
+
+.coverage-table tbody th,
+.coverage-table tbody td {
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+  border-top: 1px solid rgba(251, 234, 215, 0.12);
+}
+
+.coverage-table tbody tr:first-child th,
+.coverage-table tbody tr:first-child td {
+  border-top: none;
+}
+
+.coverage-table tbody th {
   font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: none;
+}
+
+.coverage-table__row:nth-child(odd) {
+  background: rgba(34, 11, 14, 0.45);
+}
+
+.coverage-table__row:nth-child(even) {
+  background: rgba(42, 13, 16, 0.45);
+}
+
+.coverage-table__potential {
   font-weight: 600;
   color: var(--color-amber-300);
   white-space: nowrap;
+}
+
+.coverage-table__status {
+  width: 260px;
+  min-width: 260px;
+}
+
+.coverage-table__actions {
+  width: 110px;
+  min-width: 110px;
+  text-align: right;
+}
+
+.coverage-table__remove {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.coverage-table__remove:hover,
+.coverage-table__remove:focus-visible {
+  color: var(--color-rose-300);
+  outline: none;
 }
 
 
