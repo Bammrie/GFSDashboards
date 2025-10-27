@@ -1167,6 +1167,12 @@ function initDashboardPage() {
   const productsContainer = document.getElementById('account-products-container');
   const productsEmpty = document.getElementById('account-products-empty');
   const productsUpdated = document.getElementById('account-products-updated');
+  const productsSummary = document.getElementById('account-products-summary');
+  const summaryValues = {
+    on: productsSummary?.querySelector('[data-summary-value="on"]') || null,
+    tbd: productsSummary?.querySelector('[data-summary-value="tbd"]') || null,
+    off: productsSummary?.querySelector('[data-summary-value="off"]') || null
+  };
   const addForm = document.getElementById('account-products-add-form');
   const addInput = document.getElementById('account-products-add-input');
   const addButton = addForm?.querySelector('button[type="submit"]');
@@ -1317,6 +1323,7 @@ function initDashboardPage() {
       productsContainer.hidden = true;
       productsEmpty.hidden = false;
       productsEmpty.textContent = 'Select an account to manage product status.';
+      renderProductSummary(null);
       return;
     }
 
@@ -1325,47 +1332,63 @@ function initDashboardPage() {
       productsContainer.hidden = true;
       productsEmpty.hidden = false;
       productsEmpty.textContent = 'No products configured for this account yet.';
+      renderProductSummary(null);
       return;
     }
 
-    productsContainer.hidden = false;
-    productsEmpty.hidden = true;
+    const table = document.createElement('table');
+    table.className = 'coverage-table';
+
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    ['Product', 'Monthly revenue', 'Status', 'Manage'].forEach((label) => {
+      const th = document.createElement('th');
+      th.scope = 'col';
+      th.textContent = label;
+      headerRow.append(th);
+    });
+    thead.append(headerRow);
+    table.append(thead);
+
+    const tbody = document.createElement('tbody');
+    const totals = { on: 0, tbd: 0, off: 0 };
 
     names.forEach((name) => {
-      const field = document.createElement('div');
-      field.className = 'coverage-field';
-      field.dataset.productName = name;
+      const row = document.createElement('tr');
+      row.className = 'coverage-table__row';
+      row.dataset.productName = name;
 
-      const header = document.createElement('div');
-      header.className = 'coverage-field__header';
+      const nameCell = document.createElement('th');
+      nameCell.scope = 'row';
+      nameCell.textContent = name;
+      row.append(nameCell);
 
-      const labelEl = document.createElement('span');
-      labelEl.className = 'coverage-field__label';
-      labelEl.textContent = name;
-      header.append(labelEl);
-
-      const potentialEl = document.createElement('span');
-      potentialEl.className = 'coverage-field__potential';
-      const monthlyPotential = getProductMonthlyPotential(name, opportunityMap);
+      const revenueCell = document.createElement('td');
+      revenueCell.className = 'coverage-table__potential';
+      const rawPotential = Number(getProductMonthlyPotential(name, opportunityMap) || 0);
+      const monthlyPotential = Number.isFinite(rawPotential) ? Math.max(rawPotential, 0) : 0;
       if (monthlyPotential > 0) {
-        potentialEl.textContent = `${formatProspectCurrency(monthlyPotential)} / mo`;
+        revenueCell.textContent = `${formatProspectCurrency(monthlyPotential)} / mo`;
       } else {
-        potentialEl.textContent = '—';
+        revenueCell.textContent = '—';
       }
-      header.append(potentialEl);
+      row.append(revenueCell);
 
-      field.append(header);
+      const statusCell = document.createElement('td');
+      statusCell.className = 'coverage-table__status';
 
       const statusGroup = document.createElement('div');
       statusGroup.className = 'status-toggle';
       statusGroup.setAttribute('role', 'radiogroup');
       statusGroup.setAttribute('aria-label', `${name} status`);
 
-      const currentValue = record.products[name] || DEFAULT_PRODUCT_STATUS;
+      const currentValue = sanitizeProductValue(record.products[name] || DEFAULT_PRODUCT_STATUS);
+      const totalsKey = currentValue === 'on' ? 'on' : currentValue === 'off' ? 'off' : 'tbd';
+      totals[totalsKey] += monthlyPotential;
 
       const setStatus = (nextStatus) => {
         const normalizedStatus = sanitizeProductValue(nextStatus);
-        if (record.products[name] === normalizedStatus) return;
+        if (currentValue === normalizedStatus) return;
         const updated = updateAccountProductRecord(account, (draft) => {
           draft.products[name] = normalizedStatus;
           if (!DEFAULT_PRODUCTS.includes(name) && !draft.customProducts.includes(name)) {
@@ -1378,12 +1401,10 @@ function initDashboardPage() {
         renderProductsUpdated(updated);
         window.requestAnimationFrame?.(() => {
           if (!productsContainer) return;
-          const nextField = Array.from(productsContainer.querySelectorAll('.coverage-field')).find(
+          const nextRow = Array.from(productsContainer.querySelectorAll('.coverage-table__row')).find(
             (node) => node instanceof HTMLElement && node.dataset.productName === name
           );
-          const nextButton = nextField?.querySelector(
-            `.status-toggle__light--${normalizedStatus}`
-          );
+          const nextButton = nextRow?.querySelector(`.status-toggle__light--${normalizedStatus}`);
           if (nextButton instanceof HTMLElement) {
             nextButton.focus();
           }
@@ -1426,15 +1447,19 @@ function initDashboardPage() {
 
       const statusLabel = document.createElement('span');
       statusLabel.className = 'status-toggle__label';
-      statusLabel.textContent = PRODUCT_STATUS_LABELS[currentValue] || PRODUCT_STATUS_LABELS[DEFAULT_PRODUCT_STATUS];
+      statusLabel.textContent =
+        PRODUCT_STATUS_LABELS[currentValue] || PRODUCT_STATUS_LABELS[DEFAULT_PRODUCT_STATUS];
       statusGroup.append(statusLabel);
 
-      field.append(statusGroup);
+      statusCell.append(statusGroup);
+      row.append(statusCell);
 
+      const actionsCell = document.createElement('td');
+      actionsCell.className = 'coverage-table__actions';
       if (!DEFAULT_PRODUCTS.includes(name)) {
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
-        removeBtn.className = 'coverage-field__remove';
+        removeBtn.className = 'coverage-table__remove';
         removeBtn.textContent = 'Remove';
         removeBtn.addEventListener('click', () => {
           const updated = updateAccountProductRecord(account, (draft) => {
@@ -1448,11 +1473,34 @@ function initDashboardPage() {
           renderProducts(account, updated, { opportunityMap });
           renderProductsUpdated(updated);
         });
-        field.append(removeBtn);
+        actionsCell.append(removeBtn);
       }
+      row.append(actionsCell);
 
-      productsContainer.append(field);
+      tbody.append(row);
     });
+
+    table.append(tbody);
+    productsContainer.append(table);
+    productsContainer.hidden = false;
+    productsEmpty.hidden = true;
+    renderProductSummary(totals);
+  }
+
+  function renderProductSummary(totals) {
+    if (!productsSummary) return;
+    if (!totals) {
+      productsSummary.hidden = true;
+      return;
+    }
+    ['on', 'tbd', 'off'].forEach((status) => {
+      const valueEl = summaryValues[status];
+      if (!valueEl) return;
+      const amount = Number(totals[status] || 0);
+      const normalized = Number.isFinite(amount) ? Math.max(amount, 0) : 0;
+      valueEl.textContent = `${formatProspectCurrency(normalized)} / mo`;
+    });
+    productsSummary.hidden = false;
   }
 
   function getProductMonthlyPotential(name, opportunityMap) {

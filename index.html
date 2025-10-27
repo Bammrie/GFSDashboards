@@ -72,8 +72,22 @@
         <h2 class="panel-card__title">Product status</h2>
         <p class="panel-card__subtitle">Use the traffic lights to mark each service as On, TBD, or Off.</p>
       </header>
+      <div id="account-products-summary" class="coverage-summary" hidden>
+        <div class="coverage-summary__item coverage-summary__item--on">
+          <span class="coverage-summary__label">Green light</span>
+          <span class="coverage-summary__value" data-summary-value="on">$0 / mo</span>
+        </div>
+        <div class="coverage-summary__item coverage-summary__item--tbd">
+          <span class="coverage-summary__label">Yellow light</span>
+          <span class="coverage-summary__value" data-summary-value="tbd">$0 / mo</span>
+        </div>
+        <div class="coverage-summary__item coverage-summary__item--off">
+          <span class="coverage-summary__label">Red light</span>
+          <span class="coverage-summary__value" data-summary-value="off">$0 / mo</span>
+        </div>
+      </div>
       <p id="account-products-updated" class="account-products__updated">Select an account to manage product status.</p>
-      <div id="account-products-container" class="coverage-grid" hidden></div>
+      <div id="account-products-container" class="coverage-table-container" hidden></div>
       <p id="account-products-empty" class="coverage-grid__empty">Select an account to manage product status.</p>
       <form id="account-products-add-form" class="add-product-inline" autocomplete="off">
         <label for="account-products-add-input" class="sr-only">Add another product</label>

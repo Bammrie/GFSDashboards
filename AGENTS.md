@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2025-10-27: Converted the dashboard product status grid into a compact table and added category revenue rollups above the controls for faster scanning.
 2027-01-04: Swapped product yes/no toggles for On/TBD/Off status lights with animated indicators, surfaced modeled monthly revenue per product, and added a prospects directory table showing total monthly revenue potential for every credit union.
 2027-01-04: Expanded the prospect detail layout width so the production potential table displays without horizontal scrolling on desktop.
 2027-01-03: Renamed the prospect production section to "Production potential", moved it to the top of the page, and regenerated dashboards so every call report exposes an active workspace.
