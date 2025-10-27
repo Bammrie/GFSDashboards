@@ -1,5 +1,6 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
 2025-10-27: Converted the dashboard product status grid into a compact table and added category revenue rollups above the controls for faster scanning.
+2027-01-06: Parsed the newly uploaded Beaumont Community, Coastal Community, CoastLife, Golden Triangle, Jackson County, Nspire, Texas Bridge, Bayou Community, FedFinancial, JCT, Met Tran, and Old Ocean call reports; generated structured JSON, and refreshed prospect data/pages so each dashboard renders live analytics from the latest filings.
 2027-01-05: Consolidated consumer credit insurance and debt protection modeling into a single product, renamed mortgage coverage, and updated MOB sourcing to use Schedule 703A balances in the prospect revenue calculations.
 2027-01-04: Swapped product yes/no toggles for On/TBD/Off status lights with animated indicators, surfaced modeled monthly revenue per product, and added a prospects directory table showing total monthly revenue potential for every credit union.
 2027-01-04: Expanded the prospect detail layout width so the production potential table displays without horizontal scrolling on desktop.

@@ -1,0 +1,171 @@
+{
+  "id": "callreport5300-september2025-bayou-community",
+  "name": "Bayou Community",
+  "charter": "11782",
+  "asOf": "September 30, 2025",
+  "periodMonths": 9,
+  "totalAssets": 17624449,
+  "totalLoans": 12569651,
+  "loanCount": 1032,
+  "allowance": 174685,
+  "accruedInterestLoans": 26539,
+  "loansGrantedYtdCount": 409,
+  "loansGrantedYtdAmount": 4862763,
+  "interestOnLoansYtd": 646105,
+  "creditLossExpenseLoansYtd": 63000,
+  "delinquencyTotal60Plus": 42694,
+  "delinquencyTotal60PlusLoans": 10,
+  "nonAccrualLoans": 0,
+  "bankruptcyOutstanding": 0,
+  "tdrLoans": 0,
+  "tdrBalance": 0,
+  "delinquencySources": {
+    "participations": 0,
+    "indirect": 0,
+    "purchased": 0
+  },
+  "indirect": {
+    "auto": {
+      "count": 0,
+      "balance": 0
+    },
+    "other": {
+      "count": 0,
+      "balance": 0
+    },
+    "total": {
+      "count": 0,
+      "balance": 0
+    }
+  },
+  "loanMix": {
+    "creditCard": {
+      "label": "Unsecured credit card",
+      "count": 167,
+      "balance": 229941,
+      "rate": 16.99
+    },
+    "student": {
+      "label": "Non-federally guaranteed student",
+      "count": 19,
+      "balance": 12578,
+      "rate": 28.0
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "count": 457,
+      "balance": 1907995,
+      "rate": 10.5
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "count": 122,
+      "balance": 3651004,
+      "rate": 4.0
+    },
+    "leases": {
+      "label": "Leases receivable",
+      "count": 173,
+      "balance": 3691867,
+      "rate": 6.2
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "firstMortgage": {
+      "label": "1st lien residential real estate",
+      "count": 80,
+      "balance": 1972383,
+      "rate": 5.0
+    },
+    "juniorMortgage": {
+      "label": "Junior lien residential real estate",
+      "count": 14,
+      "balance": 1103883,
+      "rate": 4.75
+    },
+    "otherNonCommercialRE": {
+      "label": "Other non-commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialRE": {
+      "label": "Commercial real estate",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    },
+    "commercialOther": {
+      "label": "Commercial & industrial",
+      "count": 0,
+      "balance": 0,
+      "rate": 0.0
+    }
+  },
+  "delinquency60PlusDetail": {
+    "creditCard": {
+      "label": "Credit card",
+      "balance": 9055,
+      "loans": 5
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "balance": 295,
+      "loans": 1
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "balance": 1801,
+      "loans": 1
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "balance": 31543,
+      "loans": 3
+    }
+  },
+  "chargeOffs": {
+    "total": {
+      "chargeOffs": 68325,
+      "recoveries": 30008
+    },
+    "creditCard": {
+      "label": "Credit card",
+      "chargeOffs": 8397,
+      "recoveries": 4331
+    },
+    "otherUnsecured": {
+      "label": "All other unsecured",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "newVehicle": {
+      "label": "New vehicle",
+      "chargeOffs": 39877,
+      "recoveries": 13521
+    },
+    "usedVehicle": {
+      "label": "Used vehicle",
+      "chargeOffs": 0,
+      "recoveries": 0
+    },
+    "otherSecured": {
+      "label": "Other secured non-real estate",
+      "chargeOffs": 0,
+      "recoveries": 0
+    }
+  },
+  "riskHighlights": [],
+  "insights": [],
+  "callReportFile": "CallReport5300_September2025_Bayou-Community.pdf"
+}
