@@ -32,13 +32,36 @@
     <section class="prospects__intro">
       <div class="prospects__intro-copy">
         <h1 class="prospects__title" id="prospect-title">Prospect intelligence</h1>
-        <p class="prospects__subtitle" id="prospect-subtitle">Load a 5300 call report to review consumer lending exposure and protection revenue opportunities.</p>
+        <p class="prospects__subtitle" id="prospect-subtitle">Load a 5300 call report to review consumer lending exposure and production potential.</p>
       </div>
       <div class="prospects__controls">
         <label for="prospect-selector" class="prospects__label">Prospect</label>
         <select id="prospect-selector" class="prospects__select" aria-label="Choose a call report to review"></select>
       </div>
       <p class="prospects__as-of" id="prospect-reporting-date">Call report as of —</p>
+    </section>
+
+    <section class="prospects__opportunities" aria-labelledby="prospects-opportunities-heading">
+      <header class="section-header">
+        <h2 id="prospects-opportunities-heading">Production potential</h2>
+        <p class="section-header__subtitle">Modeled with Goodwine Financial Services standard rate architecture and penetration assumptions.</p>
+      </header>
+      <div class="table-scroll">
+        <table id="prospect-product-table" class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Eligible base</th>
+              <th scope="col">Penetration</th>
+              <th scope="col">Gross annual revenue</th>
+              <th scope="col">GFS share</th>
+              <th scope="col">Credit union share</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="prospects__footnote" id="prospect-product-footnote">Assumptions reflect blended industry benchmarks for rate components and attach rates.</p>
     </section>
 
     <section class="prospects__rankings" id="prospect-rankings-section" aria-labelledby="prospect-rankings-heading">
@@ -185,29 +208,6 @@
           </dl>
         </article>
       </div>
-    </section>
-
-    <section class="prospects__opportunities" aria-labelledby="prospects-opportunities-heading">
-      <header class="section-header">
-        <h2 id="prospects-opportunities-heading">Protection revenue opportunities</h2>
-        <p class="section-header__subtitle">Modeled with Goodwine Financial Services standard rate architecture and penetration assumptions.</p>
-      </header>
-      <div class="table-scroll">
-        <table id="prospect-product-table" class="data-table">
-          <thead>
-            <tr>
-              <th scope="col">Product</th>
-              <th scope="col">Eligible base</th>
-              <th scope="col">Penetration</th>
-              <th scope="col">Gross annual revenue</th>
-              <th scope="col">GFS share</th>
-              <th scope="col">Credit union share</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <p class="prospects__footnote" id="prospect-product-footnote">Assumptions reflect blended industry benchmarks for rate components and attach rates.</p>
     </section>
 
     <section class="prospects__insights" aria-labelledby="prospects-insights-heading">
