@@ -324,6 +324,10 @@ function titleCase(value = '') {
       if (normalizedUpper.endsWith('FCU')) {
         return normalizedUpper;
       }
+      const hasInternalUppercase = /[A-Z]/.test(word.slice(1));
+      if (hasInternalUppercase) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      }
       const lower = word.toLowerCase();
       return lower.charAt(0).toUpperCase() + lower.slice(1);
     })

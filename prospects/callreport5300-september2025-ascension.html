@@ -119,21 +119,23 @@
           </table>
         </div>
       </div>
+      <p class="prospects__footnote">Source balances can overlap because participations, indirect, and purchased loans may reference the same contracts.</p>
     </section>
 
-    <section class="prospects__mix" aria-labelledby="prospects-mix-heading">
+    <section class="prospects__loan-mix" aria-labelledby="prospects-loan-mix-heading">
       <header class="section-header">
-        <h2 id="prospects-mix-heading">Loan mix</h2>
-        <p class="section-header__subtitle">Product-level counts, balances, and yield to benchmark performance.</p>
+        <h2 id="prospects-loan-mix-heading">Consumer lending mix</h2>
+        <p class="section-header__subtitle">Interest rates, loan counts, and balances from Schedule A, Section 1.</p>
       </header>
       <div class="table-scroll">
         <table id="prospect-loan-mix-table" class="data-table">
           <thead>
             <tr>
-              <th scope="col">Segment</th>
+              <th scope="col">Category</th>
+              <th scope="col">Avg. rate</th>
               <th scope="col">Loans</th>
               <th scope="col">Balance</th>
-              <th scope="col">Avg. rate</th>
+              <th scope="col">Portfolio share</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -143,49 +145,36 @@
 
     <section class="prospects__risk" aria-labelledby="prospects-risk-heading">
       <header class="section-header">
-        <h2 id="prospects-risk-heading">Risk monitoring</h2>
-        <p class="section-header__subtitle">Track delinquency, charge-offs, and TDR balances in one place.</p>
+        <h2 id="prospects-risk-heading">Delinquency &amp; loss pressure</h2>
+        <p class="section-header__subtitle">60+ day delinquency detail, non-accrual exposure, and charge-off concentrations.</p>
       </header>
       <div class="prospects__risk-grid">
         <div class="table-scroll">
-          <table id="prospect-delinquency-detail-table" class="data-table">
+          <table id="prospect-risk-table" class="data-table">
             <thead>
               <tr>
-                <th scope="col">Segment</th>
+                <th scope="col">Category</th>
                 <th scope="col">60+ balance</th>
-                <th scope="col">Loans</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="table-scroll">
-          <table id="prospect-chargeoff-table" class="data-table">
-            <thead>
-              <tr>
-                <th scope="col">Segment</th>
-                <th scope="col">Charge-offs</th>
-                <th scope="col">Recoveries</th>
+                <th scope="col">60+ loans</th>
+                <th scope="col">Share of total 60+</th>
+                <th scope="col">YTD charge-offs</th>
+                <th scope="col">YTD recoveries</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
         <article class="prospects__risk-summary">
-          <h3>Delinquency and loss profile</h3>
+          <h3 class="prospects__risk-title">Watch metrics</h3>
           <ul id="prospect-risk-highlights" class="prospects__list"></ul>
-          <dl class="prospects__inline-stats">
+          <dl class="prospects__risk-meta">
             <div>
-              <dt>Allowance</dt>
-              <dd id="prospect-risk-allowance">—</dd>
+              <dt>Non-accrual loans</dt>
+              <dd id="prospect-nonaccrual">—</dd>
             </div>
             <div>
-              <dt>Bankruptcies</dt>
-              <dd id="prospect-risk-bankruptcies">—</dd>
-            </div>
-            <div>
-              <dt>Non-accruals</dt>
-              <dd id="prospect-risk-nonaccrual">—</dd>
+              <dt>Bankruptcy exposure</dt>
+              <dd id="prospect-bankruptcy">—</dd>
             </div>
             <div>
               <dt>Troubled debt restructures</dt>
