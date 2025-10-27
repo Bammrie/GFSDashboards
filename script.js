@@ -5,7 +5,12 @@ const STORAGE_KEYS = {
   PROSPECT_LOG: 'gfs.prospectLog.v1'
 };
 
-const DEFAULT_PRODUCTS = [
+const CONSUMER_PROTECTION_PRODUCT = 'Credit Insurance/Debt Protection - Consumer';
+const MORTGAGE_PROTECTION_PRODUCT = 'Credit Insurance - Mortgage';
+const CONSUMER_COVERAGE_KEY = 'creditInsuranceConsumer';
+const MORTGAGE_COVERAGE_KEY = 'creditInsuranceMortgage';
+
+const LEGACY_CONSUMER_PRODUCTS = [
   'Credit Life (Single)',
   'Credit Life (Joint)',
   'Credit Life (Blended)',
@@ -14,12 +19,34 @@ const DEFAULT_PRODUCTS = [
   'Credit Disability (Blended)',
   'Debt Protection Package A',
   'Debt Protection Package B',
-  'Debt Protection Package C',
+  'Debt Protection Package C'
+];
+
+const LEGACY_MORTGAGE_PRODUCTS = ['Mortgage Life Insurance for 1st Lien mortgages'];
+
+const LEGACY_CONSUMER_COVERAGE_KEYS = [
+  'creditLifeSingle',
+  'creditLifeJoint',
+  'creditLifeBlended',
+  'creditDisabilitySingle',
+  'creditDisabilityJoint',
+  'creditDisabilityBlended',
+  'packageA',
+  'packageB',
+  'packageC'
+];
+
+const LEGACY_MORTGAGE_COVERAGE_KEYS = ['mortgageLifeFirstLien'];
+
+const LEGACY_PRODUCT_NAMES = [...LEGACY_CONSUMER_PRODUCTS, ...LEGACY_MORTGAGE_PRODUCTS];
+
+const DEFAULT_PRODUCTS = [
+  CONSUMER_PROTECTION_PRODUCT,
+  MORTGAGE_PROTECTION_PRODUCT,
   'GAP',
   'VSC',
   'Collateral Protection Insurance (CPI)',
   'Fidelity Bond',
-  'Mortgage Life Insurance for 1st Lien mortgages',
   'AFG Balloon Loans'
 ];
 
@@ -30,15 +57,8 @@ const RATE_PARAMETER_SET = [
 ];
 
 const PRODUCT_PARAMETER_DEFINITIONS = {
-  'Credit Life (Single)': RATE_PARAMETER_SET,
-  'Credit Life (Joint)': RATE_PARAMETER_SET,
-  'Credit Life (Blended)': RATE_PARAMETER_SET,
-  'Credit Disability (Single)': RATE_PARAMETER_SET,
-  'Credit Disability (Joint)': RATE_PARAMETER_SET,
-  'Credit Disability (Blended)': RATE_PARAMETER_SET,
-  'Debt Protection Package A': RATE_PARAMETER_SET,
-  'Debt Protection Package B': RATE_PARAMETER_SET,
-  'Debt Protection Package C': RATE_PARAMETER_SET,
+  [CONSUMER_PROTECTION_PRODUCT]: RATE_PARAMETER_SET,
+  [MORTGAGE_PROTECTION_PRODUCT]: RATE_PARAMETER_SET,
   GAP: [
     { id: 'clpRate', label: 'CLP Rate', requiredWhenActive: true },
     { id: 'gfsMarkup', label: 'GFS Mark-Up', requiredWhenActive: true },
@@ -58,13 +78,57 @@ const PRODUCT_PARAMETER_DEFINITIONS = {
     { id: 'annualPremium', label: 'Annual Premium', requiredWhenActive: true },
     { id: 'effectiveDate', label: 'Effective Date', inputType: 'date', requiredWhenActive: true }
   ],
-  'Mortgage Life Insurance for 1st Lien mortgages': RATE_PARAMETER_SET,
   'AFG Balloon Loans': [
     { id: 'programRate', label: 'Program Rate', requiredWhenActive: true },
     { id: 'gfsMarkup', label: 'GFS Mark-Up', requiredWhenActive: true },
     { id: 'creditUnionMarkup', label: 'Credit Union Mark-Up', requiredWhenActive: true }
   ]
 };
+
+function isLegacyProductName(name) {
+  const trimmed = (name || '').toString().trim();
+  return trimmed ? LEGACY_PRODUCT_NAMES.includes(trimmed) : false;
+}
+
+function mapToCurrentProductName(name) {
+  const trimmed = (name || '').toString().trim();
+  if (!trimmed) return '';
+  if (LEGACY_CONSUMER_PRODUCTS.includes(trimmed)) return CONSUMER_PROTECTION_PRODUCT;
+  if (LEGACY_MORTGAGE_PRODUCTS.includes(trimmed)) return MORTGAGE_PROTECTION_PRODUCT;
+  return trimmed;
+}
+
+function mapCoverageKey(key) {
+  if (!key) return key;
+  if (LEGACY_CONSUMER_COVERAGE_KEYS.includes(key)) return CONSUMER_COVERAGE_KEY;
+  if (LEGACY_MORTGAGE_COVERAGE_KEYS.includes(key)) return MORTGAGE_COVERAGE_KEY;
+  return key;
+}
+
+function remapCoverageEntries(coverages = {}) {
+  const remapped = {};
+  Object.entries(coverages).forEach(([key, value]) => {
+    if (key === 'legacy') {
+      remapped[key] = value;
+      return;
+    }
+    const mappedKey = mapCoverageKey(key);
+    if (!mappedKey) return;
+    const normalizedValue = value === 'yes' ? 'yes' : value === 'no' ? 'no' : value;
+    if (normalizedValue !== 'yes' && normalizedValue !== 'no') {
+      remapped[mappedKey] = normalizedValue;
+      return;
+    }
+    const existing = remapped[mappedKey];
+    if (existing === 'yes') return;
+    if (normalizedValue === 'yes') {
+      remapped[mappedKey] = 'yes';
+    } else if (!existing) {
+      remapped[mappedKey] = 'no';
+    }
+  });
+  return remapped;
+}
 
 function getProductParameterDefinitions(productName) {
   const definitions = PRODUCT_PARAMETER_DEFINITIONS[productName];
@@ -130,32 +194,20 @@ function productActivationIsValid(record, productName) {
 }
 
 const MOB_RATE_ROWS = [
-  { id: 'creditLifeSingle', label: 'Credit Life — Single' },
-  { id: 'creditLifeJoint', label: 'Credit Life — Joint' },
-  { id: 'creditLifeBlended', label: 'Credit Life — Blended' },
-  { id: 'creditDisabilitySingle', label: 'Credit Disability — Single' },
-  { id: 'creditDisabilityJoint', label: 'Credit Disability — Joint' },
-  { id: 'creditDisabilityBlended', label: 'Credit Disability — Blended' },
-  { id: 'packageA', label: 'Debt Protection Package A' },
-  { id: 'packageB', label: 'Debt Protection Package B' },
-  { id: 'packageC', label: 'Debt Protection Package C' },
-  { id: 'mortgageLifeFirstLien', label: 'Mortgage Life — 1st Lien' }
+  { id: CONSUMER_COVERAGE_KEY, label: CONSUMER_PROTECTION_PRODUCT },
+  { id: MORTGAGE_COVERAGE_KEY, label: MORTGAGE_PROTECTION_PRODUCT }
 ];
 
 const MOB_COVERAGE_DEFINITIONS = [
-  { key: 'creditLifeSingle', label: 'Credit Life — Single', matches: ['Credit Life (Single)'] },
-  { key: 'creditLifeJoint', label: 'Credit Life — Joint', matches: ['Credit Life (Joint)'] },
-  { key: 'creditLifeBlended', label: 'Credit Life — Blended', matches: ['Credit Life (Blended)'] },
-  { key: 'creditDisabilitySingle', label: 'Credit Disability — Single', matches: ['Credit Disability (Single)'] },
-  { key: 'creditDisabilityJoint', label: 'Credit Disability — Joint', matches: ['Credit Disability (Joint)'] },
-  { key: 'creditDisabilityBlended', label: 'Credit Disability — Blended', matches: ['Credit Disability (Blended)'] },
-  { key: 'packageA', label: 'Debt Protection — Package A', matches: ['Debt Protection Package A'] },
-  { key: 'packageB', label: 'Debt Protection — Package B', matches: ['Debt Protection Package B'] },
-  { key: 'packageC', label: 'Debt Protection — Package C', matches: ['Debt Protection Package C'] },
   {
-    key: 'mortgageLifeFirstLien',
-    label: 'Mortgage Life — 1st Lien',
-    matches: ['Mortgage Life Insurance for 1st Lien mortgages']
+    key: CONSUMER_COVERAGE_KEY,
+    label: CONSUMER_PROTECTION_PRODUCT,
+    matches: [CONSUMER_PROTECTION_PRODUCT, ...LEGACY_CONSUMER_PRODUCTS]
+  },
+  {
+    key: MORTGAGE_COVERAGE_KEY,
+    label: MORTGAGE_PROTECTION_PRODUCT,
+    matches: [MORTGAGE_PROTECTION_PRODUCT, ...LEGACY_MORTGAGE_PRODUCTS]
   }
 ];
 
@@ -273,39 +325,25 @@ let prospectDataPromise = null;
 
 const PROSPECT_PRODUCT_MODELS = [
   {
-    id: 'credit-life-single',
-    label: 'Credit Life (Single)',
+    id: 'credit-insurance-consumer',
+    label: CONSUMER_PROTECTION_PRODUCT,
     type: 'consumer-coverage',
-    ratePerThousand: 1,
+    ratePerThousand: 4.65,
     penetration: 0.38,
     creditUnionShare: 1,
-    gfsShare: 0
+    gfsShare: 0,
+    baseLabel: 'consumer loans'
   },
   {
-    id: 'credit-disability-single',
-    label: 'Credit Disability (Single)',
+    id: 'credit-insurance-mortgage',
+    label: MORTGAGE_PROTECTION_PRODUCT,
     type: 'consumer-coverage',
-    ratePerThousand: 2.25,
-    penetration: 0.38,
-    creditUnionShare: 1,
-    gfsShare: 0
-  },
-  {
-    id: 'debt-protection-package-a',
-    label: 'Debt Protection (IUI)',
-    type: 'consumer-coverage',
-    ratePerThousand: 1.4,
-    penetration: 0.38,
-    creditUnionShare: 1,
-    gfsShare: 0
-  },
-  {
-    id: 'mortgage-life-first-lien',
-    label: 'Mortgage Life Insurance — 1st Lien',
-    type: 'mob',
     eligibleBalanceKeys: ['firstMortgage'],
+    ratePerThousand: 4,
     penetration: 0.05,
-    rates: { clp: 3.8, gfsMarkup: 0.2, gfsUnderwriting: 0, creditUnionMarkup: 0 }
+    creditUnionShare: 0.95,
+    gfsMarkupShare: 0.05,
+    baseLabel: '1st lien mortgages'
   },
   {
     id: 'gap',
@@ -340,13 +378,13 @@ const PRODUCT_MODEL_LOOKUP = Object.fromEntries(
 );
 
 const PRODUCT_NAME_TO_MODEL_ID = {
-  'Credit Life (Single)': 'credit-life-single',
-  'Credit Disability (Single)': 'credit-disability-single',
-  'Debt Protection Package A': 'debt-protection-package-a',
-  'Mortgage Life Insurance for 1st Lien mortgages': 'mortgage-life-first-lien',
+  [CONSUMER_PROTECTION_PRODUCT]: 'credit-insurance-consumer',
+  [MORTGAGE_PROTECTION_PRODUCT]: 'credit-insurance-mortgage',
   GAP: 'gap',
   VSC: 'vsc',
-  'Collateral Protection Insurance (CPI)': 'cpi'
+  'Collateral Protection Insurance (CPI)': 'cpi',
+  ...Object.fromEntries(LEGACY_CONSUMER_PRODUCTS.map((name) => [name, 'credit-insurance-consumer'])),
+  ...Object.fromEntries(LEGACY_MORTGAGE_PRODUCTS.map((name) => [name, 'credit-insurance-mortgage']))
 };
 
 const PRODUCT_STATUS_SEQUENCE = ['on', 'tbd', 'off'];
@@ -362,7 +400,7 @@ const DEFAULT_PRODUCT_STATUS = 'tbd';
 const ENABLE_PRODUCT_PARAMETERS = false;
 
 const PROSPECT_PRODUCT_FOOTNOTE =
-  'Credit life, disability, and IUI estimates: (consumer loans ÷ $1,000) × rate × 38% monthly CU remittance (rates — Life $1.00, Disability $2.25, IUI $1.40; assuming 38% penetration). Mortgage Life models 5% of 1st lien balances at a $4.00 total premium with a 5% GFS share. VSC & GAP assume direct auto loans outstanding ÷ 24 for monthly production (40% VSC @ $400 GFS, 70% GAP @ $50 GFS). CPI modeling: $90 billed ($25 GFS / $20 CU).';
+  'Credit Insurance/Debt Protection - Consumer: (consumer loans ÷ $1,000) × $4.65 rate × 38% penetration with all revenue to the credit union. Credit Insurance - Mortgage applies the same MOB method to Schedule 703A 1st lien balances using a $4.00 rate, 5% penetration, and a 5% GFS share. VSC & GAP assume direct auto loans outstanding ÷ 24 for monthly production (40% VSC @ $400 GFS, 70% GAP @ $50 GFS). CPI modeling: $90 billed ($25 GFS / $20 CU).';
 
 const prospectState = {
   activeProspectId: '',
@@ -494,21 +532,57 @@ function normalizeAccountProducts(accounts) {
 function normalizeAccountProductRecord(record, account) {
   const normalizedProducts = {};
   const sourceProducts = record?.products && typeof record.products === 'object' ? record.products : {};
+
+  const statusPriority = ['on', 'off', 'tbd'];
+  const mergeStatus = (current, incoming) => {
+    if (!incoming) return current || '';
+    if (!current) return incoming;
+    const currentIndex = statusPriority.indexOf(current);
+    const incomingIndex = statusPriority.indexOf(incoming);
+    if (incomingIndex === -1) return current;
+    if (currentIndex === -1 || incomingIndex < currentIndex) return incoming;
+    return current;
+  };
+
+  const aggregateLegacyStatus = (names) => {
+    const statuses = names
+      .filter((name) => Object.prototype.hasOwnProperty.call(sourceProducts, name))
+      .map((name) => sanitizeProductValue(sourceProducts[name]));
+    if (!statuses.length) return '';
+    return statuses.reduce((result, status) => mergeStatus(result, status), '');
+  };
+
   DEFAULT_PRODUCTS.forEach((product) => {
     normalizedProducts[product] = sanitizeProductValue(sourceProducts[product]);
   });
+
+  const legacyConsumerStatus = aggregateLegacyStatus(LEGACY_CONSUMER_PRODUCTS);
+  if (legacyConsumerStatus) {
+    normalizedProducts[CONSUMER_PROTECTION_PRODUCT] = mergeStatus(
+      normalizedProducts[CONSUMER_PROTECTION_PRODUCT],
+      legacyConsumerStatus
+    );
+  }
+
+  const legacyMortgageStatus = aggregateLegacyStatus(LEGACY_MORTGAGE_PRODUCTS);
+  if (legacyMortgageStatus) {
+    normalizedProducts[MORTGAGE_PROTECTION_PRODUCT] = mergeStatus(
+      normalizedProducts[MORTGAGE_PROTECTION_PRODUCT],
+      legacyMortgageStatus
+    );
+  }
 
   const customNames = new Set();
   const sourceCustom = Array.isArray(record?.customProducts) ? record.customProducts : [];
   sourceCustom.forEach((name) => {
     const trimmed = (name || '').toString().trim();
-    if (trimmed && !DEFAULT_PRODUCTS.includes(trimmed)) {
+    if (trimmed && !DEFAULT_PRODUCTS.includes(trimmed) && !isLegacyProductName(trimmed)) {
       customNames.add(trimmed);
     }
   });
   Object.keys(sourceProducts || {}).forEach((name) => {
     const trimmed = (name || '').toString().trim();
-    if (trimmed && !DEFAULT_PRODUCTS.includes(trimmed)) {
+    if (trimmed && !DEFAULT_PRODUCTS.includes(trimmed) && !isLegacyProductName(trimmed)) {
       customNames.add(trimmed);
     }
   });
@@ -529,9 +603,11 @@ function normalizeAccountProductRecord(record, account) {
 
   parameterNames.forEach((name) => {
     if (!name) return;
-    const sanitized = sanitizeProductParameters(name, sourceParameters[name]);
+    const targetName = mapToCurrentProductName(name) || name;
+    if (isLegacyProductName(targetName)) return;
+    const sanitized = sanitizeProductParameters(targetName, sourceParameters[name] || sourceParameters[targetName]);
     if (Object.keys(sanitized).length) {
-      normalizedParameters[name] = sanitized;
+      normalizedParameters[targetName] = sanitized;
     }
   });
 
@@ -762,12 +838,30 @@ function populateAccountSelect(select, { includeNewOption = false, selectedId = 
 }
 
 function normalizeAccount(account) {
+  const sourceProducts = Array.isArray(account.products) ? account.products : [];
+  const mappedProducts = Array.from(
+    new Set(
+      sourceProducts
+        .map((name) => mapToCurrentProductName(name))
+        .filter((name) => name && !isLegacyProductName(name))
+    )
+  );
+
+  const sourceCustomProducts = Array.isArray(account.customProducts) ? account.customProducts : [];
+  const mappedCustomProducts = sourceCustomProducts
+    .map((name) => {
+      const trimmed = (name || '').toString().trim();
+      const mapped = mapToCurrentProductName(trimmed);
+      return mapped !== trimmed ? '' : trimmed;
+    })
+    .filter((name) => name && !isLegacyProductName(name));
+
   const normalized = {
     id: account.id || generateId('acct'),
     name: account.name || 'Untitled account',
     core: account.core || 'Other',
-    products: Array.isArray(account.products) ? account.products : [],
-    customProducts: Array.isArray(account.customProducts) ? account.customProducts : [],
+    products: mappedProducts,
+    customProducts: mappedCustomProducts,
     manualLoans: Array.isArray(account.manualLoans)
       ? account.manualLoans.map(normalizeLoan)
       : [],
@@ -824,6 +918,8 @@ function normalizeLoan(loan) {
     normalizedCoverages.legacy = loan.coverage;
   }
 
+  const remappedCoverages = remapCoverageEntries(normalizedCoverages);
+
   return {
     id: loan.id || generateId('loan'),
     borrower: (loan.borrower || '').toString(),
@@ -832,7 +928,7 @@ function normalizeLoan(loan) {
     loanOfficer: (loan.loanOfficer || '').toString(),
     originationDate: (loan.originationDate || '').toString(),
     notes: (loan.notes || '').toString(),
-    coverages: normalizedCoverages,
+    coverages: remappedCoverages,
     createdAt: loan.createdAt || new Date().toISOString()
   };
 }
@@ -2295,7 +2391,15 @@ function renderProductTable(report, metrics, opportunityRows) {
 
 function calculateProductOpportunity(report, metrics, model) {
   if (model.type === 'consumer-coverage') {
-    const consumerBalance = metrics.installmentBalance || 0;
+    const resolvedMetrics = metrics || computeProspectMetrics(report);
+    let eligibleBalance = 0;
+    if (Array.isArray(model.eligibleBalanceKeys) && model.eligibleBalanceKeys.length) {
+      eligibleBalance = sumBalances(report, model.eligibleBalanceKeys);
+    } else if (model.balanceMetric && resolvedMetrics && typeof resolvedMetrics[model.balanceMetric] === 'number') {
+      eligibleBalance = Number(resolvedMetrics[model.balanceMetric]) || 0;
+    } else {
+      eligibleBalance = resolvedMetrics?.installmentBalance || 0;
+    }
     const ratePerThousand = Number(model.ratePerThousand) || 0;
     const penetration = Number(model.penetration) || 0;
     const creditUnionShare =
@@ -2313,7 +2417,7 @@ function calculateProductOpportunity(report, metrics, model) {
         ? model.grossShare
         : creditUnionShare + gfsMarkupShare + gfsUnderwritingShare || 1;
 
-    const monthlyFullCoverage = (consumerBalance / 1000) * ratePerThousand;
+    const monthlyFullCoverage = (eligibleBalance / 1000) * ratePerThousand;
     const monthlyModeled = monthlyFullCoverage * penetration;
     const creditUnionMonthly = monthlyModeled * creditUnionShare;
     const gfsMonthlyMarkup = monthlyModeled * gfsMarkupShare;
@@ -2321,8 +2425,10 @@ function calculateProductOpportunity(report, metrics, model) {
     const gfsMonthly = gfsMonthlyMarkup + gfsMonthlyUnderwriting;
     const grossMonthly = monthlyModeled * grossShare;
 
+    const baseLabel = model.baseLabel || 'consumer loans';
+
     return {
-      baseDisplay: `${formatProspectCurrency(consumerBalance)} consumer loans`,
+      baseDisplay: `${formatProspectCurrency(eligibleBalance)} ${baseLabel}`,
       grossMonthly,
       grossAnnual: grossMonthly * 12,
       gfsMonthly,
@@ -2331,7 +2437,7 @@ function calculateProductOpportunity(report, metrics, model) {
       gfsUnderwritingAnnual: gfsMonthlyUnderwriting * 12,
       creditUnionMonthly,
       creditUnionAnnual: creditUnionMonthly * 12,
-      eligibleBalance: consumerBalance,
+      eligibleBalance,
       annualEligible: null,
       unitsSold: null
     };
