@@ -69,18 +69,18 @@
 
     <section class="panel-card panel-card--wide">
       <header class="panel-card__header">
-        <h2 class="panel-card__title">Product coverage</h2>
-        <p class="panel-card__subtitle">Record whether each product is live with the credit union.</p>
+        <h2 class="panel-card__title">Product status</h2>
+        <p class="panel-card__subtitle">Use the traffic lights to mark each service as On, TBD, or Off.</p>
       </header>
-      <p id="account-products-updated" class="account-products__updated">Select an account to manage product coverage.</p>
+      <p id="account-products-updated" class="account-products__updated">Select an account to manage product status.</p>
       <div id="account-products-container" class="coverage-grid" hidden></div>
-      <p id="account-products-empty" class="coverage-grid__empty">Select an account to manage product coverage.</p>
+      <p id="account-products-empty" class="coverage-grid__empty">Select an account to manage product status.</p>
       <form id="account-products-add-form" class="add-product-inline" autocomplete="off">
         <label for="account-products-add-input" class="sr-only">Add another product</label>
         <input type="text" id="account-products-add-input" class="field__input add-product-inline__input" placeholder="Custom product or service" disabled />
         <button type="submit" class="btn btn--secondary" disabled>Add product</button>
       </form>
-      <p class="field-helper">Selections apply to every call report for the account. Use “Yes” for active products and “No” when the credit union has declined the offering.</p>
+      <p class="field-helper">Statuses apply to every call report for the account. Choose “On” when the line is live, “TBD” when it’s still being pursued, and “Off” when it’s out of scope.</p>
     </section>
   </main>
 

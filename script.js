@@ -108,6 +108,7 @@ function sanitizeProductParameters(productName, values) {
 }
 
 function collectMissingRequiredParameters(definitions, values) {
+  if (!ENABLE_PRODUCT_PARAMETERS) return [];
   if (!definitions || !definitions.length) return [];
   return definitions.filter((definition) => {
     if (!definition.requiredWhenActive) return false;
@@ -117,7 +118,7 @@ function collectMissingRequiredParameters(definitions, values) {
 }
 
 function getMissingRequiredParameters(record, productName) {
-  if (!record || record.products?.[productName] !== 'yes') return [];
+  if (!record || record.products?.[productName] !== 'on') return [];
   const definitions = PRODUCT_PARAMETER_DEFINITIONS[productName];
   if (!definitions || !definitions.length) return [];
   const values = record.parameters?.[productName] || {};
@@ -266,6 +267,7 @@ function formatProspectCurrency(value) {
 
 let PROSPECT_REPORTS = [];
 let PROSPECT_LOOKUP = {};
+let PROSPECT_MONTHLY_TOTALS = new Map();
 const prospectsDataUrl = document.body?.dataset?.prospectsDataUrl || 'prospects-data.json';
 let prospectDataPromise = null;
 
@@ -332,6 +334,32 @@ const PROSPECT_PRODUCT_MODELS = [
     pricing: { retail: 90, gfsShare: 25, creditUnionShare: 20 }
   }
 ];
+
+const PRODUCT_MODEL_LOOKUP = Object.fromEntries(
+  PROSPECT_PRODUCT_MODELS.map((model) => [model.id, model])
+);
+
+const PRODUCT_NAME_TO_MODEL_ID = {
+  'Credit Life (Single)': 'credit-life-single',
+  'Credit Disability (Single)': 'credit-disability-single',
+  'Debt Protection Package A': 'debt-protection-package-a',
+  'Mortgage Life Insurance for 1st Lien mortgages': 'mortgage-life-first-lien',
+  GAP: 'gap',
+  VSC: 'vsc',
+  'Collateral Protection Insurance (CPI)': 'cpi'
+};
+
+const PRODUCT_STATUS_SEQUENCE = ['on', 'tbd', 'off'];
+
+const PRODUCT_STATUS_LABELS = {
+  on: 'On',
+  tbd: 'TBD',
+  off: 'Off'
+};
+
+const DEFAULT_PRODUCT_STATUS = 'tbd';
+
+const ENABLE_PRODUCT_PARAMETERS = false;
 
 const PROSPECT_PRODUCT_FOOTNOTE =
   'Credit life, disability, and IUI estimates: (consumer loans ÷ $1,000) × rate × 38% monthly CU remittance (rates — Life $1.00, Disability $2.25, IUI $1.40; assuming 38% penetration). Mortgage Life models 5% of 1st lien balances at a $4.00 total premium with a 5% GFS share. VSC & GAP assume direct auto loans outstanding ÷ 24 for monthly production (40% VSC @ $400 GFS, 70% GAP @ $50 GFS). CPI modeling: $90 billed ($25 GFS / $20 CU).';
@@ -539,8 +567,15 @@ function cloneProductRecord(record) {
 }
 
 function sanitizeProductValue(value) {
-  if (value === 'yes' || value === 'no') return value;
-  return '';
+  const normalized = (value ?? '').toString().trim().toLowerCase();
+  if (!normalized) return DEFAULT_PRODUCT_STATUS;
+  if (normalized === 'yes') return 'on';
+  if (normalized === 'no') return 'off';
+  if (normalized === 'pending') return 'tbd';
+  if (PRODUCT_STATUS_SEQUENCE.includes(normalized)) return normalized;
+  if (normalized === 'true') return 'on';
+  if (normalized === 'false') return 'off';
+  return DEFAULT_PRODUCT_STATUS;
 }
 
 function updateAccountProductRecord(account, updater) {
@@ -591,6 +626,7 @@ function loadProspectReports() {
     const reports = staticPayload.reports;
     PROSPECT_REPORTS = reports;
     PROSPECT_LOOKUP = Object.fromEntries(reports.map((report) => [report.id, report]));
+    PROSPECT_MONTHLY_TOTALS = new Map();
     prospectDataPromise = Promise.resolve(reports);
     return prospectDataPromise;
   }
@@ -610,12 +646,14 @@ function loadProspectReports() {
       const reports = Array.isArray(payload?.reports) ? payload.reports : [];
       PROSPECT_REPORTS = reports;
       PROSPECT_LOOKUP = Object.fromEntries(reports.map((report) => [report.id, report]));
+      PROSPECT_MONTHLY_TOTALS = new Map();
       return reports;
     })
     .catch((error) => {
       console.error('Unable to load prospect data', error);
       PROSPECT_REPORTS = [];
       PROSPECT_LOOKUP = {};
+      PROSPECT_MONTHLY_TOTALS = new Map();
       return [];
     });
 
@@ -1136,6 +1174,7 @@ function initDashboardPage() {
   if (!accountSelector) return;
 
   let currentAccount = null;
+  let currentOpportunityMap = null;
 
   prepareAccountData().then((accounts) => {
     const initialId = populateAccountSelector(accountSelector, accounts, appState.activeAccountId);
@@ -1168,13 +1207,14 @@ function initDashboardPage() {
       return draft;
     });
     if (addInput) addInput.value = '';
-    renderProducts(currentAccount, updated);
+    renderProducts(currentAccount, updated, { opportunityMap: currentOpportunityMap });
     renderProductsUpdated(updated);
   });
 
   function renderAccount(id) {
     const account = appState.accounts.find((item) => item.id === id) || null;
     currentAccount = account;
+    currentOpportunityMap = null;
 
     if (!account) {
       if (accountName) accountName.textContent = 'Select a call report';
@@ -1193,8 +1233,12 @@ function initDashboardPage() {
     if (latestDate) latestDate.textContent = account.latestAsOf || '—';
     if (reportCount) reportCount.textContent = account.reports.length.toString();
     renderReportList(account);
+    if (account.latestReport) {
+      const metrics = computeProspectMetrics(account.latestReport);
+      currentOpportunityMap = buildOpportunityMap(account.latestReport, metrics);
+    }
     const record = appState.accountProducts[account.id] || normalizeAccountProductRecord({}, account);
-    renderProducts(account, record);
+    renderProducts(account, record, { opportunityMap: currentOpportunityMap });
     renderProductsUpdated(record);
     setAddControlsDisabled(false);
   }
@@ -1265,14 +1309,14 @@ function initDashboardPage() {
     });
   }
 
-  function renderProducts(account, record) {
+  function renderProducts(account, record, { opportunityMap } = {}) {
     if (!productsContainer || !productsEmpty) return;
     productsContainer.innerHTML = '';
 
     if (!account || !record) {
       productsContainer.hidden = true;
       productsEmpty.hidden = false;
-      productsEmpty.textContent = 'Select an account to manage product coverage.';
+      productsEmpty.textContent = 'Select an account to manage product status.';
       return;
     }
 
@@ -1287,154 +1331,105 @@ function initDashboardPage() {
     productsContainer.hidden = false;
     productsEmpty.hidden = true;
 
-    const applyFieldValidation = (fieldEl, productName, currentRecord, { statusOverride, missing } = {}) => {
-      if (!fieldEl) return;
-      const validationEl = fieldEl.querySelector('.coverage-field__validation');
-      if (!validationEl) return;
-      const status = statusOverride ?? currentRecord.products?.[productName] ?? '';
-      let missingDefs = missing || [];
-      if (!missingDefs.length && status === 'yes') {
-        const definitions = getProductParameterDefinitions(productName);
-        const values = currentRecord.parameters?.[productName] || {};
-        missingDefs = collectMissingRequiredParameters(definitions, values);
-      }
-      if (status === 'yes' && missingDefs.length) {
-        fieldEl.classList.add('coverage-field--invalid');
-        const labelList = missingDefs.map((definition) => definition.label).join(', ');
-        validationEl.textContent = `Add required details: ${labelList}.`;
-      } else {
-        fieldEl.classList.remove('coverage-field--invalid');
-        validationEl.textContent = '';
-      }
-    };
-
     names.forEach((name) => {
       const field = document.createElement('div');
       field.className = 'coverage-field';
       field.dataset.productName = name;
 
+      const header = document.createElement('div');
+      header.className = 'coverage-field__header';
+
       const labelEl = document.createElement('span');
       labelEl.className = 'coverage-field__label';
       labelEl.textContent = name;
-      field.append(labelEl);
+      header.append(labelEl);
 
-      const select = document.createElement('select');
-      select.className = 'coverage-field__select';
-      select.name = `product-${name}`;
-      select.dataset.productName = name;
+      const potentialEl = document.createElement('span');
+      potentialEl.className = 'coverage-field__potential';
+      const monthlyPotential = getProductMonthlyPotential(name, opportunityMap);
+      if (monthlyPotential > 0) {
+        potentialEl.textContent = `${formatProspectCurrency(monthlyPotential)} / mo`;
+      } else {
+        potentialEl.textContent = '—';
+      }
+      header.append(potentialEl);
 
-      const blank = document.createElement('option');
-      blank.value = '';
-      blank.textContent = '—';
-      select.append(blank);
+      field.append(header);
 
-      ['yes', 'no'].forEach((value) => {
-        const option = document.createElement('option');
-        option.value = value;
-        option.textContent = value === 'yes' ? 'Yes' : 'No';
-        select.append(option);
-      });
+      const statusGroup = document.createElement('div');
+      statusGroup.className = 'status-toggle';
+      statusGroup.setAttribute('role', 'radiogroup');
+      statusGroup.setAttribute('aria-label', `${name} status`);
 
-      const currentValue = record.products[name] || '';
-      select.value = currentValue;
+      const currentValue = record.products[name] || DEFAULT_PRODUCT_STATUS;
 
-      const parameterDefinitions = getProductParameterDefinitions(name);
-      const parameterValues = record.parameters?.[name] || {};
-
-      const parametersWrapper = document.createElement('div');
-      parametersWrapper.className = 'coverage-field__parameters';
-
-      parameterDefinitions.forEach((definition) => {
-        const parameterField = document.createElement('label');
-        parameterField.className = 'coverage-parameter';
-        parameterField.dataset.parameterId = definition.id;
-
-        const parameterLabel = document.createElement('span');
-        parameterLabel.className = 'coverage-parameter__label';
-        parameterLabel.textContent = definition.requiredWhenActive
-          ? `${definition.label} *`
-          : definition.label;
-        parameterField.append(parameterLabel);
-
-        const input = document.createElement('input');
-        input.className = 'coverage-parameter__input';
-        input.type = definition.inputType || 'text';
-        if (definition.placeholder) {
-          input.placeholder = definition.placeholder;
-        }
-        if (definition.inputMode) {
-          input.setAttribute('inputmode', definition.inputMode);
-        }
-        input.value = parameterValues[definition.id] || '';
-        input.addEventListener('change', () => {
-          const sanitizedValue = sanitizeParameterValue(definition, input.value);
-          const updated = updateAccountProductRecord(account, (draft) => {
-            if (!draft.parameters[name]) {
-              draft.parameters[name] = {};
-            }
-            if (sanitizedValue) {
-              draft.parameters[name][definition.id] = sanitizedValue;
-            } else if (draft.parameters[name]) {
-              delete draft.parameters[name][definition.id];
-            }
-            if (draft.parameters[name] && !Object.keys(draft.parameters[name]).length) {
-              delete draft.parameters[name];
-            }
-            return draft;
-          });
-          renderProducts(account, updated);
-          renderProductsUpdated(updated);
-        });
-
-        parameterField.append(input);
-        parametersWrapper.append(parameterField);
-      });
-
-      select.addEventListener('change', () => {
-        const nextValue = sanitizeProductValue(select.value);
-        if (nextValue === 'yes') {
-          const definitions = getProductParameterDefinitions(name);
-          const values = record.parameters?.[name] || {};
-          const missing = collectMissingRequiredParameters(definitions, values);
-          if (missing.length) {
-            select.value = currentValue;
-            applyFieldValidation(field, name, { ...record, products: { ...record.products, [name]: 'yes' } }, {
-              statusOverride: 'yes',
-              missing
-            });
-            const firstMissing = field.querySelector(
-              `.coverage-parameter[data-parameter-id="${missing[0]?.id}"] .coverage-parameter__input`
-            );
-            if (firstMissing) {
-              firstMissing.focus();
-            }
-            return;
-          }
-        }
-
+      const setStatus = (nextStatus) => {
+        const normalizedStatus = sanitizeProductValue(nextStatus);
+        if (record.products[name] === normalizedStatus) return;
         const updated = updateAccountProductRecord(account, (draft) => {
-          draft.products[name] = nextValue;
+          draft.products[name] = normalizedStatus;
           if (!DEFAULT_PRODUCTS.includes(name) && !draft.customProducts.includes(name)) {
             draft.customProducts.push(name);
             draft.customProducts.sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }));
           }
           return draft;
         });
-        renderProducts(account, updated);
+        renderProducts(account, updated, { opportunityMap });
         renderProductsUpdated(updated);
+        window.requestAnimationFrame?.(() => {
+          if (!productsContainer) return;
+          const nextField = Array.from(productsContainer.querySelectorAll('.coverage-field')).find(
+            (node) => node instanceof HTMLElement && node.dataset.productName === name
+          );
+          const nextButton = nextField?.querySelector(
+            `.status-toggle__light--${normalizedStatus}`
+          );
+          if (nextButton instanceof HTMLElement) {
+            nextButton.focus();
+          }
+        });
+      };
+
+      PRODUCT_STATUS_SEQUENCE.forEach((statusValue) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `status-toggle__light status-toggle__light--${statusValue}`;
+        button.setAttribute('role', 'radio');
+        const isActive = currentValue === statusValue;
+        if (isActive) {
+          button.classList.add('status-toggle__light--active');
+        }
+        button.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        button.setAttribute('aria-label', `${PRODUCT_STATUS_LABELS[statusValue]} — ${name}`);
+        button.title = PRODUCT_STATUS_LABELS[statusValue];
+        button.tabIndex = isActive ? 0 : -1;
+        button.addEventListener('click', () => {
+          setStatus(statusValue);
+        });
+        statusGroup.append(button);
       });
 
-      field.append(select);
+      statusGroup.addEventListener('keydown', (event) => {
+        if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
+        event.preventDefault();
+        const currentIndex = PRODUCT_STATUS_SEQUENCE.indexOf(currentValue);
+        if (currentIndex === -1) return;
+        let nextIndex = currentIndex;
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          nextIndex = (currentIndex - 1 + PRODUCT_STATUS_SEQUENCE.length) % PRODUCT_STATUS_SEQUENCE.length;
+        } else {
+          nextIndex = (currentIndex + 1) % PRODUCT_STATUS_SEQUENCE.length;
+        }
+        const nextStatus = PRODUCT_STATUS_SEQUENCE[nextIndex];
+        setStatus(nextStatus);
+      });
 
-      if (parameterDefinitions.length) {
-        field.append(parametersWrapper);
-      }
+      const statusLabel = document.createElement('span');
+      statusLabel.className = 'status-toggle__label';
+      statusLabel.textContent = PRODUCT_STATUS_LABELS[currentValue] || PRODUCT_STATUS_LABELS[DEFAULT_PRODUCT_STATUS];
+      statusGroup.append(statusLabel);
 
-      const validationMessage = document.createElement('p');
-      validationMessage.className = 'coverage-field__validation';
-      validationMessage.setAttribute('role', 'status');
-      validationMessage.setAttribute('aria-live', 'polite');
-      field.append(validationMessage);
+      field.append(statusGroup);
 
       if (!DEFAULT_PRODUCTS.includes(name)) {
         const removeBtn = document.createElement('button');
@@ -1450,21 +1445,28 @@ function initDashboardPage() {
             }
             return draft;
           });
-          renderProducts(account, updated);
+          renderProducts(account, updated, { opportunityMap });
           renderProductsUpdated(updated);
         });
         field.append(removeBtn);
       }
 
-      applyFieldValidation(field, name, record);
       productsContainer.append(field);
     });
+  }
+
+  function getProductMonthlyPotential(name, opportunityMap) {
+    if (!opportunityMap || !(opportunityMap instanceof Map)) return 0;
+    const modelId = PRODUCT_NAME_TO_MODEL_ID[name];
+    if (!modelId) return 0;
+    const opportunity = opportunityMap.get(modelId);
+    return Number(opportunity?.grossMonthly || 0);
   }
 
   function renderProductsUpdated(record) {
     if (!productsUpdated) return;
     if (!record || !record.updatedAt) {
-      productsUpdated.textContent = 'Select an account to manage product coverage.';
+      productsUpdated.textContent = 'Select an account to manage product status.';
       return;
     }
     productsUpdated.textContent = `Updated ${formatDateTime(record.updatedAt)}.`;
@@ -1563,17 +1565,17 @@ function initReportingPage() {
       charterCell.textContent = account.charter || '—';
       row.append(charterCell);
 
-      const liveCell = document.createElement('td');
-      liveCell.textContent = counts.yes.toString();
-      row.append(liveCell);
+      const onCell = document.createElement('td');
+      onCell.textContent = counts.on.toString();
+      row.append(onCell);
 
-      const declinedCell = document.createElement('td');
-      declinedCell.textContent = counts.no.toString();
-      row.append(declinedCell);
+      const tbdCell = document.createElement('td');
+      tbdCell.textContent = counts.tbd.toString();
+      row.append(tbdCell);
 
-      const pendingCell = document.createElement('td');
-      pendingCell.textContent = counts.pending.toString();
-      row.append(pendingCell);
+      const offCell = document.createElement('td');
+      offCell.textContent = counts.off.toString();
+      row.append(offCell);
 
       const updatedCell = document.createElement('td');
       updatedCell.textContent = record.updatedAt ? formatDateTime(record.updatedAt) : 'Not set';
@@ -1603,24 +1605,20 @@ function initReportingPage() {
 
   function summarizeProductStatuses(record) {
     const names = getAccountProductNames(record);
-    let yes = 0;
-    let no = 0;
-    let pending = 0;
+    let onCount = 0;
+    let offCount = 0;
+    let tbdCount = 0;
     names.forEach((name) => {
-      const value = record.products?.[name] || '';
-      if (value === 'yes') {
-        if (productActivationIsValid(record, name)) {
-          yes += 1;
-        } else {
-          pending += 1;
-        }
-      } else if (value === 'no') {
-        no += 1;
+      const value = record.products?.[name] || DEFAULT_PRODUCT_STATUS;
+      if (value === 'on') {
+        onCount += 1;
+      } else if (value === 'off') {
+        offCount += 1;
       } else {
-        pending += 1;
+        tbdCount += 1;
       }
     });
-    return { yes, no, pending };
+    return { on: onCount, off: offCount, tbd: tbdCount };
   }
 }
 // -----------------------
@@ -1646,12 +1644,14 @@ function initProspectsPage() {
     reports.forEach((report) => {
       const option = document.createElement('option');
       option.value = report.id;
-      option.textContent = `${report.name} — ${report.asOf}`;
+      option.textContent = report.name || report.id;
       prospectSelector.append(option);
       if (logSelector) {
         logSelector.append(option.cloneNode(true));
       }
     });
+
+    renderProspectDirectory(reports);
 
     const initialId = reports[0]?.id || '';
     if (initialId) {
@@ -1763,6 +1763,70 @@ function renderProspect(id) {
   renderProspectLog();
 }
 
+function getMonthlyRevenueTotal(report, metrics) {
+  if (!report) return 0;
+  if (report.id && PROSPECT_MONTHLY_TOTALS.has(report.id)) {
+    return Number(PROSPECT_MONTHLY_TOTALS.get(report.id) || 0);
+  }
+  const opportunityMap = buildOpportunityMap(report, metrics);
+  const total = Array.from(opportunityMap.values()).reduce(
+    (sum, opportunity) => sum + Number(opportunity?.grossMonthly || 0),
+    0
+  );
+  if (report.id) {
+    PROSPECT_MONTHLY_TOTALS.set(report.id, total);
+  }
+  return total;
+}
+
+function renderProspectDirectory(reports) {
+  const table = document.getElementById('prospect-directory-table');
+  if (!table) return;
+  const tbody = table.querySelector('tbody');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+
+  if (!reports || !reports.length) {
+    const row = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = 3;
+    cell.textContent = 'Upload call reports to populate the prospect list.';
+    row.append(cell);
+    tbody.append(row);
+    return;
+  }
+
+  reports.forEach((report) => {
+    const metrics = computeProspectMetrics(report);
+    const monthlyTotal = getMonthlyRevenueTotal(report, metrics);
+
+    const row = document.createElement('tr');
+
+    const nameCell = document.createElement('td');
+    const nameLink = document.createElement('a');
+    nameLink.href = `prospects/${report.id}.html`;
+    nameLink.className = 'data-table__link';
+    nameLink.textContent = report.name || report.id;
+    nameCell.append(nameLink);
+    row.append(nameCell);
+
+    const asOfCell = document.createElement('td');
+    asOfCell.textContent = report.asOf || '—';
+    row.append(asOfCell);
+
+    const revenueCell = document.createElement('td');
+    if (monthlyTotal > 0) {
+      revenueCell.textContent = `${formatProspectCurrency(monthlyTotal)} / mo`;
+    } else {
+      revenueCell.textContent = '—';
+    }
+    row.append(revenueCell);
+
+    tbody.append(row);
+  });
+}
+
 function computeProspectMetrics(report) {
   const installmentKeys = ['creditCard', 'student', 'otherUnsecured', 'newVehicle', 'usedVehicle', 'leases', 'otherSecured'];
   const autoKeys = ['newVehicle', 'usedVehicle'];
@@ -1817,13 +1881,18 @@ function computeProspectMetrics(report) {
 }
 
 function renderProspectSummary(report, metrics) {
+  const monthlyTotal = getMonthlyRevenueTotal(report, metrics);
   setText('prospect-title', report.name || 'Prospect intelligence');
   const subtitle = document.getElementById('prospect-subtitle');
   if (subtitle) {
     const summary = report.name
       ? `Call report intelligence and protection modeling for ${report.name}.`
       : 'Load a 5300 call report to review consumer lending exposure and production potential.';
-    subtitle.textContent = summary;
+    if (monthlyTotal > 0) {
+      subtitle.textContent = `${summary} Estimated monthly revenue potential ${formatProspectCurrency(monthlyTotal)} / mo.`;
+    } else {
+      subtitle.textContent = summary;
+    }
   }
 
   const asOfEl = document.getElementById('prospect-reporting-date');
@@ -2254,10 +2323,13 @@ function calculateProductOpportunity(report, metrics, model) {
 
     return {
       baseDisplay: `${formatProspectCurrency(consumerBalance)} consumer loans`,
+      grossMonthly,
       grossAnnual: grossMonthly * 12,
+      gfsMonthly,
       gfsAnnual: gfsMonthly * 12,
       gfsMarkupAnnual: gfsMonthlyMarkup * 12,
       gfsUnderwritingAnnual: gfsMonthlyUnderwriting * 12,
+      creditUnionMonthly,
       creditUnionAnnual: creditUnionMonthly * 12,
       eligibleBalance: consumerBalance,
       annualEligible: null,
@@ -2289,10 +2361,13 @@ function calculateProductOpportunity(report, metrics, model) {
 
     return {
       baseDisplay: `${formatNumber(Math.round(annualEligible))} loans / yr`,
+      grossMonthly: monthlyUnitsSold * retailPerUnit,
       grossAnnual,
+      gfsMonthly: monthlyUnitsSold * gfsIncomePerUnit,
       gfsAnnual,
       gfsMarkupAnnual: gfsAnnual,
       gfsUnderwritingAnnual: 0,
+      creditUnionMonthly: monthlyUnitsSold * creditUnionIncomePerUnit,
       creditUnionAnnual,
       eligibleBalance: null,
       annualEligible,
@@ -2314,10 +2389,13 @@ function calculateProductOpportunity(report, metrics, model) {
     const creditUnionAnnual = eligibleBalance * model.penetration * (creditUnionRate / 100) * 12;
     return {
       baseDisplay: `${formatProspectCurrency(eligibleBalance)} outstanding`,
+      grossMonthly: grossAnnual / 12,
       grossAnnual,
+      gfsMonthly: gfsAnnual / 12,
       gfsAnnual,
       gfsMarkupAnnual,
       gfsUnderwritingAnnual,
+      creditUnionMonthly: creditUnionAnnual / 12,
       creditUnionAnnual,
       eligibleBalance,
       annualEligible: null,
@@ -2332,15 +2410,28 @@ function calculateProductOpportunity(report, metrics, model) {
   const creditUnionAnnual = unitsSold * (model.pricing?.creditUnionShare || 0);
   return {
     baseDisplay: `${formatNumber(Math.round(annualEligible))} loans / yr`,
+    grossMonthly: grossAnnual / 12,
     grossAnnual,
+    gfsMonthly: gfsAnnual / 12,
     gfsAnnual,
     gfsMarkupAnnual: gfsAnnual,
     gfsUnderwritingAnnual: 0,
+    creditUnionMonthly: creditUnionAnnual / 12,
     creditUnionAnnual,
     eligibleBalance: null,
     annualEligible,
     unitsSold
   };
+}
+
+function buildOpportunityMap(report, metrics) {
+  const opportunityMap = new Map();
+  if (!report) return opportunityMap;
+  const resolvedMetrics = metrics || computeProspectMetrics(report);
+  PROSPECT_PRODUCT_MODELS.forEach((model) => {
+    opportunityMap.set(model.id, calculateProductOpportunity(report, resolvedMetrics, model));
+  });
+  return opportunityMap;
 }
 
 function formatGfsShare(opportunity) {
