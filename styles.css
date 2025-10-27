@@ -1024,7 +1024,7 @@ textarea {
 
 /* Prospects page */
 .prospects {
-  width: min(1200px, 92vw);
+  width: min(1500px, 96vw);
   margin: 0 auto;
   padding: 2.5rem 0 4rem;
   display: flex;
