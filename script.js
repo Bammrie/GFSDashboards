@@ -317,6 +317,18 @@ function formatProspectCurrency(value) {
   return formatCurrency(value, PROSPECT_CURRENCY_FORMAT);
 }
 
+const DIRECT_AUTO_AVERAGE_TERM_MONTHS = 36;
+const DEBT_PROTECTION_RATE_PER_HUNDRED = 2;
+const DEBT_PROTECTION_MARKUP_PER_HUNDRED = 0.3;
+const DEBT_PROTECTION_UNDERWRITING_PER_HUNDRED = 1.6;
+const DEBT_PROTECTION_LOSS_RATIO = 0.3;
+const CPI_DIRECT_POLICY_RATE = 0.02;
+const CPI_INDIRECT_POLICY_RATE = 0.04;
+const CPI_AVERAGE_POLICY_COST = 2500;
+const CPI_COMMISSION_RATE = 0.1;
+const FIDELITY_BOND_PREMIUM_PER_100M = 10000;
+const FIDELITY_BOND_COMMISSION_RATE = 0.035;
+
 let PROSPECT_REPORTS = [];
 let PROSPECT_LOOKUP = {};
 let PROSPECT_MONTHLY_TOTALS = new Map();
@@ -326,13 +338,18 @@ let prospectDataPromise = null;
 const PROSPECT_PRODUCT_MODELS = [
   {
     id: 'credit-insurance-consumer',
-    label: CONSUMER_PROTECTION_PRODUCT,
-    type: 'consumer-coverage',
-    ratePerThousand: 4.65,
-    penetration: 0.38,
-    creditUnionShare: 1,
-    gfsShare: 0,
-    baseLabel: 'consumer loans'
+    label: 'Credit Insurance/Debt Protection Monthly Remittance',
+    type: 'consumer-mob',
+    coverage: {
+      creditCard: 0.3,
+      otherUnsecured: 0.4,
+      newVehicle: 0.12,
+      usedVehicle: 0.15
+    },
+    ratePerHundred: DEBT_PROTECTION_RATE_PER_HUNDRED,
+    markupPerHundred: DEBT_PROTECTION_MARKUP_PER_HUNDRED,
+    underwritingPerHundred: DEBT_PROTECTION_UNDERWRITING_PER_HUNDRED,
+    lossRatio: DEBT_PROTECTION_LOSS_RATIO
   },
   {
     id: 'credit-insurance-mortgage',
@@ -349,27 +366,58 @@ const PROSPECT_PRODUCT_MODELS = [
     id: 'gap',
     label: 'GAP',
     type: 'direct-auto-ancillary',
-    penetration: 0.7,
-    averageTermMonths: 24,
+    penetration: 0.3,
     gfsIncomePerUnit: 50,
-    creditUnionIncomePerUnit: 0
+    creditUnionIncomePerUnit: 0,
+    baseLabel: 'direct auto loans',
+    gfsMarkupLabel: 'markup commission'
+  },
+  {
+    id: 'gap-underwriting',
+    label: 'GAP Underwriting Profit',
+    type: 'direct-auto-ancillary',
+    penetration: 0.3,
+    gfsIncomePerUnit: 25,
+    creditUnionIncomePerUnit: 0,
+    baseLabel: 'direct auto loans',
+    gfsMarkupLabel: 'underwriting profit'
   },
   {
     id: 'vsc',
     label: 'Vehicle Service Contract',
     type: 'direct-auto-ancillary',
-    penetration: 0.4,
-    averageTermMonths: 24,
+    penetration: 0.1,
     gfsIncomePerUnit: 400,
-    creditUnionIncomePerUnit: 0
+    creditUnionIncomePerUnit: 0,
+    baseLabel: 'direct auto loans',
+    gfsMarkupLabel: 'program margin'
+  },
+  {
+    id: 'afg-balloon',
+    label: 'AFG Balloon Loan Program',
+    type: 'direct-auto-ancillary',
+    penetration: 0.1,
+    gfsIncomePerUnit: 50,
+    creditUnionIncomePerUnit: 0,
+    baseLabel: 'direct auto loans',
+    gfsMarkupLabel: 'program fee'
   },
   {
     id: 'cpi',
     label: 'Collateral Protection Insurance',
-    type: 'flat',
-    eligibleCountKeys: ['newVehicle', 'usedVehicle', 'otherSecured'],
-    penetration: 0.08,
-    pricing: { retail: 90, gfsShare: 25, creditUnionShare: 20 }
+    type: 'cpi',
+    directPolicyRate: CPI_DIRECT_POLICY_RATE,
+    indirectPolicyRate: CPI_INDIRECT_POLICY_RATE,
+    policyCost: CPI_AVERAGE_POLICY_COST,
+    commissionRate: CPI_COMMISSION_RATE,
+    disclaimer: '(Expect 50% refunds)',
+    gfsMarkupLabel: 'commission'
+  },
+  {
+    id: 'fidelity-bond',
+    label: 'Fidelity Bond Commission',
+    type: 'fidelity-bond',
+    gfsMarkupLabel: 'agency commission'
   }
 ];
 
@@ -378,13 +426,15 @@ const PRODUCT_MODEL_LOOKUP = Object.fromEntries(
 );
 
 const PRODUCT_NAME_TO_MODEL_ID = {
-  [CONSUMER_PROTECTION_PRODUCT]: 'credit-insurance-consumer',
-  [MORTGAGE_PROTECTION_PRODUCT]: 'credit-insurance-mortgage',
-  GAP: 'gap',
-  VSC: 'vsc',
-  'Collateral Protection Insurance (CPI)': 'cpi',
-  ...Object.fromEntries(LEGACY_CONSUMER_PRODUCTS.map((name) => [name, 'credit-insurance-consumer'])),
-  ...Object.fromEntries(LEGACY_MORTGAGE_PRODUCTS.map((name) => [name, 'credit-insurance-mortgage']))
+  [CONSUMER_PROTECTION_PRODUCT]: ['credit-insurance-consumer'],
+  [MORTGAGE_PROTECTION_PRODUCT]: ['credit-insurance-mortgage'],
+  GAP: ['gap', 'gap-underwriting'],
+  VSC: ['vsc'],
+  'Collateral Protection Insurance (CPI)': ['cpi'],
+  'Fidelity Bond': ['fidelity-bond'],
+  'AFG Balloon Loans': ['afg-balloon'],
+  ...Object.fromEntries(LEGACY_CONSUMER_PRODUCTS.map((name) => [name, ['credit-insurance-consumer']])),
+  ...Object.fromEntries(LEGACY_MORTGAGE_PRODUCTS.map((name) => [name, ['credit-insurance-mortgage']]))
 };
 
 const PRODUCT_STATUS_SEQUENCE = ['on', 'tbd', 'off'];
@@ -400,7 +450,7 @@ const DEFAULT_PRODUCT_STATUS = 'tbd';
 const ENABLE_PRODUCT_PARAMETERS = false;
 
 const PROSPECT_PRODUCT_FOOTNOTE =
-  'Credit Insurance/Debt Protection - Consumer: (consumer loans ÷ $1,000) × $4.65 rate × 38% penetration with all revenue to the credit union. Credit Insurance - Mortgage applies the same MOB method to Schedule 703A 1st lien balances using a $4.00 rate, 5% penetration, and a 5% GFS share. VSC & GAP assume direct auto loans outstanding ÷ 24 for monthly production (40% VSC @ $400 GFS, 70% GAP @ $50 GFS). CPI modeling: $90 billed ($25 GFS / $20 CU).';
+  'Debt protection remits $2.00 per $100 on 30% credit card, 40% unsecured, 12% new direct auto, and 15% used direct auto balances with a $0.30 markup commission and 30% loss ratio applied to the $1.60 underwriting share. Direct auto production divides (new + used − indirect) loan counts by 36 months; VSC assumes 10% attach @ $400 GFS, GAP 30% @ $50 commission plus $25 underwriting profit, and AFG balloons 10% attach @ $50. CPI forecasts 2% of direct and 4% of indirect vehicles force-placed monthly at a $2,500 average premium with a 10% GFS commission (Expect 50% refunds). Fidelity bond income uses a $10,000 premium per $100M of assets with a 3.5% agency share.';
 
 const prospectState = {
   activeProspectId: '',
@@ -1601,10 +1651,13 @@ function initDashboardPage() {
 
   function getProductMonthlyPotential(name, opportunityMap) {
     if (!opportunityMap || !(opportunityMap instanceof Map)) return 0;
-    const modelId = PRODUCT_NAME_TO_MODEL_ID[name];
-    if (!modelId) return 0;
-    const opportunity = opportunityMap.get(modelId);
-    return Number(opportunity?.grossMonthly || 0);
+    const modelIds = PRODUCT_NAME_TO_MODEL_ID[name];
+    if (!modelIds) return 0;
+    const ids = Array.isArray(modelIds) ? modelIds : [modelIds];
+    return ids.reduce((sum, id) => {
+      const opportunity = opportunityMap.get(id);
+      return sum + Number(opportunity?.grossMonthly || 0);
+    }, 0);
   }
 
   function renderProductsUpdated(record) {
@@ -2437,7 +2490,113 @@ function renderProductTable(report, metrics, opportunityRows) {
   }
 }
 
+function calculateDirectAutoStats(report) {
+  const newLoans = report.loanMix?.newVehicle || {};
+  const usedLoans = report.loanMix?.usedVehicle || {};
+  const indirectAuto = report.indirect?.auto || {};
+
+  const totalVehicleCount = (newLoans.count || 0) + (usedLoans.count || 0);
+  const totalVehicleBalance = (newLoans.balance || 0) + (usedLoans.balance || 0);
+  const indirectCount = indirectAuto.count || 0;
+  const indirectBalance = indirectAuto.balance || 0;
+
+  let directNewCount = newLoans.count || 0;
+  let directUsedCount = usedLoans.count || 0;
+
+  if (totalVehicleCount > 0 && indirectCount > 0) {
+    const newCountShare = (newLoans.count || 0) / totalVehicleCount;
+    const usedCountShare = (usedLoans.count || 0) / totalVehicleCount;
+    directNewCount = Math.max(directNewCount - indirectCount * newCountShare, 0);
+    directUsedCount = Math.max(directUsedCount - indirectCount * usedCountShare, 0);
+  }
+
+  const directCount = Math.max(directNewCount + directUsedCount, 0);
+
+  let directNewBalance = newLoans.balance || 0;
+  let directUsedBalance = usedLoans.balance || 0;
+
+  if (totalVehicleBalance > 0 && indirectBalance > 0) {
+    const newBalanceShare = (newLoans.balance || 0) / totalVehicleBalance;
+    const usedBalanceShare = (usedLoans.balance || 0) / totalVehicleBalance;
+    directNewBalance = Math.max(directNewBalance - indirectBalance * newBalanceShare, 0);
+    directUsedBalance = Math.max(directUsedBalance - indirectBalance * usedBalanceShare, 0);
+  }
+
+  const directBalance = Math.max(directNewBalance + directUsedBalance, 0);
+
+  const monthlyDirectCount = DIRECT_AUTO_AVERAGE_TERM_MONTHS
+    ? directCount / DIRECT_AUTO_AVERAGE_TERM_MONTHS
+    : 0;
+  const monthlyDirectNewCount = DIRECT_AUTO_AVERAGE_TERM_MONTHS
+    ? directNewCount / DIRECT_AUTO_AVERAGE_TERM_MONTHS
+    : 0;
+  const monthlyDirectUsedCount = DIRECT_AUTO_AVERAGE_TERM_MONTHS
+    ? directUsedCount / DIRECT_AUTO_AVERAGE_TERM_MONTHS
+    : 0;
+  const monthlyIndirectCount = DIRECT_AUTO_AVERAGE_TERM_MONTHS
+    ? (indirectCount || 0) / DIRECT_AUTO_AVERAGE_TERM_MONTHS
+    : 0;
+
+  return {
+    directCount,
+    directNewCount,
+    directUsedCount,
+    directBalance,
+    directNewBalance,
+    directUsedBalance,
+    indirectCount,
+    indirectBalance,
+    monthlyDirectCount,
+    monthlyDirectNewCount,
+    monthlyDirectUsedCount,
+    monthlyIndirectCount
+  };
+}
+
 function calculateProductOpportunity(report, metrics, model) {
+  if (model.type === 'consumer-mob') {
+    const coverage = model.coverage || {};
+    const ratePerHundred = Number(model.ratePerHundred) || 0;
+    const markupPerHundred = Number(model.markupPerHundred) || 0;
+    const underwritingPerHundred = Number(model.underwritingPerHundred) || 0;
+    const lossRatio = Number.isFinite(Number(model.lossRatio))
+      ? Number(model.lossRatio)
+      : DEBT_PROTECTION_LOSS_RATIO;
+
+    const creditCardBalance = report.loanMix?.creditCard?.balance || 0;
+    const otherUnsecuredBalance = report.loanMix?.otherUnsecured?.balance || 0;
+    const directStats = calculateDirectAutoStats(report);
+
+    const protectedBalance =
+      (creditCardBalance || 0) * (coverage.creditCard || 0) +
+      (otherUnsecuredBalance || 0) * (coverage.otherUnsecured || 0) +
+      (directStats.directNewBalance || 0) * (coverage.newVehicle || 0) +
+      (directStats.directUsedBalance || 0) * (coverage.usedVehicle || 0);
+
+    const monthlyRemittance = (protectedBalance / 100) * ratePerHundred;
+    const markupMonthly = (protectedBalance / 100) * markupPerHundred;
+    const underwritingMonthly = (protectedBalance / 100) * underwritingPerHundred;
+    const underwritingProfitMonthly = underwritingMonthly * (1 - lossRatio);
+    const gfsMonthly = markupMonthly + underwritingProfitMonthly;
+
+    return {
+      baseDisplay: `${formatProspectCurrency(monthlyRemittance)} Monthly Remittance`,
+      grossMonthly: monthlyRemittance,
+      grossAnnual: monthlyRemittance * 12,
+      gfsMonthly,
+      gfsAnnual: gfsMonthly * 12,
+      gfsMarkupAnnual: markupMonthly * 12,
+      gfsUnderwritingAnnual: underwritingProfitMonthly * 12,
+      gfsMarkupLabel: 'markup commission',
+      gfsUnderwritingLabel: 'MOB underwriting profit',
+      creditUnionMonthly: 0,
+      creditUnionAnnual: 0,
+      eligibleBalance: protectedBalance,
+      annualEligible: null,
+      unitsSold: null
+    };
+  }
+
   if (model.type === 'consumer-coverage') {
     const resolvedMetrics = metrics || computeProspectMetrics(report);
     let eligibleBalance = 0;
@@ -2492,13 +2651,10 @@ function calculateProductOpportunity(report, metrics, model) {
   }
 
   if (model.type === 'direct-auto-ancillary') {
-    const newVehicleCount = report.loanMix?.newVehicle?.count || 0;
-    const usedVehicleCount = report.loanMix?.usedVehicle?.count || 0;
-    const indirectAutoCount = report.indirect?.auto?.count || 0;
-    const outstandingDirect = Math.max(newVehicleCount + usedVehicleCount - indirectAutoCount, 0);
-    const averageTermMonths = Number(model.averageTermMonths) || 0;
+    const directStats = calculateDirectAutoStats(report);
+    const averageTermMonths = Number(model.averageTermMonths) || DIRECT_AUTO_AVERAGE_TERM_MONTHS;
     const penetration = Number(model.penetration) || 0;
-    const monthlyEligible = averageTermMonths > 0 ? outstandingDirect / averageTermMonths : 0;
+    const monthlyEligible = averageTermMonths > 0 ? directStats.directCount / averageTermMonths : 0;
     const annualEligible = monthlyEligible * 12;
     const monthlyUnitsSold = monthlyEligible * penetration;
     const unitsSold = monthlyUnitsSold * 12;
@@ -2513,19 +2669,79 @@ function calculateProductOpportunity(report, metrics, model) {
     const gfsAnnual = monthlyUnitsSold * gfsIncomePerUnit * 12;
     const creditUnionAnnual = monthlyUnitsSold * creditUnionIncomePerUnit * 12;
 
+    const baseLabel = model.baseLabel || 'loans';
+
     return {
-      baseDisplay: `${formatNumber(Math.round(annualEligible))} loans / yr`,
+      baseDisplay: `${formatNumber(Math.round(annualEligible))} ${baseLabel} / yr`,
       grossMonthly: monthlyUnitsSold * retailPerUnit,
       grossAnnual,
       gfsMonthly: monthlyUnitsSold * gfsIncomePerUnit,
       gfsAnnual,
       gfsMarkupAnnual: gfsAnnual,
+      gfsMarkupLabel: model.gfsMarkupLabel || '',
       gfsUnderwritingAnnual: 0,
       creditUnionMonthly: monthlyUnitsSold * creditUnionIncomePerUnit,
       creditUnionAnnual,
       eligibleBalance: null,
       annualEligible,
       unitsSold
+    };
+  }
+
+  if (model.type === 'cpi') {
+    const directStats = calculateDirectAutoStats(report);
+    const directPolicyRate = Number(model.directPolicyRate) || 0;
+    const indirectPolicyRate = Number(model.indirectPolicyRate) || 0;
+    const policyCost = Number(model.policyCost) || CPI_AVERAGE_POLICY_COST;
+    const commissionRate = Number(model.commissionRate) || CPI_COMMISSION_RATE;
+
+    const monthlyDirectPolicies = directStats.monthlyDirectCount * directPolicyRate;
+    const monthlyIndirectPolicies = directStats.monthlyIndirectCount * indirectPolicyRate;
+    const monthlyPolicies = monthlyDirectPolicies + monthlyIndirectPolicies;
+    const monthlyPremium = monthlyPolicies * policyCost;
+    const gfsMonthly = monthlyPremium * commissionRate;
+    const gfsAnnual = gfsMonthly * 12;
+
+    return {
+      baseDisplay: `${formatNumber(Math.round(monthlyPolicies * 12))} policies / yr @ ${formatProspectCurrency(
+        policyCost
+      )}`,
+      grossMonthly: gfsMonthly,
+      grossAnnual: gfsAnnual,
+      gfsMonthly,
+      gfsAnnual,
+      gfsMarkupAnnual: gfsAnnual,
+      gfsMarkupLabel: model.gfsMarkupLabel || 'commission',
+      gfsUnderwritingAnnual: 0,
+      creditUnionMonthly: 0,
+      creditUnionAnnual: 0,
+      eligibleBalance: null,
+      annualEligible: monthlyPolicies * 12,
+      unitsSold: monthlyPolicies * 12,
+      disclaimer: model.disclaimer || ''
+    };
+  }
+
+  if (model.type === 'fidelity-bond') {
+    const totalAssets = Number(report.totalAssets) || 0;
+    const annualPremium = (totalAssets / 100000000) * FIDELITY_BOND_PREMIUM_PER_100M;
+    const gfsAnnual = annualPremium * FIDELITY_BOND_COMMISSION_RATE;
+    const gfsMonthly = gfsAnnual / 12;
+
+    return {
+      baseDisplay: `${formatProspectCurrency(totalAssets)} total assets`,
+      grossMonthly: gfsMonthly,
+      grossAnnual: gfsAnnual,
+      gfsMonthly,
+      gfsAnnual,
+      gfsMarkupAnnual: gfsAnnual,
+      gfsMarkupLabel: model.gfsMarkupLabel || 'commission',
+      gfsUnderwritingAnnual: 0,
+      creditUnionMonthly: 0,
+      creditUnionAnnual: 0,
+      eligibleBalance: totalAssets,
+      annualEligible: null,
+      unitsSold: null
     };
   }
 
@@ -2592,19 +2808,24 @@ function formatGfsShare(opportunity) {
   const total = formatProspectCurrency(opportunity.gfsAnnual);
   const markup = Number(opportunity.gfsMarkupAnnual) || 0;
   const underwriting = Number(opportunity.gfsUnderwritingAnnual) || 0;
-  if (markup > 0 || underwriting > 0) {
-    const parts = [];
-    if (markup > 0) {
-      parts.push(`${formatProspectCurrency(markup)} markup`);
-    }
-    if (underwriting > 0) {
-      parts.push(`${formatProspectCurrency(underwriting)} underwriting`);
-    }
-    if (parts.length) {
-      return `${total} (${parts.join(' / ')})`;
-    }
+  const parts = [];
+  if (markup > 0) {
+    const label = opportunity.gfsMarkupLabel || 'markup';
+    parts.push(`${formatProspectCurrency(markup)} ${label}`);
   }
-  return total;
+  if (underwriting > 0) {
+    const label = opportunity.gfsUnderwritingLabel || 'underwriting';
+    parts.push(`${formatProspectCurrency(underwriting)} ${label}`);
+  }
+
+  let output = total;
+  if (parts.length) {
+    output = `${output} (${parts.join(' / ')})`;
+  }
+  if (opportunity.disclaimer) {
+    output = `${output} ${opportunity.disclaimer}`;
+  }
+  return output;
 }
 
 function setupProspectLogForm() {
