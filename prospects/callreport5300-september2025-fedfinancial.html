@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GFS Dashboards — Prospect Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body data-page="prospect-detail" data-prospect-id="callreport5300-september2025-fedfinancial">
+  <header class="site-header">
+    <div class="site-header__background" aria-hidden="true"></div>
+    <div class="site-header__inner">
+      <div class="site-header__brand">
+        <img src="../GFS Logo.png" class="site-header__logo" alt="Goodwine Financial Services" />
+        <div class="site-header__titles">
+          <span class="site-header__title">Goodwine Financial Services</span>
+          <span class="site-header__subtitle">Lending Protection Intelligence</span>
+        </div>
+      </div>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="../index.html" class="site-nav__link">Workspace</a>
+        <a href="../reporting.html" class="site-nav__link">Reporting</a>
+        <a href="../prospects.html" class="site-nav__link site-nav__link--active">Prospects</a>
+        <a href="../create-account.html" class="site-nav__link">New account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="prospects" aria-live="polite">
+    <section class="prospects__intro">
+      <div class="prospects__intro-copy">
+        <p class="prospects__breadcrumb"><a href="../prospects.html" class="prospects__breadcrumb-link">← Back to all prospects</a></p>
+        <h1 class="prospects__title" id="prospect-title">FedFinancial Federal Credit Union</h1>
+        <p class="prospects__subtitle" id="prospect-subtitle">Call report intelligence and protection modeling for FedFinancial Federal Credit Union.</p>
+      </div>
+      <p class="prospects__as-of" id="prospect-reporting-date">Call report as of —</p>
+    </section>
+
+    <section class="prospects__rankings" id="prospect-rankings-section" aria-labelledby="prospect-rankings-heading">
+      <header class="section-header section-header--compact">
+        <h2 id="prospect-rankings-heading">Opportunity ranking</h2>
+        <p class="section-header__subtitle">Prioritize the protection lines with the greatest annual revenue upside.</p>
+      </header>
+      <ol class="prospects__rankings-list" id="prospect-rankings-list"></ol>
+      <p class="prospects__rankings-note" id="prospect-rankings-note">Rankings are based on modeled gross annual revenue for each product or service.</p>
+    </section>
+
+    <section class="prospects__summary" aria-labelledby="prospects-summary-heading">
+      <header class="section-header">
+        <h2 id="prospects-summary-heading">Portfolio snapshot</h2>
+        <p class="section-header__subtitle">Balances and ratios sourced directly from NCUA Form 5300 filings.</p>
+      </header>
+      <div class="metric-card-grid">
+        <article class="metric-card">
+          <h3 class="metric-card__title">Total loans</h3>
+          <p class="metric-card__value" id="prospect-total-loans">—</p>
+          <p class="metric-card__note" id="prospect-total-loans-note"></p>
+        </article>
+        <article class="metric-card">
+          <h3 class="metric-card__title">Consumer installment</h3>
+          <p class="metric-card__value" id="prospect-installment-balance">—</p>
+          <p class="metric-card__note" id="prospect-installment-note"></p>
+        </article>
+        <article class="metric-card">
+          <h3 class="metric-card__title">Real estate</h3>
+          <p class="metric-card__value" id="prospect-real-estate-balance">—</p>
+          <p class="metric-card__note" id="prospect-real-estate-note"></p>
+        </article>
+        <article class="metric-card">
+          <h3 class="metric-card__title">60+ day delinquency</h3>
+          <p class="metric-card__value" id="prospect-delinquency">—</p>
+          <p class="metric-card__note" id="prospect-delinquency-note"></p>
+        </article>
+        <article class="metric-card">
+          <h3 class="metric-card__title">Net charge-off run-rate</h3>
+          <p class="metric-card__value" id="prospect-chargeoffs">—</p>
+          <p class="metric-card__note" id="prospect-chargeoffs-note"></p>
+        </article>
+        <article class="metric-card">
+          <h3 class="metric-card__title">Allowance coverage</h3>
+          <p class="metric-card__value" id="prospect-allowance">—</p>
+          <p class="metric-card__note" id="prospect-allowance-note"></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="prospects__channels" aria-labelledby="prospects-channels-heading">
+      <header class="section-header">
+        <h2 id="prospects-channels-heading">Channel exposure</h2>
+        <p class="section-header__subtitle">Indirect production and delinquency attribution straight from Schedule A disclosures.</p>
+      </header>
+      <div class="prospects__channels-grid">
+        <div class="table-scroll">
+          <table id="prospect-indirect-table" class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Channel</th>
+                <th scope="col">Loans</th>
+                <th scope="col">Balance</th>
+                <th scope="col">Share of loans</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="table-scroll">
+          <table id="prospect-delinquency-source-table" class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Delinquency source</th>
+                <th scope="col">60+ balance</th>
+                <th scope="col">Share of 60+ (overlap)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <p class="prospects__footnote">Source balances can overlap because participations, indirect, and purchased loans may reference the same contracts.</p>
+    </section>
+
+    <section class="prospects__loan-mix" aria-labelledby="prospects-loan-mix-heading">
+      <header class="section-header">
+        <h2 id="prospects-loan-mix-heading">Consumer lending mix</h2>
+        <p class="section-header__subtitle">Interest rates, loan counts, and balances from Schedule A, Section 1.</p>
+      </header>
+      <div class="table-scroll">
+        <table id="prospect-loan-mix-table" class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Avg. rate</th>
+              <th scope="col">Loans</th>
+              <th scope="col">Balance</th>
+              <th scope="col">Portfolio share</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="prospects__risk" aria-labelledby="prospects-risk-heading">
+      <header class="section-header">
+        <h2 id="prospects-risk-heading">Delinquency &amp; loss pressure</h2>
+        <p class="section-header__subtitle">60+ day delinquency detail, non-accrual exposure, and charge-off concentrations.</p>
+      </header>
+      <div class="prospects__risk-grid">
+        <div class="table-scroll">
+          <table id="prospect-risk-table" class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Category</th>
+                <th scope="col">60+ balance</th>
+                <th scope="col">60+ loans</th>
+                <th scope="col">Share of total 60+</th>
+                <th scope="col">YTD charge-offs</th>
+                <th scope="col">YTD recoveries</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <article class="prospects__risk-summary">
+          <h3 class="prospects__risk-title">Watch metrics</h3>
+          <ul id="prospect-risk-highlights" class="prospects__list"></ul>
+          <dl class="prospects__risk-meta">
+            <div>
+              <dt>Non-accrual loans</dt>
+              <dd id="prospect-nonaccrual">—</dd>
+            </div>
+            <div>
+              <dt>Bankruptcy exposure</dt>
+              <dd id="prospect-bankruptcy">—</dd>
+            </div>
+            <div>
+              <dt>Troubled debt restructures</dt>
+              <dd id="prospect-tdr">—</dd>
+            </div>
+          </dl>
+        </article>
+      </div>
+    </section>
+
+    <section class="prospects__opportunities" aria-labelledby="prospects-opportunities-heading">
+      <header class="section-header">
+        <h2 id="prospects-opportunities-heading">Protection revenue opportunities</h2>
+        <p class="section-header__subtitle">Modeled with Goodwine Financial Services standard rate architecture and penetration assumptions.</p>
+      </header>
+      <div class="table-scroll">
+        <table id="prospect-product-table" class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Eligible base</th>
+              <th scope="col">Penetration</th>
+              <th scope="col">Gross annual revenue</th>
+              <th scope="col">GFS share</th>
+              <th scope="col">Credit union share</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="prospects__footnote" id="prospect-product-footnote">Assumptions reflect blended industry benchmarks for rate components and attach rates.</p>
+    </section>
+
+    <section class="prospects__insights" aria-labelledby="prospects-insights-heading">
+      <h2 id="prospects-insights-heading">Key insights</h2>
+      <ul id="prospect-insights" class="prospects__list prospects__list--bullets"></ul>
+    </section>
+
+    <section class="prospects__log" aria-labelledby="prospects-log-heading">
+      <header class="section-header">
+        <h2 id="prospects-log-heading">Engagement log</h2>
+        <p class="section-header__subtitle">Track outreach and follow-up tasks for each opportunity.</p>
+      </header>
+      <form id="prospect-log-form" class="form prospects__log-form" autocomplete="off">
+        <div class="form__grid form__grid--three">
+          <label class="field">
+            <span class="field__label">Prospect <span class="field__required">*</span></span>
+            <select id="prospect-log-prospect" name="prospectId" class="field__input" required></select>
+          </label>
+          <label class="field">
+            <span class="field__label">Event date <span class="field__required">*</span></span>
+            <input type="date" name="eventDate" id="prospect-log-date" class="field__input" required />
+          </label>
+          <label class="field">
+            <span class="field__label">Event type <span class="field__required">*</span></span>
+            <select name="eventType" id="prospect-log-type" class="field__input" required>
+              <option value="" disabled selected>Select an event</option>
+              <option value="Call">Call</option>
+              <option value="Email">Email</option>
+              <option value="Meeting">Meeting</option>
+              <option value="Proposal">Proposal</option>
+              <option value="Training">Training</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field__label">Current provider <span class="field__optional">(optional)</span></span>
+            <input type="text" name="currentProvider" id="prospect-log-provider" class="field__input" placeholder="e.g. TruStage, Allied Solutions" />
+          </label>
+          <label class="field">
+            <span class="field__label">Owner <span class="field__optional">(optional)</span></span>
+            <input type="text" name="owner" id="prospect-log-owner" class="field__input" placeholder="e.g. Alex Martinez" />
+          </label>
+          <label class="field">
+            <span class="field__label">Next step due <span class="field__optional">(optional)</span></span>
+            <input type="date" name="nextStepDate" id="prospect-log-next" class="field__input" />
+          </label>
+          <label class="field field--full">
+            <span class="field__label">Summary <span class="field__required">*</span></span>
+            <textarea name="summary" id="prospect-log-summary" rows="3" class="field__input field__input--textarea" placeholder="Document outcomes, commitments, and blockers." required></textarea>
+          </label>
+        </div>
+        <div class="form__actions">
+          <button type="submit" class="btn btn--primary">Add log entry</button>
+        </div>
+      </form>
+      <div class="record-table">
+        <div class="record-table__header">
+          <h3>Activity history</h3>
+          <p id="prospect-log-count" class="record-table__meta">0 entries</p>
+        </div>
+        <div class="table-scroll">
+          <table id="prospect-log-table" class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Event date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Current provider</th>
+                <th scope="col">Summary</th>
+                <th scope="col">Owner</th>
+                <th scope="col">Next step</th>
+                <th scope="col">Logged</th>
+                <th scope="col" class="table-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p id="prospect-log-empty" class="empty-state">Select a prospect to view or add engagement notes.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; <span id="footer-year"></span> Goodwine Financial Services. All rights reserved.</p>
+  </footer>
+
+  <script src="../prospect-data.js" defer></script>
+  <script src="../script.js" defer></script>
+</body>
+</html>

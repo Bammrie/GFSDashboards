@@ -1,4 +1,6 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2027-01-02: Removed the June/September 2025 call report PDFs for Coastal Community, CoastLife, Jackson County, Matagorda County, FedFinancial, J.C.T., Met Tran, and CommonCents plus nulled their callReportUrl entries so the repo stays binary-free for GitHub submission.
+2027-01-01: Added placeholder prospects and detail pages for Coastal Community, CoastLife, Jackson County, Matagorda County, FedFinancial, J.C.T., and Met Tran June/September 2025 call report PDFs and moved the uploaded filings into CallReports to keep the root tidy.
 2026-12-31: Published placeholder prospects for Building Trades and InStep call report PDFs, updated the generator to keep camel-case branding, and regenerated the static bundles/pages so both filings surface on the site.
 2026-12-30: Hyperlinked coverage summary account names directly to dashboards and removed the duplicate "Open dashboard" link from the latest report column to tighten each row layout.
 2026-12-29: Parsed Matagorda County and CommonCents call reports, generated JSON plus prospect detail pages, and published updated data bundles with placeholder PDFs so dashboard links remain live.
