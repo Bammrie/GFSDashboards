@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2027-01-09: Corrected Ascension Credit Union total loan balance to match NCUA account 025B1 across call report JSON and generated prospect bundles.
 2027-01-08: Rebuilt consumer credit insurance modeling to pull call report accounts 396, 385, 370, 703A, and 397 at 30% penetration with $2.00 per $1,000 rates, 15% commission, and 20% loss ratio underwriting profit.
 2025-10-27: Converted the dashboard product status grid into a compact table and added category revenue rollups above the controls for faster scanning.
 2027-01-06: Parsed the newly uploaded Beaumont Community, Coastal Community, CoastLife, Golden Triangle, Jackson County, Nspire, Texas Bridge, Bayou Community, FedFinancial, JCT, Met Tran, and Old Ocean call reports; generated structured JSON, and refreshed prospect data/pages so each dashboard renders live analytics from the latest filings.
