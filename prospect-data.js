@@ -1,6 +1,6 @@
 (function() {
   window.GFS_PROSPECTS = {
-  "generatedAt": "2025-10-27T22:23:54.759Z",
+  "generatedAt": "2025-10-28T23:47:57.598Z",
   "reports": [
     {
       "id": "callreport5300-september2025-ascension",

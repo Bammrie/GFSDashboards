@@ -116,12 +116,33 @@ def extract_tables_with_marker(pdf: pdfplumber.PDF, marker: str) -> List[List[Li
     return []
 
 
-def parse_loan_mix(pdf: pdfplumber.PDF) -> Tuple[Dict[str, Dict], int, int]:
+def parse_loan_mix(
+    pdf: pdfplumber.PDF,
+) -> Tuple[Dict[str, Dict], int, int, Dict[str, int]]:
     tables = extract_tables_with_marker(pdf, 'SECTION 1 - LOANS AND LEASES')
     rows: List[List[str]] = []
+    reported_total = {'count': 0, 'balance': 0}
+    extras_count = 0
+    extras_amount = 0
+    finished = False
     for table in tables:
+        if finished:
+            break
         for row in table:
             if len(row) < 6:
+                continue
+            joined = ' '.join(filter(None, row))
+            normalized = joined.upper()
+            if 'TOTAL LOANS' in normalized and 'LEASES' in normalized:
+                count_value = row[3] if len(row) > 3 else ''
+                amount_value = row[5] if len(row) > 5 else ''
+                reported_total['count'] = parse_number(count_value)
+                reported_total['balance'] = parse_number(amount_value)
+                finished = True
+                continue
+            if 'PAYDAY ALTERNATIVE LOANS' in normalized:
+                extras_count += parse_number(row[3] if len(row) > 3 else '')
+                extras_amount += parse_number(row[5] if len(row) > 5 else '')
                 continue
             rate, count, amount = row[1], row[3], row[5]
             if not rate or 'Interest Rate' in rate:
@@ -143,7 +164,9 @@ def parse_loan_mix(pdf: pdfplumber.PDF) -> Tuple[Dict[str, Dict], int, int]:
         }
         total_count += mix[key]['count']
         total_amount += mix[key]['balance']
-    return mix, total_count, total_amount
+    total_count += extras_count
+    total_amount += extras_amount
+    return mix, total_count, total_amount, reported_total
 
 
 def parse_loans_granted(tables: List[List[List[str]]]) -> Tuple[int, int]:
@@ -334,10 +357,24 @@ def parse_indirect(pdf: pdfplumber.PDF) -> Dict[str, Dict[str, int]]:
 
 
 def parse_assets_fields(pages_text: List[str]) -> Dict[str, int]:
-    result = {'totalAssets': 0, 'allowance': 0, 'accruedInterestLoans': 0}
+    result = {
+        'totalAssets': 0,
+        'allowance': 0,
+        'accruedInterestLoans': 0,
+        'netLoans': 0,
+    }
     for text in pages_text:
         for raw_line in text.split('\n'):
             line = raw_line.replace('_', '')
+            if (
+                result['netLoans'] == 0
+                and 'TOTAL LOANS' in line.upper()
+                and 'LEASES' in line.upper()
+                and 'TOTAL ASSETS' not in line.upper()
+            ):
+                m = re.search(r'\$([\d,()]+)', line)
+                if m:
+                    result['netLoans'] = parse_number(m.group(0))
             if 'TOTAL ASSETS' in line and result['totalAssets'] == 0:
                 m = re.search(r'\$([\d,()]+)', line)
                 if m:
@@ -419,7 +456,7 @@ def create_report(pdf_path: Path) -> Dict:
         pages_text = [page.extract_text() or '' for page in pdf.pages]
         clean_text = [text.replace('_', '') for text in pages_text]
         name, charter = extract_name_charter(clean_text)
-        loan_mix, loan_count, total_loans_calc = parse_loan_mix(pdf)
+        loan_mix, loan_count, total_loans_calc, loan_mix_total = parse_loan_mix(pdf)
         interest_ytd, credit_loss_ytd = parse_interest_and_credit_loss(pdf)
         delinquency_total, delinquency_loans, delinquency_breakdown = parse_delinquency(pdf)
         nonaccrual_data = parse_nonaccrual_sources(pdf)
@@ -430,6 +467,26 @@ def create_report(pdf_path: Path) -> Dict:
         loans_granted_count, loans_granted_amount = parse_loans_granted(tables_section1)
 
     as_of, period_months = quarter_info(pdf_path.stem)
+    reported_loan_total = loan_mix_total.get('balance', 0)
+    reported_loan_count = loan_mix_total.get('count', 0)
+    tolerance = 5
+    if reported_loan_total and abs(reported_loan_total - total_loans_calc) > tolerance:
+        raise ValueError(
+            'Loan mix balance mismatch for '
+            f"{pdf_path.name}: schedule reports {reported_loan_total:,} but components sum to {total_loans_calc:,}."
+        )
+    asset_net_loans = assets.get('netLoans', 0)
+    if asset_net_loans and reported_loan_total and abs(asset_net_loans - reported_loan_total) > tolerance:
+        raise ValueError(
+            'Asset page net loan balance mismatch for '
+            f"{pdf_path.name}: assets page lists {asset_net_loans:,} vs schedule total {reported_loan_total:,}."
+        )
+    if asset_net_loans and not reported_loan_total and abs(asset_net_loans - total_loans_calc) > tolerance:
+        raise ValueError(
+            'Asset page net loan balance mismatch for '
+            f"{pdf_path.name}: assets page lists {asset_net_loans:,} vs calculated total {total_loans_calc:,}."
+        )
+
     report = {
         'id': slugify_file_stem(pdf_path.stem),
         'name': name,
@@ -437,8 +494,8 @@ def create_report(pdf_path: Path) -> Dict:
         'asOf': as_of,
         'periodMonths': period_months,
         'totalAssets': assets['totalAssets'],
-        'totalLoans': total_loans_calc,
-        'loanCount': loan_count,
+        'totalLoans': reported_loan_total or total_loans_calc,
+        'loanCount': reported_loan_count or loan_count,
         'allowance': assets['allowance'],
         'accruedInterestLoans': assets['accruedInterestLoans'],
         'loansGrantedYtdCount': loans_granted_count,
@@ -458,6 +515,7 @@ def create_report(pdf_path: Path) -> Dict:
         },
         'indirect': indirect,
         'loanMix': loan_mix,
+        'loanMixTotal': loan_mix_total,
         'delinquency60PlusDetail': {key: value for key, value in delinquency_breakdown.items() if value['balance'] > 0},
         'chargeOffs': {'total': chargeoffs_total, **chargeoffs_breakdown},
         'riskHighlights': [],

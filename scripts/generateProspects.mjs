@@ -16,6 +16,14 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(error);
+  const message = error?.message || String(error);
+  console.error('\n❌ Prospect artifact generation failed.');
+  if (/Loan mix|Asset page net loan balance mismatch/i.test(message)) {
+    console.error('Loan mix validation error:');
+  }
+  console.error(message);
+  if (error?.stack) {
+    console.error(error.stack);
+  }
   process.exitCode = 1;
 });
