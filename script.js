@@ -318,10 +318,10 @@ function formatProspectCurrency(value) {
 }
 
 const DIRECT_AUTO_AVERAGE_TERM_MONTHS = 36;
-const DEBT_PROTECTION_RATE_PER_HUNDRED = 2;
-const DEBT_PROTECTION_MARKUP_PER_HUNDRED = 0.3;
-const DEBT_PROTECTION_UNDERWRITING_PER_HUNDRED = 1.6;
-const DEBT_PROTECTION_LOSS_RATIO = 0.3;
+const CREDIT_INSURANCE_RATE_PER_THOUSAND = 2;
+const CREDIT_INSURANCE_PENETRATION = 0.3;
+const CREDIT_INSURANCE_COMMISSION_SHARE = 0.15;
+const CREDIT_INSURANCE_LOSS_RATIO = 0.2;
 const CPI_DIRECT_POLICY_RATE = 0.02;
 const CPI_INDIRECT_POLICY_RATE = 0.04;
 const CPI_AVERAGE_POLICY_COST = 2500;
@@ -340,16 +340,11 @@ const PROSPECT_PRODUCT_MODELS = [
     id: 'credit-insurance-consumer',
     label: 'Credit Insurance/Debt Protection Monthly Remittance',
     type: 'consumer-mob',
-    coverage: {
-      creditCard: 0.3,
-      otherUnsecured: 0.4,
-      newVehicle: 0.12,
-      usedVehicle: 0.15
-    },
-    ratePerHundred: DEBT_PROTECTION_RATE_PER_HUNDRED,
-    markupPerHundred: DEBT_PROTECTION_MARKUP_PER_HUNDRED,
-    underwritingPerHundred: DEBT_PROTECTION_UNDERWRITING_PER_HUNDRED,
-    lossRatio: DEBT_PROTECTION_LOSS_RATIO
+    accountCodes: ['396', '385', '370', '703A', '397'],
+    ratePerThousand: CREDIT_INSURANCE_RATE_PER_THOUSAND,
+    penetration: CREDIT_INSURANCE_PENETRATION,
+    commissionShare: CREDIT_INSURANCE_COMMISSION_SHARE,
+    lossRatio: CREDIT_INSURANCE_LOSS_RATIO
   },
   {
     id: 'credit-insurance-mortgage',
@@ -450,7 +445,7 @@ const DEFAULT_PRODUCT_STATUS = 'tbd';
 const ENABLE_PRODUCT_PARAMETERS = false;
 
 const PROSPECT_PRODUCT_FOOTNOTE =
-  'Debt protection remits $2.00 per $100 on 30% credit card, 40% unsecured, 12% new direct auto, and 15% used direct auto balances with a $0.30 markup commission and 30% loss ratio applied to the $1.60 underwriting share. Direct auto production divides (new + used − indirect) loan counts by 36 months; VSC assumes 10% attach @ $400 GFS, GAP 30% @ $50 commission plus $25 underwriting profit, and AFG balloons 10% attach @ $50. CPI forecasts 2% of direct and 4% of indirect vehicles force-placed monthly at a $2,500 average premium with a 10% GFS commission (Expect 50% refunds). Fidelity bond income uses a $10,000 premium per $100M of assets with a 3.5% agency share.';
+  'Credit insurance remits $2.00 per $1,000 at 30% coverage across call report accounts 396, 385, 370, 703A, and 397. GFS income combines a 15% up-front commission with underwriting profit on the remaining $1.70 after a 20% loss ratio. Direct auto production divides (new + used − indirect) loan counts by 36 months; VSC assumes 10% attach @ $400 GFS, GAP 30% @ $50 commission plus $25 underwriting profit, and AFG balloons 10% attach @ $50. CPI forecasts 2% of direct and 4% of indirect vehicles force-placed monthly at a $2,500 average premium with a 10% GFS commission (Expect 50% refunds). Fidelity bond income uses a $10,000 premium per $100M of assets with a 3.5% agency share.';
 
 const prospectState = {
   activeProspectId: '',
@@ -2553,31 +2548,52 @@ function calculateDirectAutoStats(report) {
   };
 }
 
+function getCreditInsuranceAccountBalance(report, accountCode) {
+  switch (accountCode) {
+    case '396':
+      return report.loanMix?.creditCard?.balance || 0;
+    case '385':
+      return report.loanMix?.otherUnsecured?.balance || 0;
+    case '370':
+      return report.loanMix?.newVehicle?.balance || 0;
+    case '397':
+      return report.loanMix?.usedVehicle?.balance || 0;
+    case '703A':
+      return report.indirect?.auto?.balance || 0;
+    default:
+      return 0;
+  }
+}
+
 function calculateProductOpportunity(report, metrics, model) {
   if (model.type === 'consumer-mob') {
-    const coverage = model.coverage || {};
-    const ratePerHundred = Number(model.ratePerHundred) || 0;
-    const markupPerHundred = Number(model.markupPerHundred) || 0;
-    const underwritingPerHundred = Number(model.underwritingPerHundred) || 0;
+    const ratePerThousand = Number(model.ratePerThousand) || 0;
+    const penetration =
+      typeof model.penetration === 'number' ? model.penetration : CREDIT_INSURANCE_PENETRATION;
+    const commissionShare =
+      typeof model.commissionShare === 'number'
+        ? model.commissionShare
+        : CREDIT_INSURANCE_COMMISSION_SHARE;
+    const underwritingShare = Math.max(1 - commissionShare, 0);
     const lossRatio = Number.isFinite(Number(model.lossRatio))
       ? Number(model.lossRatio)
-      : DEBT_PROTECTION_LOSS_RATIO;
+      : CREDIT_INSURANCE_LOSS_RATIO;
 
-    const creditCardBalance = report.loanMix?.creditCard?.balance || 0;
-    const otherUnsecuredBalance = report.loanMix?.otherUnsecured?.balance || 0;
-    const directStats = calculateDirectAutoStats(report);
+    const accountCodes = Array.isArray(model.accountCodes) && model.accountCodes.length
+      ? model.accountCodes
+      : ['396', '385', '370', '703A', '397'];
 
-    const protectedBalance =
-      (creditCardBalance || 0) * (coverage.creditCard || 0) +
-      (otherUnsecuredBalance || 0) * (coverage.otherUnsecured || 0) +
-      (directStats.directNewBalance || 0) * (coverage.newVehicle || 0) +
-      (directStats.directUsedBalance || 0) * (coverage.usedVehicle || 0);
+    const totalBalance = accountCodes.reduce(
+      (sum, code) => sum + (getCreditInsuranceAccountBalance(report, code) || 0),
+      0
+    );
 
-    const monthlyRemittance = (protectedBalance / 100) * ratePerHundred;
-    const markupMonthly = (protectedBalance / 100) * markupPerHundred;
-    const underwritingMonthly = (protectedBalance / 100) * underwritingPerHundred;
-    const underwritingProfitMonthly = underwritingMonthly * (1 - lossRatio);
-    const gfsMonthly = markupMonthly + underwritingProfitMonthly;
+    const coveredBalance = totalBalance * penetration;
+    const monthlyRemittance = (totalBalance / 1000) * ratePerThousand * penetration;
+    const commissionMonthly = monthlyRemittance * commissionShare;
+    const underwritingPremiumMonthly = monthlyRemittance * underwritingShare;
+    const underwritingProfitMonthly = underwritingPremiumMonthly * (1 - lossRatio);
+    const gfsMonthly = commissionMonthly + underwritingProfitMonthly;
 
     return {
       baseDisplay: `${formatProspectCurrency(monthlyRemittance)} Monthly Remittance`,
@@ -2585,13 +2601,13 @@ function calculateProductOpportunity(report, metrics, model) {
       grossAnnual: monthlyRemittance * 12,
       gfsMonthly,
       gfsAnnual: gfsMonthly * 12,
-      gfsMarkupAnnual: markupMonthly * 12,
+      gfsMarkupAnnual: commissionMonthly * 12,
       gfsUnderwritingAnnual: underwritingProfitMonthly * 12,
-      gfsMarkupLabel: 'markup commission',
-      gfsUnderwritingLabel: 'MOB underwriting profit',
+      gfsMarkupLabel: 'up-front commission',
+      gfsUnderwritingLabel: 'underwriting profit',
       creditUnionMonthly: 0,
       creditUnionAnnual: 0,
-      eligibleBalance: protectedBalance,
+      eligibleBalance: coveredBalance,
       annualEligible: null,
       unitsSold: null
     };
