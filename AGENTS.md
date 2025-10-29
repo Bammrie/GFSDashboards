@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2027-01-12: Corrected CommonCents Credit Union total loans in call-report JSON and prospect bundles to match the September 2025 filing totals.
 2027-01-11: Added reporting leaderboards that rank call report accounts by direct auto balances and consumer installment exposure.
 2027-01-10: Added loan mix total cross-checks to the call report extractor, surfaced validation failures in the prospect build script, and documented the new guardrail so future uploads confirm totals before publishing.
 2027-01-09: Corrected Ascension Credit Union total loan balance to match NCUA account 025B1 across call report JSON and generated prospect bundles.
