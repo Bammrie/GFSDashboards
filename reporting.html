@@ -51,6 +51,51 @@
       </div>
       <p id="account-coverage-empty" class="empty-state">Upload call reports to populate the account list.</p>
     </section>
+
+    <section id="leaderboard-section" class="panel-card panel-card--wide">
+      <header class="panel-card__header">
+        <h2 class="panel-card__title">Production leaderboards</h2>
+        <p class="panel-card__subtitle">Spot the largest direct auto flows and consumer lending exposure across every uploaded call report.</p>
+      </header>
+      <div id="leaderboard-grid" class="leaderboard-grid" hidden>
+        <article class="leaderboard-card">
+          <h3 class="leaderboard-card__title">Direct auto leaders</h3>
+          <p class="leaderboard-card__note">Balances net out indirect participation to highlight in-house opportunity.</p>
+          <div class="table-scroll">
+            <table id="leaderboard-direct-auto" class="data-table">
+              <thead>
+                <tr>
+                  <th scope="col">Rank</th>
+                  <th scope="col">Account</th>
+                  <th scope="col">Direct auto balance</th>
+                  <th scope="col">Direct loans / mo</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="leaderboard-card">
+          <h3 class="leaderboard-card__title">Consumer spending leaders</h3>
+          <p class="leaderboard-card__note">Installment balances combine credit card, unsecured, and vehicle exposure.</p>
+          <div class="table-scroll">
+            <table id="leaderboard-consumer-spending" class="data-table">
+              <thead>
+                <tr>
+                  <th scope="col">Rank</th>
+                  <th scope="col">Account</th>
+                  <th scope="col">Installment balance</th>
+                  <th scope="col">Consumer share</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+      <p id="leaderboard-empty" class="empty-state">Upload call reports to calculate leaderboard standings.</p>
+    </section>
   </main>
 
   <footer class="site-footer">

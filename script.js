@@ -1714,11 +1714,16 @@ function initDashboardPage() {
 function initReportingPage() {
   const tableBody = document.querySelector('#account-coverage-table tbody');
   const emptyState = document.getElementById('account-coverage-empty');
+  const leaderboardGrid = document.getElementById('leaderboard-grid');
+  const leaderboardEmpty = document.getElementById('leaderboard-empty');
+  const directLeaderboardBody = document.querySelector('#leaderboard-direct-auto tbody');
+  const consumerLeaderboardBody = document.querySelector('#leaderboard-consumer-spending tbody');
 
   if (!tableBody) return;
 
   prepareAccountData().then((accounts) => {
     renderCoverageTable(accounts);
+    renderLeaderboards(accounts);
   });
 
   function renderCoverageTable(accounts) {
@@ -1793,6 +1798,146 @@ function initReportingPage() {
 
       tableBody.append(row);
     });
+  }
+
+  function renderLeaderboards(accounts) {
+    if (!leaderboardGrid || !leaderboardEmpty || !directLeaderboardBody || !consumerLeaderboardBody) {
+      return;
+    }
+
+    directLeaderboardBody.innerHTML = '';
+    consumerLeaderboardBody.innerHTML = '';
+
+    const entries = accounts
+      .map((account) => {
+        const report = account.latestReport;
+        if (!report) return null;
+        const metrics = computeProspectMetrics(report);
+        const autoStats = calculateDirectAutoStats(report);
+        return { account, report, metrics, autoStats };
+      })
+      .filter(Boolean);
+
+    if (!entries.length) {
+      leaderboardGrid.hidden = true;
+      leaderboardEmpty.hidden = false;
+      return;
+    }
+
+    const hasDirectLeaders = renderDirectLeaderboard(entries);
+    const hasConsumerLeaders = renderConsumerLeaderboard(entries);
+
+    const hasAnyLeaders = hasDirectLeaders || hasConsumerLeaders;
+    leaderboardGrid.hidden = !hasAnyLeaders;
+    leaderboardEmpty.hidden = hasAnyLeaders;
+  }
+
+  function renderDirectLeaderboard(entries) {
+    const leaders = entries
+      .filter((entry) => entry.autoStats.directBalance > 0 || entry.autoStats.directCount > 0)
+      .sort((a, b) => b.autoStats.directBalance - a.autoStats.directBalance)
+      .slice(0, 5);
+
+    directLeaderboardBody.innerHTML = '';
+
+    if (!leaders.length) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 4;
+      cell.textContent = 'No direct auto activity recorded yet.';
+      row.append(cell);
+      directLeaderboardBody.append(row);
+      return false;
+    }
+
+    leaders.forEach((entry, index) => {
+      const row = document.createElement('tr');
+
+      const rankCell = document.createElement('td');
+      rankCell.textContent = String(index + 1);
+      row.append(rankCell);
+
+      const accountCell = document.createElement('th');
+      accountCell.scope = 'row';
+      const link = document.createElement('a');
+      link.className = 'data-table__link';
+      link.textContent = entry.account.name || entry.account.id;
+      if (entry.report?.id) {
+        link.href = `prospects/${entry.report.id}.html`;
+      } else {
+        link.href = '#';
+        link.addEventListener('click', (event) => event.preventDefault());
+      }
+      accountCell.append(link);
+      row.append(accountCell);
+
+      const balanceCell = document.createElement('td');
+      balanceCell.textContent = formatProspectCurrency(entry.autoStats.directBalance);
+      row.append(balanceCell);
+
+      const monthlyCell = document.createElement('td');
+      const monthly = entry.autoStats.monthlyDirectCount;
+      monthlyCell.textContent = monthly > 0 ? `${formatNumber(monthly, { decimals: 1 })} loans / mo` : '—';
+      row.append(monthlyCell);
+
+      directLeaderboardBody.append(row);
+    });
+
+    return true;
+  }
+
+  function renderConsumerLeaderboard(entries) {
+    const leaders = entries
+      .filter((entry) => entry.metrics.installmentBalance > 0)
+      .sort((a, b) => b.metrics.installmentBalance - a.metrics.installmentBalance)
+      .slice(0, 5);
+
+    consumerLeaderboardBody.innerHTML = '';
+
+    if (!leaders.length) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 4;
+      cell.textContent = 'No consumer installment balances reported yet.';
+      row.append(cell);
+      consumerLeaderboardBody.append(row);
+      return false;
+    }
+
+    leaders.forEach((entry, index) => {
+      const row = document.createElement('tr');
+
+      const rankCell = document.createElement('td');
+      rankCell.textContent = String(index + 1);
+      row.append(rankCell);
+
+      const accountCell = document.createElement('th');
+      accountCell.scope = 'row';
+      const link = document.createElement('a');
+      link.className = 'data-table__link';
+      link.textContent = entry.account.name || entry.account.id;
+      if (entry.report?.id) {
+        link.href = `prospects/${entry.report.id}.html`;
+      } else {
+        link.href = '#';
+        link.addEventListener('click', (event) => event.preventDefault());
+      }
+      accountCell.append(link);
+      row.append(accountCell);
+
+      const balanceCell = document.createElement('td');
+      balanceCell.textContent = formatProspectCurrency(entry.metrics.installmentBalance);
+      row.append(balanceCell);
+
+      const shareCell = document.createElement('td');
+      const share = entry.metrics.consumerShare;
+      shareCell.textContent = share > 0 ? formatPercent(share, { decimals: 1 }) : '—';
+      row.append(shareCell);
+
+      consumerLeaderboardBody.append(row);
+    });
+
+    return true;
   }
 
   function summarizeProductStatuses(record) {
