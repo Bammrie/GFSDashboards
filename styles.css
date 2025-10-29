@@ -1346,6 +1346,41 @@ textarea {
   min-width: 720px;
 }
 
+.leaderboard-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 960px) {
+  .leaderboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+.leaderboard-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.leaderboard-card__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.leaderboard-card__note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.leaderboard-card .table-scroll .data-table {
+  min-width: 0;
+}
+
 .prospects__risk-grid {
   display: grid;
   gap: 1.5rem;
