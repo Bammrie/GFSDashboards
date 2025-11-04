@@ -3,105 +3,235 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GFS Dashboards — Account Coverage</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Income Stream Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-page="dashboard">
-  <header class="site-header site-header--hero">
-    <div class="site-header__background" aria-hidden="true"></div>
-    <div class="site-header__inner">
-      <div class="site-header__brand">
-        <img src="GFS Logo.png" class="site-header__logo" alt="Goodwine Financial Services" />
-        <div class="site-header__titles">
-          <span class="site-header__title">Goodwine Financial Services</span>
-          <span class="site-header__subtitle">Lending Protection Intelligence</span>
-        </div>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Add Income Stream</h1>
+        <p class="site-subtitle">Track every revenue source across your partners in one place.</p>
       </div>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="index.html" class="site-nav__link site-nav__link--active">Accounts</a>
-        <a href="prospects.html" class="site-nav__link">Prospects</a>
-        <a href="reporting.html" class="site-nav__link">Reporting</a>
+      <nav class="header-actions" aria-label="Page sections">
+        <a href="#income-streams" class="header-link">Income Streams</a>
+        <a href="#revenue-updates" class="header-link">Revenue Updates</a>
+        <a href="#reporting" class="header-link">Reporting</a>
       </nav>
     </div>
   </header>
-  <main class="account-hub" aria-live="polite">
-    <section class="panel-card panel-card--wide account-hub__panel">
-      <header class="panel-card__header">
-        <h1 class="panel-card__title">Account coverage tracker</h1>
-        <p class="panel-card__subtitle">Call report uploads automatically create or update accounts so you can track protection adoption in one workspace.</p>
+
+  <main class="layout">
+    <section id="income-streams" class="panel" aria-labelledby="income-streams-heading">
+      <header class="panel__header">
+        <h2 id="income-streams-heading" class="panel__title">Create income streams</h2>
+        <p class="panel__description">
+          Each income stream links a credit union, one of our core products or services, and whether we earn on the frontend,
+          backend, or through commissions.
+        </p>
       </header>
-      <div class="account-hub__grid">
-        <div class="account-hub__column">
-          <label class="field">
-            <span class="field__label">Account</span>
-            <select id="account-hub-selector" class="field__input" aria-label="Select a credit union to manage"></select>
-          </label>
-          <dl class="account-hub__summary">
-            <div>
-              <dt>Credit union</dt>
-              <dd id="account-hub-name">Select a call report</dd>
-            </div>
-            <div>
-              <dt>Charter number</dt>
-              <dd id="account-hub-charter">—</dd>
-            </div>
-            <div>
-              <dt>Latest call report</dt>
-              <dd id="account-hub-latest-date">—</dd>
-            </div>
-            <div>
-              <dt>Reports on file</dt>
-              <dd id="account-hub-report-count">0</dd>
-            </div>
-          </dl>
+
+      <form id="income-stream-form" class="form-grid" autocomplete="off">
+        <div class="field-group">
+          <label for="credit-union-select">Credit union / entity</label>
+          <div class="field-with-action">
+            <select id="credit-union-select" name="creditUnionId" required>
+              <option value="" disabled selected>Select a credit union</option>
+            </select>
+            <button type="button" id="add-credit-union-btn" class="icon-button" aria-label="Add credit union">
+              <span aria-hidden="true">＋</span>
+            </button>
+          </div>
+          <p id="credit-union-help" class="field-help">Use the plus button to add a new partner if it isn&rsquo;t listed.</p>
         </div>
-        <div class="account-hub__column account-hub__column--reports">
-          <h2 class="account-hub__section-title">Call report history</h2>
-          <ul id="account-hub-report-list" class="account-hub__report-list">
-            <li class="account-hub__report-empty">Upload call reports to build the account list.</li>
-          </ul>
+
+        <div class="field-group">
+          <label for="product-select">Product / service</label>
+          <select id="product-select" name="product" required></select>
         </div>
-      </div>
+
+        <div class="field-group">
+          <label for="revenue-type-select">Revenue type</label>
+          <select id="revenue-type-select" name="revenueType" required>
+            <option value="" disabled selected>Select type</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary-button">Create income stream</button>
+        </div>
+      </form>
+
+      <section class="panel__list" aria-live="polite">
+        <header class="list-header">
+          <h3 class="list-title">Active income streams</h3>
+          <p class="list-subtitle" id="income-stream-count">Loading&hellip;</p>
+        </header>
+        <ul id="income-stream-list" class="item-list" role="list"></ul>
+      </section>
     </section>
 
-    <section class="panel-card panel-card--wide">
-      <header class="panel-card__header">
-        <h2 class="panel-card__title">Product status</h2>
-        <p class="panel-card__subtitle">Use the traffic lights to mark each service as On, TBD, or Off.</p>
+    <section id="revenue-updates" class="panel" aria-labelledby="revenue-updates-heading">
+      <header class="panel__header">
+        <h2 id="revenue-updates-heading" class="panel__title">Log monthly revenue</h2>
+        <p class="panel__description">
+          Record how much each income stream produced for a given month. We&rsquo;ll keep everything in sync with MongoDB so the
+          reporting view is always current.
+        </p>
       </header>
-      <div id="account-products-summary" class="coverage-summary" hidden>
-        <div class="coverage-summary__item coverage-summary__item--on">
-          <span class="coverage-summary__label">Green light</span>
-          <span class="coverage-summary__value" data-summary-value="on">$0 / mo</span>
+
+      <form id="revenue-form" class="form-grid" autocomplete="off">
+        <div class="field-group">
+          <label for="revenue-stream-select">Income stream</label>
+          <select id="revenue-stream-select" name="incomeStreamId" required>
+            <option value="" disabled selected>Select income stream</option>
+          </select>
         </div>
-        <div class="coverage-summary__item coverage-summary__item--tbd">
-          <span class="coverage-summary__label">Yellow light</span>
-          <span class="coverage-summary__value" data-summary-value="tbd">$0 / mo</span>
+
+        <div class="field-group">
+          <label for="revenue-period">Month / year</label>
+          <input type="month" id="revenue-period" name="period" required />
         </div>
-        <div class="coverage-summary__item coverage-summary__item--off">
-          <span class="coverage-summary__label">Red light</span>
-          <span class="coverage-summary__value" data-summary-value="off">$0 / mo</span>
+
+        <div class="field-group">
+          <label for="revenue-amount">Amount</label>
+          <div class="currency-field">
+            <span class="currency-prefix">$</span>
+            <input type="number" id="revenue-amount" name="amount" min="0" step="0.01" required />
+          </div>
         </div>
-      </div>
-      <p id="account-products-updated" class="account-products__updated">Select an account to manage product status.</p>
-      <div id="account-products-container" class="coverage-table-container" hidden></div>
-      <p id="account-products-empty" class="coverage-grid__empty">Select an account to manage product status.</p>
-      <form id="account-products-add-form" class="add-product-inline" autocomplete="off">
-        <label for="account-products-add-input" class="sr-only">Add another product</label>
-        <input type="text" id="account-products-add-input" class="field__input add-product-inline__input" placeholder="Custom product or service" disabled />
-        <button type="submit" class="btn btn--secondary" disabled>Add product</button>
+
+        <div class="form-actions">
+          <button type="submit" class="primary-button">Save revenue</button>
+        </div>
       </form>
-      <p class="field-helper">Statuses apply to every call report for the account. Choose “On” when the line is live, “TBD” when it’s still being pursued, and “Off” when it’s out of scope.</p>
+
+      <div class="feedback" id="revenue-feedback" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="reporting" class="panel" aria-labelledby="reporting-heading">
+      <header class="panel__header">
+        <h2 id="reporting-heading" class="panel__title">Revenue intelligence</h2>
+        <p class="panel__description">
+          Analyze performance by partner, by product, and by revenue type. Adjust the reporting window to explore trends and see
+          where growth is accelerating.
+        </p>
+      </header>
+
+      <form id="reporting-filter" class="filter-grid" autocomplete="off">
+        <div class="field-group">
+          <label for="reporting-start">Start month</label>
+          <input type="month" id="reporting-start" name="start" />
+        </div>
+        <div class="field-group">
+          <label for="reporting-end">End month</label>
+          <input type="month" id="reporting-end" name="end" />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="secondary-button">Refresh reporting</button>
+        </div>
+      </form>
+
+      <section class="insights">
+        <article class="insight-card" aria-live="polite">
+          <h3 class="insight-title">Total revenue</h3>
+          <p id="total-revenue" class="insight-value">$0</p>
+        </article>
+        <article class="insight-card" aria-live="polite">
+          <h3 class="insight-title">Best performing credit union</h3>
+          <p id="top-credit-union" class="insight-value">Waiting for data</p>
+        </article>
+        <article class="insight-card" aria-live="polite">
+          <h3 class="insight-title">Strongest product</h3>
+          <p id="top-product" class="insight-value">Waiting for data</p>
+        </article>
+      </section>
+
+      <div class="chart-card" aria-live="polite">
+        <header class="chart-header">
+          <h3 class="chart-title">Revenue timeline</h3>
+          <p class="chart-subtitle">Monthly totals across all income streams</p>
+        </header>
+        <svg id="revenue-timeline-chart" class="timeline-chart" role="img" aria-label="Revenue over time"></svg>
+      </div>
+
+      <div class="grid-columns">
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">By credit union</h3>
+          </header>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Credit union</th>
+                <th scope="col" class="numeric">Revenue</th>
+              </tr>
+            </thead>
+            <tbody id="credit-union-summary"></tbody>
+          </table>
+        </section>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">By product</h3>
+          </header>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Product</th>
+                <th scope="col" class="numeric">Revenue</th>
+              </tr>
+            </thead>
+            <tbody id="product-summary"></tbody>
+          </table>
+        </section>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">By revenue type</h3>
+          </header>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Type</th>
+                <th scope="col" class="numeric">Revenue</th>
+              </tr>
+            </thead>
+            <tbody id="type-summary"></tbody>
+          </table>
+        </section>
+      </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <p>&copy; <span id="footer-year"></span> Goodwine Financial Services. All rights reserved.</p>
-  </footer>
+  <dialog id="credit-union-dialog" aria-labelledby="credit-union-dialog-title">
+    <form method="dialog" id="credit-union-form" class="dialog-form" autocomplete="off">
+      <header class="dialog-header">
+        <h2 id="credit-union-dialog-title">Add a credit union / entity</h2>
+        <button type="button" class="icon-button" id="close-credit-union-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+      <div class="dialog-body">
+        <label for="credit-union-name">Name</label>
+        <input type="text" id="credit-union-name" name="name" placeholder="Example: CommonCents" required />
+      </div>
+      <footer class="dialog-footer">
+        <button type="submit" class="primary-button">Save credit union</button>
+      </footer>
+    </form>
+  </dialog>
 
-  <script src="script.js" type="module"></script>
+  <template id="income-stream-template">
+    <li class="item">
+      <div class="item__primary">
+        <p class="item__title"></p>
+        <p class="item__subtitle"></p>
+      </div>
+      <p class="item__metric"></p>
+    </li>
+  </template>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>

@@ -1,134 +1,421 @@
-import fs from 'fs';
-import http from 'http';
+import express from 'express';
+import mongoose from 'mongoose';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { buildProspectArtifacts } from './scripts/lib/prospectBuilder.mjs';
+import dotenv from 'dotenv';
 
-const fsp = fs.promises;
+dotenv.config();
+
+mongoose.set('strictQuery', true);
+mongoose.set('bufferCommands', false);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const publicDir = __dirname;
-const callReportsDir = path.join(publicDir, 'CallReports');
-const templatesDir = path.join(publicDir, 'templates');
 
-const mimeTypes = {
-  '.html': 'text/html; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.js': 'application/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.svg': 'image/svg+xml',
-  '.ico': 'image/x-icon',
-  '.txt': 'text/plain; charset=utf-8'
-};
-
+const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
-await synchronizeProspects();
-setupProspectWatchers();
+app.use(express.json({ limit: '1mb' }));
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+app.use(express.static(publicDir));
 
-const server = http.createServer(async (req, res) => {
+const REVENUE_TYPES = ['Frontend', 'Backend', 'Commission'];
+
+const creditUnionSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    normalizedName: { type: String, required: true, unique: true }
+  },
+  { timestamps: true }
+);
+
+creditUnionSchema.pre('validate', function preValidate(next) {
+  if (this.name) {
+    this.normalizedName = this.name.trim().toLowerCase();
+  }
+  next();
+});
+
+const incomeStreamSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
+    product: { type: String, required: true, trim: true },
+    revenueType: { type: String, required: true, enum: REVENUE_TYPES }
+  },
+  { timestamps: true }
+);
+
+incomeStreamSchema.index({ creditUnion: 1, product: 1, revenueType: 1 }, { unique: true });
+
+const revenueEntrySchema = new mongoose.Schema(
+  {
+    incomeStream: { type: mongoose.Schema.Types.ObjectId, ref: 'IncomeStream', required: true },
+    year: { type: Number, required: true, min: 1900 },
+    month: { type: Number, required: true, min: 1, max: 12 },
+    amount: { type: Number, required: true, min: 0 },
+    periodKey: { type: Number, required: true },
+    reportedAt: { type: Date, default: Date.now }
+  },
+  { timestamps: true }
+);
+
+revenueEntrySchema.index({ incomeStream: 1, year: 1, month: 1 }, { unique: true });
+revenueEntrySchema.index({ periodKey: 1 });
+
+const CreditUnion = mongoose.model('CreditUnion', creditUnionSchema);
+const IncomeStream = mongoose.model('IncomeStream', incomeStreamSchema);
+const RevenueEntry = mongoose.model('RevenueEntry', revenueEntrySchema);
+
+await initializeDatabase();
+
+app.get('/api/credit-unions', async (req, res, next) => {
   try {
-    const url = new URL(req.url ?? '/', `http://${req.headers.host}`);
-    const safePath = decodeURIComponent(url.pathname);
-    const basePath = safePath.endsWith('/') ? `${safePath}index.html` : safePath;
-    const resolvedPath = path.join(publicDir, basePath);
-
-    if (!resolvedPath.startsWith(publicDir)) {
-      res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end('Forbidden');
-      return;
-    }
-
-    let filePath = resolvedPath;
-    let fileData;
-
-    try {
-      fileData = await fsp.readFile(filePath);
-    } catch (error) {
-      if (error.code === 'EISDIR') {
-        filePath = path.join(filePath, 'index.html');
-        fileData = await fsp.readFile(filePath);
-      } else if (error.code === 'ENOENT' && !basePath.endsWith('index.html')) {
-        filePath = path.join(publicDir, 'index.html');
-        fileData = await fsp.readFile(filePath);
-      } else {
-        throw error;
-      }
-    }
-
-    const ext = path.extname(filePath).toLowerCase();
-    const contentType = mimeTypes[ext] ?? 'application/octet-stream';
-
-    res.writeHead(200, { 'Content-Type': contentType });
-    res.end(fileData);
+    const creditUnions = await CreditUnion.find().sort({ name: 1 }).lean();
+    res.json(
+      creditUnions.map((creditUnion) => ({
+        id: creditUnion._id.toString(),
+        name: creditUnion.name
+      }))
+    );
   } catch (error) {
-    const message = error.code === 'ENOENT' ? 'Not Found' : 'Internal Server Error';
-    const status = error.code === 'ENOENT' ? 404 : 500;
-    res.writeHead(status, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end(message);
-    if (status === 500) {
-      console.error('Server error:', error);
-    }
+    next(error);
   }
 });
 
-server.listen(port, () => {
-  console.log(`GFS Dashboards server running at http://localhost:${port}`);
-});
-
-async function synchronizeProspects() {
+app.post('/api/credit-unions', async (req, res, next) => {
   try {
-    await buildProspectArtifacts({ rootDir: publicDir, logger: console });
-  } catch (error) {
-    console.error('Failed to synchronize call reports:', error);
-  }
-}
-
-function setupProspectWatchers() {
-  const scheduleSync = createSyncScheduler();
-
-  if (fs.existsSync(callReportsDir)) {
-    fs.watch(callReportsDir, { persistent: false }, () => scheduleSync());
-  }
-
-  if (fs.existsSync(templatesDir)) {
-    fs.watch(templatesDir, { persistent: false }, () => scheduleSync());
-  }
-}
-
-function createSyncScheduler() {
-  let timer = null;
-  let running = false;
-  let queued = false;
-
-  const run = async () => {
-    if (running) {
-      queued = true;
+    const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
+    if (!name) {
+      res.status(400).json({ error: 'Credit union name is required.' });
       return;
     }
-    running = true;
-    try {
-      await synchronizeProspects();
-    } finally {
-      running = false;
-      if (queued) {
-        queued = false;
-        run();
-      }
-    }
-  };
 
-  return () => {
-    if (timer) {
-      clearTimeout(timer);
+    const existing = await CreditUnion.findOne({ normalizedName: name.toLowerCase() }).lean();
+    if (existing) {
+      res.status(409).json({ error: 'That credit union already exists.' });
+      return;
     }
-    timer = setTimeout(() => {
-      timer = null;
-      run();
-    }, 250);
-  };
+
+    const created = await CreditUnion.create({ name });
+    res.status(201).json({ id: created._id.toString(), name: created.name });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/income-streams', async (req, res, next) => {
+  try {
+    const streams = await IncomeStream.find()
+      .populate('creditUnion')
+      .sort({ updatedAt: -1 })
+      .lean();
+
+    const streamIds = streams.map((stream) => stream._id);
+    const lastReports = await RevenueEntry.aggregate([
+      { $match: { incomeStream: { $in: streamIds } } },
+      { $sort: { periodKey: -1, updatedAt: -1 } },
+      {
+        $group: {
+          _id: '$incomeStream',
+          amount: { $first: '$amount' },
+          month: { $first: '$month' },
+          year: { $first: '$year' }
+        }
+      }
+    ]);
+
+    const lastReportMap = new Map(
+      lastReports.map((report) => [report._id.toString(), { amount: report.amount, month: report.month, year: report.year }])
+    );
+
+    const payload = streams.map((stream) => {
+      const creditUnion = stream.creditUnion;
+      const lastReport = lastReportMap.get(stream._id.toString());
+      return {
+        id: stream._id.toString(),
+        creditUnionId: creditUnion?._id?.toString() ?? null,
+        creditUnionName: creditUnion?.name ?? 'Unknown credit union',
+        product: stream.product,
+        revenueType: stream.revenueType,
+        label: `${creditUnion?.name ?? 'Unknown'} – ${stream.product} (${stream.revenueType})`,
+        updatedAt: stream.updatedAt,
+        lastReport: lastReport
+          ? {
+              amount: Number(lastReport.amount),
+              month: lastReport.month,
+              year: lastReport.year
+            }
+          : null
+      };
+    });
+
+    res.json(payload);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/income-streams', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    const product = typeof req.body?.product === 'string' ? req.body.product.trim() : '';
+    const revenueType = typeof req.body?.revenueType === 'string' ? req.body.revenueType.trim() : '';
+
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'A valid credit union is required.' });
+      return;
+    }
+    if (!product) {
+      res.status(400).json({ error: 'Product is required.' });
+      return;
+    }
+    if (!REVENUE_TYPES.includes(revenueType)) {
+      res.status(400).json({ error: 'Revenue type must be Frontend, Backend, or Commission.' });
+      return;
+    }
+
+    const creditUnion = await CreditUnion.findById(creditUnionId).lean();
+    if (!creditUnion) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const existing = await IncomeStream.findOne({
+      creditUnion: creditUnionId,
+      product,
+      revenueType
+    }).lean();
+
+    if (existing) {
+      res.status(409).json({ error: 'This income stream already exists.' });
+      return;
+    }
+
+    const stream = await IncomeStream.create({
+      creditUnion: creditUnionId,
+      product,
+      revenueType
+    });
+
+    res.status(201).json({
+      id: stream._id.toString(),
+      creditUnionId: creditUnionId,
+      creditUnionName: creditUnion.name,
+      product,
+      revenueType,
+      label: `${creditUnion.name} – ${product} (${revenueType})`,
+      updatedAt: stream.updatedAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/revenue', async (req, res, next) => {
+  try {
+    const incomeStreamId = req.body?.incomeStreamId;
+    const year = Number.parseInt(req.body?.year, 10);
+    const month = Number.parseInt(req.body?.month, 10);
+    const amount = Number(req.body?.amount);
+
+    if (!incomeStreamId || !mongoose.Types.ObjectId.isValid(incomeStreamId)) {
+      res.status(400).json({ error: 'A valid income stream is required.' });
+      return;
+    }
+    if (!Number.isFinite(year) || year < 1900) {
+      res.status(400).json({ error: 'Year is required.' });
+      return;
+    }
+    if (!Number.isFinite(month) || month < 1 || month > 12) {
+      res.status(400).json({ error: 'Month must be between 1 and 12.' });
+      return;
+    }
+    if (!Number.isFinite(amount) || amount < 0) {
+      res.status(400).json({ error: 'Amount must be a non-negative number.' });
+      return;
+    }
+
+    const stream = await IncomeStream.findById(incomeStreamId).lean();
+    if (!stream) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    const periodKey = year * 100 + month;
+
+    await RevenueEntry.findOneAndUpdate(
+      { incomeStream: incomeStreamId, year, month },
+      {
+        $set: {
+          amount,
+          periodKey,
+          reportedAt: new Date()
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/reports/summary', async (req, res, next) => {
+  try {
+    const start = parsePeriod(req.query.start);
+    const end = parsePeriod(req.query.end);
+
+    if (start && end && start.key > end.key) {
+      res.status(400).json({ error: 'Start month must be before the end month.' });
+      return;
+    }
+
+    const now = new Date();
+    const defaultEnd = { year: now.getFullYear(), month: now.getMonth() + 1, key: (now.getFullYear()) * 100 + (now.getMonth() + 1) };
+    const defaultStartDate = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+    const defaultStart = {
+      year: defaultStartDate.getFullYear(),
+      month: defaultStartDate.getMonth() + 1,
+      key: defaultStartDate.getFullYear() * 100 + (defaultStartDate.getMonth() + 1)
+    };
+
+    const rangeStart = start ?? defaultStart;
+    const rangeEnd = end ?? defaultEnd;
+
+    const entries = await RevenueEntry.find({
+      periodKey: { $gte: rangeStart.key, $lte: rangeEnd.key }
+    })
+      .populate({
+        path: 'incomeStream',
+        populate: { path: 'creditUnion' }
+      })
+      .sort({ periodKey: 1 })
+      .lean();
+
+    const byCreditUnion = new Map();
+    const byProduct = new Map();
+    const byRevenueType = new Map();
+    const timelineMap = new Map();
+    let totalRevenue = 0;
+
+    entries.forEach((entry) => {
+      const amount = Number(entry.amount) || 0;
+      totalRevenue += amount;
+
+      const incomeStream = entry.incomeStream;
+      const creditUnionName = incomeStream?.creditUnion?.name ?? 'Unknown';
+      const product = incomeStream?.product ?? 'Unknown product';
+      const type = incomeStream?.revenueType ?? 'Unknown type';
+
+      accumulate(byCreditUnion, creditUnionName, amount);
+      accumulate(byProduct, product, amount);
+      accumulate(byRevenueType, type, amount);
+
+      const monthLabel = `${entry.year}-${String(entry.month).padStart(2, '0')}`;
+      accumulate(timelineMap, monthLabel, amount);
+    });
+
+    const timeline = buildTimeline(rangeStart, rangeEnd, timelineMap);
+
+    res.json({
+      totalRevenue,
+      byCreditUnion: sortAggregates(byCreditUnion),
+      byProduct: sortAggregates(byProduct),
+      byRevenueType: sortAggregates(byRevenueType),
+      timeline
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.use((error, req, res, _next) => {
+  console.error(error);
+  res.status(500).json({ error: 'An unexpected error occurred.' });
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(publicDir, 'index.html'));
+});
+
+app.listen(port, () => {
+  console.log(`Income dashboard running on http://localhost:${port}`);
+});
+
+function accumulate(map, key, value) {
+  const previous = map.get(key) ?? 0;
+  map.set(key, previous + value);
 }
+
+function sortAggregates(map) {
+  return Array.from(map.entries())
+    .map(([name, amount]) => ({ name, amount }))
+    .sort((a, b) => b.amount - a.amount);
+}
+
+function parsePeriod(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}$/.test(value)) {
+    return null;
+  }
+  const [yearStr, monthStr] = value.split('-');
+  const year = Number.parseInt(yearStr, 10);
+  const month = Number.parseInt(monthStr, 10);
+  if (!Number.isFinite(year) || !Number.isFinite(month) || month < 1 || month > 12) {
+    return null;
+  }
+  return { year, month, key: year * 100 + month };
+}
+
+function buildTimeline(start, end, valueMap) {
+  const timeline = [];
+  let currentYear = start.year;
+  let currentMonth = start.month;
+
+  while (currentYear * 100 + currentMonth <= end.key) {
+    const key = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+    const amount = Number(valueMap.get(key) ?? 0);
+    const label = formatMonthLabel(currentYear, currentMonth);
+    timeline.push({ key, label, amount });
+
+    currentMonth += 1;
+    if (currentMonth > 12) {
+      currentMonth = 1;
+      currentYear += 1;
+    }
+  }
+
+  return timeline;
+}
+
+function formatMonthLabel(year, month) {
+  return new Date(year, month - 1, 1).toLocaleString('en-US', {
+    month: 'short',
+    year: 'numeric'
+  });
+}
+
+async function initializeDatabase() {
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI environment variable is required to start the income dashboard.');
+  }
+
+  const options = {};
+  if (process.env.MONGODB_DB) {
+    options.dbName = process.env.MONGODB_DB;
+  }
+
+  await mongoose.connect(uri, options);
+  console.log('Connected to MongoDB');
+}
+
+process.on('SIGINT', async () => {
+  await mongoose.disconnect();
+  process.exit(0);
+});
