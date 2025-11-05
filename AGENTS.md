@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2025-11-04: Allowed the income dashboard server to start without a MongoDB URI by disabling API routes when the database is not configured, so static assets still deploy instead of crashing.
 2027-01-12: Rebuilt the dashboard as an income stream and revenue tracking platform, replaced the static call-report tooling with a MongoDB-backed API, and redesigned the frontend around income stream creation, revenue updates, and reporting intelligence.
 2027-01-11: Added reporting leaderboards that rank call report accounts by direct auto balances and consumer installment exposure.
 2027-01-10: Added loan mix total cross-checks to the call report extractor, surfaced validation failures in the prospect build script, and documented the new guardrail so future uploads confirm totals before publishing.

@@ -71,7 +71,24 @@ const CreditUnion = mongoose.model('CreditUnion', creditUnionSchema);
 const IncomeStream = mongoose.model('IncomeStream', incomeStreamSchema);
 const RevenueEntry = mongoose.model('RevenueEntry', revenueEntrySchema);
 
-await initializeDatabase();
+const databaseReady = await initializeDatabase();
+
+if (!databaseReady) {
+  console.warn(
+    'Income dashboard API routes are disabled until the MONGODB_URI environment variable is configured.'
+  );
+}
+
+app.use('/api', (req, res, next) => {
+  if (!databaseReady) {
+    res.status(503).json({
+      error:
+        'Database connection is not configured. Set the MONGODB_URI environment variable to enable income tracking APIs.'
+    });
+    return;
+  }
+  next();
+});
 
 app.get('/api/credit-unions', async (req, res, next) => {
   try {
@@ -403,7 +420,9 @@ function formatMonthLabel(year, month) {
 async function initializeDatabase() {
   const uri = process.env.MONGODB_URI;
   if (!uri) {
-    throw new Error('MONGODB_URI environment variable is required to start the income dashboard.');
+    console.warn('MONGODB_URI environment variable is not set.');
+    console.warn('Starting the income dashboard without a MongoDB connection.');
+    return false;
   }
 
   const options = {};
@@ -411,11 +430,20 @@ async function initializeDatabase() {
     options.dbName = process.env.MONGODB_DB;
   }
 
-  await mongoose.connect(uri, options);
-  console.log('Connected to MongoDB');
+  try {
+    await mongoose.connect(uri, options);
+    console.log('Connected to MongoDB');
+    return true;
+  } catch (error) {
+    console.error('Failed to connect to MongoDB.');
+    console.error(error);
+    return false;
+  }
 }
 
 process.on('SIGINT', async () => {
-  await mongoose.disconnect();
+  if (databaseReady) {
+    await mongoose.disconnect();
+  }
   process.exit(0);
 });
