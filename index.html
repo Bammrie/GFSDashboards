@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Income Stream Dashboard</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Income Streams | Income Stream Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -13,10 +14,10 @@
         <h1 class="site-title">Add Income Stream</h1>
         <p class="site-subtitle">Track every revenue source across your partners in one place.</p>
       </div>
-      <nav class="header-actions" aria-label="Page sections">
-        <a href="#income-streams" class="header-link">Income Streams</a>
-        <a href="#revenue-updates" class="header-link">Revenue Updates</a>
-        <a href="#reporting" class="header-link">Reporting</a>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a href="index.html" class="header-link" aria-current="page">Income Streams</a>
+        <a href="revenue.html" class="header-link">Revenue Updates</a>
+        <a href="reporting.html" class="header-link">Reporting</a>
       </nav>
     </div>
   </header>
@@ -69,138 +70,6 @@
         </header>
         <ul id="income-stream-list" class="item-list" role="list"></ul>
       </section>
-    </section>
-
-    <section id="revenue-updates" class="panel" aria-labelledby="revenue-updates-heading">
-      <header class="panel__header">
-        <h2 id="revenue-updates-heading" class="panel__title">Log monthly revenue</h2>
-        <p class="panel__description">
-          Record how much each income stream produced for a given month. We&rsquo;ll keep everything in sync with MongoDB so the
-          reporting view is always current.
-        </p>
-      </header>
-
-      <form id="revenue-form" class="form-grid" autocomplete="off">
-        <div class="field-group">
-          <label for="revenue-stream-select">Income stream</label>
-          <select id="revenue-stream-select" name="incomeStreamId" required>
-            <option value="" disabled selected>Select income stream</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label for="revenue-period">Month / year</label>
-          <input type="month" id="revenue-period" name="period" required />
-        </div>
-
-        <div class="field-group">
-          <label for="revenue-amount">Amount</label>
-          <div class="currency-field">
-            <span class="currency-prefix">$</span>
-            <input type="number" id="revenue-amount" name="amount" min="0" step="0.01" required />
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="primary-button">Save revenue</button>
-        </div>
-      </form>
-
-      <div class="feedback" id="revenue-feedback" role="status" aria-live="polite"></div>
-    </section>
-
-    <section id="reporting" class="panel" aria-labelledby="reporting-heading">
-      <header class="panel__header">
-        <h2 id="reporting-heading" class="panel__title">Revenue intelligence</h2>
-        <p class="panel__description">
-          Analyze performance by partner, by product, and by revenue type. Adjust the reporting window to explore trends and see
-          where growth is accelerating.
-        </p>
-      </header>
-
-      <form id="reporting-filter" class="filter-grid" autocomplete="off">
-        <div class="field-group">
-          <label for="reporting-start">Start month</label>
-          <input type="month" id="reporting-start" name="start" />
-        </div>
-        <div class="field-group">
-          <label for="reporting-end">End month</label>
-          <input type="month" id="reporting-end" name="end" />
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="secondary-button">Refresh reporting</button>
-        </div>
-      </form>
-
-      <section class="insights">
-        <article class="insight-card" aria-live="polite">
-          <h3 class="insight-title">Total revenue</h3>
-          <p id="total-revenue" class="insight-value">$0</p>
-        </article>
-        <article class="insight-card" aria-live="polite">
-          <h3 class="insight-title">Best performing credit union</h3>
-          <p id="top-credit-union" class="insight-value">Waiting for data</p>
-        </article>
-        <article class="insight-card" aria-live="polite">
-          <h3 class="insight-title">Strongest product</h3>
-          <p id="top-product" class="insight-value">Waiting for data</p>
-        </article>
-      </section>
-
-      <div class="chart-card" aria-live="polite">
-        <header class="chart-header">
-          <h3 class="chart-title">Revenue timeline</h3>
-          <p class="chart-subtitle">Monthly totals across all income streams</p>
-        </header>
-        <svg id="revenue-timeline-chart" class="timeline-chart" role="img" aria-label="Revenue over time"></svg>
-      </div>
-
-      <div class="grid-columns">
-        <section class="table-card" aria-live="polite">
-          <header class="table-header">
-            <h3 class="table-title">By credit union</h3>
-          </header>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th scope="col">Credit union</th>
-                <th scope="col" class="numeric">Revenue</th>
-              </tr>
-            </thead>
-            <tbody id="credit-union-summary"></tbody>
-          </table>
-        </section>
-
-        <section class="table-card" aria-live="polite">
-          <header class="table-header">
-            <h3 class="table-title">By product</h3>
-          </header>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th scope="col">Product</th>
-                <th scope="col" class="numeric">Revenue</th>
-              </tr>
-            </thead>
-            <tbody id="product-summary"></tbody>
-          </table>
-        </section>
-
-        <section class="table-card" aria-live="polite">
-          <header class="table-header">
-            <h3 class="table-title">By revenue type</h3>
-          </header>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th scope="col">Type</th>
-                <th scope="col" class="numeric">Revenue</th>
-              </tr>
-            </thead>
-            <tbody id="type-summary"></tbody>
-          </table>
-        </section>
-      </div>
     </section>
   </main>
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Revenue Updates | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Log Monthly Revenue</h1>
+        <p class="site-subtitle">Record how much each income stream produced for a given month.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a href="index.html" class="header-link">Income Streams</a>
+        <a href="revenue.html" class="header-link" aria-current="page">Revenue Updates</a>
+        <a href="reporting.html" class="header-link">Reporting</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section id="revenue-updates" class="panel" aria-labelledby="revenue-updates-heading">
+      <header class="panel__header">
+        <h2 id="revenue-updates-heading" class="panel__title">Log monthly revenue</h2>
+        <p class="panel__description">
+          Record how much each income stream produced for a given month. We&rsquo;ll keep everything in sync with MongoDB so the
+          reporting view is always current.
+        </p>
+      </header>
+
+      <form id="revenue-form" class="form-grid" autocomplete="off">
+        <div class="field-group">
+          <label for="revenue-stream-select">Income stream</label>
+          <select id="revenue-stream-select" name="incomeStreamId" required>
+            <option value="" disabled selected>Select income stream</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label for="revenue-period">Month / year</label>
+          <input type="month" id="revenue-period" name="period" required />
+        </div>
+
+        <div class="field-group">
+          <label for="revenue-amount">Amount</label>
+          <div class="currency-field">
+            <span class="currency-prefix">$</span>
+            <input type="number" id="revenue-amount" name="amount" min="0" step="0.01" required />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary-button">Save revenue</button>
+        </div>
+      </form>
+
+      <div class="feedback" id="revenue-feedback" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

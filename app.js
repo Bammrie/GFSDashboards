@@ -33,6 +33,7 @@ const selectors = {
   revenueStreamSelect: document.getElementById('revenue-stream-select'),
   revenueFeedback: document.getElementById('revenue-feedback'),
   reportingForm: document.getElementById('reporting-filter'),
+  reportingCreditUnionSelect: document.getElementById('reporting-credit-union'),
   totalRevenue: document.getElementById('total-revenue'),
   topCreditUnion: document.getElementById('top-credit-union'),
   topProduct: document.getElementById('top-product'),
@@ -40,6 +41,7 @@ const selectors = {
   productSummary: document.getElementById('product-summary'),
   typeSummary: document.getElementById('type-summary'),
   timelineChart: document.getElementById('revenue-timeline-chart'),
+  timelineSubtitle: document.getElementById('timeline-subtitle'),
   incomeStreamTemplate: document.getElementById('income-stream-template')
 };
 
@@ -47,7 +49,8 @@ const appState = {
   creditUnions: [],
   incomeStreams: [],
   summary: null,
-  reportingWindow: { start: null, end: null }
+  reportingWindow: { start: null, end: null },
+  selectedCreditUnion: 'all'
 };
 
 function showDialog(dialog) {
@@ -108,15 +111,19 @@ async function request(path, options = {}) {
 }
 
 function populateStaticOptions() {
-  selectors.productSelect.replaceChildren(
-    createOption('', 'Select a product', true, true),
-    ...PRODUCT_OPTIONS.map((option) => createOption(option, option))
-  );
+  if (selectors.productSelect) {
+    selectors.productSelect.replaceChildren(
+      createOption('', 'Select a product', true, true),
+      ...PRODUCT_OPTIONS.map((option) => createOption(option, option))
+    );
+  }
 
-  selectors.revenueTypeSelect.replaceChildren(
-    createOption('', 'Select type', true, true),
-    ...REVENUE_TYPES.map((type) => createOption(type, type))
-  );
+  if (selectors.revenueTypeSelect) {
+    selectors.revenueTypeSelect.replaceChildren(
+      createOption('', 'Select type', true, true),
+      ...REVENUE_TYPES.map((type) => createOption(type, type))
+    );
+  }
 }
 
 function createOption(value, label, disabled = false, selected = false) {
@@ -131,33 +138,59 @@ function createOption(value, label, disabled = false, selected = false) {
 function renderCreditUnionOptions() {
   const select = selectors.creditUnionSelect;
   const revenueSelect = selectors.revenueStreamSelect;
-  if (!select || !revenueSelect) return;
+  const reportingSelect = selectors.reportingCreditUnionSelect;
 
-  const placeholder = createOption('', 'Select a credit union', true, true);
-  const revenuePlaceholder = createOption('', 'Select income stream', true, true);
+  if (select) {
+    const placeholder = createOption('', 'Select a credit union', true, true);
+    select.replaceChildren(placeholder);
 
-  select.replaceChildren(placeholder);
+    appState.creditUnions
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((creditUnion) => {
+        select.append(createOption(creditUnion.id, creditUnion.name));
+      });
+  }
 
-  appState.creditUnions
-    .slice()
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .forEach((creditUnion) => {
-      select.append(createOption(creditUnion.id, creditUnion.name));
-    });
+  if (revenueSelect) {
+    const currentIncomeStream = revenueSelect.value;
+    const revenuePlaceholder = createOption('', 'Select income stream', true, true);
+    revenueSelect.replaceChildren(revenuePlaceholder);
 
-  const currentIncomeStream = revenueSelect.value;
-  revenueSelect.replaceChildren(revenuePlaceholder);
+    appState.incomeStreams
+      .slice()
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .forEach((stream) => {
+        const option = createOption(stream.id, stream.label, false, stream.id === currentIncomeStream);
+        revenueSelect.append(option);
+      });
 
-  appState.incomeStreams
-    .slice()
-    .sort((a, b) => a.label.localeCompare(b.label))
-    .forEach((stream) => {
-      const option = createOption(stream.id, stream.label);
-      revenueSelect.append(option);
-      if (stream.id === currentIncomeStream) {
-        option.selected = true;
-      }
-    });
+    if (currentIncomeStream) {
+      revenueSelect.value = currentIncomeStream;
+    }
+  }
+
+  if (reportingSelect) {
+    const currentSelection = reportingSelect.value || appState.selectedCreditUnion || 'all';
+    const options = [createOption('all', 'All accounts', false, currentSelection === 'all')];
+
+    appState.creditUnions
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((creditUnion) => {
+        options.push(createOption(creditUnion.id, creditUnion.name, false, creditUnion.id === currentSelection));
+      });
+
+    reportingSelect.replaceChildren(...options);
+
+    if (currentSelection !== 'all' && !appState.creditUnions.some((creditUnion) => creditUnion.id === currentSelection)) {
+      reportingSelect.value = 'all';
+      appState.selectedCreditUnion = 'all';
+    } else {
+      reportingSelect.value = currentSelection;
+      appState.selectedCreditUnion = reportingSelect.value || 'all';
+    }
+  }
 }
 
 function renderIncomeStreamList() {
@@ -179,7 +212,9 @@ function renderIncomeStreamList() {
     empty.append(heading);
     empty.append(sub);
     list.append(empty);
-    selectors.incomeStreamCount.textContent = '0 streams';
+    if (selectors.incomeStreamCount) {
+      selectors.incomeStreamCount.textContent = '0 streams';
+    }
     return;
   }
 
@@ -211,9 +246,11 @@ function renderIncomeStreamList() {
       list.append(fragment);
     });
 
-  selectors.incomeStreamCount.textContent = `${formatter.format(appState.incomeStreams.length)} stream${
-    appState.incomeStreams.length === 1 ? '' : 's'
-  }`;
+  if (selectors.incomeStreamCount) {
+    selectors.incomeStreamCount.textContent = `${formatter.format(appState.incomeStreams.length)} stream${
+      appState.incomeStreams.length === 1 ? '' : 's'
+    }`;
+  }
 }
 
 function formatPeriodLabel(year, month) {
@@ -278,7 +315,9 @@ async function createIncomeStream(payload) {
 
   renderCreditUnionOptions();
   renderIncomeStreamList();
-  selectors.revenueStreamSelect.value = result.id;
+  if (selectors.revenueStreamSelect) {
+    selectors.revenueStreamSelect.value = result.id;
+  }
 }
 
 async function saveRevenueEntry(payload) {
@@ -292,6 +331,10 @@ async function loadSummary(params = {}) {
   const searchParams = new URLSearchParams();
   if (params.start) searchParams.set('start', params.start);
   if (params.end) searchParams.set('end', params.end);
+  const creditUnionId = params.creditUnionId ?? appState.selectedCreditUnion;
+  if (creditUnionId && creditUnionId !== 'all') {
+    searchParams.set('creditUnionId', creditUnionId);
+  }
   const query = searchParams.toString();
   const data = await request(`/api/reports/summary${query ? `?${query}` : ''}`);
   appState.summary = data;
@@ -302,28 +345,45 @@ function renderSummary() {
   const summary = appState.summary;
   if (!summary) return;
 
-  selectors.totalRevenue.textContent = currencyFormatter.format(summary.totalRevenue || 0);
-
-  if (summary.byCreditUnion?.length) {
-    selectors.topCreditUnion.textContent = `${summary.byCreditUnion[0].name} (${currencyFormatter.format(
-      summary.byCreditUnion[0].amount
-    )})`;
-  } else {
-    selectors.topCreditUnion.textContent = 'Waiting for data';
+  if (selectors.totalRevenue) {
+    selectors.totalRevenue.textContent = currencyFormatter.format(summary.totalRevenue || 0);
   }
 
-  if (summary.byProduct?.length) {
-    selectors.topProduct.textContent = `${summary.byProduct[0].name} (${currencyFormatter.format(
-      summary.byProduct[0].amount
-    )})`;
-  } else {
-    selectors.topProduct.textContent = 'Waiting for data';
+  if (selectors.topCreditUnion) {
+    if (summary.byCreditUnion?.length) {
+      selectors.topCreditUnion.textContent = `${summary.byCreditUnion[0].name} (${currencyFormatter.format(
+        summary.byCreditUnion[0].amount
+      )})`;
+    } else {
+      selectors.topCreditUnion.textContent = 'Waiting for data';
+    }
+  }
+
+  if (selectors.topProduct) {
+    if (summary.byProduct?.length) {
+      selectors.topProduct.textContent = `${summary.byProduct[0].name} (${currencyFormatter.format(
+        summary.byProduct[0].amount
+      )})`;
+    } else {
+      selectors.topProduct.textContent = 'Waiting for data';
+    }
   }
 
   renderSummaryTable(selectors.creditUnionSummary, summary.byCreditUnion);
   renderSummaryTable(selectors.productSummary, summary.byProduct);
   renderSummaryTable(selectors.typeSummary, summary.byRevenueType);
   renderTimeline(summary.timeline || []);
+
+  if (selectors.timelineSubtitle) {
+    if (appState.selectedCreditUnion && appState.selectedCreditUnion !== 'all') {
+      const creditUnionName =
+        appState.creditUnions.find((creditUnion) => creditUnion.id === appState.selectedCreditUnion)?.name ||
+        'selected credit union';
+      selectors.timelineSubtitle.textContent = `Monthly totals for ${creditUnionName}`;
+    } else {
+      selectors.timelineSubtitle.textContent = 'Monthly totals across all income streams';
+    }
+  }
 }
 
 function renderSummaryTable(container, rows = []) {
@@ -364,7 +424,7 @@ function renderTimeline(timeline) {
     text.setAttribute('x', '50%');
     text.setAttribute('y', '50%');
     text.setAttribute('text-anchor', 'middle');
-    text.setAttribute('fill', 'rgba(255,255,255,0.6)');
+    text.setAttribute('fill', 'var(--text-secondary)');
     text.setAttribute('font-size', '18');
     text.textContent = 'No revenue recorded for this period';
     svg.append(text);
@@ -425,7 +485,7 @@ function renderTimeline(timeline) {
     label.setAttribute('x', point.x);
     label.setAttribute('y', height - padding + 20);
     label.setAttribute('text-anchor', 'middle');
-    label.setAttribute('fill', 'rgba(255,255,255,0.65)');
+    label.setAttribute('fill', 'var(--text-secondary)');
     label.setAttribute('font-size', '11');
     label.textContent = point.label;
     svg.append(label);
@@ -509,7 +569,18 @@ selectors.reportingForm?.addEventListener('submit', async (event) => {
   appState.reportingWindow = { start: start || null, end: end || null };
 
   try {
-    await loadSummary(appState.reportingWindow);
+    await loadSummary({ ...appState.reportingWindow, creditUnionId: appState.selectedCreditUnion });
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+selectors.reportingCreditUnionSelect?.addEventListener('change', async (event) => {
+  const select = event.currentTarget;
+  appState.selectedCreditUnion = select.value || 'all';
+
+  try {
+    await loadSummary({ ...appState.reportingWindow, creditUnionId: appState.selectedCreditUnion });
   } catch (error) {
     alert(error.message);
   }
@@ -529,9 +600,33 @@ async function bootstrap() {
     const startDate = new Date(now.getFullYear(), now.getMonth() - 11, 1);
     const start = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`;
     appState.reportingWindow = { start, end };
-    selectors.reportingForm.start.value = start;
-    selectors.reportingForm.end.value = end;
-    await loadSummary(appState.reportingWindow);
+    if (selectors.reportingForm) {
+      selectors.reportingForm.start.value = start;
+      selectors.reportingForm.end.value = end;
+    }
+
+    if (selectors.reportingCreditUnionSelect) {
+      if (!selectors.reportingCreditUnionSelect.value) {
+        selectors.reportingCreditUnionSelect.value = 'all';
+      }
+      appState.selectedCreditUnion = selectors.reportingCreditUnionSelect.value || 'all';
+    }
+
+    const shouldLoadSummary =
+      Boolean(
+        selectors.totalRevenue ||
+          selectors.topCreditUnion ||
+          selectors.topProduct ||
+          selectors.creditUnionSummary ||
+          selectors.productSummary ||
+          selectors.typeSummary ||
+          selectors.timelineChart ||
+          selectors.reportingCreditUnionSelect
+      );
+
+    if (shouldLoadSummary) {
+      await loadSummary({ ...appState.reportingWindow, creditUnionId: appState.selectedCreditUnion });
+    }
   } catch (error) {
     console.error(error);
   }
