@@ -16,6 +16,52 @@ const publicDir = __dirname;
 const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 
+const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || 'adminpass';
+const DASHBOARD_USERNAME = process.env.DASHBOARD_USERNAME || null;
+
+app.use((req, res, next) => {
+  const unauthorized = () => {
+    res.setHeader('WWW-Authenticate', 'Basic realm="GFSDashboards"');
+    res.status(401).send('Authentication required.');
+  };
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    unauthorized();
+    return;
+  }
+
+  const [scheme, credentials] = authHeader.split(' ');
+  if (scheme !== 'Basic' || !credentials) {
+    unauthorized();
+    return;
+  }
+
+  let decoded = '';
+  try {
+    decoded = Buffer.from(credentials, 'base64').toString('utf8');
+  } catch (error) {
+    unauthorized();
+    return;
+  }
+
+  const separatorIndex = decoded.indexOf(':');
+  const username = separatorIndex >= 0 ? decoded.slice(0, separatorIndex) : '';
+  const password = separatorIndex >= 0 ? decoded.slice(separatorIndex + 1) : '';
+
+  if (DASHBOARD_USERNAME && username !== DASHBOARD_USERNAME) {
+    unauthorized();
+    return;
+  }
+
+  if (password !== DASHBOARD_PASSWORD) {
+    unauthorized();
+    return;
+  }
+
+  next();
+});
+
 app.use(express.json({ limit: '1mb' }));
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -305,9 +351,42 @@ app.get('/api/reports/summary', async (req, res, next) => {
     const rangeStart = start ?? defaultStart;
     const rangeEnd = end ?? defaultEnd;
 
-    const entries = await RevenueEntry.find({
+    const creditUnionId = typeof req.query.creditUnionId === 'string' ? req.query.creditUnionId.trim() : '';
+    let incomeStreamFilter = null;
+
+    if (creditUnionId && creditUnionId !== 'all') {
+      if (!mongoose.Types.ObjectId.isValid(creditUnionId)) {
+        res.status(400).json({ error: 'Invalid credit union selection.' });
+        return;
+      }
+
+      const streams = await IncomeStream.find({ creditUnion: creditUnionId }).select('_id').lean();
+      const streamIds = streams.map((stream) => stream._id);
+
+      if (!streamIds.length) {
+        const emptyTimeline = buildTimeline(rangeStart, rangeEnd, new Map());
+        res.json({
+          totalRevenue: 0,
+          byCreditUnion: [],
+          byProduct: [],
+          byRevenueType: [],
+          timeline: emptyTimeline
+        });
+        return;
+      }
+
+      incomeStreamFilter = streamIds;
+    }
+
+    const query = {
       periodKey: { $gte: rangeStart.key, $lte: rangeEnd.key }
-    })
+    };
+
+    if (incomeStreamFilter) {
+      query.incomeStream = { $in: incomeStreamFilter };
+    }
+
+    const entries = await RevenueEntry.find(query)
       .populate({
         path: 'incomeStream',
         populate: { path: 'creditUnion' }

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Reporting | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Revenue Intelligence</h1>
+        <p class="site-subtitle">Analyze performance by partner, product, and revenue type.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a href="index.html" class="header-link">Income Streams</a>
+        <a href="revenue.html" class="header-link">Revenue Updates</a>
+        <a href="reporting.html" class="header-link" aria-current="page">Reporting</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section id="reporting" class="panel" aria-labelledby="reporting-heading">
+      <header class="panel__header">
+        <h2 id="reporting-heading" class="panel__title">Revenue intelligence</h2>
+        <p class="panel__description">
+          Analyze performance by partner, by product, and by revenue type. Adjust the reporting window to explore trends and see
+          where growth is accelerating.
+        </p>
+      </header>
+
+      <div class="filter-grid reporting-controls">
+        <div class="field-group">
+          <label for="reporting-credit-union">Credit union</label>
+          <select id="reporting-credit-union" name="creditUnion">
+            <option value="all">All accounts</option>
+          </select>
+        </div>
+      </div>
+
+      <form id="reporting-filter" class="filter-grid" autocomplete="off">
+        <div class="field-group">
+          <label for="reporting-start">Start month</label>
+          <input type="month" id="reporting-start" name="start" />
+        </div>
+        <div class="field-group">
+          <label for="reporting-end">End month</label>
+          <input type="month" id="reporting-end" name="end" />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="secondary-button">Refresh reporting</button>
+        </div>
+      </form>
+
+      <section class="insights">
+        <article class="insight-card" aria-live="polite">
+          <h3 class="insight-title">Total revenue</h3>
+          <p id="total-revenue" class="insight-value">$0</p>
+        </article>
+        <article class="insight-card" aria-live="polite">
+          <h3 class="insight-title">Best performing credit union</h3>
+          <p id="top-credit-union" class="insight-value">Waiting for data</p>
+        </article>
+        <article class="insight-card" aria-live="polite">
+          <h3 class="insight-title">Strongest product</h3>
+          <p id="top-product" class="insight-value">Waiting for data</p>
+        </article>
+      </section>
+
+      <div class="chart-card" aria-live="polite">
+        <header class="chart-header">
+          <h3 class="chart-title">Revenue timeline</h3>
+          <p class="chart-subtitle" id="timeline-subtitle">Monthly totals across all income streams</p>
+        </header>
+        <svg id="revenue-timeline-chart" class="timeline-chart" role="img" aria-label="Revenue over time"></svg>
+      </div>
+
+      <div class="grid-columns">
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">By credit union</h3>
+          </header>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Credit union</th>
+                <th scope="col" class="numeric">Revenue</th>
+              </tr>
+            </thead>
+            <tbody id="credit-union-summary"></tbody>
+          </table>
+        </section>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">By product</h3>
+          </header>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Product</th>
+                <th scope="col" class="numeric">Revenue</th>
+              </tr>
+            </thead>
+            <tbody id="product-summary"></tbody>
+          </table>
+        </section>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">By revenue type</h3>
+          </header>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Type</th>
+                <th scope="col" class="numeric">Revenue</th>
+              </tr>
+            </thead>
+            <tbody id="type-summary"></tbody>
+          </table>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
