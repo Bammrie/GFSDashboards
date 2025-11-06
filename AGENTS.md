@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2027-01-16: Synced reporting requirements with historical revenue entries so prior months like October 2025 show as completed once their revenue was logged.
 2027-01-15: Added required monthly reporting scaffolding for every income stream, auto-generated periods back to Jan 2023, and built the stream detail red/green status view so duplicate or missing revenue entries are prevented.
 2027-01-14: Updated select dropdown option colors to a dark navy on white so the menu text stays readable against the browser default background.
 2027-01-13: Added HTTP basic authentication with the adminpass credential to block search engine indexing, split the single-page app into dedicated Income Streams, Revenue Updates, and Reporting pages with a credit union filter on reporting, and refreshed typography colors for better contrast.

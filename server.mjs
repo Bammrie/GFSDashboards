@@ -670,13 +670,13 @@ async function ensureReportingRequirementsForStream(streamId) {
   const endYear = now.getFullYear();
   const endMonth = now.getMonth() + 1;
 
-  const operations = [];
+  const requirementOperations = [];
   let year = REPORTING_START_YEAR;
   let month = REPORTING_START_MONTH;
 
   while (year < endYear || (year === endYear && month <= endMonth)) {
     const periodKey = year * 100 + month;
-    operations.push({
+    requirementOperations.push({
       updateOne: {
         filter: { incomeStream: streamId, periodKey },
         update: {
@@ -698,8 +698,32 @@ async function ensureReportingRequirementsForStream(streamId) {
     }
   }
 
-  if (operations.length) {
-    await ReportingRequirement.bulkWrite(operations, { ordered: false });
+  if (requirementOperations.length) {
+    await ReportingRequirement.bulkWrite(requirementOperations, { ordered: false });
+  }
+
+  const entries = await RevenueEntry.find({ incomeStream: streamId })
+    .select('year month periodKey reportedAt')
+    .lean();
+
+  if (entries.length) {
+    const completionOperations = entries.map((entry) => ({
+      updateOne: {
+        filter: { incomeStream: streamId, periodKey: entry.periodKey },
+        update: {
+          $set: {
+            incomeStream: streamId,
+            year: entry.year,
+            month: entry.month,
+            periodKey: entry.periodKey,
+            completedAt: entry.reportedAt ?? new Date()
+          }
+        },
+        upsert: true
+      }
+    }));
+
+    await ReportingRequirement.bulkWrite(completionOperations, { ordered: false });
   }
 }
 
