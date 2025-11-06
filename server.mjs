@@ -71,6 +71,8 @@ app.use((req, res, next) => {
 app.use(express.static(publicDir));
 
 const REVENUE_TYPES = ['Frontend', 'Backend', 'Commission'];
+const REPORTING_START_YEAR = 2023;
+const REPORTING_START_MONTH = 1;
 
 const creditUnionSchema = new mongoose.Schema(
   {
@@ -113,11 +115,29 @@ const revenueEntrySchema = new mongoose.Schema(
 revenueEntrySchema.index({ incomeStream: 1, year: 1, month: 1 }, { unique: true });
 revenueEntrySchema.index({ periodKey: 1 });
 
+const reportingRequirementSchema = new mongoose.Schema(
+  {
+    incomeStream: { type: mongoose.Schema.Types.ObjectId, ref: 'IncomeStream', required: true },
+    year: { type: Number, required: true, min: 1900 },
+    month: { type: Number, required: true, min: 1, max: 12 },
+    periodKey: { type: Number, required: true },
+    completedAt: { type: Date, default: null }
+  },
+  { timestamps: true }
+);
+
+reportingRequirementSchema.index({ incomeStream: 1, periodKey: 1 }, { unique: true });
+
 const CreditUnion = mongoose.model('CreditUnion', creditUnionSchema);
 const IncomeStream = mongoose.model('IncomeStream', incomeStreamSchema);
 const RevenueEntry = mongoose.model('RevenueEntry', revenueEntrySchema);
+const ReportingRequirement = mongoose.model('ReportingRequirement', reportingRequirementSchema);
 
 const databaseReady = await initializeDatabase();
+
+if (databaseReady) {
+  await ensureReportingRequirementsForAllStreams();
+}
 
 if (!databaseReady) {
   console.warn(
@@ -179,6 +199,8 @@ app.get('/api/income-streams', async (req, res, next) => {
       .lean();
 
     const streamIds = streams.map((stream) => stream._id);
+    await ensureReportingRequirementsForStreams(streamIds);
+
     const lastReports = await RevenueEntry.aggregate([
       { $match: { incomeStream: { $in: streamIds } } },
       { $sort: { periodKey: -1, updatedAt: -1 } },
@@ -196,6 +218,22 @@ app.get('/api/income-streams', async (req, res, next) => {
       lastReports.map((report) => [report._id.toString(), { amount: report.amount, month: report.month, year: report.year }])
     );
 
+    const pendingCounts = await ReportingRequirement.aggregate([
+      { $match: { incomeStream: { $in: streamIds } } },
+      {
+        $group: {
+          _id: '$incomeStream',
+          pending: {
+            $sum: {
+              $cond: [{ $ifNull: ['$completedAt', false] }, 0, 1]
+            }
+          }
+        }
+      }
+    ]);
+
+    const pendingMap = new Map(pendingCounts.map((item) => [item._id.toString(), item.pending]));
+
     const payload = streams.map((stream) => {
       const creditUnion = stream.creditUnion;
       const lastReport = lastReportMap.get(stream._id.toString());
@@ -207,6 +245,7 @@ app.get('/api/income-streams', async (req, res, next) => {
         revenueType: stream.revenueType,
         label: `${creditUnion?.name ?? 'Unknown'} – ${stream.product} (${stream.revenueType})`,
         updatedAt: stream.updatedAt,
+        pendingCount: pendingMap.get(stream._id.toString()) ?? 0,
         lastReport: lastReport
           ? {
               amount: Number(lastReport.amount),
@@ -218,6 +257,94 @@ app.get('/api/income-streams', async (req, res, next) => {
     });
 
     res.json(payload);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/income-streams/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    const stream = await IncomeStream.findById(id).populate('creditUnion').lean();
+    if (!stream) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    await ensureReportingRequirementsForStream(stream._id);
+
+    const pendingCount = await ReportingRequirement.countDocuments({
+      incomeStream: stream._id,
+      completedAt: null
+    });
+
+    res.json({
+      id: stream._id.toString(),
+      creditUnionId: stream.creditUnion?._id?.toString() ?? null,
+      creditUnionName: stream.creditUnion?.name ?? 'Unknown credit union',
+      product: stream.product,
+      revenueType: stream.revenueType,
+      label: `${stream.creditUnion?.name ?? 'Unknown'} – ${stream.product} (${stream.revenueType})`,
+      createdAt: stream.createdAt,
+      updatedAt: stream.updatedAt,
+      pendingCount
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/income-streams/:id/reporting-status', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    const stream = await IncomeStream.findById(id).select('_id').lean();
+    if (!stream) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    await ensureReportingRequirementsForStream(stream._id);
+
+    const requirements = await ReportingRequirement.find({ incomeStream: stream._id })
+      .sort({ periodKey: 1 })
+      .lean();
+
+    const entries = await RevenueEntry.find({ incomeStream: stream._id })
+      .select('periodKey amount reportedAt')
+      .lean();
+
+    const entryMap = new Map(entries.map((entry) => [entry.periodKey, entry]));
+
+    const months = requirements.map((requirement) => {
+      const entry = entryMap.get(requirement.periodKey);
+      return {
+        key: `${requirement.year}-${String(requirement.month).padStart(2, '0')}`,
+        year: requirement.year,
+        month: requirement.month,
+        label: formatMonthLabel(requirement.year, requirement.month),
+        completed: Boolean(requirement.completedAt),
+        completedAt: requirement.completedAt,
+        amount: entry ? Number(entry.amount) : null
+      };
+    });
+
+    const summary = {
+      total: months.length,
+      completed: months.filter((month) => month.completed).length,
+      pending: months.filter((month) => !month.completed).length
+    };
+
+    res.json({ months, summary });
   } catch (error) {
     next(error);
   }
@@ -265,6 +392,13 @@ app.post('/api/income-streams', async (req, res, next) => {
       revenueType
     });
 
+    await ensureReportingRequirementsForStream(stream._id);
+
+    const pendingCount = await ReportingRequirement.countDocuments({
+      incomeStream: stream._id,
+      completedAt: null
+    });
+
     res.status(201).json({
       id: stream._id.toString(),
       creditUnionId: creditUnionId,
@@ -272,7 +406,8 @@ app.post('/api/income-streams', async (req, res, next) => {
       product,
       revenueType,
       label: `${creditUnion.name} – ${product} (${revenueType})`,
-      updatedAt: stream.updatedAt
+      updatedAt: stream.updatedAt,
+      pendingCount
     });
   } catch (error) {
     next(error);
@@ -322,6 +457,22 @@ app.post('/api/revenue', async (req, res, next) => {
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
+
+    await ReportingRequirement.updateOne(
+      { incomeStream: incomeStreamId, periodKey },
+      {
+        $set: { completedAt: new Date() },
+        $setOnInsert: {
+          incomeStream: incomeStreamId,
+          year,
+          month,
+          periodKey
+        }
+      },
+      { upsert: true }
+    );
+
+    await IncomeStream.updateOne({ _id: incomeStreamId }, { updatedAt: new Date() });
 
     res.status(204).end();
   } catch (error) {
@@ -494,6 +645,62 @@ function formatMonthLabel(year, month) {
     month: 'short',
     year: 'numeric'
   });
+}
+
+async function ensureReportingRequirementsForAllStreams() {
+  const streams = await IncomeStream.find().select('_id').lean();
+  for (const stream of streams) {
+    await ensureReportingRequirementsForStream(stream._id);
+  }
+}
+
+async function ensureReportingRequirementsForStreams(streamIds) {
+  if (!Array.isArray(streamIds) || !streamIds.length) {
+    return;
+  }
+  for (const streamId of streamIds) {
+    await ensureReportingRequirementsForStream(streamId);
+  }
+}
+
+async function ensureReportingRequirementsForStream(streamId) {
+  if (!streamId) return;
+
+  const now = new Date();
+  const endYear = now.getFullYear();
+  const endMonth = now.getMonth() + 1;
+
+  const operations = [];
+  let year = REPORTING_START_YEAR;
+  let month = REPORTING_START_MONTH;
+
+  while (year < endYear || (year === endYear && month <= endMonth)) {
+    const periodKey = year * 100 + month;
+    operations.push({
+      updateOne: {
+        filter: { incomeStream: streamId, periodKey },
+        update: {
+          $setOnInsert: {
+            incomeStream: streamId,
+            year,
+            month,
+            periodKey
+          }
+        },
+        upsert: true
+      }
+    });
+
+    month += 1;
+    if (month > 12) {
+      month = 1;
+      year += 1;
+    }
+  }
+
+  if (operations.length) {
+    await ReportingRequirement.bulkWrite(operations, { ordered: false });
+  }
 }
 
 async function initializeDatabase() {

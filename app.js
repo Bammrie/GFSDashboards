@@ -42,7 +42,12 @@ const selectors = {
   typeSummary: document.getElementById('type-summary'),
   timelineChart: document.getElementById('revenue-timeline-chart'),
   timelineSubtitle: document.getElementById('timeline-subtitle'),
-  incomeStreamTemplate: document.getElementById('income-stream-template')
+  incomeStreamTemplate: document.getElementById('income-stream-template'),
+  streamName: document.getElementById('income-stream-name'),
+  streamDetails: document.getElementById('income-stream-details'),
+  reportingStatusGrid: document.getElementById('reporting-status-grid'),
+  reportingStatusTemplate: document.getElementById('reporting-status-template'),
+  reportingStatusSummary: document.getElementById('reporting-status-summary')
 };
 
 const appState = {
@@ -50,7 +55,8 @@ const appState = {
   incomeStreams: [],
   summary: null,
   reportingWindow: { start: null, end: null },
-  selectedCreditUnion: 'all'
+  selectedCreditUnion: 'all',
+  currentStreamId: null
 };
 
 function showDialog(dialog) {
@@ -229,18 +235,33 @@ function renderIncomeStreamList() {
     .sort((a, b) => b.updatedAt - a.updatedAt)
     .forEach((stream) => {
       const fragment = template.content.cloneNode(true);
+      const link = fragment.querySelector('.item__link');
       const title = fragment.querySelector('.item__title');
       const subtitle = fragment.querySelector('.item__subtitle');
+      const meta = fragment.querySelector('.item__meta');
       const metric = fragment.querySelector('.item__metric');
 
       title.textContent = stream.label;
       subtitle.textContent = `${stream.creditUnionName} • ${stream.product} • ${stream.revenueType}`;
 
+      if (link) {
+        link.href = `stream.html?id=${encodeURIComponent(stream.id)}`;
+        link.setAttribute('aria-label', `View monthly reporting status for ${stream.label}`);
+      }
+
       if (stream.lastReport) {
         const { month, year, amount } = stream.lastReport;
-        metric.textContent = `${currencyFormatter.format(amount)} in ${formatPeriodLabel(year, month)}`;
+        meta.textContent = `Last reported ${currencyFormatter.format(amount)} in ${formatPeriodLabel(year, month)}`;
       } else {
-        metric.textContent = 'No revenue logged yet';
+        meta.textContent = 'No revenue logged yet';
+      }
+
+      if (stream.pendingCount > 0) {
+        metric.textContent = `${stream.pendingCount} month${stream.pendingCount === 1 ? '' : 's'} pending`;
+        metric.dataset.status = 'pending';
+      } else {
+        metric.textContent = 'All months reported';
+        metric.dataset.status = 'complete';
       }
 
       list.append(fragment);
@@ -256,6 +277,129 @@ function renderIncomeStreamList() {
 function formatPeriodLabel(year, month) {
   const date = new Date(year, month - 1, 1);
   return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+}
+
+function formatDateString(value) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+function getStreamIdFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (id) {
+    appState.currentStreamId = id;
+  }
+  return id;
+}
+
+async function loadIncomeStreamDetail(streamId) {
+  const data = await request(`/api/income-streams/${streamId}`);
+  renderStreamOverview(data);
+}
+
+function renderStreamOverview(stream) {
+  if (!stream) return;
+
+  if (selectors.streamName) {
+    selectors.streamName.textContent = stream.label;
+  }
+
+  if (selectors.streamDetails) {
+    selectors.streamDetails.replaceChildren();
+    const entries = [
+      ['Credit union / entity', stream.creditUnionName],
+      ['Product / service', stream.product],
+      ['Revenue type', stream.revenueType],
+      ['Created on', formatDateString(stream.createdAt)],
+      ['Last updated', formatDateString(stream.updatedAt)],
+      [
+        'Pending months',
+        stream.pendingCount > 0
+          ? `${stream.pendingCount} month${stream.pendingCount === 1 ? '' : 's'} awaiting reporting`
+          : 'All months reported'
+      ]
+    ];
+
+    entries.forEach(([label, value]) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'stream-overview__detail';
+      const dt = document.createElement('dt');
+      dt.textContent = label;
+      const dd = document.createElement('dd');
+      dd.textContent = value;
+      wrapper.append(dt, dd);
+      selectors.streamDetails.append(wrapper);
+    });
+  }
+}
+
+async function loadIncomeStreamReportingStatus(streamId) {
+  const data = await request(`/api/income-streams/${streamId}/reporting-status`);
+  renderReportingStatus(data);
+}
+
+function renderReportingStatus(data) {
+  const grid = selectors.reportingStatusGrid;
+  const template = selectors.reportingStatusTemplate;
+  if (!grid || !template) return;
+
+  grid.replaceChildren();
+
+  const months = Array.isArray(data?.months) ? data.months : [];
+  const summary = data?.summary ?? { total: months.length, completed: 0, pending: months.length };
+
+  if (!months.length) {
+    const empty = document.createElement('p');
+    empty.className = 'panel__description';
+    empty.textContent = 'No reporting requirements found for this income stream.';
+    grid.append(empty);
+  } else {
+    months.forEach((month) => {
+      const fragment = template.content.cloneNode(true);
+      const card = fragment.querySelector('.status-card');
+      const title = fragment.querySelector('.status-card__month');
+      const amount = fragment.querySelector('.status-card__amount');
+
+      if (card) {
+        card.dataset.state = month.completed ? 'complete' : 'pending';
+      }
+
+      if (title) {
+        title.textContent = month.label;
+      }
+
+      if (amount) {
+        if (month.completed && Number.isFinite(month.amount)) {
+          amount.textContent = `Recorded ${currencyFormatter.format(month.amount)}`;
+        } else if (month.completed) {
+          amount.textContent = 'Recorded (amount unavailable)';
+        } else {
+          amount.textContent = 'Awaiting input';
+        }
+      }
+
+      grid.append(fragment);
+    });
+  }
+
+  if (selectors.reportingStatusSummary) {
+    const pendingText =
+      summary.pending > 0
+        ? `${summary.pending} month${summary.pending === 1 ? '' : 's'} still need numbers.`
+        : 'Every required month has been reported. Great job!';
+    const completedText = `${summary.completed} of ${summary.total} month${summary.total === 1 ? '' : 's'} reported.`;
+    const startLabel = months[0]?.label ?? 'Jan 2023';
+    const endLabel = months[months.length - 1]?.label ?? startLabel;
+    const rangeText = startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`;
+    selectors.reportingStatusSummary.textContent = `${completedText} ${pendingText} Tracking period: ${rangeText}.`;
+  }
 }
 
 async function loadCreditUnions() {
@@ -274,6 +418,7 @@ async function loadIncomeStreams() {
     product: stream.product,
     revenueType: stream.revenueType,
     updatedAt: stream.updatedAt ? new Date(stream.updatedAt).getTime() : 0,
+    pendingCount: Number(stream.pendingCount ?? 0),
     lastReport: stream.lastReport
       ? {
           amount: Number(stream.lastReport.amount),
@@ -310,6 +455,7 @@ async function createIncomeStream(payload) {
     product: result.product,
     revenueType: result.revenueType,
     updatedAt: result.updatedAt ? new Date(result.updatedAt).getTime() : Date.now(),
+    pendingCount: Number(result.pendingCount ?? 0),
     lastReport: null
   });
 
@@ -629,6 +775,29 @@ async function bootstrap() {
     }
   } catch (error) {
     console.error(error);
+  }
+
+  if (selectors.streamName) {
+    const streamId = getStreamIdFromQuery();
+    if (streamId) {
+      try {
+        await Promise.all([loadIncomeStreamDetail(streamId), loadIncomeStreamReportingStatus(streamId)]);
+      } catch (error) {
+        console.error(error);
+        if (selectors.streamName) {
+          selectors.streamName.textContent = 'Income stream not found';
+        }
+        if (selectors.reportingStatusSummary) {
+          selectors.reportingStatusSummary.textContent = error.message;
+        }
+      }
+    } else {
+      selectors.streamName.textContent = 'Income stream not found';
+      if (selectors.reportingStatusSummary) {
+        selectors.reportingStatusSummary.textContent =
+          'Use the income stream list to choose a reporting view.';
+      }
+    }
   }
 }
 

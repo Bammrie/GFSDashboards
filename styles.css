@@ -311,14 +311,28 @@ input[type='month']:focus-visible {
 }
 
 .item {
+  background: var(--surface-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.item__link {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
-  background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 18px;
   padding: 1rem 1.25rem;
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.item__link:hover,
+.item__link:focus-visible {
+  background: rgba(79, 195, 247, 0.12);
+  border-color: rgba(79, 195, 247, 0.32);
+  outline: none;
 }
 
 .item__title {
@@ -333,10 +347,26 @@ input[type='month']:focus-visible {
   font-size: 0.9rem;
 }
 
+.item__meta {
+  margin: 0.45rem 0 0;
+  color: rgba(196, 223, 255, 0.68);
+  font-size: 0.85rem;
+}
+
 .item__metric {
   margin: 0;
   font-variant-numeric: tabular-nums;
   color: var(--text-secondary);
+  font-weight: 600;
+  align-self: center;
+}
+
+.item__metric[data-status='pending'] {
+  color: #ef9a9a;
+}
+
+.item__metric[data-status='complete'] {
+  color: var(--success);
 }
 
 .feedback {
@@ -352,6 +382,100 @@ input[type='month']:focus-visible {
 
 .feedback[data-state='error'] {
   color: #ef5350;
+}
+
+.stream-overview {
+  display: grid;
+  gap: 1rem;
+}
+
+.stream-overview__name {
+  margin: 0;
+  font-size: clamp(1.2rem, 2.2vw, 1.75rem);
+}
+
+.stream-overview__details {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin: 0;
+  padding: 0;
+}
+
+.stream-overview__detail {
+  background: var(--surface-card);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.stream-overview__detail dt {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.stream-overview__detail dd {
+  margin: 0.25rem 0 0;
+  font-size: 1rem;
+}
+
+.status-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.status-card {
+  background: var(--surface-card);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-card[data-state='complete'] {
+  border-color: rgba(76, 175, 80, 0.45);
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.status-card[data-state='pending'] {
+  border-color: rgba(239, 83, 80, 0.45);
+  box-shadow: 0 0 0 2px rgba(239, 83, 80, 0.18);
+}
+
+.status-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.status-card__indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ef5350;
+  box-shadow: 0 0 12px rgba(239, 83, 80, 0.45);
+}
+
+.status-card[data-state='complete'] .status-card__indicator {
+  background: var(--success);
+  box-shadow: 0 0 12px rgba(76, 175, 80, 0.45);
+}
+
+.status-card__month {
+  margin: 0;
+  font-weight: 600;
+}
+
+.status-card__amount {
+  margin: 0;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 .insights {

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Income Stream Reporting | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Income stream reporting</h1>
+        <p class="site-subtitle">Verify every monthly revenue entry at a glance.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a href="index.html" class="header-link" aria-current="page">Income Streams</a>
+        <a href="revenue.html" class="header-link">Revenue Updates</a>
+        <a href="reporting.html" class="header-link">Reporting</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-labelledby="stream-overview-heading">
+      <header class="panel__header">
+        <h2 id="stream-overview-heading" class="panel__title">Stream details</h2>
+        <p class="panel__description">Every month requires an amount, even when the value is $0.00. Missing months are highlighted in red until they are reported.</p>
+      </header>
+      <div class="stream-overview">
+        <h3 id="income-stream-name" class="stream-overview__name">Loading income stream&hellip;</h3>
+        <dl id="income-stream-details" class="stream-overview__details"></dl>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="reporting-status-heading">
+      <header class="panel__header">
+        <h2 id="reporting-status-heading" class="panel__title">Monthly reporting status</h2>
+        <p id="reporting-status-summary" class="panel__description">Preparing month-by-month requirements&hellip;</p>
+      </header>
+      <div id="reporting-status-grid" class="status-grid" role="list"></div>
+    </section>
+  </main>
+
+  <template id="reporting-status-template">
+    <article class="status-card" data-state="pending" role="listitem">
+      <header class="status-card__header">
+        <span class="status-card__indicator" aria-hidden="true"></span>
+        <p class="status-card__month"></p>
+      </header>
+      <p class="status-card__amount"></p>
+    </article>
+  </template>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
