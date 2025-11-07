@@ -28,6 +28,9 @@
         <h2 id="stream-overview-heading" class="panel__title">Stream details</h2>
         <p class="panel__description">Every month requires an amount, even when the value is $0.00. Missing months are highlighted in red until they are reported.</p>
       </header>
+      <div class="panel__actions">
+        <button type="button" id="cancel-stream-btn" class="secondary-button" hidden>Cancel income stream</button>
+      </div>
       <div class="stream-overview">
         <h3 id="income-stream-name" class="stream-overview__name">Loading income stream&hellip;</h3>
         <dl id="income-stream-details" class="stream-overview__details"></dl>
@@ -42,6 +45,46 @@
       <div id="reporting-status-grid" class="status-grid" role="list"></div>
     </section>
   </main>
+
+  <dialog id="cancel-stream-dialog" aria-labelledby="cancel-stream-dialog-title">
+    <form method="dialog" id="cancel-stream-form" class="dialog-form" autocomplete="off">
+      <header class="dialog-header">
+        <h2 id="cancel-stream-dialog-title">Cancel income stream</h2>
+        <button type="button" class="icon-button" id="close-cancel-stream-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+      <div class="dialog-body">
+        <p>Select the final month so new reporting requirements stop after the account is closed.</p>
+        <label for="cancel-stream-month">Which month will be the final month to report revenue?</label>
+        <input type="month" id="cancel-stream-month" name="finalMonth" required />
+        <p id="cancel-stream-message" class="feedback" data-state="info"></p>
+      </div>
+      <footer class="dialog-footer">
+        <button type="submit" class="primary-button">Save final month</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog id="edit-revenue-dialog" aria-labelledby="edit-revenue-dialog-title">
+    <form method="dialog" id="edit-revenue-form" class="dialog-form" autocomplete="off">
+      <header class="dialog-header">
+        <h2 id="edit-revenue-dialog-title">Update monthly revenue</h2>
+        <button type="button" class="icon-button" id="close-edit-revenue-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+      <div class="dialog-body">
+        <p><strong id="edit-revenue-month"></strong></p>
+        <label for="edit-revenue-amount">Monthly revenue amount</label>
+        <input type="number" id="edit-revenue-amount" name="amount" min="0" step="0.01" required />
+        <p id="edit-revenue-feedback" class="feedback" data-state="info"></p>
+      </div>
+      <footer class="dialog-footer">
+        <button type="submit" class="primary-button">Save revenue</button>
+      </footer>
+    </form>
+  </dialog>
 
   <template id="reporting-status-template">
     <article class="status-card" data-state="pending" role="listitem">
