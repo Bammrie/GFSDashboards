@@ -93,7 +93,11 @@ const incomeStreamSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
     product: { type: String, required: true, trim: true },
-    revenueType: { type: String, required: true, enum: REVENUE_TYPES }
+    revenueType: { type: String, required: true, enum: REVENUE_TYPES },
+    finalReportYear: { type: Number, min: 1900, default: null },
+    finalReportMonth: { type: Number, min: 1, max: 12, default: null },
+    finalReportPeriodKey: { type: Number, default: null },
+    canceledAt: { type: Date, default: null }
   },
   { timestamps: true }
 );
@@ -237,6 +241,15 @@ app.get('/api/income-streams', async (req, res, next) => {
     const payload = streams.map((stream) => {
       const creditUnion = stream.creditUnion;
       const lastReport = lastReportMap.get(stream._id.toString());
+      const finalReport =
+        stream.finalReportPeriodKey && stream.finalReportYear && stream.finalReportMonth
+          ? {
+              year: stream.finalReportYear,
+              month: stream.finalReportMonth,
+              periodKey: stream.finalReportPeriodKey,
+              label: formatMonthLabel(stream.finalReportYear, stream.finalReportMonth)
+            }
+          : null;
       return {
         id: stream._id.toString(),
         creditUnionId: creditUnion?._id?.toString() ?? null,
@@ -252,7 +265,9 @@ app.get('/api/income-streams', async (req, res, next) => {
               month: lastReport.month,
               year: lastReport.year
             }
-          : null
+          : null,
+        finalReport,
+        canceledAt: stream.canceledAt
       };
     });
 
@@ -283,6 +298,16 @@ app.get('/api/income-streams/:id', async (req, res, next) => {
       completedAt: null
     });
 
+    const finalReport =
+      stream.finalReportPeriodKey && stream.finalReportYear && stream.finalReportMonth
+        ? {
+            year: stream.finalReportYear,
+            month: stream.finalReportMonth,
+            periodKey: stream.finalReportPeriodKey,
+            label: formatMonthLabel(stream.finalReportYear, stream.finalReportMonth)
+          }
+        : null;
+
     res.json({
       id: stream._id.toString(),
       creditUnionId: stream.creditUnion?._id?.toString() ?? null,
@@ -292,7 +317,109 @@ app.get('/api/income-streams/:id', async (req, res, next) => {
       label: `${stream.creditUnion?.name ?? 'Unknown'} – ${stream.product} (${stream.revenueType})`,
       createdAt: stream.createdAt,
       updatedAt: stream.updatedAt,
-      pendingCount
+      pendingCount,
+      finalReport,
+      canceledAt: stream.canceledAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch('/api/income-streams/:id/cancel', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    const stream = await IncomeStream.findById(id).populate('creditUnion').lean();
+    if (!stream) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    const finalMonthValue = typeof req.body?.finalMonth === 'string' ? req.body.finalMonth : '';
+    const finalPeriod = parsePeriod(finalMonthValue);
+    if (!finalPeriod) {
+      res.status(400).json({ error: 'Select a valid final month (YYYY-MM).' });
+      return;
+    }
+
+    const minimumPeriodKey = REPORTING_START_YEAR * 100 + REPORTING_START_MONTH;
+    if (finalPeriod.key < minimumPeriodKey) {
+      res.status(400).json({ error: 'Final month cannot be before the tracking start in Jan 2023.' });
+      return;
+    }
+
+    const now = new Date();
+    const currentPeriodKey = now.getFullYear() * 100 + (now.getMonth() + 1);
+    if (finalPeriod.key > currentPeriodKey) {
+      res.status(400).json({ error: 'Final month cannot be in the future.' });
+      return;
+    }
+
+    const latestEntry = await RevenueEntry.findOne({ incomeStream: stream._id })
+      .sort({ periodKey: -1 })
+      .lean();
+
+    if (latestEntry && latestEntry.periodKey > finalPeriod.key) {
+      res.status(400).json({
+        error: `Revenue has already been reported through ${formatMonthLabel(
+          latestEntry.year,
+          latestEntry.month
+        )}. Adjust or remove those entries before selecting an earlier final month.`
+      });
+      return;
+    }
+
+    const updatedStream = await IncomeStream.findByIdAndUpdate(
+      stream._id,
+      {
+        $set: {
+          finalReportYear: finalPeriod.year,
+          finalReportMonth: finalPeriod.month,
+          finalReportPeriodKey: finalPeriod.key,
+          canceledAt: new Date()
+        }
+      },
+      { new: true }
+    )
+      .populate('creditUnion')
+      .lean();
+
+    await ensureReportingRequirementsForStream(stream._id);
+
+    const pendingCount = await ReportingRequirement.countDocuments({
+      incomeStream: stream._id,
+      completedAt: null
+    });
+
+    const finalReport =
+      updatedStream.finalReportPeriodKey &&
+      updatedStream.finalReportYear &&
+      updatedStream.finalReportMonth
+        ? {
+            year: updatedStream.finalReportYear,
+            month: updatedStream.finalReportMonth,
+            periodKey: updatedStream.finalReportPeriodKey,
+            label: formatMonthLabel(updatedStream.finalReportYear, updatedStream.finalReportMonth)
+          }
+        : null;
+
+    res.json({
+      id: updatedStream._id.toString(),
+      creditUnionId: updatedStream.creditUnion?._id?.toString() ?? null,
+      creditUnionName: updatedStream.creditUnion?.name ?? 'Unknown credit union',
+      product: updatedStream.product,
+      revenueType: updatedStream.revenueType,
+      label: `${updatedStream.creditUnion?.name ?? 'Unknown'} – ${updatedStream.product} (${updatedStream.revenueType})`,
+      createdAt: updatedStream.createdAt,
+      updatedAt: updatedStream.updatedAt,
+      pendingCount,
+      finalReport,
+      canceledAt: updatedStream.canceledAt
     });
   } catch (error) {
     next(error);
@@ -445,6 +572,16 @@ app.post('/api/revenue', async (req, res, next) => {
     }
 
     const periodKey = year * 100 + month;
+
+    if (stream.finalReportPeriodKey && periodKey > stream.finalReportPeriodKey) {
+      res.status(400).json({
+        error: `This income stream was canceled after ${formatMonthLabel(
+          stream.finalReportYear,
+          stream.finalReportMonth
+        )}. Update the final month before reporting additional revenue.`
+      });
+      return;
+    }
 
     await RevenueEntry.findOneAndUpdate(
       { incomeStream: incomeStreamId, year, month },
@@ -666,15 +803,30 @@ async function ensureReportingRequirementsForStreams(streamIds) {
 async function ensureReportingRequirementsForStream(streamId) {
   if (!streamId) return;
 
+  const stream = await IncomeStream.findById(streamId)
+    .select('finalReportYear finalReportMonth finalReportPeriodKey')
+    .lean();
+
+  if (!stream) {
+    return;
+  }
+
   const now = new Date();
-  const endYear = now.getFullYear();
-  const endMonth = now.getMonth() + 1;
+  let endYear = now.getFullYear();
+  let endMonth = now.getMonth() + 1;
+  let endPeriodKey = endYear * 100 + endMonth;
+
+  if (stream.finalReportPeriodKey && stream.finalReportYear && stream.finalReportMonth) {
+    endYear = stream.finalReportYear;
+    endMonth = stream.finalReportMonth;
+    endPeriodKey = stream.finalReportPeriodKey;
+  }
 
   const requirementOperations = [];
   let year = REPORTING_START_YEAR;
   let month = REPORTING_START_MONTH;
 
-  while (year < endYear || (year === endYear && month <= endMonth)) {
+  while (year * 100 + month <= endPeriodKey) {
     const periodKey = year * 100 + month;
     requirementOperations.push({
       updateOne: {
@@ -700,6 +852,13 @@ async function ensureReportingRequirementsForStream(streamId) {
 
   if (requirementOperations.length) {
     await ReportingRequirement.bulkWrite(requirementOperations, { ordered: false });
+  }
+
+  if (stream.finalReportPeriodKey) {
+    await ReportingRequirement.deleteMany({
+      incomeStream: streamId,
+      periodKey: { $gt: endPeriodKey }
+    });
   }
 
   const entries = await RevenueEntry.find({ incomeStream: streamId })

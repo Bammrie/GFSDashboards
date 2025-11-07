@@ -9,6 +9,7 @@ const PRODUCT_OPTIONS = [
 ];
 
 const REVENUE_TYPES = ['Frontend', 'Backend', 'Commission'];
+const REPORTING_START_PERIOD = '2023-01';
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -47,7 +48,19 @@ const selectors = {
   streamDetails: document.getElementById('income-stream-details'),
   reportingStatusGrid: document.getElementById('reporting-status-grid'),
   reportingStatusTemplate: document.getElementById('reporting-status-template'),
-  reportingStatusSummary: document.getElementById('reporting-status-summary')
+  reportingStatusSummary: document.getElementById('reporting-status-summary'),
+  cancelStreamBtn: document.getElementById('cancel-stream-btn'),
+  cancelStreamDialog: document.getElementById('cancel-stream-dialog'),
+  cancelStreamForm: document.getElementById('cancel-stream-form'),
+  cancelStreamInput: document.getElementById('cancel-stream-month'),
+  cancelStreamMessage: document.getElementById('cancel-stream-message'),
+  closeCancelStreamDialogBtn: document.getElementById('close-cancel-stream-dialog'),
+  editRevenueDialog: document.getElementById('edit-revenue-dialog'),
+  editRevenueForm: document.getElementById('edit-revenue-form'),
+  editRevenueMonthLabel: document.getElementById('edit-revenue-month'),
+  editRevenueAmountInput: document.getElementById('edit-revenue-amount'),
+  editRevenueFeedback: document.getElementById('edit-revenue-feedback'),
+  closeEditRevenueDialogBtn: document.getElementById('close-edit-revenue-dialog')
 };
 
 const appState = {
@@ -56,7 +69,10 @@ const appState = {
   summary: null,
   reportingWindow: { start: null, end: null },
   selectedCreditUnion: 'all',
-  currentStreamId: null
+  currentStreamId: null,
+  currentStreamDetail: null,
+  currentStreamMonths: [],
+  editingPeriod: null
 };
 
 function showDialog(dialog) {
@@ -66,6 +82,56 @@ function showDialog(dialog) {
   } else {
     dialog.setAttribute('open', '');
   }
+}
+
+function openEditRevenueDialog(month) {
+  if (!selectors.editRevenueDialog || !selectors.editRevenueForm) return;
+  appState.editingPeriod = month;
+
+  if (selectors.editRevenueMonthLabel) {
+    selectors.editRevenueMonthLabel.textContent = month.label;
+  }
+
+  if (selectors.editRevenueAmountInput) {
+    selectors.editRevenueAmountInput.value =
+      Number.isFinite(month.amount) && month.amount !== null ? String(month.amount) : '';
+  }
+
+  if (selectors.editRevenueFeedback) {
+    setFeedback(selectors.editRevenueFeedback, '', 'info');
+  }
+
+  showDialog(selectors.editRevenueDialog);
+  setTimeout(() => selectors.editRevenueAmountInput?.focus(), 75);
+}
+
+function handleStatusCardActivation(event) {
+  const isKeyboard = event.type === 'keydown';
+  const isActivationKey = event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar';
+  if (isKeyboard && !isActivationKey) {
+    return;
+  }
+
+  const card = event.target.closest('.status-card');
+  if (!card || !selectors.reportingStatusGrid?.contains(card)) {
+    return;
+  }
+
+  if (isKeyboard) {
+    event.preventDefault();
+  }
+
+  const key = card.dataset.key;
+  if (!key) {
+    return;
+  }
+
+  const month = appState.currentStreamMonths.find((item) => item.key === key);
+  if (!month) {
+    return;
+  }
+
+  openEditRevenueDialog(month);
 }
 
 function closeDialog(dialog) {
@@ -249,16 +315,26 @@ function renderIncomeStreamList() {
         link.setAttribute('aria-label', `View monthly reporting status for ${stream.label}`);
       }
 
+      const metaSegments = [];
       if (stream.lastReport) {
         const { month, year, amount } = stream.lastReport;
-        meta.textContent = `Last reported ${currencyFormatter.format(amount)} in ${formatPeriodLabel(year, month)}`;
+        metaSegments.push(`Last reported ${currencyFormatter.format(amount)} in ${formatPeriodLabel(year, month)}`);
       } else {
-        meta.textContent = 'No revenue logged yet';
+        metaSegments.push('No revenue logged yet');
       }
+
+      if (stream.finalReport) {
+        metaSegments.push(`Final reporting month: ${stream.finalReport.label}`);
+      }
+
+      meta.textContent = metaSegments.join(' • ');
 
       if (stream.pendingCount > 0) {
         metric.textContent = `${stream.pendingCount} month${stream.pendingCount === 1 ? '' : 's'} pending`;
         metric.dataset.status = 'pending';
+      } else if (stream.finalReport) {
+        metric.textContent = 'Stream canceled';
+        metric.dataset.status = 'complete';
       } else {
         metric.textContent = 'All months reported';
         metric.dataset.status = 'complete';
@@ -277,6 +353,15 @@ function renderIncomeStreamList() {
 function formatPeriodLabel(year, month) {
   const date = new Date(year, month - 1, 1);
   return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+}
+
+function formatPeriodValue(year, month) {
+  return `${year}-${String(month).padStart(2, '0')}`;
+}
+
+function getCurrentPeriodValue() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
 function formatDateString(value) {
@@ -307,12 +392,27 @@ async function loadIncomeStreamDetail(streamId) {
 function renderStreamOverview(stream) {
   if (!stream) return;
 
+  appState.currentStreamDetail = stream;
+
   if (selectors.streamName) {
     selectors.streamName.textContent = stream.label;
   }
 
+  if (selectors.cancelStreamBtn) {
+    const button = selectors.cancelStreamBtn;
+    button.hidden = false;
+    if (stream.finalReport) {
+      button.textContent = 'Update final reporting month';
+      button.setAttribute('aria-label', 'Update the final reporting month for this income stream');
+    } else {
+      button.textContent = 'Cancel income stream';
+      button.setAttribute('aria-label', 'Cancel this income stream and stop future reporting requirements');
+    }
+  }
+
   if (selectors.streamDetails) {
     selectors.streamDetails.replaceChildren();
+    const finalReportLabel = stream.finalReport ? stream.finalReport.label : null;
     const entries = [
       ['Credit union / entity', stream.creditUnionName],
       ['Product / service', stream.product],
@@ -326,6 +426,17 @@ function renderStreamOverview(stream) {
           : 'All months reported'
       ]
     ];
+
+    if (finalReportLabel) {
+      entries.push(['Final reporting month', finalReportLabel]);
+      entries.push(['Stream status', 'Canceled']);
+    } else {
+      entries.push(['Stream status', 'Active']);
+    }
+
+    if (stream.canceledAt) {
+      entries.push(['Canceled on', formatDateString(stream.canceledAt)]);
+    }
 
     entries.forEach(([label, value]) => {
       const wrapper = document.createElement('div');
@@ -354,6 +465,7 @@ function renderReportingStatus(data) {
 
   const months = Array.isArray(data?.months) ? data.months : [];
   const summary = data?.summary ?? { total: months.length, completed: 0, pending: months.length };
+  appState.currentStreamMonths = months;
 
   if (!months.length) {
     const empty = document.createElement('p');
@@ -369,6 +481,11 @@ function renderReportingStatus(data) {
 
       if (card) {
         card.dataset.state = month.completed ? 'complete' : 'pending';
+        card.dataset.key = month.key;
+        card.dataset.interactive = 'true';
+        card.tabIndex = 0;
+        card.setAttribute('aria-label', `Edit revenue for ${month.label}`);
+        card.setAttribute('aria-roledescription', 'button');
       }
 
       if (title) {
@@ -398,7 +515,12 @@ function renderReportingStatus(data) {
     const startLabel = months[0]?.label ?? 'Jan 2023';
     const endLabel = months[months.length - 1]?.label ?? startLabel;
     const rangeText = startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`;
-    selectors.reportingStatusSummary.textContent = `${completedText} ${pendingText} Tracking period: ${rangeText}.`;
+    const finalReportLabel = appState.currentStreamDetail?.finalReport?.label;
+    if (finalReportLabel) {
+      selectors.reportingStatusSummary.textContent = `${completedText} ${pendingText} Tracking period: ${rangeText}. No new months will be generated after ${finalReportLabel}.`;
+    } else {
+      selectors.reportingStatusSummary.textContent = `${completedText} ${pendingText} Tracking period: ${rangeText}.`;
+    }
   }
 }
 
@@ -424,6 +546,13 @@ async function loadIncomeStreams() {
           amount: Number(stream.lastReport.amount),
           month: stream.lastReport.month,
           year: stream.lastReport.year
+        }
+      : null,
+    finalReport: stream.finalReport
+      ? {
+          year: stream.finalReport.year,
+          month: stream.finalReport.month,
+          label: stream.finalReport.label
         }
       : null
   }));
@@ -470,6 +599,13 @@ async function saveRevenueEntry(payload) {
   await request('/api/revenue', {
     method: 'POST',
     body: JSON.stringify(payload)
+  });
+}
+
+async function cancelIncomeStream(streamId, finalMonth) {
+  return request(`/api/income-streams/${streamId}/cancel`, {
+    method: 'PATCH',
+    body: JSON.stringify({ finalMonth })
   });
 }
 
@@ -660,6 +796,135 @@ selectors.creditUnionForm?.addEventListener('submit', async (event) => {
   }
 });
 
+selectors.cancelStreamBtn?.addEventListener('click', () => {
+  if (!appState.currentStreamId || !selectors.cancelStreamDialog) return;
+
+  if (selectors.cancelStreamMessage) {
+    setFeedback(selectors.cancelStreamMessage, '', 'info');
+  }
+
+  if (selectors.cancelStreamInput) {
+    selectors.cancelStreamInput.min = REPORTING_START_PERIOD;
+    selectors.cancelStreamInput.max = getCurrentPeriodValue();
+
+    const finalReport = appState.currentStreamDetail?.finalReport;
+    if (finalReport?.year && finalReport?.month) {
+      selectors.cancelStreamInput.value = formatPeriodValue(finalReport.year, finalReport.month);
+    } else {
+      const lastMonth = appState.currentStreamMonths[appState.currentStreamMonths.length - 1];
+      if (lastMonth?.year && lastMonth?.month) {
+        selectors.cancelStreamInput.value = formatPeriodValue(lastMonth.year, lastMonth.month);
+      } else {
+        selectors.cancelStreamInput.value = '';
+      }
+    }
+  }
+
+  showDialog(selectors.cancelStreamDialog);
+  setTimeout(() => selectors.cancelStreamInput?.focus(), 75);
+});
+
+selectors.closeCancelStreamDialogBtn?.addEventListener('click', () => {
+  closeDialog(selectors.cancelStreamDialog);
+});
+
+selectors.cancelStreamDialog?.addEventListener('close', () => {
+  if (selectors.cancelStreamMessage) {
+    setFeedback(selectors.cancelStreamMessage, '', 'info');
+  }
+});
+
+selectors.cancelStreamForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!appState.currentStreamId || !selectors.cancelStreamInput) return;
+
+  const finalMonth = selectors.cancelStreamInput.value;
+  if (!finalMonth) {
+    if (selectors.cancelStreamMessage) {
+      setFeedback(selectors.cancelStreamMessage, 'Select the month when reporting ends.', 'error');
+    }
+    return;
+  }
+
+  try {
+    const result = await cancelIncomeStream(appState.currentStreamId, finalMonth);
+    renderStreamOverview(result);
+    await Promise.all([
+      loadIncomeStreamReportingStatus(appState.currentStreamId),
+      loadIncomeStreams()
+    ]);
+    closeDialog(selectors.cancelStreamDialog);
+  } catch (error) {
+    if (selectors.cancelStreamMessage) {
+      setFeedback(selectors.cancelStreamMessage, error.message, 'error');
+    } else {
+      alert(error.message);
+    }
+  }
+});
+
+selectors.reportingStatusGrid?.addEventListener('click', handleStatusCardActivation);
+selectors.reportingStatusGrid?.addEventListener('keydown', handleStatusCardActivation);
+
+selectors.closeEditRevenueDialogBtn?.addEventListener('click', () => {
+  appState.editingPeriod = null;
+  closeDialog(selectors.editRevenueDialog);
+});
+
+selectors.editRevenueDialog?.addEventListener('close', () => {
+  appState.editingPeriod = null;
+  if (selectors.editRevenueFeedback) {
+    setFeedback(selectors.editRevenueFeedback, '', 'info');
+  }
+  if (selectors.editRevenueAmountInput) {
+    selectors.editRevenueAmountInput.value = '';
+  }
+});
+
+selectors.editRevenueForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!appState.currentStreamId || !appState.editingPeriod || !selectors.editRevenueAmountInput) {
+    return;
+  }
+
+  const rawAmount = selectors.editRevenueAmountInput.value.trim();
+  if (!rawAmount) {
+    if (selectors.editRevenueFeedback) {
+      setFeedback(selectors.editRevenueFeedback, 'Enter an amount to save.', 'error');
+    }
+    return;
+  }
+
+  const amount = Number(rawAmount);
+  if (!Number.isFinite(amount) || amount < 0) {
+    if (selectors.editRevenueFeedback) {
+      setFeedback(selectors.editRevenueFeedback, 'Amount must be a non-negative number.', 'error');
+    }
+    return;
+  }
+
+  try {
+    await saveRevenueEntry({
+      incomeStreamId: appState.currentStreamId,
+      year: appState.editingPeriod.year,
+      month: appState.editingPeriod.month,
+      amount
+    });
+
+    closeDialog(selectors.editRevenueDialog);
+    appState.editingPeriod = null;
+    await loadIncomeStreamDetail(appState.currentStreamId);
+    await loadIncomeStreamReportingStatus(appState.currentStreamId);
+    await loadIncomeStreams();
+  } catch (error) {
+    if (selectors.editRevenueFeedback) {
+      setFeedback(selectors.editRevenueFeedback, error.message, 'error');
+    } else {
+      alert(error.message);
+    }
+  }
+});
+
 selectors.incomeStreamForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
@@ -781,7 +1046,8 @@ async function bootstrap() {
     const streamId = getStreamIdFromQuery();
     if (streamId) {
       try {
-        await Promise.all([loadIncomeStreamDetail(streamId), loadIncomeStreamReportingStatus(streamId)]);
+        await loadIncomeStreamDetail(streamId);
+        await loadIncomeStreamReportingStatus(streamId);
       } catch (error) {
         console.error(error);
         if (selectors.streamName) {
@@ -790,12 +1056,18 @@ async function bootstrap() {
         if (selectors.reportingStatusSummary) {
           selectors.reportingStatusSummary.textContent = error.message;
         }
+        if (selectors.cancelStreamBtn) {
+          selectors.cancelStreamBtn.hidden = true;
+        }
       }
     } else {
       selectors.streamName.textContent = 'Income stream not found';
       if (selectors.reportingStatusSummary) {
         selectors.reportingStatusSummary.textContent =
           'Use the income stream list to choose a reporting view.';
+      }
+      if (selectors.cancelStreamBtn) {
+        selectors.cancelStreamBtn.hidden = true;
       }
     }
   }
