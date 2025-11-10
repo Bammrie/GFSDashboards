@@ -109,7 +109,7 @@ const revenueEntrySchema = new mongoose.Schema(
     incomeStream: { type: mongoose.Schema.Types.ObjectId, ref: 'IncomeStream', required: true },
     year: { type: Number, required: true, min: 1900 },
     month: { type: Number, required: true, min: 1, max: 12 },
-    amount: { type: Number, required: true, min: 0 },
+    amount: { type: Number, required: true },
     periodKey: { type: Number, required: true },
     reportedAt: { type: Date, default: Date.now }
   },
@@ -560,8 +560,8 @@ app.post('/api/revenue', async (req, res, next) => {
       res.status(400).json({ error: 'Month must be between 1 and 12.' });
       return;
     }
-    if (!Number.isFinite(amount) || amount < 0) {
-      res.status(400).json({ error: 'Amount must be a non-negative number.' });
+    if (!Number.isFinite(amount)) {
+      res.status(400).json({ error: 'Amount must be a valid number.' });
       return;
     }
 

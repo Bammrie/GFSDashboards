@@ -896,9 +896,9 @@ selectors.editRevenueForm?.addEventListener('submit', async (event) => {
   }
 
   const amount = Number(rawAmount);
-  if (!Number.isFinite(amount) || amount < 0) {
+  if (!Number.isFinite(amount)) {
     if (selectors.editRevenueFeedback) {
-      setFeedback(selectors.editRevenueFeedback, 'Amount must be a non-negative number.', 'error');
+      setFeedback(selectors.editRevenueFeedback, 'Amount must be a valid number.', 'error');
     }
     return;
   }
