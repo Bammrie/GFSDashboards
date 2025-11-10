@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Monthly Detail | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Monthly Totals</h1>
+        <p class="site-subtitle">Review every income stream reported for the selected month.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a href="index.html" class="header-link">Income Streams</a>
+        <a href="revenue.html" class="header-link">Revenue Updates</a>
+        <a href="reporting.html" class="header-link">Reporting</a>
+        <a href="monthly.html" class="header-link" aria-current="page">Monthly Totals</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-labelledby="monthly-detail-heading">
+      <header class="panel__header">
+        <h2 id="monthly-detail-heading" class="panel__title">Monthly revenue detail</h2>
+        <p id="monthly-detail-description" class="panel__description">
+          Choose a month from the Monthly Totals view to load the income stream breakdown.
+        </p>
+      </header>
+
+      <p class="back-link">
+        <a href="monthly.html">&larr; Back to Monthly Totals</a>
+      </p>
+
+      <section class="table-card" aria-live="polite">
+        <header class="table-header">
+          <h3 id="monthly-detail-month" class="table-title">Select a month to view totals</h3>
+          <p id="monthly-detail-summary" class="table-description"></p>
+        </header>
+        <table class="data-table" id="monthly-detail-table">
+          <thead>
+            <tr>
+              <th scope="col">Income stream</th>
+              <th scope="col" class="numeric">Amount</th>
+            </tr>
+          </thead>
+          <tbody id="monthly-detail-body"></tbody>
+        </table>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

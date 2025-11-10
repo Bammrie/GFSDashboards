@@ -585,6 +585,21 @@ input[type='month']:focus-visible {
   line-height: 1.4;
 }
 
+.back-link {
+  margin: 0 0 1rem;
+}
+
+.back-link a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.back-link a:hover,
+.back-link a:focus {
+  text-decoration: underline;
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -612,6 +627,17 @@ input[type='month']:focus-visible {
 
 .data-table td.numeric {
   text-align: right;
+}
+
+.data-table .table-link {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.data-table .table-link:hover,
+.data-table .table-link:focus {
+  text-decoration: underline;
 }
 
 .numeric {

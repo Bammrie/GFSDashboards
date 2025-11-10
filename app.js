@@ -51,6 +51,10 @@ const selectors = {
   reportingStatusSummary: document.getElementById('reporting-status-summary'),
   monthlyCompletionTable: document.getElementById('monthly-completion-table'),
   monthlyCompletionBody: document.getElementById('monthly-completion-body'),
+  monthlyDetailMonth: document.getElementById('monthly-detail-month'),
+  monthlyDetailSummary: document.getElementById('monthly-detail-summary'),
+  monthlyDetailBody: document.getElementById('monthly-detail-body'),
+  monthlyDetailDescription: document.getElementById('monthly-detail-description'),
   cancelStreamBtn: document.getElementById('cancel-stream-btn'),
   cancelStreamDialog: document.getElementById('cancel-stream-dialog'),
   cancelStreamForm: document.getElementById('cancel-stream-form'),
@@ -75,7 +79,10 @@ const appState = {
   currentStreamId: null,
   currentStreamDetail: null,
   currentStreamMonths: [],
-  editingPeriod: null
+  editingPeriod: null,
+  monthlyDetailMonthKey: null,
+  detailCreditUnionId: null,
+  detailCreditUnionName: null
 };
 
 function showDialog(dialog) {
@@ -208,6 +215,66 @@ function createOption(value, label, disabled = false, selected = false) {
   option.disabled = disabled;
   option.selected = selected;
   return option;
+}
+
+function getCreditUnionNameById(id) {
+  if (!id) return null;
+  const match = appState.creditUnions.find((creditUnion) => creditUnion.id === id);
+  return match ? match.name : null;
+}
+
+function formatMonthLabelFromKey(key) {
+  if (typeof key !== 'string' || !/^\d{4}-\d{2}$/.test(key)) {
+    return null;
+  }
+  const [yearStr, monthStr] = key.split('-');
+  const year = Number.parseInt(yearStr, 10);
+  const month = Number.parseInt(monthStr, 10);
+  if (!Number.isFinite(year) || !Number.isFinite(month)) {
+    return null;
+  }
+  const date = new Date(year, month - 1, 1);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+}
+
+function buildMonthlyDetailUrl(monthKey) {
+  const params = new URLSearchParams();
+  params.set('month', monthKey);
+  if (appState.selectedCreditUnion && appState.selectedCreditUnion !== 'all') {
+    params.set('creditUnionId', appState.selectedCreditUnion);
+    const creditUnionName = getCreditUnionNameById(appState.selectedCreditUnion);
+    if (creditUnionName) {
+      params.set('creditUnionName', creditUnionName);
+    }
+  }
+  return `monthly-detail.html?${params.toString()}`;
+}
+
+function getMonthFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const value = params.get('month');
+  if (!value || !/^\d{4}-\d{2}$/.test(value)) {
+    return null;
+  }
+  return value;
+}
+
+function getDetailCreditUnionIdFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const value = params.get('creditUnionId');
+  if (!value || value === 'all') {
+    return null;
+  }
+  return value;
+}
+
+function getDetailCreditUnionNameFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const value = params.get('creditUnionName');
+  return value ? value : null;
 }
 
 function renderCreditUnionOptions() {
@@ -626,10 +693,43 @@ async function loadMonthlyCompletion(params = {}) {
   }
 
   const query = searchParams.toString();
-  const data = await request(`/api/reports/completion${query ? `?${query}` : ''}`);
+  let data;
+  try {
+    data = await request(`/api/reports/completion${query ? `?${query}` : ''}`);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unable to load monthly completion.';
+    if (selectors.monthlyCompletionBody) {
+      const body = selectors.monthlyCompletionBody;
+      body.replaceChildren();
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      const columnCount = selectors.monthlyCompletionTable?.querySelectorAll('thead th').length || 3;
+      cell.colSpan = columnCount;
+      cell.textContent = message;
+      row.append(cell);
+      body.append(row);
+    }
+    throw error;
+  }
   const months = Array.isArray(data?.months) ? data.months : [];
   appState.monthlyCompletion = months;
   renderMonthlyCompletion();
+}
+
+async function loadMonthlyDetail(monthKey, creditUnionId) {
+  if (!selectors.monthlyDetailBody || !monthKey) {
+    return;
+  }
+
+  const searchParams = new URLSearchParams();
+  if (creditUnionId && creditUnionId !== 'all') {
+    searchParams.set('creditUnionId', creditUnionId);
+  }
+
+  const query = searchParams.toString();
+  const data = await request(`/api/reports/monthly/${monthKey}${query ? `?${query}` : ''}`);
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || appState.detailCreditUnionName || null;
+  renderMonthlyDetail(data, { monthKey, creditUnionId, creditUnionName });
 }
 
 async function loadSummary(params = {}) {
@@ -727,7 +827,13 @@ function renderMonthlyCompletion() {
     }
 
     const monthCell = document.createElement('td');
-    monthCell.textContent = month.label ?? month.key;
+    const link = document.createElement('a');
+    const monthLabel = month.label ?? month.key;
+    link.href = buildMonthlyDetailUrl(month.key);
+    link.textContent = monthLabel;
+    link.className = 'table-link';
+    link.setAttribute('aria-label', `View monthly totals for ${monthLabel}`);
+    monthCell.append(link);
 
     const reportedCell = document.createElement('td');
     reportedCell.className = 'numeric';
@@ -745,6 +851,80 @@ function renderMonthlyCompletion() {
     row.append(monthCell, reportedCell, completionCell);
     body.append(row);
   });
+}
+
+function renderMonthlyDetail(data, options = {}) {
+  const body = selectors.monthlyDetailBody;
+  if (!body) return;
+
+  const monthKey = data?.month?.key || options.monthKey || null;
+  const monthLabel = data?.month?.label || (monthKey ? formatMonthLabelFromKey(monthKey) : null);
+  const creditUnionName =
+    options.creditUnionName || getCreditUnionNameById(options.creditUnionId) || appState.detailCreditUnionName || null;
+
+  if (selectors.monthlyDetailMonth) {
+    selectors.monthlyDetailMonth.textContent = monthLabel || 'Select a month to view totals';
+  }
+
+  if (selectors.monthlyDetailDescription) {
+    const baseText =
+      selectors.monthlyDetailDescription.dataset.baseText ||
+      selectors.monthlyDetailDescription.textContent ||
+      'Choose a month from the Monthly Totals view to load the income stream breakdown.';
+    selectors.monthlyDetailDescription.dataset.baseText = baseText;
+
+    if (monthLabel) {
+      const creditUnionPart = creditUnionName ? ` for ${creditUnionName}` : '';
+      selectors.monthlyDetailDescription.textContent = `Showing revenue totals${creditUnionPart} for ${monthLabel}.`;
+    } else {
+      selectors.monthlyDetailDescription.textContent = baseText;
+    }
+  }
+
+  body.replaceChildren();
+  const streams = Array.isArray(data?.streams) ? data.streams : [];
+  const hasError = Boolean(options.error);
+
+  if (hasError || !streams.length) {
+    const row = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = 2;
+    cell.textContent = options.error
+      ? options.error
+      : monthLabel
+      ? 'No revenue has been recorded for this month yet.'
+      : 'Select a month from the Monthly Totals view to get started.';
+    row.append(cell);
+    body.append(row);
+  } else {
+    streams.forEach((stream) => {
+      const row = document.createElement('tr');
+      const nameCell = document.createElement('td');
+      const amountCell = document.createElement('td');
+      nameCell.textContent = stream.name;
+      amountCell.className = 'numeric';
+      amountCell.textContent = currencyFormatter.format(stream.amount ?? 0);
+      row.append(nameCell, amountCell);
+      body.append(row);
+    });
+  }
+
+  if (selectors.monthlyDetailSummary) {
+    if (hasError) {
+      selectors.monthlyDetailSummary.textContent = options.error;
+    } else if (streams.length) {
+      const totalAmount = streams.reduce((sum, stream) => sum + Number(stream.amount ?? 0), 0);
+      const streamCountLabel = `${streams.length} income stream${streams.length === 1 ? '' : 's'}`;
+      const prefix = creditUnionName ? `${creditUnionName} · ` : '';
+      selectors.monthlyDetailSummary.textContent = `${prefix}${streamCountLabel} · Total ${currencyFormatter.format(
+        totalAmount
+      )}`;
+    } else if (monthLabel) {
+      selectors.monthlyDetailSummary.textContent = 'No revenue logged for this month yet.';
+    } else {
+      selectors.monthlyDetailSummary.textContent = '';
+    }
+  }
 }
 
 function renderSummaryTable(container, rows = []) {
@@ -1078,10 +1258,20 @@ selectors.reportingCreditUnionSelect?.addEventListener('change', async (event) =
 
 async function bootstrap() {
   populateStaticOptions();
+  appState.monthlyDetailMonthKey = getMonthFromQuery();
+  appState.detailCreditUnionId = getDetailCreditUnionIdFromQuery();
+  appState.detailCreditUnionName = getDetailCreditUnionNameFromQuery();
   try {
     await Promise.all([loadCreditUnions(), loadIncomeStreams()]);
   } catch (error) {
     console.error(error);
+  }
+
+  if (appState.detailCreditUnionId) {
+    const resolvedName = getCreditUnionNameById(appState.detailCreditUnionId);
+    if (resolvedName) {
+      appState.detailCreditUnionName = resolvedName;
+    }
   }
 
   try {
@@ -1120,6 +1310,32 @@ async function bootstrap() {
     }
   } catch (error) {
     console.error(error);
+  }
+
+  if (selectors.monthlyCompletionBody && (!appState.monthlyCompletion || !appState.monthlyCompletion.length)) {
+    try {
+      await loadMonthlyCompletion({ ...appState.reportingWindow, creditUnionId: appState.selectedCreditUnion });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  if (selectors.monthlyDetailBody) {
+    if (appState.monthlyDetailMonthKey) {
+      try {
+        await loadMonthlyDetail(appState.monthlyDetailMonthKey, appState.detailCreditUnionId);
+      } catch (error) {
+        console.error(error);
+        renderMonthlyDetail(null, {
+          monthKey: appState.monthlyDetailMonthKey,
+          creditUnionId: appState.detailCreditUnionId,
+          creditUnionName: appState.detailCreditUnionName,
+          error: error.message
+        });
+      }
+    } else {
+      renderMonthlyDetail(null, { creditUnionId: appState.detailCreditUnionId, creditUnionName: appState.detailCreditUnionName });
+    }
   }
 
   if (selectors.streamName) {
