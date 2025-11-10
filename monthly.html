@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Monthly Totals | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Monthly Totals</h1>
+        <p class="site-subtitle">See which months are fully reported and jump into detailed revenue totals.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a href="index.html" class="header-link">Income Streams</a>
+        <a href="revenue.html" class="header-link">Revenue Updates</a>
+        <a href="reporting.html" class="header-link">Reporting</a>
+        <a href="monthly.html" class="header-link" aria-current="page">Monthly Totals</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-labelledby="monthly-totals-heading">
+      <header class="panel__header">
+        <h2 id="monthly-totals-heading" class="panel__title">Monthly reporting completion</h2>
+        <p class="panel__description">
+          Track how many active income streams have reported revenue, then open a month to review the detailed income breakdown.
+        </p>
+      </header>
+
+      <div class="filter-grid reporting-controls">
+        <div class="field-group">
+          <label for="reporting-credit-union">Credit union</label>
+          <select id="reporting-credit-union" name="creditUnion">
+            <option value="all">All accounts</option>
+          </select>
+        </div>
+      </div>
+
+      <form id="reporting-filter" class="filter-grid" autocomplete="off">
+        <div class="field-group">
+          <label for="reporting-start">Start month</label>
+          <input type="month" id="reporting-start" name="start" />
+        </div>
+        <div class="field-group">
+          <label for="reporting-end">End month</label>
+          <input type="month" id="reporting-end" name="end" />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="secondary-button">Refresh completion</button>
+        </div>
+      </form>
+
+      <section class="table-card" aria-live="polite">
+        <header class="table-header">
+          <h3 class="table-title">Completion by month</h3>
+          <p class="table-description">Click a month to view every income stream ranked by revenue.</p>
+        </header>
+        <table class="data-table completion-table" id="monthly-completion-table">
+          <thead>
+            <tr>
+              <th scope="col">Month</th>
+              <th scope="col" class="numeric">Streams reported</th>
+              <th scope="col" class="numeric">% complete</th>
+            </tr>
+          </thead>
+          <tbody id="monthly-completion-body"></tbody>
+        </table>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -719,6 +719,107 @@ app.get('/api/reports/summary', async (req, res, next) => {
   }
 });
 
+app.get('/api/reports/monthly/:period', async (req, res, next) => {
+  try {
+    const period = parsePeriod(req.params.period);
+    if (!period) {
+      res.status(400).json({ error: 'Select a valid month using the YYYY-MM format.' });
+      return;
+    }
+
+    const creditUnionId = typeof req.query.creditUnionId === 'string' ? req.query.creditUnionId.trim() : '';
+    let incomeStreamFilter = null;
+
+    if (creditUnionId && creditUnionId !== 'all') {
+      if (!mongoose.Types.ObjectId.isValid(creditUnionId)) {
+        res.status(400).json({ error: 'Invalid credit union selection.' });
+        return;
+      }
+
+      const streams = await IncomeStream.find({ creditUnion: creditUnionId }).select('_id').lean();
+      const streamIds = streams.map((stream) => stream._id);
+
+      if (!streamIds.length) {
+        res.json({
+          month: {
+            key: `${period.year}-${String(period.month).padStart(2, '0')}`,
+            label: formatMonthLabel(period.year, period.month)
+          },
+          streams: []
+        });
+        return;
+      }
+
+      incomeStreamFilter = streamIds;
+    }
+
+    const match = { year: period.year, month: period.month };
+    if (incomeStreamFilter) {
+      match.incomeStream = { $in: incomeStreamFilter };
+    }
+
+    const aggregates = await RevenueEntry.aggregate([
+      { $match: match },
+      {
+        $group: {
+          _id: '$incomeStream',
+          amount: { $sum: '$amount' }
+        }
+      },
+      {
+        $lookup: {
+          from: 'incomestreams',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'stream'
+        }
+      },
+      { $unwind: '$stream' },
+      {
+        $lookup: {
+          from: 'creditunions',
+          localField: 'stream.creditUnion',
+          foreignField: '_id',
+          as: 'creditUnion'
+        }
+      },
+      { $unwind: { path: '$creditUnion', preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          _id: 0,
+          streamId: '$stream._id',
+          amount: '$amount',
+          product: '$stream.product',
+          revenueType: '$stream.revenueType',
+          creditUnionName: '$creditUnion.name'
+        }
+      },
+      { $sort: { amount: -1, product: 1, revenueType: 1 } }
+    ]);
+
+    const streams = aggregates.map((entry) => {
+      const creditUnionName = entry.creditUnionName ?? 'Unknown credit union';
+      const product = entry.product ?? 'Unknown product';
+      const revenueType = entry.revenueType ?? 'Unknown type';
+      return {
+        id: entry.streamId?.toString() ?? '',
+        name: `${creditUnionName} – ${product} (${revenueType})`,
+        amount: Number(entry.amount ?? 0)
+      };
+    });
+
+    res.json({
+      month: {
+        key: `${period.year}-${String(period.month).padStart(2, '0')}`,
+        label: formatMonthLabel(period.year, period.month)
+      },
+      streams
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get('/api/reports/completion', async (req, res, next) => {
   try {
     const start = parsePeriod(req.query.start);
