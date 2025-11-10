@@ -49,6 +49,8 @@ const selectors = {
   reportingStatusGrid: document.getElementById('reporting-status-grid'),
   reportingStatusTemplate: document.getElementById('reporting-status-template'),
   reportingStatusSummary: document.getElementById('reporting-status-summary'),
+  monthlyCompletionTable: document.getElementById('monthly-completion-table'),
+  monthlyCompletionBody: document.getElementById('monthly-completion-body'),
   cancelStreamBtn: document.getElementById('cancel-stream-btn'),
   cancelStreamDialog: document.getElementById('cancel-stream-dialog'),
   cancelStreamForm: document.getElementById('cancel-stream-form'),
@@ -67,6 +69,7 @@ const appState = {
   creditUnions: [],
   incomeStreams: [],
   summary: null,
+  monthlyCompletion: [],
   reportingWindow: { start: null, end: null },
   selectedCreditUnion: 'all',
   currentStreamId: null,
@@ -609,6 +612,26 @@ async function cancelIncomeStream(streamId, finalMonth) {
   });
 }
 
+async function loadMonthlyCompletion(params = {}) {
+  if (!selectors.monthlyCompletionBody) {
+    return;
+  }
+
+  const searchParams = new URLSearchParams();
+  if (params.start) searchParams.set('start', params.start);
+  if (params.end) searchParams.set('end', params.end);
+  const creditUnionId = params.creditUnionId ?? appState.selectedCreditUnion;
+  if (creditUnionId && creditUnionId !== 'all') {
+    searchParams.set('creditUnionId', creditUnionId);
+  }
+
+  const query = searchParams.toString();
+  const data = await request(`/api/reports/completion${query ? `?${query}` : ''}`);
+  const months = Array.isArray(data?.months) ? data.months : [];
+  appState.monthlyCompletion = months;
+  renderMonthlyCompletion();
+}
+
 async function loadSummary(params = {}) {
   const searchParams = new URLSearchParams();
   if (params.start) searchParams.set('start', params.start);
@@ -621,6 +644,14 @@ async function loadSummary(params = {}) {
   const data = await request(`/api/reports/summary${query ? `?${query}` : ''}`);
   appState.summary = data;
   renderSummary();
+
+  if (selectors.monthlyCompletionBody) {
+    try {
+      await loadMonthlyCompletion({ start: params.start, end: params.end, creditUnionId });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
 
 function renderSummary() {
@@ -666,6 +697,54 @@ function renderSummary() {
       selectors.timelineSubtitle.textContent = 'Monthly totals across all income streams';
     }
   }
+}
+
+function renderMonthlyCompletion() {
+  const body = selectors.monthlyCompletionBody;
+  if (!body) return;
+
+  body.replaceChildren();
+  const months = Array.isArray(appState.monthlyCompletion) ? appState.monthlyCompletion : [];
+
+  if (!months.length) {
+    const emptyRow = document.createElement('tr');
+    const cell = document.createElement('td');
+    const columnCount = selectors.monthlyCompletionTable?.querySelectorAll('thead th').length || 3;
+    cell.colSpan = columnCount;
+    cell.textContent = 'No reporting requirements in this window yet.';
+    emptyRow.append(cell);
+    body.append(emptyRow);
+    return;
+  }
+
+  months.forEach((month) => {
+    const row = document.createElement('tr');
+    const totalActive = Number(month.totalActiveStreams ?? 0);
+    const completed = Number(month.completedStreams ?? 0);
+
+    if (totalActive > 0 && completed === totalActive) {
+      row.dataset.state = 'complete';
+    }
+
+    const monthCell = document.createElement('td');
+    monthCell.textContent = month.label ?? month.key;
+
+    const reportedCell = document.createElement('td');
+    reportedCell.className = 'numeric';
+    reportedCell.textContent = totalActive > 0 ? `${completed} of ${totalActive} active` : '0 of 0 active';
+
+    const completionCell = document.createElement('td');
+    completionCell.className = 'numeric';
+    if (totalActive > 0) {
+      const percent = Math.round(Number(month.completionRate ?? 0));
+      completionCell.textContent = `${percent}%`;
+    } else {
+      completionCell.textContent = '—';
+    }
+
+    row.append(monthCell, reportedCell, completionCell);
+    body.append(row);
+  });
 }
 
 function renderSummaryTable(container, rows = []) {
@@ -1032,6 +1111,7 @@ async function bootstrap() {
           selectors.productSummary ||
           selectors.typeSummary ||
           selectors.timelineChart ||
+          selectors.monthlyCompletionBody ||
           selectors.reportingCreditUnionSelect
       );
 
