@@ -719,6 +719,85 @@ app.get('/api/reports/summary', async (req, res, next) => {
   }
 });
 
+app.get('/api/reports/completion', async (req, res, next) => {
+  try {
+    const start = parsePeriod(req.query.start);
+    const end = parsePeriod(req.query.end);
+
+    if (start && end && start.key > end.key) {
+      res.status(400).json({ error: 'Start month must be before the end month.' });
+      return;
+    }
+
+    const now = new Date();
+    const defaultEnd = { year: now.getFullYear(), month: now.getMonth() + 1, key: now.getFullYear() * 100 + (now.getMonth() + 1) };
+    const defaultStartDate = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+    const defaultStart = {
+      year: defaultStartDate.getFullYear(),
+      month: defaultStartDate.getMonth() + 1,
+      key: defaultStartDate.getFullYear() * 100 + (defaultStartDate.getMonth() + 1)
+    };
+
+    const rangeStart = start ?? defaultStart;
+    const rangeEnd = end ?? defaultEnd;
+
+    const creditUnionId = typeof req.query.creditUnionId === 'string' ? req.query.creditUnionId.trim() : '';
+    let incomeStreamFilter = null;
+
+    if (creditUnionId && creditUnionId !== 'all') {
+      if (!mongoose.Types.ObjectId.isValid(creditUnionId)) {
+        res.status(400).json({ error: 'Invalid credit union selection.' });
+        return;
+      }
+
+      const streams = await IncomeStream.find({ creditUnion: creditUnionId }).select('_id').lean();
+      const streamIds = streams.map((stream) => stream._id);
+
+      if (!streamIds.length) {
+        const months = buildCompletionSeries(rangeStart, rangeEnd, new Map());
+        res.json({ months });
+        return;
+      }
+
+      incomeStreamFilter = streamIds;
+    }
+
+    const match = {
+      periodKey: { $gte: rangeStart.key, $lte: rangeEnd.key }
+    };
+
+    if (incomeStreamFilter) {
+      match.incomeStream = { $in: incomeStreamFilter };
+    }
+
+    const aggregates = await ReportingRequirement.aggregate([
+      { $match: match },
+      {
+        $group: {
+          _id: '$periodKey',
+          total: { $sum: 1 },
+          completed: {
+            $sum: {
+              $cond: [{ $ifNull: ['$completedAt', false] }, 1, 0]
+            }
+          }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    const completionMap = new Map(
+      aggregates.map((entry) => [entry._id, { total: entry.total ?? 0, completed: entry.completed ?? 0 }])
+    );
+
+    const months = buildCompletionSeries(rangeStart, rangeEnd, completionMap);
+
+    res.json({ months });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.use((error, req, res, _next) => {
   console.error(error);
   res.status(500).json({ error: 'An unexpected error occurred.' });
@@ -754,6 +833,36 @@ function parsePeriod(value) {
     return null;
   }
   return { year, month, key: year * 100 + month };
+}
+
+function buildCompletionSeries(start, end, completionMap) {
+  const months = [];
+  let currentYear = start.year;
+  let currentMonth = start.month;
+
+  while (currentYear * 100 + currentMonth <= end.key) {
+    const periodKey = currentYear * 100 + currentMonth;
+    const stats = completionMap.get(periodKey) ?? { total: 0, completed: 0 };
+    const totalActiveStreams = stats.total ?? 0;
+    const completedStreams = stats.completed ?? 0;
+    const completionRate = totalActiveStreams > 0 ? (completedStreams / totalActiveStreams) * 100 : 0;
+
+    months.push({
+      key: `${currentYear}-${String(currentMonth).padStart(2, '0')}`,
+      label: formatMonthLabel(currentYear, currentMonth),
+      totalActiveStreams,
+      completedStreams,
+      completionRate
+    });
+
+    currentMonth += 1;
+    if (currentMonth > 12) {
+      currentMonth = 1;
+      currentYear += 1;
+    }
+  }
+
+  return months;
 }
 
 function buildTimeline(start, end, valueMap) {
