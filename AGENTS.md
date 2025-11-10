@@ -147,3 +147,5 @@ Document or extend new features so they reuse these formulas without re-defining
 2025-10-25: Automated call report ingestion from the /CallReports directory on server start and file changes so account and prospect data regenerate whenever new JSON uploads arrive. Shared the generator logic in scripts/lib/prospectBuilder.mjs.
 
 2027-01-07: Rebuilt ancillary revenue modeling with 36-month direct auto pacing, new debt protection remittance math, and updated CPI/Fidelity/AFG income assumptions site-wide.
+
+2025-11-10: Enabled negative revenue entries across the UI and API so refunds can be logged as negative amounts.
