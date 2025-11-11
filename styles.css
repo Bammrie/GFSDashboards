@@ -322,6 +322,22 @@ input[type='month']:focus-visible {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 18px;
   overflow: hidden;
+  position: relative;
+  isolation: isolate;
+  --product-color: rgba(79, 195, 247, 0.9);
+  --product-color-soft: rgba(79, 195, 247, 0.18);
+  --product-color-border: rgba(79, 195, 247, 0.4);
+}
+
+.item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 6px;
+  background: var(--product-color);
+  opacity: 0.95;
 }
 
 .item__link {
@@ -352,6 +368,38 @@ input[type='month']:focus-visible {
   margin: 0.25rem 0 0;
   color: var(--text-secondary);
   font-size: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.item__divider {
+  color: rgba(196, 223, 255, 0.5);
+}
+
+.item__product-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--product-color-soft);
+  border: 1px solid var(--product-color-border);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+
+.item__product-badge::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--product-color);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
 }
 
 .item__meta {
@@ -374,6 +422,48 @@ input[type='month']:focus-visible {
 
 .item__metric[data-status='complete'] {
   color: var(--success);
+}
+
+.item[data-product-key='credit-insurance-debt-protection-consumer'] {
+  --product-color: rgba(79, 195, 247, 0.95);
+  --product-color-soft: rgba(79, 195, 247, 0.22);
+  --product-color-border: rgba(79, 195, 247, 0.48);
+}
+
+.item[data-product-key='credit-insurance-mortgage'] {
+  --product-color: rgba(149, 117, 205, 0.95);
+  --product-color-soft: rgba(149, 117, 205, 0.24);
+  --product-color-border: rgba(149, 117, 205, 0.5);
+}
+
+.item[data-product-key='gap'] {
+  --product-color: rgba(255, 183, 77, 0.95);
+  --product-color-soft: rgba(255, 183, 77, 0.24);
+  --product-color-border: rgba(255, 183, 77, 0.48);
+}
+
+.item[data-product-key='vsc'] {
+  --product-color: rgba(240, 98, 146, 0.95);
+  --product-color-soft: rgba(240, 98, 146, 0.24);
+  --product-color-border: rgba(240, 98, 146, 0.5);
+}
+
+.item[data-product-key='collateral-protection-insurance-cpi'] {
+  --product-color: rgba(38, 166, 154, 0.95);
+  --product-color-soft: rgba(38, 166, 154, 0.24);
+  --product-color-border: rgba(38, 166, 154, 0.52);
+}
+
+.item[data-product-key='fidelity-bond'] {
+  --product-color: rgba(129, 199, 132, 0.95);
+  --product-color-soft: rgba(129, 199, 132, 0.24);
+  --product-color-border: rgba(129, 199, 132, 0.5);
+}
+
+.item[data-product-key='afg-balloon-loans'] {
+  --product-color: rgba(121, 134, 203, 0.95);
+  --product-color-soft: rgba(121, 134, 203, 0.24);
+  --product-color-border: rgba(121, 134, 203, 0.5);
 }
 
 .feedback {
