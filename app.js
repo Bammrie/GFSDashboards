@@ -217,6 +217,42 @@ function createOption(value, label, disabled = false, selected = false) {
   return option;
 }
 
+function getProductKey(name) {
+  if (typeof name !== 'string' || !name.trim()) {
+    return null;
+  }
+
+  return name
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function createSubtitleText(text) {
+  const span = document.createElement('span');
+  span.textContent = typeof text === 'string' && text.trim() ? text : '—';
+  return span;
+}
+
+function createSubtitleDivider() {
+  const divider = document.createElement('span');
+  divider.className = 'item__divider';
+  divider.setAttribute('aria-hidden', 'true');
+  divider.textContent = '•';
+  return divider;
+}
+
+function createProductBadge(name, productKey) {
+  const badge = document.createElement('span');
+  badge.className = 'item__product-badge';
+  if (productKey) {
+    badge.dataset.productKey = productKey;
+  }
+  badge.textContent = typeof name === 'string' && name.trim() ? name : 'Unknown product';
+  return badge;
+}
+
 function getCreditUnionNameById(id) {
   if (!id) return null;
   const match = appState.creditUnions.find((creditUnion) => creditUnion.id === id);
@@ -371,14 +407,35 @@ function renderIncomeStreamList() {
     .sort((a, b) => b.updatedAt - a.updatedAt)
     .forEach((stream) => {
       const fragment = template.content.cloneNode(true);
+      const listItem = fragment.querySelector('.item');
       const link = fragment.querySelector('.item__link');
       const title = fragment.querySelector('.item__title');
       const subtitle = fragment.querySelector('.item__subtitle');
       const meta = fragment.querySelector('.item__meta');
       const metric = fragment.querySelector('.item__metric');
+      const productKey = getProductKey(stream.product);
 
       title.textContent = stream.label;
-      subtitle.textContent = `${stream.creditUnionName} • ${stream.product} • ${stream.revenueType}`;
+
+      if (listItem) {
+        if (productKey) {
+          listItem.dataset.productKey = productKey;
+        } else {
+          delete listItem.dataset.productKey;
+        }
+      }
+
+      if (subtitle) {
+        subtitle.replaceChildren();
+        const segments = [
+          createSubtitleText(stream.creditUnionName),
+          createSubtitleDivider(),
+          createProductBadge(stream.product, productKey),
+          createSubtitleDivider(),
+          createSubtitleText(stream.revenueType)
+        ];
+        segments.forEach((segment) => subtitle.append(segment));
+      }
 
       if (link) {
         link.href = `stream.html?id=${encodeURIComponent(stream.id)}`;
