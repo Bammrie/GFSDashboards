@@ -44,6 +44,21 @@
       </header>
       <div id="reporting-status-grid" class="status-grid" role="list"></div>
     </section>
+
+    <section class="panel" aria-labelledby="stream-performance-heading">
+      <header class="panel__header">
+        <h2 id="stream-performance-heading" class="panel__title">Monthly revenue trend</h2>
+        <p id="stream-performance-summary" class="panel__description">
+          Revenue history updates automatically as each month is reported.
+        </p>
+      </header>
+      <svg
+        id="stream-performance-chart"
+        class="timeline-chart"
+        role="img"
+        aria-labelledby="stream-performance-heading stream-performance-summary"
+      ></svg>
+    </section>
   </main>
 
   <dialog id="cancel-stream-dialog" aria-labelledby="cancel-stream-dialog-title">

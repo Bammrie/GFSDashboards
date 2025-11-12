@@ -49,6 +49,8 @@ const selectors = {
   reportingStatusGrid: document.getElementById('reporting-status-grid'),
   reportingStatusTemplate: document.getElementById('reporting-status-template'),
   reportingStatusSummary: document.getElementById('reporting-status-summary'),
+  streamPerformanceChart: document.getElementById('stream-performance-chart'),
+  streamPerformanceSummary: document.getElementById('stream-performance-summary'),
   monthlyCompletionTable: document.getElementById('monthly-completion-table'),
   monthlyCompletionBody: document.getElementById('monthly-completion-body'),
   monthlyDetailMonth: document.getElementById('monthly-detail-month'),
@@ -633,6 +635,8 @@ function renderReportingStatus(data) {
     });
   }
 
+  renderStreamPerformance(months);
+
   if (selectors.reportingStatusSummary) {
     const pendingText =
       summary.pending > 0
@@ -905,7 +909,12 @@ function renderMonthlyCompletion() {
       completionCell.textContent = '—';
     }
 
-    row.append(monthCell, reportedCell, completionCell);
+    const totalRevenueCell = document.createElement('td');
+    totalRevenueCell.className = 'numeric';
+    const revenueAmount = Number(month.totalRevenue ?? 0);
+    totalRevenueCell.textContent = currencyFormatter.format(revenueAmount);
+
+    row.append(monthCell, reportedCell, completionCell, totalRevenueCell);
     body.append(row);
   });
 }
@@ -1010,39 +1019,54 @@ function renderSummaryTable(container, rows = []) {
   });
 }
 
-function renderTimeline(timeline) {
-  const svg = selectors.timelineChart;
+function renderLineChart(svg, data = [], options = {}) {
   if (!svg) return;
 
-  svg.replaceChildren();
+  const {
+    emptyMessage = 'No data available',
+    valueKey = 'amount',
+    width = 800,
+    height = 240,
+    padding = 40,
+    lineColor = 'rgba(79, 195, 247, 0.9)',
+    areaColor = 'rgba(79, 195, 247, 0.16)'
+  } = options;
 
-  if (!timeline.length) {
-    svg.setAttribute('viewBox', '0 0 600 240');
+  svg.replaceChildren();
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+  if (!Array.isArray(data) || !data.length) {
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
     text.setAttribute('x', '50%');
     text.setAttribute('y', '50%');
     text.setAttribute('text-anchor', 'middle');
     text.setAttribute('fill', 'var(--text-secondary)');
     text.setAttribute('font-size', '18');
-    text.textContent = 'No revenue recorded for this period';
+    text.textContent = emptyMessage;
     svg.append(text);
     return;
   }
 
-  const width = 800;
-  const height = 240;
-  const padding = 40;
+  const normalized = data.map((entry) => {
+    const rawValue = Number(entry?.[valueKey]);
+    const value = Number.isFinite(rawValue) ? rawValue : 0;
+    return {
+      key: entry?.key ?? null,
+      label: entry?.label ?? (entry?.key ?? ''),
+      value
+    };
+  });
 
-  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  const values = normalized.map((item) => item.value);
+  const maxAmount = Math.max(...values);
+  const minAmount = Math.min(...values);
+  const range = maxAmount === minAmount ? Math.abs(maxAmount) || 1 : maxAmount - minAmount;
+  const horizontalSteps = Math.max(normalized.length - 1, 1);
 
-  const maxAmount = Math.max(...timeline.map((entry) => entry.amount));
-  const minAmount = Math.min(...timeline.map((entry) => entry.amount));
-  const range = maxAmount === minAmount ? maxAmount || 1 : maxAmount - minAmount;
-
-  const points = timeline.map((entry, index) => {
-    const x = padding + (index / Math.max(timeline.length - 1, 1)) * (width - padding * 2);
-    const y = height - padding - ((entry.amount - minAmount) / range) * (height - padding * 2);
-    return { x, y, label: entry.label, amount: entry.amount };
+  const points = normalized.map((entry, index) => {
+    const x = padding + (index / horizontalSteps) * (width - padding * 2);
+    const y = height - padding - ((entry.value - minAmount) / range) * (height - padding * 2);
+    return { x, y, label: entry.label, value: entry.value };
   });
 
   const axis = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -1060,13 +1084,13 @@ function renderTimeline(timeline) {
     'Z'
   ].join(' ');
   areaPath.setAttribute('d', areaPoints);
-  areaPath.setAttribute('fill', 'rgba(79, 195, 247, 0.16)');
+  areaPath.setAttribute('fill', areaColor);
   svg.append(areaPath);
 
   const linePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   const lineCommands = points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
   linePath.setAttribute('d', lineCommands);
-  linePath.setAttribute('stroke', 'rgba(79, 195, 247, 0.9)');
+  linePath.setAttribute('stroke', lineColor);
   linePath.setAttribute('stroke-width', '3');
   linePath.setAttribute('fill', 'none');
   svg.append(linePath);
@@ -1088,6 +1112,71 @@ function renderTimeline(timeline) {
     label.textContent = point.label;
     svg.append(label);
   });
+}
+
+function renderTimeline(timeline) {
+  if (!selectors.timelineChart) return;
+  renderLineChart(selectors.timelineChart, timeline, {
+    emptyMessage: 'No revenue recorded for this period'
+  });
+}
+
+function renderStreamPerformance(months = []) {
+  const chart = selectors.streamPerformanceChart;
+  const summary = selectors.streamPerformanceSummary;
+
+  if (!chart && !summary) {
+    return;
+  }
+
+  const dataset = Array.isArray(months)
+    ? months.map((month) => {
+        const hasAmount = month.amount !== null && month.amount !== undefined;
+        const amount = hasAmount ? Number(month.amount) : 0;
+        return {
+          key: month.key,
+          label: month.label,
+          amount: Number.isFinite(amount) ? amount : 0,
+          completed: Boolean(month.completed),
+          hasAmount
+        };
+      })
+    : [];
+
+  const hasRecordedData = dataset.some((month) => month.hasAmount);
+
+  if (chart) {
+    const chartData = hasRecordedData ? dataset : [];
+    renderLineChart(chart, chartData, {
+      emptyMessage: 'Monthly revenue will appear once amounts are recorded.'
+    });
+  }
+
+  if (summary) {
+    if (!dataset.length) {
+      summary.textContent = 'No reporting requirements found for this income stream yet.';
+      return;
+    }
+
+    if (!hasRecordedData) {
+      summary.textContent = 'Revenue has not been recorded for any months yet.';
+      return;
+    }
+
+    const recordedMonths = dataset.filter((month) => month.hasAmount);
+
+    const totalAmount = recordedMonths.reduce((sum, month) => sum + month.amount, 0);
+    const pendingCount = dataset.length - recordedMonths.length;
+    let message = `${recordedMonths.length} recorded month${
+      recordedMonths.length === 1 ? '' : 's'
+    } · Total ${currencyFormatter.format(totalAmount)}.`;
+
+    if (pendingCount > 0) {
+      message += ` ${pendingCount} month${pendingCount === 1 ? '' : 's'} awaiting numbers.`;
+    }
+
+    summary.textContent = message;
+  }
 }
 
 selectors.addCreditUnionBtn?.addEventListener('click', () => {
