@@ -891,7 +891,29 @@ app.get('/api/reports/completion', async (req, res, next) => {
       aggregates.map((entry) => [entry._id, { total: entry.total ?? 0, completed: entry.completed ?? 0 }])
     );
 
-    const months = buildCompletionSeries(rangeStart, rangeEnd, completionMap);
+    const revenueMatch = {
+      periodKey: { $gte: rangeStart.key, $lte: rangeEnd.key }
+    };
+
+    if (incomeStreamFilter) {
+      revenueMatch.incomeStream = { $in: incomeStreamFilter };
+    }
+
+    const revenueAggregates = await RevenueEntry.aggregate([
+      { $match: revenueMatch },
+      {
+        $group: {
+          _id: '$periodKey',
+          totalRevenue: { $sum: '$amount' }
+        }
+      }
+    ]);
+
+    const revenueMap = new Map(
+      revenueAggregates.map((entry) => [entry._id, Number(entry.totalRevenue ?? 0)])
+    );
+
+    const months = buildCompletionSeries(rangeStart, rangeEnd, completionMap, revenueMap);
 
     res.json({ months });
   } catch (error) {
@@ -936,7 +958,7 @@ function parsePeriod(value) {
   return { year, month, key: year * 100 + month };
 }
 
-function buildCompletionSeries(start, end, completionMap) {
+function buildCompletionSeries(start, end, completionMap, revenueMap = new Map()) {
   const months = [];
   let currentYear = start.year;
   let currentMonth = start.month;
@@ -947,13 +969,15 @@ function buildCompletionSeries(start, end, completionMap) {
     const totalActiveStreams = stats.total ?? 0;
     const completedStreams = stats.completed ?? 0;
     const completionRate = totalActiveStreams > 0 ? (completedStreams / totalActiveStreams) * 100 : 0;
+    const totalRevenue = Number(revenueMap.get(periodKey) ?? 0);
 
     months.push({
       key: `${currentYear}-${String(currentMonth).padStart(2, '0')}`,
       label: formatMonthLabel(currentYear, currentMonth),
       totalActiveStreams,
       completedStreams,
-      completionRate
+      completionRate,
+      totalRevenue
     });
 
     currentMonth += 1;
