@@ -693,11 +693,12 @@ app.get('/api/reports/summary', async (req, res, next) => {
       totalRevenue += amount;
 
       const incomeStream = entry.incomeStream;
+      const creditUnionId = incomeStream?.creditUnion?._id?.toString?.() ?? null;
       const creditUnionName = incomeStream?.creditUnion?.name ?? 'Unknown';
       const product = incomeStream?.product ?? 'Unknown product';
       const type = incomeStream?.revenueType ?? 'Unknown type';
 
-      accumulate(byCreditUnion, creditUnionName, amount);
+      accumulateCreditUnion(byCreditUnion, creditUnionId, creditUnionName, amount);
       accumulate(byProduct, product, amount);
       accumulate(byRevenueType, type, amount);
 
@@ -713,6 +714,93 @@ app.get('/api/reports/summary', async (req, res, next) => {
       byProduct: sortAggregates(byProduct),
       byRevenueType: sortAggregates(byRevenueType),
       timeline
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/reports/credit-union/:id', async (req, res, next) => {
+  try {
+    const creditUnionId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Invalid credit union selection.' });
+      return;
+    }
+
+    const creditUnion = await CreditUnion.findById(creditUnionId).lean();
+    if (!creditUnion) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const start = parsePeriod(req.query.start);
+    const end = parsePeriod(req.query.end);
+
+    if (start && end && start.key > end.key) {
+      res.status(400).json({ error: 'Start month must be before the end month.' });
+      return;
+    }
+
+    const streams = await IncomeStream.find({ creditUnion: creditUnionId })
+      .select('_id product revenueType')
+      .sort({ product: 1, revenueType: 1 })
+      .lean();
+
+    const streamIds = streams.map((stream) => stream._id);
+
+    const match = {};
+    if (streamIds.length) {
+      match.incomeStream = { $in: streamIds };
+    }
+
+    if (start || end) {
+      match.periodKey = {};
+      if (start) {
+        match.periodKey.$gte = start.key;
+      }
+      if (end) {
+        match.periodKey.$lte = end.key;
+      }
+    }
+
+    let totalRevenue = 0;
+    const streamSummaries = streams.map((stream) => ({
+      id: stream._id.toString(),
+      product: stream.product,
+      revenueType: stream.revenueType,
+      amount: 0
+    }));
+
+    if (streamIds.length) {
+      const aggregates = await RevenueEntry.aggregate([
+        { $match: match },
+        {
+          $group: {
+            _id: '$incomeStream',
+            totalRevenue: { $sum: '$amount' }
+          }
+        }
+      ]);
+
+      const revenueByStream = new Map(
+        aggregates.map((entry) => [entry._id.toString(), Number(entry.totalRevenue ?? 0)])
+      );
+
+      streamSummaries.forEach((stream) => {
+        const amount = revenueByStream.get(stream.id) ?? 0;
+        stream.amount = amount;
+        totalRevenue += amount;
+      });
+    }
+
+    streamSummaries.sort((a, b) => b.amount - a.amount);
+
+    res.json({
+      creditUnion: { id: creditUnion._id.toString(), name: creditUnion.name },
+      totalRevenue,
+      streams: streamSummaries,
+      reportingWindow: buildReportingWindow(start, end)
     });
   } catch (error) {
     next(error);
@@ -939,10 +1027,48 @@ function accumulate(map, key, value) {
   map.set(key, previous + value);
 }
 
+function accumulateCreditUnion(map, id, name, amount) {
+  const key = id ?? name ?? 'Unknown';
+  const previous = map.get(key) ?? { id: id ?? null, name: name ?? 'Unknown', amount: 0 };
+  const resolvedName = name ?? previous.name ?? 'Unknown';
+  const resolvedId = id ?? previous.id ?? null;
+  map.set(key, {
+    id: resolvedId,
+    name: resolvedName,
+    amount: (previous.amount ?? 0) + amount
+  });
+}
+
 function sortAggregates(map) {
   return Array.from(map.entries())
-    .map(([name, amount]) => ({ name, amount }))
+    .map(([key, value]) => {
+      if (value && typeof value === 'object' && Object.prototype.hasOwnProperty.call(value, 'amount')) {
+        return {
+          ...value,
+          amount: Number(value.amount ?? 0),
+          name: value.name ?? key
+        };
+      }
+      return { name: key, amount: Number(value ?? 0) };
+    })
     .sort((a, b) => b.amount - a.amount);
+}
+
+function buildReportingWindow(start, end) {
+  const result = {};
+  if (start) {
+    result.start = formatPeriodValue(start.year, start.month);
+    result.startLabel = formatMonthLabel(start.year, start.month);
+  }
+  if (end) {
+    result.end = formatPeriodValue(end.year, end.month);
+    result.endLabel = formatMonthLabel(end.year, end.month);
+  }
+  return result;
+}
+
+function formatPeriodValue(year, month) {
+  return `${year}-${String(month).padStart(2, '0')}`;
 }
 
 function parsePeriod(value) {

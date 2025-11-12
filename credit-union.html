@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Credit Union Detail | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Credit Union Detail</h1>
+        <p class="site-subtitle">Review every income stream tied to the selected credit union.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a href="index.html" class="header-link">Income Streams</a>
+        <a href="revenue.html" class="header-link">Revenue Updates</a>
+        <a href="reporting.html" class="header-link" aria-current="page">Reporting</a>
+        <a href="monthly.html" class="header-link">Monthly Totals</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-labelledby="credit-union-detail-heading">
+      <header class="panel__header">
+        <h2 id="credit-union-detail-heading" class="panel__title">Credit union revenue detail</h2>
+        <p id="credit-union-detail-summary" class="panel__description">
+          Choose a credit union from the Reporting view to load revenue totals by income stream.
+        </p>
+      </header>
+
+      <p class="back-link">
+        <a href="reporting.html">&larr; Back to Reporting</a>
+      </p>
+
+      <section class="insights" aria-live="polite">
+        <article class="insight-card">
+          <h3 class="insight-title">Credit union</h3>
+          <p id="credit-union-detail-name" class="insight-value">Waiting for selection</p>
+        </article>
+        <article class="insight-card">
+          <h3 class="insight-title">Reporting window</h3>
+          <p id="credit-union-detail-window" class="insight-value">All recorded months</p>
+        </article>
+        <article class="insight-card">
+          <h3 class="insight-title">Total revenue</h3>
+          <p id="credit-union-total-revenue" class="insight-value">$0.00</p>
+        </article>
+      </section>
+
+      <section class="table-card" aria-live="polite">
+        <header class="table-header">
+          <h3 class="table-title">Income streams</h3>
+          <p id="credit-union-streams-summary" class="table-description">
+            Revenue totals reflect the selected reporting window for every income stream tied to this credit union.
+          </p>
+        </header>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Income stream</th>
+              <th scope="col" class="numeric">Total revenue</th>
+              <th scope="col" class="numeric">Share of total</th>
+            </tr>
+          </thead>
+          <tbody id="credit-union-streams"></tbody>
+        </table>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
