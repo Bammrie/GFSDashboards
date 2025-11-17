@@ -896,7 +896,12 @@ async function createCreditUnion(name) {
   });
   appState.creditUnions.push({ id: result.id, name: result.name });
   renderCreditUnionOptions();
-  selectors.creditUnionSelect.value = result.id;
+  if (selectors.creditUnionSelect) {
+    selectors.creditUnionSelect.value = result.id;
+  }
+  if (selectors.prospectCreditUnionSelect) {
+    selectors.prospectCreditUnionSelect.value = result.id;
+  }
 }
 
 async function createIncomeStream(payload) {
