@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2025-11-17: Added a prospect income stream workspace with monthly estimate tracking, activation into active reporting, and navigation to the new page.
 2027-01-21: Linked the reporting credit union totals to a new detail view that lists each income stream with its revenue and share of the selected window, adding percentages to highlight contribution mix.
 2027-01-20: Surfaced total monthly revenue on the Monthly Totals grid and added a revenue trend chart to stream detail pages so teams can review performance in-page.
 2027-01-19: Moved the monthly completion tracker into a dedicated Monthly Totals tab, added a detail view with per-stream rankings, and exposed a monthly totals API.

@@ -780,6 +780,57 @@ input[type='month']:focus-visible {
   gap: 0.75rem;
 }
 
+.prospect-item {
+  display: grid;
+  grid-template-columns: minmax(240px, 1.2fr) minmax(260px, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .prospect-item {
+    grid-template-columns: 1fr;
+  }
+}
+
+.prospect-item__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.prospect-estimate-fields {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.prospect-estimate-fields input[type='number'] {
+  flex: 1;
+}
+
+.prospect-feedback {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+}
+
+.prospect-activate {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.prospect-note {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.prospect-estimate-display {
+  font-weight: 700;
+  color: #fff;
+}
+
 #credit-union-dialog::backdrop,
 #cancel-stream-dialog::backdrop,
 #edit-revenue-dialog::backdrop {

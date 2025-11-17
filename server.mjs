@@ -94,6 +94,8 @@ const incomeStreamSchema = new mongoose.Schema(
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
     product: { type: String, required: true, trim: true },
     revenueType: { type: String, required: true, enum: REVENUE_TYPES },
+    status: { type: String, enum: ['active', 'prospect'], default: 'active', index: true },
+    monthlyIncomeEstimate: { type: Number, default: null },
     finalReportYear: { type: Number, min: 1900, default: null },
     finalReportMonth: { type: Number, min: 1, max: 12, default: null },
     finalReportPeriodKey: { type: Number, default: null },
@@ -197,13 +199,16 @@ app.post('/api/credit-unions', async (req, res, next) => {
 
 app.get('/api/income-streams', async (req, res, next) => {
   try {
-    const streams = await IncomeStream.find()
+    const requestedStatus = req.query.status === 'prospect' ? 'prospect' : 'active';
+    const streams = await IncomeStream.find({ status: requestedStatus })
       .populate('creditUnion')
       .sort({ updatedAt: -1 })
       .lean();
 
     const streamIds = streams.map((stream) => stream._id);
-    await ensureReportingRequirementsForStreams(streamIds);
+    if (requestedStatus === 'active') {
+      await ensureReportingRequirementsForStreams(streamIds);
+    }
 
     const lastReports = await RevenueEntry.aggregate([
       { $match: { incomeStream: { $in: streamIds } } },
@@ -256,6 +261,8 @@ app.get('/api/income-streams', async (req, res, next) => {
         creditUnionName: creditUnion?.name ?? 'Unknown credit union',
         product: stream.product,
         revenueType: stream.revenueType,
+        status: stream.status,
+        monthlyIncomeEstimate: stream.monthlyIncomeEstimate,
         label: `${creditUnion?.name ?? 'Unknown'} – ${stream.product} (${stream.revenueType})`,
         updatedAt: stream.updatedAt,
         pendingCount: pendingMap.get(stream._id.toString()) ?? 0,
@@ -291,12 +298,15 @@ app.get('/api/income-streams/:id', async (req, res, next) => {
       return;
     }
 
-    await ensureReportingRequirementsForStream(stream._id);
+    let pendingCount = 0;
+    if (stream.status === 'active') {
+      await ensureReportingRequirementsForStream(stream._id);
 
-    const pendingCount = await ReportingRequirement.countDocuments({
-      incomeStream: stream._id,
-      completedAt: null
-    });
+      pendingCount = await ReportingRequirement.countDocuments({
+        incomeStream: stream._id,
+        completedAt: null
+      });
+    }
 
     const finalReport =
       stream.finalReportPeriodKey && stream.finalReportYear && stream.finalReportMonth
@@ -314,6 +324,8 @@ app.get('/api/income-streams/:id', async (req, res, next) => {
       creditUnionName: stream.creditUnion?.name ?? 'Unknown credit union',
       product: stream.product,
       revenueType: stream.revenueType,
+      status: stream.status,
+      monthlyIncomeEstimate: stream.monthlyIncomeEstimate,
       label: `${stream.creditUnion?.name ?? 'Unknown'} – ${stream.product} (${stream.revenueType})`,
       createdAt: stream.createdAt,
       updatedAt: stream.updatedAt,
@@ -434,9 +446,14 @@ app.get('/api/income-streams/:id/reporting-status', async (req, res, next) => {
       return;
     }
 
-    const stream = await IncomeStream.findById(id).select('_id').lean();
+    const stream = await IncomeStream.findById(id).select('_id status').lean();
     if (!stream) {
       res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    if (stream.status !== 'active') {
+      res.status(400).json({ error: 'Prospect income streams cannot be tracked for reporting yet.' });
       return;
     }
 
@@ -477,11 +494,124 @@ app.get('/api/income-streams/:id/reporting-status', async (req, res, next) => {
   }
 });
 
+app.patch('/api/income-streams/:id/estimate', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    const rawEstimate = req.body?.monthlyIncomeEstimate;
+    const estimate = rawEstimate === null ? null : Number(rawEstimate);
+    if (rawEstimate === undefined) {
+      res.status(400).json({ error: 'Monthly income estimate is required.' });
+      return;
+    }
+    if (estimate !== null && !Number.isFinite(estimate)) {
+      res.status(400).json({ error: 'Monthly income estimate must be a valid number.' });
+      return;
+    }
+
+    const updatedStream = await IncomeStream.findByIdAndUpdate(
+      id,
+      { $set: { monthlyIncomeEstimate: estimate, updatedAt: new Date() } },
+      { new: true }
+    )
+      .populate('creditUnion')
+      .lean();
+
+    if (!updatedStream) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    res.json({
+      id: updatedStream._id.toString(),
+      creditUnionId: updatedStream.creditUnion?._id?.toString() ?? null,
+      creditUnionName: updatedStream.creditUnion?.name ?? 'Unknown credit union',
+      product: updatedStream.product,
+      revenueType: updatedStream.revenueType,
+      status: updatedStream.status,
+      monthlyIncomeEstimate: updatedStream.monthlyIncomeEstimate,
+      label: `${updatedStream.creditUnion?.name ?? 'Unknown'} – ${updatedStream.product} (${updatedStream.revenueType})`,
+      updatedAt: updatedStream.updatedAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch('/api/income-streams/:id/activate', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    const stream = await IncomeStream.findById(id).populate('creditUnion').lean();
+    if (!stream) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    if (stream.status === 'active') {
+      res.status(400).json({ error: 'This income stream is already active.' });
+      return;
+    }
+
+    const updatedStream = await IncomeStream.findByIdAndUpdate(
+      stream._id,
+      {
+        $set: {
+          status: 'active',
+          canceledAt: null,
+          finalReportYear: null,
+          finalReportMonth: null,
+          finalReportPeriodKey: null,
+          updatedAt: new Date()
+        }
+      },
+      { new: true }
+    )
+      .populate('creditUnion')
+      .lean();
+
+    await ensureReportingRequirementsForStream(updatedStream._id);
+
+    const pendingCount = await ReportingRequirement.countDocuments({
+      incomeStream: updatedStream._id,
+      completedAt: null
+    });
+
+    res.json({
+      id: updatedStream._id.toString(),
+      creditUnionId: updatedStream.creditUnion?._id?.toString() ?? null,
+      creditUnionName: updatedStream.creditUnion?.name ?? 'Unknown credit union',
+      product: updatedStream.product,
+      revenueType: updatedStream.revenueType,
+      status: updatedStream.status,
+      monthlyIncomeEstimate: updatedStream.monthlyIncomeEstimate,
+      label: `${updatedStream.creditUnion?.name ?? 'Unknown'} – ${updatedStream.product} (${updatedStream.revenueType})`,
+      updatedAt: updatedStream.updatedAt,
+      pendingCount
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.post('/api/income-streams', async (req, res, next) => {
   try {
     const creditUnionId = req.body?.creditUnionId;
     const product = typeof req.body?.product === 'string' ? req.body.product.trim() : '';
     const revenueType = typeof req.body?.revenueType === 'string' ? req.body.revenueType.trim() : '';
+    const status = req.body?.status === 'prospect' ? 'prospect' : 'active';
+    const monthlyIncomeEstimate =
+      req.body?.monthlyIncomeEstimate !== undefined && req.body?.monthlyIncomeEstimate !== null
+        ? Number(req.body.monthlyIncomeEstimate)
+        : null;
 
     if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
       res.status(400).json({ error: 'A valid credit union is required.' });
@@ -493,6 +623,14 @@ app.post('/api/income-streams', async (req, res, next) => {
     }
     if (!REVENUE_TYPES.includes(revenueType)) {
       res.status(400).json({ error: 'Revenue type must be Frontend, Backend, or Commission.' });
+      return;
+    }
+    if (!['active', 'prospect'].includes(status)) {
+      res.status(400).json({ error: 'Status must be active or prospect.' });
+      return;
+    }
+    if (monthlyIncomeEstimate !== null && !Number.isFinite(monthlyIncomeEstimate)) {
+      res.status(400).json({ error: 'Monthly income estimate must be a valid number.' });
       return;
     }
 
@@ -516,15 +654,20 @@ app.post('/api/income-streams', async (req, res, next) => {
     const stream = await IncomeStream.create({
       creditUnion: creditUnionId,
       product,
-      revenueType
+      revenueType,
+      status,
+      monthlyIncomeEstimate
     });
 
-    await ensureReportingRequirementsForStream(stream._id);
+    let pendingCount = 0;
+    if (status === 'active') {
+      await ensureReportingRequirementsForStream(stream._id);
 
-    const pendingCount = await ReportingRequirement.countDocuments({
-      incomeStream: stream._id,
-      completedAt: null
-    });
+      pendingCount = await ReportingRequirement.countDocuments({
+        incomeStream: stream._id,
+        completedAt: null
+      });
+    }
 
     res.status(201).json({
       id: stream._id.toString(),
@@ -532,6 +675,8 @@ app.post('/api/income-streams', async (req, res, next) => {
       creditUnionName: creditUnion.name,
       product,
       revenueType,
+      status: stream.status,
+      monthlyIncomeEstimate: stream.monthlyIncomeEstimate,
       label: `${creditUnion.name} – ${product} (${revenueType})`,
       updatedAt: stream.updatedAt,
       pendingCount
@@ -568,6 +713,11 @@ app.post('/api/revenue', async (req, res, next) => {
     const stream = await IncomeStream.findById(incomeStreamId).lean();
     if (!stream) {
       res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    if (stream.status !== 'active') {
+      res.status(400).json({ error: 'Activate this income stream before logging revenue.' });
       return;
     }
 
@@ -648,7 +798,9 @@ app.get('/api/reports/summary', async (req, res, next) => {
         return;
       }
 
-      const streams = await IncomeStream.find({ creditUnion: creditUnionId }).select('_id').lean();
+      const streams = await IncomeStream.find({ creditUnion: creditUnionId, status: 'active' })
+        .select('_id')
+        .lean();
       const streamIds = streams.map((stream) => stream._id);
 
       if (!streamIds.length) {
@@ -742,7 +894,7 @@ app.get('/api/reports/credit-union/:id', async (req, res, next) => {
       return;
     }
 
-    const streams = await IncomeStream.find({ creditUnion: creditUnionId })
+    const streams = await IncomeStream.find({ creditUnion: creditUnionId, status: 'active' })
       .select('_id product revenueType')
       .sort({ product: 1, revenueType: 1 })
       .lean();
@@ -824,7 +976,9 @@ app.get('/api/reports/monthly/:period', async (req, res, next) => {
         return;
       }
 
-      const streams = await IncomeStream.find({ creditUnion: creditUnionId }).select('_id').lean();
+      const streams = await IncomeStream.find({ creditUnion: creditUnionId, status: 'active' })
+        .select('_id')
+        .lean();
       const streamIds = streams.map((stream) => stream._id);
 
       if (!streamIds.length) {
@@ -939,7 +1093,9 @@ app.get('/api/reports/completion', async (req, res, next) => {
         return;
       }
 
-      const streams = await IncomeStream.find({ creditUnion: creditUnionId }).select('_id').lean();
+      const streams = await IncomeStream.find({ creditUnion: creditUnionId, status: 'active' })
+        .select('_id')
+        .lean();
       const streamIds = streams.map((stream) => stream._id);
 
       if (!streamIds.length) {
@@ -1145,7 +1301,7 @@ function formatMonthLabel(year, month) {
 }
 
 async function ensureReportingRequirementsForAllStreams() {
-  const streams = await IncomeStream.find().select('_id').lean();
+  const streams = await IncomeStream.find({ status: 'active' }).select('_id').lean();
   for (const stream of streams) {
     await ensureReportingRequirementsForStream(stream._id);
   }
@@ -1164,10 +1320,14 @@ async function ensureReportingRequirementsForStream(streamId) {
   if (!streamId) return;
 
   const stream = await IncomeStream.findById(streamId)
-    .select('finalReportYear finalReportMonth finalReportPeriodKey')
+    .select('status finalReportYear finalReportMonth finalReportPeriodKey')
     .lean();
 
   if (!stream) {
+    return;
+  }
+
+  if (stream.status !== 'active') {
     return;
   }
 
