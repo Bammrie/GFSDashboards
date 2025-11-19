@@ -145,6 +145,7 @@ const ReportingRequirement = mongoose.model('ReportingRequirement', reportingReq
 const databaseReady = await initializeDatabase();
 
 if (databaseReady) {
+  await backfillIncomeStreamStatuses();
   await ensureReportingRequirementsForAllStreams();
 }
 
@@ -1420,6 +1421,25 @@ async function ensureReportingRequirementsForAllStreams() {
   for (const stream of streams) {
     await ensureReportingRequirementsForStream(stream._id);
   }
+}
+
+async function backfillIncomeStreamStatuses() {
+  const missingStatusQuery = { $or: [{ status: { $exists: false } }, { status: null }] };
+  const missingCount = await IncomeStream.countDocuments(missingStatusQuery);
+
+  if (!missingCount) {
+    return false;
+  }
+
+  const result = await IncomeStream.updateMany(missingStatusQuery, { $set: { status: 'active' } });
+
+  console.log(
+    `Backfilled status to 'active' on ${result.modifiedCount} income stream${
+      result.modifiedCount === 1 ? '' : 's'
+    } missing the field.`
+  );
+
+  return result.modifiedCount > 0;
 }
 
 async function ensureReportingRequirementsForStreams(streamIds) {
