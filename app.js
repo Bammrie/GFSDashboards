@@ -8,11 +8,17 @@ const PRODUCT_OPTIONS = [
   'AFG Balloon Loans'
 ];
 
-const REVENUE_TYPES = ['Frontend', 'Backend', 'Commission'];
+const PRODUCT_REVENUE_TYPES = {
+  'Credit Insurance/Debt Protection - Consumer': ['Frontend', 'Backend', 'Commission'],
+  'GAP': ['Frontend', 'Backend', 'Commission']
+};
+
+const DEFAULT_REVENUE_TYPES = ['Commission'];
 const REPORTING_START_PERIOD = '2023-01';
-const PRODUCT_REVENUE_PAIRS = PRODUCT_OPTIONS.flatMap((product) =>
-  REVENUE_TYPES.map((revenueType) => ({ product, revenueType }))
-);
+const PRODUCT_REVENUE_PAIRS = PRODUCT_OPTIONS.flatMap((product) => {
+  const revenueTypes = PRODUCT_REVENUE_TYPES[product] || DEFAULT_REVENUE_TYPES;
+  return revenueTypes.map((revenueType) => ({ product, revenueType }));
+});
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
