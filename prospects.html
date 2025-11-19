@@ -80,16 +80,27 @@
 
     <section class="panel" aria-labelledby="prospect-list-heading">
       <header class="panel__header">
-        <h2 id="prospect-list-heading" class="panel__title">Prospect income streams</h2>
-        <p class="panel__description">Record monthly estimates and activate prospects when agreements are finalized.</p>
+        <h2 id="prospect-list-heading" class="panel__title">Credit union coverage tracker</h2>
+        <p class="panel__description">
+          Review every product by account, see which income streams are live, and which are still prospects. Active and prospect
+          checkboxes update automatically from the streams you have already created.
+        </p>
       </header>
+
+      <div class="prospect-account-controls">
+        <div class="field-group">
+          <label for="prospect-account-filter">Search credit unions</label>
+          <input type="text" id="prospect-account-filter" placeholder="Type a name to filter" />
+        </div>
+        <p class="field-help">Need to change a status? Activate or edit the prospect directly from the account view.</p>
+      </div>
 
       <section class="panel__list" aria-live="polite">
         <header class="list-header">
-          <h3 class="list-title">Prospects waiting for activation</h3>
+          <h3 class="list-title">Income streams by product</h3>
           <p class="list-subtitle" id="prospect-stream-count">Loading&hellip;</p>
         </header>
-        <ul id="prospect-stream-list" class="item-list" role="list"></ul>
+        <ul id="prospect-account-list" class="prospect-account-list" role="list"></ul>
       </section>
     </section>
   </main>
@@ -112,25 +123,30 @@
     </form>
   </dialog>
 
-  <template id="prospect-stream-template">
-    <li class="item prospect-item">
-      <div class="prospect-item__info">
-        <p class="item__title"></p>
-        <p class="item__subtitle"></p>
-        <p class="item__meta">Estimated monthly income: <span class="prospect-estimate-display">—</span></p>
-      </div>
-      <div class="prospect-item__actions">
-        <form class="prospect-estimate-form" autocomplete="off">
-          <label class="prospect-label">Monthly income estimate</label>
-          <div class="prospect-estimate-fields">
-            <input type="number" name="monthlyIncomeEstimate" step="0.01" placeholder="Ex: 12500" />
-            <button type="submit" class="secondary-button">Save estimate</button>
-          </div>
-          <p class="prospect-feedback" data-state="info"></p>
-        </form>
-        <div class="prospect-activate">
-          <button type="button" class="primary-button prospect-activate-btn">Activate Income Stream</button>
-          <p class="prospect-note">Activation moves this prospect into the active reporting queue.</p>
+  <template id="prospect-account-template">
+    <li class="account-card">
+      <header class="account-card__header">
+        <div>
+          <h3 class="account-card__title"></h3>
+          <p class="account-card__subtitle"></p>
+        </div>
+        <div class="account-card__totals">
+          <span class="account-card__total account-card__total--active"></span>
+          <span class="account-card__total account-card__total--prospect"></span>
+        </div>
+      </header>
+      <div class="account-card__body">
+        <div class="account-card__table-wrapper">
+          <table class="account-card__table">
+            <thead>
+              <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Active</th>
+                <th scope="col">Prospect</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
     </li>
