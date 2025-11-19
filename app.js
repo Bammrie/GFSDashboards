@@ -518,15 +518,15 @@ function renderIncomeStreamList() {
 
       meta.textContent = metaSegments.join(' • ');
 
-      if (stream.pendingCount > 0) {
-        metric.textContent = `${stream.pendingCount} month${stream.pendingCount === 1 ? '' : 's'} pending`;
-        metric.dataset.status = 'pending';
-      } else if (stream.finalReport) {
-        metric.textContent = 'Stream canceled';
+      const reportedMonths = Number(stream.reportedCount ?? 0);
+      const hasReporting = reportedMonths > 0;
+
+      if (hasReporting) {
+        metric.textContent = `${reportedMonths} reported month${reportedMonths === 1 ? '' : 's'}`;
         metric.dataset.status = 'complete';
       } else {
-        metric.textContent = 'All months reported';
-        metric.dataset.status = 'complete';
+        metric.textContent = 'No reports yet';
+        metric.dataset.status = 'pending';
       }
 
       list.append(fragment);
@@ -1195,6 +1195,7 @@ async function loadIncomeStreams() {
     monthlyIncomeEstimate: stream.monthlyIncomeEstimate,
     updatedAt: stream.updatedAt ? new Date(stream.updatedAt).getTime() : 0,
     pendingCount: Number(stream.pendingCount ?? 0),
+    reportedCount: Number(stream.reportedCount ?? 0),
     firstReport: stream.firstReport
       ? {
           year: stream.firstReport.year,
@@ -1269,6 +1270,7 @@ async function createIncomeStream(payload) {
     monthlyIncomeEstimate: result.monthlyIncomeEstimate,
     updatedAt: result.updatedAt ? new Date(result.updatedAt).getTime() : Date.now(),
     pendingCount: Number(result.pendingCount ?? 0),
+    reportedCount: Number(result.reportedCount ?? 0),
     firstReport: result.firstReport
       ? {
           year: result.firstReport.year,
@@ -1334,6 +1336,7 @@ async function activateProspectStream(streamId, options = {}) {
     monthlyIncomeEstimate: result.monthlyIncomeEstimate,
     updatedAt: result.updatedAt ? new Date(result.updatedAt).getTime() : Date.now(),
     pendingCount: Number(result.pendingCount ?? 0),
+    reportedCount: Number(result.reportedCount ?? 0),
     firstReport: result.firstReport
       ? {
           year: result.firstReport.year,
