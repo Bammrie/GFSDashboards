@@ -203,7 +203,10 @@ app.post('/api/credit-unions', async (req, res, next) => {
 app.get('/api/income-streams', async (req, res, next) => {
   try {
     const requestedStatus = req.query.status === 'prospect' ? 'prospect' : 'active';
-    const streams = await IncomeStream.find({ status: requestedStatus })
+    const statusFilter =
+      requestedStatus === 'active' ? { $in: ['active', null] } : { $in: ['prospect'] };
+
+    const streams = await IncomeStream.find({ status: statusFilter })
       .populate('creditUnion')
       .sort({ updatedAt: -1 })
       .lean();
@@ -268,13 +271,15 @@ app.get('/api/income-streams', async (req, res, next) => {
       const firstReport = buildFirstReportPayload(stream);
       const reportingCount = reportingCountMap.get(stream._id.toString()) ?? { pending: 0, completed: 0 };
 
+      const normalizedStatus = stream.status ?? 'active';
+
       return {
         id: stream._id.toString(),
         creditUnionId: creditUnion?._id?.toString() ?? null,
         creditUnionName: creditUnion?.name ?? 'Unknown credit union',
         product: stream.product,
         revenueType: stream.revenueType,
-        status: stream.status,
+        status: normalizedStatus,
         monthlyIncomeEstimate: stream.monthlyIncomeEstimate,
         label: `${creditUnion?.name ?? 'Unknown'} – ${stream.product} (${stream.revenueType})`,
         updatedAt: stream.updatedAt,
