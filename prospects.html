@@ -4,154 +4,117 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Prospect Income Streams | Income Stream Dashboard</title>
+  <title>Prospects (redirecting to Accounts)</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    .redirect-card {
+      max-width: 540px;
+      margin: 72px auto;
+      background: #0c1226;
+      border: 1px solid #25304f;
+      border-radius: 12px;
+      padding: 32px;
+      color: #f5f7fb;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+    .redirect-card h1 {
+      margin: 0 0 12px;
+      font-size: 1.6rem;
+      color: #9cc1ff;
+    }
+    .redirect-card p {
+      margin: 0 0 18px;
+      line-height: 1.6;
+      color: #e6ecf5;
+    }
+    .redirect-card a {
+      color: #9cc1ff;
+      font-weight: 600;
+    }
+    .redirect-card .button-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .redirect-card button,
+    .redirect-card a.button-link {
+      background: linear-gradient(135deg, #2c7cf6, #68c3ff);
+      border: none;
+      color: #0b132b;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+      box-shadow: 0 10px 20px rgba(44, 124, 246, 0.35);
+    }
+    .redirect-card button:hover,
+    .redirect-card a.button-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(44, 124, 246, 0.45);
+    }
+    .redirect-card .secondary-link {
+      color: #e6ecf5;
+      font-weight: 500;
+    }
+  </style>
+  <script>
+    // Preserve deep-links while directing users to the new Accounts workspace.
+    window.addEventListener('DOMContentLoaded', () => {
+      const target = new URL(window.location.href);
+      const accountTarget = new URL('accounts.html', window.location.origin);
+      if (target.search) {
+        accountTarget.search = target.search;
+      }
+      if (target.hash) {
+        accountTarget.hash = target.hash;
+      }
+      const redirectMs = 1200;
+      const redirectLink = document.getElementById('redirect-link');
+      const timer = setTimeout(() => {
+        window.location.href = accountTarget.href;
+      }, redirectMs);
+
+      if (redirectLink) {
+        redirectLink.href = accountTarget.href;
+        redirectLink.addEventListener('click', () => clearTimeout(timer));
+      }
+
+      const manualButton = document.getElementById('redirect-button');
+      if (manualButton) {
+        manualButton.addEventListener('click', () => {
+          clearTimeout(timer);
+          window.location.href = accountTarget.href;
+        });
+      }
+    });
+  </script>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-content">
-      <div class="branding">
-        <h1 class="site-title">Prospect Income Streams</h1>
-        <p class="site-subtitle">Capture potential revenue opportunities and activate them when they are ready.</p>
+  <header class="page-header">
+    <div class="nav-logo">
+      <img src="GFS%20Logo.png" alt="GFS Logo" class="logo" />
+      <div class="nav-title">
+        <div class="subtitle">Income Stream Dashboard</div>
+        <div class="title">Prospects</div>
       </div>
-      <nav class="header-actions" aria-label="Primary navigation">
-        <a href="index.html" class="header-link">Income Streams</a>
-        <a href="prospects.html" class="header-link" aria-current="page">Prospects</a>
-        <a href="revenue.html" class="header-link">Revenue Updates</a>
-        <a href="reporting.html" class="header-link">Reporting</a>
-        <a href="monthly.html" class="header-link">Monthly Totals</a>
-      </nav>
     </div>
   </header>
-
-  <main class="layout">
-    <section class="panel" aria-labelledby="prospect-create-heading">
-      <header class="panel__header">
-        <h2 id="prospect-create-heading" class="panel__title">Log a prospect income stream</h2>
-        <p class="panel__description">
-          Add the partner, product, and whether we expect frontend or backend income, then record the monthly estimate.
-        </p>
-      </header>
-
-      <form id="prospect-stream-form" class="form-grid" autocomplete="off">
-        <div class="field-group">
-          <label for="prospect-credit-union-select">Credit union / entity</label>
-          <div class="field-with-action">
-            <select id="prospect-credit-union-select" name="creditUnionId" required>
-              <option value="" disabled selected>Select a credit union</option>
-            </select>
-            <button type="button" id="add-credit-union-btn" class="icon-button" aria-label="Add credit union">
-              <span aria-hidden="true">＋</span>
-            </button>
-          </div>
-          <p class="field-help">Use the plus button to add a new partner if it isn&rsquo;t listed.</p>
-        </div>
-
-        <div class="field-group">
-          <label for="prospect-product-select">Product / service</label>
-          <select id="prospect-product-select" name="product" required></select>
-        </div>
-
-        <div class="field-group">
-          <label for="prospect-revenue-type-select">Revenue type</label>
-          <select id="prospect-revenue-type-select" name="revenueType" required>
-            <option value="" disabled selected>Select type</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label for="prospect-monthly-estimate">Monthly income estimate</label>
-          <input
-            type="number"
-            id="prospect-monthly-estimate"
-            name="monthlyIncomeEstimate"
-            placeholder="Ex: 12500"
-            step="0.01"
-          />
-          <p class="field-help">Optional. Add a projected monthly amount to guide prioritization.</p>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="primary-button">Save prospect</button>
-        </div>
-        <p id="prospect-feedback" class="feedback" data-state="info"></p>
-      </form>
-    </section>
-
-    <section class="panel" aria-labelledby="prospect-list-heading">
-      <header class="panel__header">
-        <h2 id="prospect-list-heading" class="panel__title">Credit union coverage tracker</h2>
-        <p class="panel__description">
-          Review every product by account, see which income streams are live, and which are still prospects. Active and prospect
-          checkboxes update automatically from the streams you have already created.
-        </p>
-      </header>
-
-      <div class="prospect-account-controls">
-        <div class="field-group">
-          <label for="prospect-account-filter">Search credit unions</label>
-          <input type="text" id="prospect-account-filter" placeholder="Type a name to filter" />
-        </div>
-        <p class="field-help">Need to change a status? Activate or edit the prospect directly from the account view.</p>
+  <main>
+    <section class="redirect-card">
+      <h1>Prospects moved to the Accounts workspace</h1>
+      <p>
+        Prospect and activation workflows now live on the <strong>Accounts</strong> page. All
+        existing income streams remain intact—active items stay green and prospect items stay yellow.
+      </p>
+      <div class="button-row">
+        <button id="redirect-button" type="button">Open Accounts</button>
+        <a id="redirect-link" class="button-link" href="accounts.html">Go now</a>
+        <a class="secondary-link" href="index.html">Back to dashboard</a>
       </div>
-
-      <section class="panel__list" aria-live="polite">
-        <header class="list-header">
-          <h3 class="list-title">Income streams by product</h3>
-          <p class="list-subtitle" id="prospect-stream-count">Loading&hellip;</p>
-        </header>
-        <ul id="prospect-account-list" class="prospect-account-list" role="list"></ul>
-      </section>
     </section>
   </main>
-
-  <dialog id="credit-union-dialog" aria-labelledby="credit-union-dialog-title">
-    <form method="dialog" id="credit-union-form" class="dialog-form" autocomplete="off">
-      <header class="dialog-header">
-        <h2 id="credit-union-dialog-title">Add a credit union / entity</h2>
-        <button type="button" class="icon-button" id="close-credit-union-dialog" aria-label="Close dialog">
-          <span aria-hidden="true">×</span>
-        </button>
-      </header>
-      <div class="dialog-body">
-        <label for="credit-union-name">Name</label>
-        <input type="text" id="credit-union-name" name="name" placeholder="Example: CommonCents" required />
-      </div>
-      <footer class="dialog-footer">
-        <button type="submit" class="primary-button">Save credit union</button>
-      </footer>
-    </form>
-  </dialog>
-
-  <template id="prospect-account-template">
-    <li class="account-card">
-      <header class="account-card__header">
-        <div>
-          <h3 class="account-card__title"></h3>
-          <p class="account-card__subtitle"></p>
-        </div>
-        <div class="account-card__totals">
-          <span class="account-card__total account-card__total--active"></span>
-          <span class="account-card__total account-card__total--prospect"></span>
-        </div>
-      </header>
-      <div class="account-card__body">
-        <div class="account-card__table-wrapper">
-          <table class="account-card__table">
-            <thead>
-              <tr>
-                <th scope="col">Product</th>
-                <th scope="col">Active</th>
-                <th scope="col">Prospect</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </li>
-  </template>
-
-  <script type="module" src="app.js"></script>
 </body>
 </html>

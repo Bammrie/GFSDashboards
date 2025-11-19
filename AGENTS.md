@@ -1,4 +1,7 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2027-01-25: Restored prospects.html as a redirect to Accounts to resolve merge conflicts and keep legacy links working.
+2027-01-24: Finished the Accounts-only workflow so creation happens from a single drop-down-driven workspace, restored existing active streams as locked green lights, and wired first-report month persistence into the reporting requirement generator.
+2027-01-23: Replaced the Prospects grid with the Accounts workspace so each product/revenue type shows red/yellow/green lights tied to income streams, added first-report month tracking, and routed all stream creation through the new page.
 2025-11-19: Reworked the Prospects experience into an account-level coverage tracker so each credit union lists every product with Active/Prospect checkboxes that stay synced with existing income streams.
 2027-01-22: Enabled adding a new credit union directly from the Prospects page by reusing the add dialog so partners can be created before logging prospect income streams.
 2025-11-17: Added a prospect income stream workspace with monthly estimate tracking, activation into active reporting, and navigation to the new page.

@@ -96,6 +96,9 @@ const incomeStreamSchema = new mongoose.Schema(
     revenueType: { type: String, required: true, enum: REVENUE_TYPES },
     status: { type: String, enum: ['active', 'prospect'], default: 'active', index: true },
     monthlyIncomeEstimate: { type: Number, default: null },
+    firstReportYear: { type: Number, min: 1900, default: null },
+    firstReportMonth: { type: Number, min: 1, max: 12, default: null },
+    firstReportPeriodKey: { type: Number, default: null },
     finalReportYear: { type: Number, min: 1900, default: null },
     finalReportMonth: { type: Number, min: 1, max: 12, default: null },
     finalReportPeriodKey: { type: Number, default: null },
@@ -255,6 +258,7 @@ app.get('/api/income-streams', async (req, res, next) => {
               label: formatMonthLabel(stream.finalReportYear, stream.finalReportMonth)
             }
           : null;
+      const firstReport = buildFirstReportPayload(stream);
       return {
         id: stream._id.toString(),
         creditUnionId: creditUnion?._id?.toString() ?? null,
@@ -266,6 +270,7 @@ app.get('/api/income-streams', async (req, res, next) => {
         label: `${creditUnion?.name ?? 'Unknown'} – ${stream.product} (${stream.revenueType})`,
         updatedAt: stream.updatedAt,
         pendingCount: pendingMap.get(stream._id.toString()) ?? 0,
+        firstReport,
         lastReport: lastReport
           ? {
               amount: Number(lastReport.amount),
@@ -317,6 +322,7 @@ app.get('/api/income-streams/:id', async (req, res, next) => {
             label: formatMonthLabel(stream.finalReportYear, stream.finalReportMonth)
           }
         : null;
+    const firstReport = buildFirstReportPayload(stream);
 
     res.json({
       id: stream._id.toString(),
@@ -330,6 +336,7 @@ app.get('/api/income-streams/:id', async (req, res, next) => {
       createdAt: stream.createdAt,
       updatedAt: stream.updatedAt,
       pendingCount,
+      firstReport,
       finalReport,
       canceledAt: stream.canceledAt
     });
@@ -561,6 +568,28 @@ app.patch('/api/income-streams/:id/activate', async (req, res, next) => {
       return;
     }
 
+    const firstReportInput = typeof req.body?.firstReportMonth === 'string' ? req.body.firstReportMonth.trim() : '';
+    const requestedFirstReport = firstReportInput ? parseReportingMonth(firstReportInput) : null;
+    if (firstReportInput && !requestedFirstReport) {
+      res.status(400).json({ error: 'First reporting month must be in YYYY-MM format.' });
+      return;
+    }
+
+    const existingFirstReport =
+      stream.firstReportYear && stream.firstReportMonth
+        ? {
+            year: stream.firstReportYear,
+            month: stream.firstReportMonth,
+            periodKey: stream.firstReportPeriodKey || stream.firstReportYear * 100 + stream.firstReportMonth
+          }
+        : null;
+    const defaultFirstReport = {
+      year: REPORTING_START_YEAR,
+      month: REPORTING_START_MONTH,
+      periodKey: REPORTING_START_YEAR * 100 + REPORTING_START_MONTH
+    };
+    const appliedFirstReport = requestedFirstReport ?? existingFirstReport ?? defaultFirstReport;
+
     const updatedStream = await IncomeStream.findByIdAndUpdate(
       stream._id,
       {
@@ -570,6 +599,9 @@ app.patch('/api/income-streams/:id/activate', async (req, res, next) => {
           finalReportYear: null,
           finalReportMonth: null,
           finalReportPeriodKey: null,
+          firstReportYear: appliedFirstReport.year,
+          firstReportMonth: appliedFirstReport.month,
+          firstReportPeriodKey: appliedFirstReport.periodKey,
           updatedAt: new Date()
         }
       },
@@ -595,7 +627,8 @@ app.patch('/api/income-streams/:id/activate', async (req, res, next) => {
       monthlyIncomeEstimate: updatedStream.monthlyIncomeEstimate,
       label: `${updatedStream.creditUnion?.name ?? 'Unknown'} – ${updatedStream.product} (${updatedStream.revenueType})`,
       updatedAt: updatedStream.updatedAt,
-      pendingCount
+      pendingCount,
+      firstReport: buildFirstReportPayload(updatedStream)
     });
   } catch (error) {
     next(error);
@@ -612,6 +645,8 @@ app.post('/api/income-streams', async (req, res, next) => {
       req.body?.monthlyIncomeEstimate !== undefined && req.body?.monthlyIncomeEstimate !== null
         ? Number(req.body.monthlyIncomeEstimate)
         : null;
+    const firstReportInput = typeof req.body?.firstReportMonth === 'string' ? req.body.firstReportMonth.trim() : '';
+    const requestedFirstReport = firstReportInput ? parseReportingMonth(firstReportInput) : null;
 
     if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
       res.status(400).json({ error: 'A valid credit union is required.' });
@@ -634,6 +669,11 @@ app.post('/api/income-streams', async (req, res, next) => {
       return;
     }
 
+    if (firstReportInput && !requestedFirstReport) {
+      res.status(400).json({ error: 'First reporting month must be in YYYY-MM format.' });
+      return;
+    }
+
     const creditUnion = await CreditUnion.findById(creditUnionId).lean();
     if (!creditUnion) {
       res.status(404).json({ error: 'Credit union not found.' });
@@ -651,13 +691,29 @@ app.post('/api/income-streams', async (req, res, next) => {
       return;
     }
 
-    const stream = await IncomeStream.create({
+    const streamData = {
       creditUnion: creditUnionId,
       product,
       revenueType,
       status,
       monthlyIncomeEstimate
-    });
+    };
+
+    if (status === 'active') {
+      const defaultFirstReport = {
+        year: REPORTING_START_YEAR,
+        month: REPORTING_START_MONTH,
+        periodKey: REPORTING_START_YEAR * 100 + REPORTING_START_MONTH
+      };
+      const appliedFirstReport = requestedFirstReport ?? defaultFirstReport;
+      Object.assign(streamData, {
+        firstReportYear: appliedFirstReport.year,
+        firstReportMonth: appliedFirstReport.month,
+        firstReportPeriodKey: appliedFirstReport.periodKey
+      });
+    }
+
+    const stream = await IncomeStream.create(streamData);
 
     let pendingCount = 0;
     if (status === 'active') {
@@ -679,7 +735,8 @@ app.post('/api/income-streams', async (req, res, next) => {
       monthlyIncomeEstimate: stream.monthlyIncomeEstimate,
       label: `${creditUnion.name} – ${product} (${revenueType})`,
       updatedAt: stream.updatedAt,
-      pendingCount
+      pendingCount,
+      firstReport: buildFirstReportPayload(stream)
     });
   } catch (error) {
     next(error);
@@ -1300,6 +1357,28 @@ function formatMonthLabel(year, month) {
   });
 }
 
+function parseReportingMonth(value) {
+  const parsed = parsePeriod(value);
+  if (!parsed) {
+    return null;
+  }
+  return { year: parsed.year, month: parsed.month, periodKey: parsed.key };
+}
+
+function buildFirstReportPayload(stream) {
+  if (stream.firstReportYear && stream.firstReportMonth) {
+    const periodKey = stream.firstReportPeriodKey || stream.firstReportYear * 100 + stream.firstReportMonth;
+    return {
+      year: stream.firstReportYear,
+      month: stream.firstReportMonth,
+      periodKey,
+      key: `${stream.firstReportYear}-${String(stream.firstReportMonth).padStart(2, '0')}`,
+      label: formatMonthLabel(stream.firstReportYear, stream.firstReportMonth)
+    };
+  }
+  return null;
+}
+
 async function ensureReportingRequirementsForAllStreams() {
   const streams = await IncomeStream.find({ status: 'active' }).select('_id').lean();
   for (const stream of streams) {
@@ -1320,7 +1399,9 @@ async function ensureReportingRequirementsForStream(streamId) {
   if (!streamId) return;
 
   const stream = await IncomeStream.findById(streamId)
-    .select('status finalReportYear finalReportMonth finalReportPeriodKey')
+    .select(
+      'status firstReportYear firstReportMonth firstReportPeriodKey finalReportYear finalReportMonth finalReportPeriodKey'
+    )
     .lean();
 
   if (!stream) {
@@ -1343,8 +1424,8 @@ async function ensureReportingRequirementsForStream(streamId) {
   }
 
   const requirementOperations = [];
-  let year = REPORTING_START_YEAR;
-  let month = REPORTING_START_MONTH;
+  let year = stream.firstReportYear ?? REPORTING_START_YEAR;
+  let month = stream.firstReportMonth ?? REPORTING_START_MONTH;
 
   while (year * 100 + month <= endPeriodKey) {
     const periodKey = year * 100 + month;
