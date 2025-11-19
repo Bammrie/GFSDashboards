@@ -9,8 +9,8 @@ const PRODUCT_OPTIONS = [
 ];
 
 const PRODUCT_REVENUE_TYPES = {
-  'Credit Insurance/Debt Protection - Consumer': ['Frontend', 'Backend', 'Commission'],
-  'GAP': ['Frontend', 'Backend', 'Commission']
+  'Credit Insurance/Debt Protection - Consumer': ['Frontend', 'Backend'],
+  'GAP': ['Frontend', 'Backend']
 };
 
 const DEFAULT_REVENUE_TYPES = ['Commission'];
