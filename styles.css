@@ -309,6 +309,200 @@ input[type='month']:focus-visible {
   font-size: 0.9rem;
 }
 
+.prospect-account-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.prospect-account-controls .field-group {
+  flex: 1 1 280px;
+}
+
+.prospect-account-controls .field-help {
+  flex: 1 1 220px;
+  margin: 0;
+}
+
+.prospect-account-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.account-card {
+  background: var(--surface-card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.account-card--empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.account-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 1rem;
+}
+
+.account-card__title {
+  margin: 0;
+}
+
+.account-card__subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.account-card__totals {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.account-card__total {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.account-card__total--active {
+  border-color: rgba(129, 199, 132, 0.4);
+  background: rgba(129, 199, 132, 0.2);
+}
+
+.account-card__total--prospect {
+  border-color: rgba(255, 224, 130, 0.45);
+  background: rgba(255, 224, 130, 0.2);
+}
+
+.account-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.account-card__table-wrapper {
+  overflow-x: auto;
+}
+
+.account-card__table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.account-card__table th,
+.account-card__table td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: top;
+}
+
+.account-card__table th {
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.account-card__table tbody tr:last-of-type th,
+.account-card__table tbody tr:last-of-type td {
+  border-bottom: none;
+}
+
+.status-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.status-checkbox input[type='checkbox'] {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
+}
+
+.status-entry-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+.product-status {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.product-status[data-state='active'] {
+  border-color: rgba(129, 199, 132, 0.35);
+  background: rgba(129, 199, 132, 0.15);
+}
+
+.product-status[data-state='prospect'] {
+  border-color: rgba(255, 224, 130, 0.35);
+  background: rgba(255, 224, 130, 0.12);
+}
+
+.product-status__title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.product-status__meta {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.product-status__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.product-status__empty {
+  margin: 0.5rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.product-status__actions .table-link {
+  font-weight: 600;
+}
+
 .item-list {
   list-style: none;
   padding: 0;
