@@ -230,7 +230,7 @@ app.get('/api/income-streams', async (req, res, next) => {
       lastReports.map((report) => [report._id.toString(), { amount: report.amount, month: report.month, year: report.year }])
     );
 
-    const pendingCounts = await ReportingRequirement.aggregate([
+    const reportingCounts = await ReportingRequirement.aggregate([
       { $match: { incomeStream: { $in: streamIds } } },
       {
         $group: {
@@ -239,12 +239,19 @@ app.get('/api/income-streams', async (req, res, next) => {
             $sum: {
               $cond: [{ $ifNull: ['$completedAt', false] }, 0, 1]
             }
+          },
+          completed: {
+            $sum: {
+              $cond: [{ $ifNull: ['$completedAt', false] }, 1, 0]
+            }
           }
         }
       }
     ]);
 
-    const pendingMap = new Map(pendingCounts.map((item) => [item._id.toString(), item.pending]));
+    const reportingCountMap = new Map(
+      reportingCounts.map((item) => [item._id.toString(), { pending: item.pending, completed: item.completed }])
+    );
 
     const payload = streams.map((stream) => {
       const creditUnion = stream.creditUnion;
@@ -259,6 +266,8 @@ app.get('/api/income-streams', async (req, res, next) => {
             }
           : null;
       const firstReport = buildFirstReportPayload(stream);
+      const reportingCount = reportingCountMap.get(stream._id.toString()) ?? { pending: 0, completed: 0 };
+
       return {
         id: stream._id.toString(),
         creditUnionId: creditUnion?._id?.toString() ?? null,
@@ -269,7 +278,8 @@ app.get('/api/income-streams', async (req, res, next) => {
         monthlyIncomeEstimate: stream.monthlyIncomeEstimate,
         label: `${creditUnion?.name ?? 'Unknown'} – ${stream.product} (${stream.revenueType})`,
         updatedAt: stream.updatedAt,
-        pendingCount: pendingMap.get(stream._id.toString()) ?? 0,
+        pendingCount: reportingCount.pending,
+        reportedCount: reportingCount.completed,
         firstReport,
         lastReport: lastReport
           ? {
@@ -304,12 +314,18 @@ app.get('/api/income-streams/:id', async (req, res, next) => {
     }
 
     let pendingCount = 0;
+    let reportedCount = 0;
     if (stream.status === 'active') {
       await ensureReportingRequirementsForStream(stream._id);
 
       pendingCount = await ReportingRequirement.countDocuments({
         incomeStream: stream._id,
         completedAt: null
+      });
+
+      reportedCount = await ReportingRequirement.countDocuments({
+        incomeStream: stream._id,
+        completedAt: { $ne: null }
       });
     }
 
@@ -336,6 +352,7 @@ app.get('/api/income-streams/:id', async (req, res, next) => {
       createdAt: stream.createdAt,
       updatedAt: stream.updatedAt,
       pendingCount,
+      reportedCount,
       firstReport,
       finalReport,
       canceledAt: stream.canceledAt
@@ -415,6 +432,11 @@ app.patch('/api/income-streams/:id/cancel', async (req, res, next) => {
       completedAt: null
     });
 
+    const reportedCount = await ReportingRequirement.countDocuments({
+      incomeStream: stream._id,
+      completedAt: { $ne: null }
+    });
+
     const finalReport =
       updatedStream.finalReportPeriodKey &&
       updatedStream.finalReportYear &&
@@ -437,6 +459,7 @@ app.patch('/api/income-streams/:id/cancel', async (req, res, next) => {
       createdAt: updatedStream.createdAt,
       updatedAt: updatedStream.updatedAt,
       pendingCount,
+      reportedCount,
       finalReport,
       canceledAt: updatedStream.canceledAt
     });
@@ -617,6 +640,11 @@ app.patch('/api/income-streams/:id/activate', async (req, res, next) => {
       completedAt: null
     });
 
+    const reportedCount = await ReportingRequirement.countDocuments({
+      incomeStream: updatedStream._id,
+      completedAt: { $ne: null }
+    });
+
     res.json({
       id: updatedStream._id.toString(),
       creditUnionId: updatedStream.creditUnion?._id?.toString() ?? null,
@@ -628,6 +656,7 @@ app.patch('/api/income-streams/:id/activate', async (req, res, next) => {
       label: `${updatedStream.creditUnion?.name ?? 'Unknown'} – ${updatedStream.product} (${updatedStream.revenueType})`,
       updatedAt: updatedStream.updatedAt,
       pendingCount,
+      reportedCount,
       firstReport: buildFirstReportPayload(updatedStream)
     });
   } catch (error) {
@@ -716,12 +745,18 @@ app.post('/api/income-streams', async (req, res, next) => {
     const stream = await IncomeStream.create(streamData);
 
     let pendingCount = 0;
+    let reportedCount = 0;
     if (status === 'active') {
       await ensureReportingRequirementsForStream(stream._id);
 
       pendingCount = await ReportingRequirement.countDocuments({
         incomeStream: stream._id,
         completedAt: null
+      });
+
+      reportedCount = await ReportingRequirement.countDocuments({
+        incomeStream: stream._id,
+        completedAt: { $ne: null }
       });
     }
 
@@ -736,6 +771,7 @@ app.post('/api/income-streams', async (req, res, next) => {
       label: `${creditUnion.name} – ${product} (${revenueType})`,
       updatedAt: stream.updatedAt,
       pendingCount,
+      reportedCount,
       firstReport: buildFirstReportPayload(stream)
     });
   } catch (error) {
