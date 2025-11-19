@@ -99,7 +99,8 @@ const appState = {
   detailCreditUnionName: null,
   creditUnionDetail: null,
   detailStart: null,
-  detailEnd: null
+  detailEnd: null,
+  prospectAccountFilter: ''
 };
 
 function showDialog(dialog) {
@@ -1178,6 +1179,7 @@ async function loadCreditUnions() {
   const data = await request('/api/credit-unions');
   appState.creditUnions = data.map((item) => ({ id: item.id, name: item.name }));
   renderCreditUnionOptions();
+  renderProspectAccountList();
 }
 
 async function loadIncomeStreams() {
@@ -1218,6 +1220,7 @@ async function loadIncomeStreams() {
   }));
   renderCreditUnionOptions();
   renderIncomeStreamList();
+  renderProspectAccountList();
 }
 
 async function loadProspectStreams() {
@@ -1282,6 +1285,7 @@ async function createIncomeStream(payload) {
   } else {
     appState.incomeStreams.push(normalizedStream);
     renderIncomeStreamList();
+    renderProspectAccountList();
     if (selectors.revenueStreamSelect) {
       selectors.revenueStreamSelect.value = result.id;
     }
@@ -2143,6 +2147,11 @@ selectors.accountStatusBody?.addEventListener('click', (event) => {
     return;
   }
   submitAccountRow(row, button);
+});
+
+selectors.prospectAccountFilter?.addEventListener('input', (event) => {
+  appState.prospectAccountFilter = event.currentTarget.value || '';
+  renderProspectAccountList();
 });
 
 selectors.revenueForm?.addEventListener('submit', async (event) => {
