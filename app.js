@@ -10,6 +10,9 @@ const PRODUCT_OPTIONS = [
 
 const REVENUE_TYPES = ['Frontend', 'Backend', 'Commission'];
 const REPORTING_START_PERIOD = '2023-01';
+const PRODUCT_REVENUE_PAIRS = PRODUCT_OPTIONS.flatMap((product) =>
+  REVENUE_TYPES.map((revenueType) => ({ product, revenueType }))
+);
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -19,24 +22,18 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 });
 
 const selectors = {
-  creditUnionSelect: document.getElementById('credit-union-select'),
   addCreditUnionBtn: document.getElementById('add-credit-union-btn'),
   creditUnionDialog: document.getElementById('credit-union-dialog'),
   creditUnionForm: document.getElementById('credit-union-form'),
   creditUnionNameInput: document.getElementById('credit-union-name'),
   closeCreditUnionDialogBtn: document.getElementById('close-credit-union-dialog'),
-  productSelect: document.getElementById('product-select'),
-  revenueTypeSelect: document.getElementById('revenue-type-select'),
-  prospectProductSelect: document.getElementById('prospect-product-select'),
-  prospectRevenueTypeSelect: document.getElementById('prospect-revenue-type-select'),
-  prospectCreditUnionSelect: document.getElementById('prospect-credit-union-select'),
-  incomeStreamForm: document.getElementById('income-stream-form'),
-  prospectStreamForm: document.getElementById('prospect-stream-form'),
+  accountCreditUnionSelect: document.getElementById('account-credit-union-select'),
+  accountStatusBody: document.getElementById('account-status-body'),
+  accountStatusSummary: document.getElementById('account-status-summary'),
+  accountDetailTitle: document.getElementById('account-detail-title'),
+  accountEmptyState: document.getElementById('account-empty-state'),
   incomeStreamList: document.getElementById('income-stream-list'),
-  prospectStreamList: document.getElementById('prospect-stream-list'),
   incomeStreamCount: document.getElementById('income-stream-count'),
-  prospectStreamCount: document.getElementById('prospect-stream-count'),
-  prospectFeedback: document.getElementById('prospect-feedback'),
   revenueForm: document.getElementById('revenue-form'),
   revenueStreamSelect: document.getElementById('revenue-stream-select'),
   revenueFeedback: document.getElementById('revenue-feedback'),
@@ -51,7 +48,6 @@ const selectors = {
   timelineChart: document.getElementById('revenue-timeline-chart'),
   timelineSubtitle: document.getElementById('timeline-subtitle'),
   incomeStreamTemplate: document.getElementById('income-stream-template'),
-  prospectStreamTemplate: document.getElementById('prospect-stream-template'),
   streamName: document.getElementById('income-stream-name'),
   streamDetails: document.getElementById('income-stream-details'),
   creditUnionDetailSummary: document.getElementById('credit-union-detail-summary'),
@@ -93,6 +89,7 @@ const appState = {
   monthlyCompletion: [],
   reportingWindow: { start: null, end: null },
   selectedCreditUnion: 'all',
+  accountSelectionId: null,
   currentStreamId: null,
   currentStreamDetail: null,
   currentStreamMonths: [],
@@ -212,36 +209,6 @@ async function request(path, options = {}) {
   return response.text();
 }
 
-function populateStaticOptions() {
-  if (selectors.productSelect) {
-    selectors.productSelect.replaceChildren(
-      createOption('', 'Select a product', true, true),
-      ...PRODUCT_OPTIONS.map((option) => createOption(option, option))
-    );
-  }
-
-  if (selectors.prospectProductSelect) {
-    selectors.prospectProductSelect.replaceChildren(
-      createOption('', 'Select a product', true, true),
-      ...PRODUCT_OPTIONS.map((option) => createOption(option, option))
-    );
-  }
-
-  if (selectors.revenueTypeSelect) {
-    selectors.revenueTypeSelect.replaceChildren(
-      createOption('', 'Select type', true, true),
-      ...REVENUE_TYPES.map((type) => createOption(type, type))
-    );
-  }
-
-  if (selectors.prospectRevenueTypeSelect) {
-    selectors.prospectRevenueTypeSelect.replaceChildren(
-      createOption('', 'Select type', true, true),
-      ...REVENUE_TYPES.map((type) => createOption(type, type))
-    );
-  }
-}
-
 function createOption(value, label, disabled = false, selected = false) {
   const option = document.createElement('option');
   option.value = value;
@@ -285,6 +252,16 @@ function createProductBadge(name, productKey) {
   }
   badge.textContent = typeof name === 'string' && name.trim() ? name : 'Unknown product';
   return badge;
+}
+
+function escapeSelectorValue(value) {
+  if (typeof value !== 'string') {
+    return '';
+  }
+  if (typeof window !== 'undefined' && window.CSS?.escape) {
+    return window.CSS.escape(value);
+  }
+  return value.replace(/([!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~\s])/g, '\\$1');
 }
 
 function getCreditUnionNameById(id) {
@@ -382,22 +359,9 @@ function getDetailEndFromQuery() {
 }
 
 function renderCreditUnionOptions() {
-  const select = selectors.creditUnionSelect;
   const revenueSelect = selectors.revenueStreamSelect;
   const reportingSelect = selectors.reportingCreditUnionSelect;
-  const prospectSelect = selectors.prospectCreditUnionSelect;
-
-  if (select) {
-    const placeholder = createOption('', 'Select a credit union', true, true);
-    select.replaceChildren(placeholder);
-
-    appState.creditUnions
-      .slice()
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach((creditUnion) => {
-        select.append(createOption(creditUnion.id, creditUnion.name));
-      });
-  }
+  const accountSelect = selectors.accountCreditUnionSelect;
 
   if (revenueSelect) {
     const currentIncomeStream = revenueSelect.value;
@@ -439,17 +403,33 @@ function renderCreditUnionOptions() {
     }
   }
 
-  if (prospectSelect) {
+  if (accountSelect) {
     const placeholder = createOption('', 'Select a credit union', true, true);
-    prospectSelect.replaceChildren(placeholder);
+    accountSelect.replaceChildren(placeholder);
 
-    appState.creditUnions
-      .slice()
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach((creditUnion) => {
-        prospectSelect.append(createOption(creditUnion.id, creditUnion.name));
-      });
+    const sortedCreditUnions = appState.creditUnions.slice().sort((a, b) => a.name.localeCompare(b.name));
+    sortedCreditUnions.forEach((creditUnion) => {
+      accountSelect.append(createOption(creditUnion.id, creditUnion.name));
+    });
+
+    if (appState.accountSelectionId && !sortedCreditUnions.some((cu) => cu.id === appState.accountSelectionId)) {
+      appState.accountSelectionId = null;
+    }
+
+    if (!appState.accountSelectionId && sortedCreditUnions.length) {
+      appState.accountSelectionId = sortedCreditUnions[0].id;
+    }
+
+    if (appState.accountSelectionId) {
+      accountSelect.value = appState.accountSelectionId;
+      accountSelect.removeAttribute('disabled');
+    } else {
+      accountSelect.value = '';
+      accountSelect.setAttribute('disabled', 'disabled');
+    }
   }
+
+  renderAccountWorkspace();
 }
 
 function renderIncomeStreamList() {
@@ -558,104 +538,464 @@ function renderIncomeStreamList() {
   }
 }
 
-function renderProspectStreamList() {
-  const list = selectors.prospectStreamList;
-  const template = selectors.prospectStreamTemplate;
-  if (!list || !template) return;
 
-  list.replaceChildren();
 
-  if (!appState.prospectStreams.length) {
-    const empty = document.createElement('li');
-    empty.className = 'item';
-    const heading = document.createElement('p');
-    heading.className = 'item__title';
-    heading.textContent = 'No prospect income streams yet';
-    const sub = document.createElement('p');
-    sub.className = 'item__subtitle';
-    sub.textContent = 'Log potential opportunities to estimate and activate them later.';
-    empty.append(heading, sub);
-    list.append(empty);
-    if (selectors.prospectStreamCount) {
-      selectors.prospectStreamCount.textContent = '0 prospects';
+
+function createStatusLight({ value, label, color, name, checked, disabled }) {
+  const wrapper = document.createElement('label');
+  wrapper.className = `status-light status-light--${color}`;
+  const input = document.createElement('input');
+  input.type = 'radio';
+  input.name = name;
+  input.value = value;
+  input.className = 'status-light__input';
+  input.checked = checked;
+  input.disabled = disabled;
+  const indicator = document.createElement('span');
+  indicator.className = 'status-light__indicator';
+  indicator.setAttribute('aria-hidden', 'true');
+  const textNode = document.createElement('span');
+  textNode.className = 'status-light__text';
+  textNode.textContent = label;
+  wrapper.append(input, indicator, textNode);
+  return wrapper;
+}
+
+function createAccountStatusRow(entry, index) {
+  const row = document.createElement('tr');
+  row.className = 'account-status__row';
+  row.dataset.productRow = 'true';
+  row.dataset.product = entry.product;
+  row.dataset.revenueType = entry.revenueType;
+  row.dataset.state = entry.status;
+  row.dataset.targetState = entry.status;
+  if (entry.productKey) {
+    row.dataset.productKey = entry.productKey;
+  }
+  if (entry.activeStream) {
+    row.dataset.activeId = entry.activeStream.id;
+    row.dataset.locked = 'active';
+  }
+  if (entry.prospectStream) {
+    row.dataset.prospectId = entry.prospectStream.id;
+  }
+
+  const productCell = document.createElement('th');
+  productCell.scope = 'row';
+  const name = document.createElement('p');
+  name.className = 'account-status__product-name';
+  name.textContent = entry.product;
+  const meta = document.createElement('p');
+  meta.className = 'account-status__product-meta';
+  meta.textContent = entry.revenueType;
+  productCell.append(name, meta);
+  row.append(productCell);
+
+  const radioName = `account-status-${index}`;
+
+  const noneCell = document.createElement('td');
+  const noneGroup = document.createElement('div');
+  noneGroup.className = 'status-light-group';
+  noneGroup.append(
+    createStatusLight({
+      value: 'none',
+      label: 'No Inquiry',
+      color: 'red',
+      name: radioName,
+      checked: entry.status === 'none',
+      disabled: Boolean(entry.activeStream)
+    })
+  );
+  noneCell.append(noneGroup);
+  row.append(noneCell);
+
+  const prospectCell = document.createElement('td');
+  const prospectGroup = document.createElement('div');
+  prospectGroup.className = 'status-light-group';
+  prospectGroup.append(
+    createStatusLight({
+      value: 'prospect',
+      label: 'Prospect',
+      color: 'yellow',
+      name: radioName,
+      checked: entry.status === 'prospect',
+      disabled: Boolean(entry.activeStream)
+    })
+  );
+  prospectCell.append(prospectGroup);
+  const prospectField = document.createElement('div');
+  prospectField.className = 'status-light__field';
+  prospectField.dataset.fieldState = 'prospect';
+  const prospectLabel = document.createElement('label');
+  prospectLabel.textContent = 'Potential monthly income';
+  const prospectInput = document.createElement('input');
+  prospectInput.type = 'number';
+  prospectInput.name = 'monthlyEstimate';
+  prospectInput.placeholder = 'Ex: 12500';
+  prospectInput.step = '0.01';
+  if (Number.isFinite(entry.prospectStream?.monthlyIncomeEstimate)) {
+    prospectInput.value = String(entry.prospectStream.monthlyIncomeEstimate);
+  }
+  prospectField.append(prospectLabel, prospectInput);
+  prospectCell.append(prospectField);
+  row.append(prospectCell);
+
+  const activeCell = document.createElement('td');
+  const activeGroup = document.createElement('div');
+  activeGroup.className = 'status-light-group';
+  activeGroup.append(
+    createStatusLight({
+      value: 'active',
+      label: 'Active',
+      color: 'green',
+      name: radioName,
+      checked: entry.status === 'active',
+      disabled: false
+    })
+  );
+  activeCell.append(activeGroup);
+  const activeField = document.createElement('div');
+  activeField.className = 'status-light__field';
+  activeField.dataset.fieldState = 'active';
+  const activeLabel = document.createElement('label');
+  activeLabel.textContent = 'First reporting month';
+  const activeInput = document.createElement('input');
+  activeInput.type = 'month';
+  activeInput.name = 'firstReportMonth';
+  activeInput.min = REPORTING_START_PERIOD;
+  if (entry.activeStream?.firstReport?.key) {
+    activeInput.value = entry.activeStream.firstReport.key;
+  }
+  activeField.append(activeLabel, activeInput);
+  activeCell.append(activeField);
+  row.append(activeCell);
+
+  const detailsCell = document.createElement('td');
+  detailsCell.className = 'account-status__details account-status__notes';
+  const stateText = document.createElement('p');
+  stateText.className = 'account-status__state';
+  stateText.textContent = getAccountRowStatusMessage(entry);
+  const actionButton = document.createElement('button');
+  actionButton.type = 'button';
+  actionButton.className = 'primary-button account-status__action';
+  actionButton.dataset.action = 'account-save';
+  const feedback = document.createElement('p');
+  feedback.className = 'account-status__feedback';
+  feedback.dataset.state = 'info';
+  detailsCell.append(stateText, actionButton, feedback);
+  row.append(detailsCell);
+
+  updateAccountRowInteractionState(row);
+  return row;
+}
+
+function getAccountRowStatusMessage(entry) {
+  if (entry.activeStream) {
+    const firstLabel = entry.activeStream.firstReport?.label || 'Reporting requirement started';
+    const updatedLabel = entry.activeStream.updatedAt ? formatDateString(entry.activeStream.updatedAt) : null;
+    return updatedLabel
+      ? `Active income stream. Reporting since ${firstLabel}. Updated ${updatedLabel}.`
+      : `Active income stream. Reporting since ${firstLabel}.`;
+  }
+  if (entry.prospectStream) {
+    const parts = ['Prospect captured.'];
+    if (Number.isFinite(entry.prospectStream.monthlyIncomeEstimate)) {
+      parts.push(`Potential ${currencyFormatter.format(entry.prospectStream.monthlyIncomeEstimate)} / month.`);
+    }
+    if (entry.prospectStream.updatedAt) {
+      parts.push(`Updated ${formatDateString(entry.prospectStream.updatedAt)}.`);
+    }
+    return parts.join(' ');
+  }
+  return 'No inquiry logged yet.';
+}
+
+function getAccountRowElement(product, revenueType) {
+  if (!selectors.accountStatusBody) return null;
+  const productSelector = escapeSelectorValue(product);
+  const revenueSelector = escapeSelectorValue(revenueType);
+  if (!productSelector || !revenueSelector) {
+    return null;
+  }
+  return selectors.accountStatusBody.querySelector(
+    `.account-status__row[data-product="${productSelector}"][data-revenue-type="${revenueSelector}"]`
+  );
+}
+
+function updateAccountRowInteractionState(row) {
+  if (!row) return;
+  const targetState = row.dataset.targetState || row.dataset.state || 'none';
+  const locked = row.dataset.locked === 'active';
+
+  row.querySelectorAll('.status-light__input').forEach((input) => {
+    if (locked) {
+      input.disabled = input.value !== 'active';
+    }
+    input.checked = input.value === targetState;
+  });
+
+  row.querySelectorAll('.status-light__field').forEach((field) => {
+    const matches = field.dataset.fieldState === targetState;
+    field.hidden = !matches;
+    field.querySelectorAll('input').forEach((input) => {
+      input.disabled = locked || !matches;
+    });
+  });
+
+  const button = row.querySelector('[data-action="account-save"]');
+  if (!button) return;
+
+  if (locked) {
+    button.disabled = true;
+    button.textContent = 'In reporting';
+    return;
+  }
+
+  if (targetState === 'active') {
+    button.disabled = false;
+    button.textContent = row.dataset.prospectId ? 'Activate stream' : 'Create active stream';
+    return;
+  }
+
+  if (targetState === 'prospect') {
+    button.disabled = false;
+    button.textContent = row.dataset.prospectId ? 'Update prospect' : 'Save prospect';
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'No inquiry selected';
+}
+
+function setAccountRowFeedback(row, message, state = 'info') {
+  if (!row) return;
+  const feedback = row.querySelector('.account-status__feedback');
+  if (!feedback) return;
+  feedback.textContent = message;
+  feedback.dataset.state = state;
+}
+
+function getAccountRowsForCreditUnion(creditUnionId) {
+  if (!creditUnionId) {
+    return [];
+  }
+
+  return PRODUCT_REVENUE_PAIRS.map(({ product, revenueType }) => {
+    const activeStream = appState.incomeStreams.find(
+      (stream) => stream.creditUnionId === creditUnionId && stream.product === product && stream.revenueType === revenueType
+    );
+    const prospectStream = appState.prospectStreams.find(
+      (stream) => stream.creditUnionId === creditUnionId && stream.product === product && stream.revenueType === revenueType
+    );
+    return {
+      product,
+      revenueType,
+      productKey: getProductKey(product),
+      status: activeStream ? 'active' : prospectStream ? 'prospect' : 'none',
+      activeStream,
+      prospectStream
+    };
+  });
+}
+
+function renderAccountWorkspace() {
+  const body = selectors.accountStatusBody;
+  if (!body) return;
+
+  const summary = selectors.accountStatusSummary;
+  const detailTitle = selectors.accountDetailTitle;
+  const emptyState = selectors.accountEmptyState;
+
+  const creditUnionId = appState.accountSelectionId;
+  const hasCreditUnions = appState.creditUnions.length > 0;
+
+  if (!creditUnionId) {
+    body.replaceChildren();
+    if (summary) {
+      summary.textContent = hasCreditUnions ? 'Choose a credit union to begin.' : 'Add a credit union to get started.';
+    }
+    if (detailTitle) {
+      detailTitle.textContent = hasCreditUnions
+        ? 'Select an account to load coverage details.'
+        : 'Add a credit union to start building coverage.';
+    }
+    if (emptyState) {
+      emptyState.hidden = false;
     }
     return;
   }
 
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'decimal',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || 'Selected credit union';
+  if (detailTitle) {
+    detailTitle.textContent = creditUnionName;
+  }
+  if (emptyState) {
+    emptyState.hidden = true;
+  }
+
+  const entries = getAccountRowsForCreditUnion(creditUnionId);
+  const fragment = document.createDocumentFragment();
+  let activeCount = 0;
+  let prospectCount = 0;
+
+  entries.forEach((entry, index) => {
+    if (entry.status === 'active') {
+      activeCount += 1;
+    } else if (entry.status === 'prospect') {
+      prospectCount += 1;
+    }
+    fragment.append(createAccountStatusRow(entry, index));
   });
 
-  appState.prospectStreams
-    .slice()
-    .sort((a, b) => b.updatedAt - a.updatedAt)
-    .forEach((stream) => {
-      const fragment = template.content.cloneNode(true);
-      const listItem = fragment.querySelector('.item');
-      const title = fragment.querySelector('.item__title');
-      const subtitle = fragment.querySelector('.item__subtitle');
-      const productKey = getProductKey(stream.product);
-      const estimateInput = fragment.querySelector('input[name="monthlyIncomeEstimate"]');
-      const estimateFeedback = fragment.querySelector('.prospect-feedback');
-      const activateButton = fragment.querySelector('.prospect-activate-btn');
-      const estimateDisplay = fragment.querySelector('.prospect-estimate-display');
+  body.replaceChildren(fragment);
 
-      if (listItem) {
-        listItem.dataset.streamId = stream.id;
-        if (productKey) {
-          listItem.dataset.productKey = productKey;
-        } else {
-          delete listItem.dataset.productKey;
-        }
-      }
-
-      if (title) {
-        title.textContent = stream.label;
-      }
-
-      if (subtitle) {
-        subtitle.replaceChildren();
-        const segments = [
-          createSubtitleText(stream.creditUnionName),
-          createSubtitleDivider(),
-          createProductBadge(stream.product, productKey),
-          createSubtitleDivider(),
-          createSubtitleText(stream.revenueType)
-        ];
-        segments.forEach((segment) => subtitle.append(segment));
-      }
-
-      if (estimateInput) {
-        const estimateValue = Number.isFinite(stream.monthlyIncomeEstimate)
-          ? stream.monthlyIncomeEstimate
-          : '';
-        estimateInput.value = estimateValue === '' ? '' : String(estimateValue);
-      }
-
-      if (estimateFeedback) {
-        setFeedback(estimateFeedback, '', 'info');
-      }
-
-      if (activateButton) {
-        activateButton.dataset.streamId = stream.id;
-      }
-
-      if (estimateDisplay) {
-        estimateDisplay.textContent = Number.isFinite(stream.monthlyIncomeEstimate)
-          ? currencyFormatter.format(stream.monthlyIncomeEstimate)
-          : '—';
-      }
-
-      list.append(fragment);
-    });
-
-  if (selectors.prospectStreamCount) {
-    selectors.prospectStreamCount.textContent = `${formatter.format(appState.prospectStreams.length)} prospect${
-      appState.prospectStreams.length === 1 ? '' : 's'
-    }`;
+  if (summary) {
+    const inactiveCount = entries.length - activeCount - prospectCount;
+    summary.textContent = `${activeCount} active • ${prospectCount} prospect${prospectCount === 1 ? '' : 's'} • ${inactiveCount} not started`;
   }
+}
+
+async function saveProspectFromRow(row, creditUnionId) {
+  const product = row.dataset.product;
+  const revenueType = row.dataset.revenueType;
+  if (!product || !revenueType) {
+    throw new Error('Select a product before saving.');
+  }
+  const estimateInput = row.querySelector('input[name="monthlyEstimate"]');
+  if (!estimateInput) {
+    throw new Error('Monthly estimate input not found.');
+  }
+  const rawValue = estimateInput.value.trim();
+  if (!rawValue) {
+    throw new Error('Enter potential monthly income before saving a prospect.');
+  }
+  const parsedValue = Number(rawValue);
+  if (!Number.isFinite(parsedValue)) {
+    throw new Error('Monthly estimate must be a valid number.');
+  }
+  if (row.dataset.prospectId) {
+    await updateProspectEstimate(row.dataset.prospectId, parsedValue);
+    return 'Prospect estimate saved.';
+  }
+  await createIncomeStream({
+    creditUnionId,
+    product,
+    revenueType,
+    status: 'prospect',
+    monthlyIncomeEstimate: parsedValue
+  });
+  return 'Prospect saved.';
+}
+
+async function saveActiveFromRow(row, creditUnionId) {
+  const product = row.dataset.product;
+  const revenueType = row.dataset.revenueType;
+  if (!product || !revenueType) {
+    throw new Error('Select a product before activating.');
+  }
+  const firstMonthInput = row.querySelector('input[name="firstReportMonth"]');
+  if (!firstMonthInput || !firstMonthInput.value) {
+    throw new Error('Choose the first reporting month before activating.');
+  }
+  const payload = {
+    creditUnionId,
+    product,
+    revenueType,
+    status: 'active',
+    firstReportMonth: firstMonthInput.value
+  };
+  if (row.dataset.prospectId) {
+    await activateProspectStream(row.dataset.prospectId, { firstReportMonth: firstMonthInput.value });
+    return 'Prospect activated.';
+  }
+  await createIncomeStream(payload);
+  return 'Active stream created.';
+}
+
+async function submitAccountRow(row, button) {
+  if (!row || !button) {
+    return;
+  }
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    setAccountRowFeedback(row, 'Select a credit union first.', 'error');
+    return;
+  }
+
+  const desiredState = row.dataset.targetState || row.dataset.state || 'none';
+  if (row.dataset.locked === 'active') {
+    setAccountRowFeedback(row, 'This income stream is already active.', 'info');
+    return;
+  }
+  if (!['prospect', 'active'].includes(desiredState)) {
+    setAccountRowFeedback(row, 'Choose Prospect or Active to save changes.', 'error');
+    return;
+  }
+
+  const product = row.dataset.product;
+  const revenueType = row.dataset.revenueType;
+  if (!product || !revenueType) {
+    setAccountRowFeedback(row, 'Unable to determine the selected product.', 'error');
+    return;
+  }
+
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Saving…';
+  setAccountRowFeedback(row, 'Saving...', 'info');
+
+  try {
+    const message =
+      desiredState === 'prospect'
+        ? await saveProspectFromRow(row, creditUnionId)
+        : await saveActiveFromRow(row, creditUnionId);
+    const refreshedRow = getAccountRowElement(product, revenueType) || row;
+    setAccountRowFeedback(refreshedRow, message, 'success');
+    updateAccountRowInteractionState(refreshedRow);
+  } catch (error) {
+    const refreshedRow = getAccountRowElement(product, revenueType) || row;
+    setAccountRowFeedback(
+      refreshedRow,
+      error instanceof Error ? error.message : 'Unable to save changes.',
+      'error'
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
+function handleAccountStatusChange(event) {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement)) {
+    return;
+  }
+  if (!input.classList.contains('status-light__input')) {
+    return;
+  }
+  const row = input.closest('.account-status__row');
+  if (!row) {
+    return;
+  }
+  if (row.dataset.locked === 'active') {
+    input.checked = true;
+    return;
+  }
+  row.dataset.targetState = input.value;
+  setAccountRowFeedback(row, '', 'info');
+  updateAccountRowInteractionState(row);
+}
+
+function handleAccountFieldInput(event) {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement)) {
+    return;
+  }
+  const row = input.closest('.account-status__row');
+  if (!row) {
+    return;
+  }
+  setAccountRowFeedback(row, '', 'info');
 }
 
 function formatPeriodLabel(year, month) {
@@ -853,6 +1193,14 @@ async function loadIncomeStreams() {
     monthlyIncomeEstimate: stream.monthlyIncomeEstimate,
     updatedAt: stream.updatedAt ? new Date(stream.updatedAt).getTime() : 0,
     pendingCount: Number(stream.pendingCount ?? 0),
+    firstReport: stream.firstReport
+      ? {
+          year: stream.firstReport.year,
+          month: stream.firstReport.month,
+          key: stream.firstReport.key,
+          label: stream.firstReport.label
+        }
+      : null,
     lastReport: stream.lastReport
       ? {
           amount: Number(stream.lastReport.amount),
@@ -885,8 +1233,7 @@ async function loadProspectStreams() {
     monthlyIncomeEstimate: stream.monthlyIncomeEstimate,
     updatedAt: stream.updatedAt ? new Date(stream.updatedAt).getTime() : 0
   }));
-  renderCreditUnionOptions();
-  renderProspectStreamList();
+  renderAccountWorkspace();
 }
 
 async function createCreditUnion(name) {
@@ -895,12 +1242,10 @@ async function createCreditUnion(name) {
     body: JSON.stringify({ name })
   });
   appState.creditUnions.push({ id: result.id, name: result.name });
+  appState.accountSelectionId = result.id;
   renderCreditUnionOptions();
-  if (selectors.creditUnionSelect) {
-    selectors.creditUnionSelect.value = result.id;
-  }
-  if (selectors.prospectCreditUnionSelect) {
-    selectors.prospectCreditUnionSelect.value = result.id;
+  if (selectors.accountCreditUnionSelect) {
+    selectors.accountCreditUnionSelect.value = result.id;
   }
 }
 
@@ -921,12 +1266,19 @@ async function createIncomeStream(payload) {
     monthlyIncomeEstimate: result.monthlyIncomeEstimate,
     updatedAt: result.updatedAt ? new Date(result.updatedAt).getTime() : Date.now(),
     pendingCount: Number(result.pendingCount ?? 0),
+    firstReport: result.firstReport
+      ? {
+          year: result.firstReport.year,
+          month: result.firstReport.month,
+          key: result.firstReport.key,
+          label: result.firstReport.label
+        }
+      : null,
     lastReport: null
   };
 
   if (result.status === 'prospect') {
     appState.prospectStreams.push(normalizedStream);
-    renderProspectStreamList();
   } else {
     appState.incomeStreams.push(normalizedStream);
     renderIncomeStreamList();
@@ -951,12 +1303,19 @@ async function updateProspectEstimate(streamId, monthlyIncomeEstimate) {
       monthlyIncomeEstimate: result.monthlyIncomeEstimate,
       updatedAt: result.updatedAt ? new Date(result.updatedAt).getTime() : Date.now()
     };
-    renderProspectStreamList();
+    renderAccountWorkspace();
   }
 }
 
-async function activateProspectStream(streamId) {
-  const result = await request(`/api/income-streams/${streamId}/activate`, { method: 'PATCH' });
+async function activateProspectStream(streamId, options = {}) {
+  const payload = {};
+  if (options.firstReportMonth) {
+    payload.firstReportMonth = options.firstReportMonth;
+  }
+  const result = await request(`/api/income-streams/${streamId}/activate`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload)
+  });
 
   appState.prospectStreams = appState.prospectStreams.filter((stream) => stream.id !== streamId);
 
@@ -971,10 +1330,17 @@ async function activateProspectStream(streamId) {
     monthlyIncomeEstimate: result.monthlyIncomeEstimate,
     updatedAt: result.updatedAt ? new Date(result.updatedAt).getTime() : Date.now(),
     pendingCount: Number(result.pendingCount ?? 0),
+    firstReport: result.firstReport
+      ? {
+          year: result.firstReport.year,
+          month: result.firstReport.month,
+          key: result.firstReport.key,
+          label: result.firstReport.label
+        }
+      : null,
     lastReport: null
   });
 
-  renderProspectStreamList();
   renderIncomeStreamList();
   renderCreditUnionOptions();
 }
@@ -1760,68 +2126,23 @@ selectors.editRevenueForm?.addEventListener('submit', async (event) => {
   }
 });
 
-selectors.incomeStreamForm?.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const creditUnionId = form.creditUnionId.value;
-  const product = form.product.value;
-  const revenueType = form.revenueType.value;
-
-  if (!creditUnionId || !product || !revenueType) {
-    alert('All fields are required.');
-    return;
-  }
-
-  try {
-    await createIncomeStream({ creditUnionId, product, revenueType });
-    form.reset();
-    setFeedback(selectors.revenueFeedback, 'Income stream created. You can start logging revenue.', 'success');
-  } catch (error) {
-    alert(error.message);
-  }
+selectors.accountCreditUnionSelect?.addEventListener('change', (event) => {
+  appState.accountSelectionId = event.currentTarget.value || null;
+  renderAccountWorkspace();
 });
 
-selectors.prospectStreamForm?.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const creditUnionId = form.creditUnionId.value;
-  const product = form.product.value;
-  const revenueType = form.revenueType.value;
-  const monthlyIncomeEstimateValue = form.monthlyIncomeEstimate.value.trim();
-
-  if (!creditUnionId || !product || !revenueType) {
-    setFeedback(selectors.prospectFeedback, 'All fields except estimate are required.', 'error');
+selectors.accountStatusBody?.addEventListener('change', handleAccountStatusChange);
+selectors.accountStatusBody?.addEventListener('input', handleAccountFieldInput);
+selectors.accountStatusBody?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-action="account-save"]');
+  if (!button || !selectors.accountStatusBody?.contains(button)) {
     return;
   }
-
-  let monthlyIncomeEstimate = null;
-  if (monthlyIncomeEstimateValue) {
-    const parsed = Number(monthlyIncomeEstimateValue);
-    if (!Number.isFinite(parsed)) {
-      setFeedback(selectors.prospectFeedback, 'Monthly estimate must be a valid number.', 'error');
-      return;
-    }
-    monthlyIncomeEstimate = parsed;
+  const row = button.closest('.account-status__row');
+  if (!row) {
+    return;
   }
-
-  try {
-    await createIncomeStream({
-      creditUnionId,
-      product,
-      revenueType,
-      status: 'prospect',
-      monthlyIncomeEstimate
-    });
-    form.reset();
-    setFeedback(selectors.prospectFeedback, 'Prospect income stream saved.', 'success');
-    await loadProspectStreams();
-  } catch (error) {
-    setFeedback(
-      selectors.prospectFeedback,
-      error instanceof Error ? error.message : 'Unable to save prospect stream.',
-      'error'
-    );
-  }
+  submitAccountRow(row, button);
 });
 
 selectors.revenueForm?.addEventListener('submit', async (event) => {
@@ -1849,67 +2170,6 @@ selectors.revenueForm?.addEventListener('submit', async (event) => {
   }
 });
 
-selectors.prospectStreamList?.addEventListener('submit', async (event) => {
-  const form = event.target.closest('.prospect-estimate-form');
-  if (!form) return;
-  event.preventDefault();
-
-  const listItem = form.closest('.item');
-  const streamId = listItem?.dataset.streamId;
-  const input = form.querySelector('input[name="monthlyIncomeEstimate"]');
-  const feedback = form.querySelector('.prospect-feedback');
-
-  if (!streamId || !input) {
-    return;
-  }
-
-  const rawValue = input.value.trim();
-  let parsedEstimate = null;
-
-  if (rawValue) {
-    const parsed = Number(rawValue);
-    if (!Number.isFinite(parsed)) {
-      setFeedback(feedback, 'Enter a valid number for the monthly estimate.', 'error');
-      return;
-    }
-    parsedEstimate = parsed;
-  }
-
-  try {
-    setFeedback(feedback, 'Saving estimate...', 'info');
-    await updateProspectEstimate(streamId, parsedEstimate);
-    setFeedback(feedback, 'Monthly estimate saved.', 'success');
-  } catch (error) {
-    setFeedback(feedback, error instanceof Error ? error.message : 'Unable to save estimate.', 'error');
-  }
-});
-
-selectors.prospectStreamList?.addEventListener('click', async (event) => {
-  const button = event.target.closest('.prospect-activate-btn');
-  if (!button || !selectors.prospectStreamList?.contains(button)) {
-    return;
-  }
-
-  const listItem = button.closest('.item');
-  const streamId = listItem?.dataset.streamId || button.dataset.streamId;
-
-  if (!streamId) {
-    return;
-  }
-
-  const originalText = button.textContent;
-  button.disabled = true;
-  button.textContent = 'Activating...';
-
-  try {
-    await activateProspectStream(streamId);
-    await Promise.all([loadIncomeStreams(), loadProspectStreams()]);
-  } catch (error) {
-    button.disabled = false;
-    button.textContent = originalText;
-    alert(error instanceof Error ? error.message : 'Unable to activate income stream.');
-  }
-});
 
 selectors.reportingForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -1938,7 +2198,6 @@ selectors.reportingCreditUnionSelect?.addEventListener('change', async (event) =
 });
 
 async function bootstrap() {
-  populateStaticOptions();
   appState.monthlyDetailMonthKey = getMonthFromQuery();
   appState.detailCreditUnionId = getDetailCreditUnionIdFromQuery();
   appState.detailCreditUnionName = getDetailCreditUnionNameFromQuery();
@@ -2003,7 +2262,7 @@ async function bootstrap() {
     }
   }
 
-  if (selectors.prospectStreamList) {
+  if (selectors.accountStatusBody) {
     try {
       await loadProspectStreams();
     } catch (error) {

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Accounts | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Accounts</h1>
+        <p class="site-subtitle">Choose a credit union and mark every product as No Inquiry, Prospect, or Active.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a href="index.html" class="header-link">Income Streams</a>
+        <a href="accounts.html" class="header-link" aria-current="page">Accounts</a>
+        <a href="revenue.html" class="header-link">Revenue Updates</a>
+        <a href="reporting.html" class="header-link">Reporting</a>
+        <a href="monthly.html" class="header-link">Monthly Totals</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-labelledby="account-select-heading">
+      <header class="panel__header">
+        <h2 id="account-select-heading" class="panel__title">Select an account</h2>
+        <p class="panel__description">
+          All coverage creation now happens here. Pick a partner, then light up the products that are in play.
+        </p>
+      </header>
+
+      <div class="account-select-grid">
+        <div class="field-group">
+          <label for="account-credit-union-select">Credit union / entity</label>
+          <div class="field-with-action">
+            <select id="account-credit-union-select" name="creditUnionId" required>
+              <option value="" disabled selected>Select a credit union</option>
+            </select>
+            <button type="button" id="add-credit-union-btn" class="icon-button" aria-label="Add credit union">
+              <span aria-hidden="true">＋</span>
+            </button>
+          </div>
+          <p class="field-help">Use the plus button to add a new partner if it isn&rsquo;t listed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="account-status-panel" aria-labelledby="account-status-heading">
+      <header class="panel__header account-status__header">
+        <div>
+          <h2 id="account-status-heading" class="panel__title">Coverage by product</h2>
+          <p id="account-detail-title" class="panel__description">Select an account to load coverage details.</p>
+        </div>
+        <p id="account-status-summary" class="account-status__summary"></p>
+      </header>
+
+      <div id="account-empty-state" class="account-empty-state" role="status">
+        <p>Select a credit union to begin managing product coverage.</p>
+      </div>
+
+      <div class="account-status" aria-live="polite">
+        <table class="account-status__table">
+          <caption class="sr-only">Product statuses for the selected credit union</caption>
+          <thead>
+            <tr>
+              <th scope="col">Product / revenue type</th>
+              <th scope="col">No Inquiry</th>
+              <th scope="col">Prospect</th>
+              <th scope="col">Active</th>
+              <th scope="col" class="account-status__notes">Details</th>
+            </tr>
+          </thead>
+          <tbody id="account-status-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="credit-union-dialog" aria-labelledby="credit-union-dialog-title">
+    <form method="dialog" id="credit-union-form" class="dialog-form" autocomplete="off">
+      <header class="dialog-header">
+        <h2 id="credit-union-dialog-title">Add a credit union / entity</h2>
+        <button type="button" class="icon-button" id="close-credit-union-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+      <div class="dialog-body">
+        <label for="credit-union-name">Name</label>
+        <input type="text" id="credit-union-name" name="name" placeholder="Example: CommonCents" required />
+      </div>
+      <footer class="dialog-footer">
+        <button type="submit" class="primary-button">Save credit union</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

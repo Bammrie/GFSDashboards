@@ -16,7 +16,7 @@
       </div>
       <nav class="header-actions" aria-label="Primary navigation">
         <a href="index.html" class="header-link" aria-current="page">Income Streams</a>
-        <a href="prospects.html" class="header-link">Prospects</a>
+        <a href="accounts.html" class="header-link">Accounts</a>
         <a href="revenue.html" class="header-link">Revenue Updates</a>
         <a href="reporting.html" class="header-link">Reporting</a>
         <a href="monthly.html" class="header-link">Monthly Totals</a>
@@ -34,36 +34,13 @@
         </p>
       </header>
 
-      <form id="income-stream-form" class="form-grid" autocomplete="off">
-        <div class="field-group">
-          <label for="credit-union-select">Credit union / entity</label>
-          <div class="field-with-action">
-            <select id="credit-union-select" name="creditUnionId" required>
-              <option value="" disabled selected>Select a credit union</option>
-            </select>
-            <button type="button" id="add-credit-union-btn" class="icon-button" aria-label="Add credit union">
-              <span aria-hidden="true">＋</span>
-            </button>
-          </div>
-          <p id="credit-union-help" class="field-help">Use the plus button to add a new partner if it isn&rsquo;t listed.</p>
-        </div>
-
-        <div class="field-group">
-          <label for="product-select">Product / service</label>
-          <select id="product-select" name="product" required></select>
-        </div>
-
-        <div class="field-group">
-          <label for="revenue-type-select">Revenue type</label>
-          <select id="revenue-type-select" name="revenueType" required>
-            <option value="" disabled selected>Select type</option>
-          </select>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="primary-button">Create income stream</button>
-        </div>
-      </form>
+      <div class="info-callout">
+        <p>
+          New income streams now start inside the <strong>Accounts</strong> workspace so that status lights, prospect estimates,
+          and activation dates stay in sync. Use the button below to open the workflow and light up a product.
+        </p>
+        <a class="primary-button" href="accounts.html">Open Accounts workspace</a>
+      </div>
 
       <section class="panel__list" aria-live="polite">
         <header class="list-header">
@@ -74,24 +51,6 @@
       </section>
     </section>
   </main>
-
-  <dialog id="credit-union-dialog" aria-labelledby="credit-union-dialog-title">
-    <form method="dialog" id="credit-union-form" class="dialog-form" autocomplete="off">
-      <header class="dialog-header">
-        <h2 id="credit-union-dialog-title">Add a credit union / entity</h2>
-        <button type="button" class="icon-button" id="close-credit-union-dialog" aria-label="Close dialog">
-          <span aria-hidden="true">×</span>
-        </button>
-      </header>
-      <div class="dialog-body">
-        <label for="credit-union-name">Name</label>
-        <input type="text" id="credit-union-name" name="name" placeholder="Example: CommonCents" required />
-      </div>
-      <footer class="dialog-footer">
-        <button type="submit" class="primary-button">Save credit union</button>
-      </footer>
-    </form>
-  </dialog>
 
   <template id="income-stream-template">
     <li class="item">
