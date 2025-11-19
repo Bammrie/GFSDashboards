@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Prospects (redirecting to Accounts)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .redirect-card {
+      max-width: 540px;
+      margin: 72px auto;
+      background: #0c1226;
+      border: 1px solid #25304f;
+      border-radius: 12px;
+      padding: 32px;
+      color: #f5f7fb;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+    .redirect-card h1 {
+      margin: 0 0 12px;
+      font-size: 1.6rem;
+      color: #9cc1ff;
+    }
+    .redirect-card p {
+      margin: 0 0 18px;
+      line-height: 1.6;
+      color: #e6ecf5;
+    }
+    .redirect-card a {
+      color: #9cc1ff;
+      font-weight: 600;
+    }
+    .redirect-card .button-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .redirect-card button,
+    .redirect-card a.button-link {
+      background: linear-gradient(135deg, #2c7cf6, #68c3ff);
+      border: none;
+      color: #0b132b;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+      box-shadow: 0 10px 20px rgba(44, 124, 246, 0.35);
+    }
+    .redirect-card button:hover,
+    .redirect-card a.button-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(44, 124, 246, 0.45);
+    }
+    .redirect-card .secondary-link {
+      color: #e6ecf5;
+      font-weight: 500;
+    }
+  </style>
+  <script>
+    // Preserve deep-links while directing users to the new Accounts workspace.
+    window.addEventListener('DOMContentLoaded', () => {
+      const target = new URL(window.location.href);
+      const accountTarget = new URL('accounts.html', window.location.origin);
+      if (target.search) {
+        accountTarget.search = target.search;
+      }
+      if (target.hash) {
+        accountTarget.hash = target.hash;
+      }
+      const redirectMs = 1200;
+      const redirectLink = document.getElementById('redirect-link');
+      const timer = setTimeout(() => {
+        window.location.href = accountTarget.href;
+      }, redirectMs);
+
+      if (redirectLink) {
+        redirectLink.href = accountTarget.href;
+        redirectLink.addEventListener('click', () => clearTimeout(timer));
+      }
+
+      const manualButton = document.getElementById('redirect-button');
+      if (manualButton) {
+        manualButton.addEventListener('click', () => {
+          clearTimeout(timer);
+          window.location.href = accountTarget.href;
+        });
+      }
+    });
+  </script>
+</head>
+<body>
+  <header class="page-header">
+    <div class="nav-logo">
+      <img src="GFS%20Logo.png" alt="GFS Logo" class="logo" />
+      <div class="nav-title">
+        <div class="subtitle">Income Stream Dashboard</div>
+        <div class="title">Prospects</div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="redirect-card">
+      <h1>Prospects moved to the Accounts workspace</h1>
+      <p>
+        Prospect and activation workflows now live on the <strong>Accounts</strong> page. All
+        existing income streams remain intact—active items stay green and prospect items stay yellow.
+      </p>
+      <div class="button-row">
+        <button id="redirect-button" type="button">Open Accounts</button>
+        <a id="redirect-link" class="button-link" href="accounts.html">Go now</a>
+        <a class="secondary-link" href="index.html">Back to dashboard</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
