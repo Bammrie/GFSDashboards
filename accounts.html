@@ -81,6 +81,33 @@
           <tbody id="call-report-list"></tbody>
         </table>
       </section>
+
+      <section class="table-card" aria-live="polite">
+        <header class="table-header">
+          <h3 class="table-title">Extracted call report metrics</h3>
+          <p class="table-description">Net income, loan mix, and indirect exposure pulled from the uploaded filing.</p>
+        </header>
+        <div id="call-report-metrics" class="metric-grid"></div>
+      </section>
+
+      <section class="table-card" aria-live="polite">
+        <header class="table-header">
+          <h3 class="table-title">Quarterly coverage</h3>
+          <p class="table-description">Tracks which quarters back to 2020 have a stored call report for this account.</p>
+        </header>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Year</th>
+              <th scope="col" class="numeric">Q1</th>
+              <th scope="col" class="numeric">Q2</th>
+              <th scope="col" class="numeric">Q3</th>
+              <th scope="col" class="numeric">Q4</th>
+            </tr>
+          </thead>
+          <tbody id="call-report-coverage"></tbody>
+        </table>
+      </section>
     </section>
 
     <section class="panel" id="account-status-panel" aria-labelledby="account-status-heading">

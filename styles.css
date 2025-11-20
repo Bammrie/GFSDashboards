@@ -1261,6 +1261,60 @@ input[type='month']:focus-visible {
   color: #fff;
 }
 
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.metric-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.metric-card__label {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.metric-card__value {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.metric-card__subtext {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.sparkline {
+  width: 100%;
+  height: 64px;
+}
+
+.coverage-missing {
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.coverage-complete {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.coverage-missed {
+  color: #e57373;
+  font-weight: 600;
+}
+
 #credit-union-dialog::backdrop,
 #cancel-stream-dialog::backdrop,
 #edit-revenue-dialog::backdrop {
