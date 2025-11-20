@@ -12,12 +12,11 @@
     <div class="header-content">
       <div class="branding">
         <h1 class="site-title">Revenue Intelligence</h1>
-        <p class="site-subtitle">Analyze performance by partner, product, and revenue type.</p>
+        <p class="site-subtitle">Spot missing revenue updates and log them without leaving the page.</p>
       </div>
       <nav class="header-actions" aria-label="Primary navigation">
         <a href="index.html" class="header-link">Income Streams</a>
         <a href="accounts.html" class="header-link">Accounts</a>
-        <a href="revenue.html" class="header-link">Revenue Updates</a>
         <a href="reporting.html" class="header-link" aria-current="page">Reporting</a>
         <a href="monthly.html" class="header-link">Monthly Totals</a>
       </nav>
@@ -27,105 +26,64 @@
   <main class="layout">
     <section id="reporting" class="panel" aria-labelledby="reporting-heading">
       <header class="panel__header">
-        <h2 id="reporting-heading" class="panel__title">Revenue intelligence</h2>
+        <h2 id="reporting-heading" class="panel__title">Missing revenue updates</h2>
         <p class="panel__description">
-          Analyze performance by partner, by product, and by revenue type. Adjust the reporting window to explore trends and see
-          where growth is accelerating.
+          View every active income stream that still needs a monthly revenue entry, filter by period and income type, and log the
+          missing amounts inline.
         </p>
       </header>
-
-      <div class="filter-grid reporting-controls">
-        <div class="field-group">
-          <label for="reporting-credit-union">Credit union</label>
-          <select id="reporting-credit-union" name="creditUnion">
-            <option value="all">All accounts</option>
-          </select>
-        </div>
-      </div>
-
-      <form id="reporting-filter" class="filter-grid" autocomplete="off">
-        <div class="field-group">
-          <label for="reporting-start">Start month</label>
-          <input type="month" id="reporting-start" name="start" />
-        </div>
-        <div class="field-group">
-          <label for="reporting-end">End month</label>
-          <input type="month" id="reporting-end" name="end" />
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="secondary-button">Refresh reporting</button>
-        </div>
-      </form>
-
       <section class="insights">
         <article class="insight-card" aria-live="polite">
-          <h3 class="insight-title">Total revenue</h3>
-          <p id="total-revenue" class="insight-value">$0</p>
-        </article>
-        <article class="insight-card" aria-live="polite">
-          <h3 class="insight-title">Best performing credit union</h3>
-          <p id="top-credit-union" class="insight-value">Waiting for data</p>
-        </article>
-        <article class="insight-card" aria-live="polite">
-          <h3 class="insight-title">Strongest product</h3>
-          <p id="top-product" class="insight-value">Waiting for data</p>
+          <h3 class="insight-title">Missing revenue updates</h3>
+          <p id="missing-total" class="insight-value">0</p>
+          <p class="insight-subtext">Active income streams without a reported month.</p>
         </article>
       </section>
 
-      <div class="chart-card" aria-live="polite">
-        <header class="chart-header">
-          <h3 class="chart-title">Revenue timeline</h3>
-          <p class="chart-subtitle" id="timeline-subtitle">Monthly totals across all income streams</p>
+      <form id="missing-filter" class="filter-grid" autocomplete="off">
+        <div class="field-group">
+          <label for="missing-month">Month to fill</label>
+          <input type="month" id="missing-month" name="month" required />
+        </div>
+        <div class="field-group">
+          <label for="missing-type">Income type</label>
+          <select id="missing-type" name="revenueType">
+            <option value="all">All income types</option>
+            <option value="Frontend">Frontend</option>
+            <option value="Backend">Backend</option>
+            <option value="Commission">Commission</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="secondary-button">Find missing revenue</button>
+        </div>
+      </form>
+
+      <section class="table-card" aria-live="polite">
+        <header class="table-header">
+          <h3 class="table-title">Missing entries</h3>
+          <p id="missing-summary" class="table-description">Select a month to see which updates are missing.</p>
         </header>
-        <svg id="revenue-timeline-chart" class="timeline-chart" role="img" aria-label="Revenue over time"></svg>
-      </div>
 
-      <div class="grid-columns">
-        <section class="table-card" aria-live="polite">
-          <header class="table-header">
-            <h3 class="table-title">By credit union</h3>
-          </header>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th scope="col">Credit union</th>
-                <th scope="col" class="numeric">Revenue</th>
-              </tr>
-            </thead>
-            <tbody id="credit-union-summary"></tbody>
-          </table>
-        </section>
+        <div class="feedback" id="missing-feedback" role="status" aria-live="polite"></div>
 
-        <section class="table-card" aria-live="polite">
-          <header class="table-header">
-            <h3 class="table-title">By product</h3>
-          </header>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th scope="col">Product</th>
-                <th scope="col" class="numeric">Revenue</th>
-              </tr>
-            </thead>
-            <tbody id="product-summary"></tbody>
-          </table>
-        </section>
+        <div id="missing-empty-state" class="empty-state" hidden>
+          <p>All income streams are reported for the selected filters.</p>
+        </div>
 
-        <section class="table-card" aria-live="polite">
-          <header class="table-header">
-            <h3 class="table-title">By revenue type</h3>
-          </header>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th scope="col">Type</th>
-                <th scope="col" class="numeric">Revenue</th>
-              </tr>
-            </thead>
-            <tbody id="type-summary"></tbody>
-          </table>
-        </section>
-      </div>
+        <table class="data-table" id="missing-table">
+          <thead>
+            <tr>
+              <th scope="col">Credit union</th>
+              <th scope="col">Product</th>
+              <th scope="col">Month</th>
+              <th scope="col" class="numeric">Revenue amount</th>
+              <th scope="col" class="numeric">Action</th>
+            </tr>
+          </thead>
+          <tbody id="missing-body"></tbody>
+        </table>
+      </section>
     </section>
   </main>
 

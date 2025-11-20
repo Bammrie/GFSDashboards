@@ -17,7 +17,6 @@
       <nav class="header-actions" aria-label="Primary navigation">
         <a href="index.html" class="header-link">Income Streams</a>
         <a href="accounts.html" class="header-link" aria-current="page">Accounts</a>
-        <a href="revenue.html" class="header-link">Revenue Updates</a>
         <a href="reporting.html" class="header-link">Reporting</a>
         <a href="monthly.html" class="header-link">Monthly Totals</a>
       </nav>
@@ -47,6 +46,41 @@
           <p class="field-help">Use the plus button to add a new partner if it isn&rsquo;t listed.</p>
         </div>
       </div>
+    </section>
+
+    <section class="panel" aria-labelledby="call-report-heading">
+      <header class="panel__header">
+        <h2 id="call-report-heading" class="panel__title">Call reports</h2>
+        <p id="call-report-summary" class="panel__description">
+          Upload a call report to capture loan balances, indirect exposure, and asset size for the selected credit union.
+        </p>
+      </header>
+
+      <div class="call-report__actions">
+        <input type="file" id="call-report-file-input" accept=".pdf,.txt,.csv,.json" hidden />
+        <button type="button" id="call-report-upload-btn" class="primary-button" disabled>Upload call report</button>
+        <p class="field-help">Files are read for data extraction only; they are not stored on the server.</p>
+      </div>
+
+      <div class="feedback" id="call-report-feedback" role="status" aria-live="polite"></div>
+
+      <section class="table-card" aria-live="polite">
+        <header class="table-header">
+          <h3 class="table-title">Captured filings</h3>
+          <p class="table-description">Asset size, indirect loans, and loan-line counts extracted from uploaded reports.</p>
+        </header>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Report date</th>
+              <th scope="col" class="numeric">Assets</th>
+              <th scope="col" class="numeric">Indirect loans</th>
+              <th scope="col" class="numeric">Loan lines stored</th>
+            </tr>
+          </thead>
+          <tbody id="call-report-list"></tbody>
+        </table>
+      </section>
     </section>
 
     <section class="panel" id="account-status-panel" aria-labelledby="account-status-heading">

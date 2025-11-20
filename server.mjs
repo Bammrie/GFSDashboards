@@ -1,5 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import multer from 'multer';
+import pdfParse from 'pdf-parse';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
@@ -15,6 +17,10 @@ const publicDir = __dirname;
 
 const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 }
+});
 
 const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || 'adminpass';
 const DASHBOARD_USERNAME = process.env.DASHBOARD_USERNAME || null;
@@ -141,6 +147,30 @@ const CreditUnion = mongoose.model('CreditUnion', creditUnionSchema);
 const IncomeStream = mongoose.model('IncomeStream', incomeStreamSchema);
 const RevenueEntry = mongoose.model('RevenueEntry', revenueEntrySchema);
 const ReportingRequirement = mongoose.model('ReportingRequirement', reportingRequirementSchema);
+const callReportSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
+    reportDate: { type: Date, required: true },
+    periodYear: { type: Number, required: true },
+    periodMonth: { type: Number, required: true },
+    assetSize: { type: Number, default: null },
+    indirectLoans: { type: Number, default: null },
+    loanData: [
+      {
+        label: { type: String, required: true },
+        figures: { type: [Number], default: [] }
+      }
+    ],
+    sourceName: { type: String, default: null },
+    extractedAt: { type: Date, default: Date.now }
+  },
+  { timestamps: true }
+);
+
+callReportSchema.index({ creditUnion: 1, periodYear: 1, periodMonth: 1 });
+callReportSchema.index({ creditUnion: 1, extractedAt: -1 });
+
+const CallReport = mongoose.model('CallReport', callReportSchema);
 
 const databaseReady = await initializeDatabase();
 
@@ -1264,6 +1294,159 @@ app.get('/api/reports/completion', async (req, res, next) => {
   }
 });
 
+app.get('/api/reports/missing', async (req, res, next) => {
+  try {
+    const month = parsePeriod(req.query.month);
+    const revenueType =
+      typeof req.query.revenueType === 'string' && req.query.revenueType !== 'all'
+        ? req.query.revenueType
+        : null;
+
+    await ensureReportingRequirementsForAllStreams();
+
+    const requirementMatch = { completedAt: null };
+    if (month) {
+      requirementMatch.periodKey = month.key;
+    }
+
+    const pipeline = [
+      { $match: requirementMatch },
+      {
+        $lookup: {
+          from: 'incomestreams',
+          localField: 'incomeStream',
+          foreignField: '_id',
+          as: 'stream'
+        }
+      },
+      { $unwind: '$stream' },
+      { $match: { 'stream.status': { $in: ['active', null] } } }
+    ];
+
+    if (revenueType) {
+      pipeline.push({ $match: { 'stream.revenueType': revenueType } });
+    }
+
+    pipeline.push(
+      {
+        $lookup: {
+          from: 'creditunions',
+          localField: 'stream.creditUnion',
+          foreignField: '_id',
+          as: 'creditUnion'
+        }
+      },
+      {
+        $unwind: {
+          path: '$creditUnion',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          requirementId: '$_id',
+          incomeStreamId: '$stream._id',
+          creditUnionId: '$creditUnion._id',
+          creditUnionName: { $ifNull: ['$creditUnion.name', 'Unknown credit union'] },
+          product: '$stream.product',
+          revenueType: '$stream.revenueType',
+          year: '$year',
+          month: '$month',
+          periodKey: '$periodKey'
+        }
+      },
+      { $sort: { creditUnionName: 1, product: 1, revenueType: 1 } }
+    );
+
+    const requirements = await ReportingRequirement.aggregate(pipeline);
+    const totalMissing = await ReportingRequirement.countDocuments({ completedAt: null });
+
+    res.json({
+      totalMissing,
+      filteredMissing: requirements.length,
+      month: month
+        ? { key: `${month.year}-${String(month.month).padStart(2, '0')}`, label: formatMonthLabel(month.year, month.month) }
+        : null,
+      revenueType: revenueType ?? 'all',
+      items: requirements
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/call-reports', upload.single('file'), async (req, res, next) => {
+  try {
+    const creditUnionId = typeof req.body?.creditUnionId === 'string' ? req.body.creditUnionId.trim() : '';
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'A valid credit union selection is required.' });
+      return;
+    }
+
+    const creditUnion = await CreditUnion.findById(creditUnionId).lean();
+    if (!creditUnion) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    if (!req.file?.buffer) {
+      res.status(400).json({ error: 'Please upload a call report document.' });
+      return;
+    }
+
+    const { text, pages } = await extractCallReportText(req.file.buffer, req.file.mimetype);
+    const reportDate = extractReportDate(text);
+    const periodYear = reportDate.getFullYear();
+    const periodMonth = reportDate.getMonth() + 1;
+
+    const assetSize = extractNumberByLabels(text, ['total assets', 'assets']);
+    const indirectLoans = extractNumberByLabels(text, ['indirect']);
+    const loanData = extractLoanData(pages[5] ?? pages[0] ?? text);
+
+    const created = await CallReport.create({
+      creditUnion: creditUnionId,
+      reportDate,
+      periodYear,
+      periodMonth,
+      assetSize,
+      indirectLoans,
+      loanData,
+      sourceName: req.file.originalname ?? null
+    });
+
+    res.status(201).json(formatCallReportPayload(created, creditUnion.name));
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/credit-unions/:id/call-reports', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const creditUnion = await CreditUnion.findById(id).lean();
+    if (!creditUnion) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const reports = await CallReport.find({ creditUnion: id })
+      .sort({ reportDate: -1 })
+      .lean();
+
+    res.json(
+      reports.map((report) => formatCallReportPayload(report, creditUnion.name))
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.use((error, req, res, _next) => {
   console.error(error);
   res.status(500).json({ error: 'An unexpected error occurred.' });
@@ -1276,6 +1459,114 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   console.log(`Income dashboard running on http://localhost:${port}`);
 });
+
+async function extractCallReportText(buffer, mimeType) {
+  const pages = [];
+  if (mimeType === 'application/pdf' || mimeType === 'application/octet-stream' || mimeType === 'application/x-pdf') {
+    try {
+      const data = await pdfParse(buffer, {
+        pagerender: (pageData) =>
+          pageData.getTextContent().then((content) => {
+            const text = content.items.map((item) => item.str).join(' ');
+            pages.push(text);
+            return text;
+          })
+      });
+
+      return { text: data.text || pages.join('\n\n'), pages: pages.length ? pages : [data.text] };
+    } catch (error) {
+      console.warn('Failed to parse PDF call report. Falling back to text buffer.', error);
+    }
+  }
+
+  const fallbackText = buffer.toString('utf8');
+  return { text: fallbackText, pages: [fallbackText] };
+}
+
+function extractReportDate(text) {
+  const dateMatch = text.match(/(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
+  if (dateMatch) {
+    const [, monthStr, dayStr, yearStr] = dateMatch;
+    const year = Number.parseInt(yearStr.length === 2 ? `20${yearStr}` : yearStr, 10);
+    const month = Number.parseInt(monthStr, 10) - 1;
+    const day = Number.parseInt(dayStr, 10);
+    if (Number.isFinite(year) && Number.isFinite(month) && Number.isFinite(day)) {
+      return new Date(Date.UTC(year, month, day));
+    }
+  }
+
+  const yearOnlyMatch = text.match(/\b(20\d{2})\b/);
+  if (yearOnlyMatch) {
+    const year = Number.parseInt(yearOnlyMatch[1], 10);
+    return new Date(Date.UTC(year, 0, 1));
+  }
+
+  return new Date();
+}
+
+function extractNumberByLabels(text, labels = []) {
+  const lower = text.toLowerCase();
+  for (const label of labels) {
+    const index = lower.indexOf(label.toLowerCase());
+    if (index >= 0) {
+      const snippet = text.slice(index, index + 120);
+      const figures = parseNumbersFromLine(snippet);
+      if (figures.length) {
+        return figures[0];
+      }
+    }
+  }
+  return null;
+}
+
+function extractLoanData(pageText) {
+  if (!pageText) return [];
+  const lines = pageText
+    .split(/\n|\r/)
+    .map((line) => line.trim())
+    .filter((line) => line && /loan/i.test(line));
+
+  const rows = [];
+  for (const line of lines) {
+    if (!/\d/.test(line)) continue;
+    const figures = parseNumbersFromLine(line);
+    rows.push({
+      label: line.slice(0, 160),
+      figures
+    });
+    if (rows.length >= 40) {
+      break;
+    }
+  }
+
+  return rows;
+}
+
+function parseNumbersFromLine(line) {
+  const matches = line.match(/-?[\d,]+(?:\.\d+)?/g) || [];
+  return matches
+    .map((value) => Number.parseFloat(value.replace(/,/g, '')))
+    .filter((value) => Number.isFinite(value));
+}
+
+function formatCallReportPayload(report, creditUnionName = null) {
+  if (!report) return null;
+  return {
+    id: report._id?.toString?.() ?? '',
+    creditUnionId: report.creditUnion?.toString?.() ?? null,
+    creditUnionName: creditUnionName ?? null,
+    reportDate: report.reportDate,
+    periodYear: report.periodYear,
+    periodMonth: report.periodMonth,
+    assetSize: report.assetSize,
+    indirectLoans: report.indirectLoans,
+    loanData: Array.isArray(report.loanData)
+      ? report.loanData.map((row) => ({ label: row.label, figures: row.figures ?? [] }))
+      : [],
+    sourceName: report.sourceName ?? null,
+    extractedAt: report.extractedAt ?? report.createdAt
+  };
+}
 
 function accumulate(map, key, value) {
   const previous = map.get(key) ?? 0;

@@ -53,6 +53,14 @@ const selectors = {
   typeSummary: document.getElementById('type-summary'),
   timelineChart: document.getElementById('revenue-timeline-chart'),
   timelineSubtitle: document.getElementById('timeline-subtitle'),
+  missingTotal: document.getElementById('missing-total'),
+  missingFilterForm: document.getElementById('missing-filter'),
+  missingMonthInput: document.getElementById('missing-month'),
+  missingTypeSelect: document.getElementById('missing-type'),
+  missingSummary: document.getElementById('missing-summary'),
+  missingBody: document.getElementById('missing-body'),
+  missingFeedback: document.getElementById('missing-feedback'),
+  missingEmptyState: document.getElementById('missing-empty-state'),
   incomeStreamTemplate: document.getElementById('income-stream-template'),
   streamName: document.getElementById('income-stream-name'),
   streamDetails: document.getElementById('income-stream-details'),
@@ -84,7 +92,12 @@ const selectors = {
   editRevenueMonthLabel: document.getElementById('edit-revenue-month'),
   editRevenueAmountInput: document.getElementById('edit-revenue-amount'),
   editRevenueFeedback: document.getElementById('edit-revenue-feedback'),
-  closeEditRevenueDialogBtn: document.getElementById('close-edit-revenue-dialog')
+  closeEditRevenueDialogBtn: document.getElementById('close-edit-revenue-dialog'),
+  callReportUploadBtn: document.getElementById('call-report-upload-btn'),
+  callReportFileInput: document.getElementById('call-report-file-input'),
+  callReportFeedback: document.getElementById('call-report-feedback'),
+  callReportList: document.getElementById('call-report-list'),
+  callReportSummary: document.getElementById('call-report-summary')
 };
 
 const appState = {
@@ -106,7 +119,10 @@ const appState = {
   creditUnionDetail: null,
   detailStart: null,
   detailEnd: null,
-  prospectAccountFilter: ''
+  prospectAccountFilter: '',
+  missingUpdates: [],
+  missingFilters: { month: null, revenueType: 'all' },
+  callReports: []
 };
 
 function showDialog(dialog) {
@@ -860,6 +876,91 @@ function renderAccountWorkspace() {
     const inactiveCount = entries.length - activeCount - prospectCount;
     summary.textContent = `${activeCount} active • ${prospectCount} prospect${prospectCount === 1 ? '' : 's'} • ${inactiveCount} not started`;
   }
+
+  renderCallReports();
+}
+
+function setCallReportFeedback(message, state = 'info') {
+  if (!selectors.callReportFeedback) return;
+  selectors.callReportFeedback.textContent = message;
+  selectors.callReportFeedback.dataset.state = state;
+}
+
+function renderCallReports() {
+  if (!selectors.callReportList) return;
+
+  const uploadBtn = selectors.callReportUploadBtn;
+  const fileInput = selectors.callReportFileInput;
+  const creditUnionId = appState.accountSelectionId;
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || 'this credit union';
+
+  if (uploadBtn) {
+    uploadBtn.disabled = !creditUnionId;
+  }
+  if (fileInput) {
+    fileInput.disabled = !creditUnionId;
+  }
+
+  const summary = selectors.callReportSummary;
+  const reports = Array.isArray(appState.callReports) ? appState.callReports : [];
+  if (!creditUnionId) {
+    if (summary) {
+      summary.textContent = 'Select a credit union to upload call reports and capture loan balances.';
+    }
+    selectors.callReportList.replaceChildren();
+    return;
+  }
+
+  if (summary) {
+    summary.textContent = `${reports.length} call report${reports.length === 1 ? '' : 's'} stored for ${creditUnionName}.`;
+  }
+
+  const body = selectors.callReportList;
+  body.replaceChildren();
+
+  if (!reports.length) {
+    const row = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = 4;
+    cell.textContent = 'No call reports uploaded yet.';
+    row.append(cell);
+    body.append(row);
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  reports.forEach((report) => {
+    const row = document.createElement('tr');
+    const monthKey = `${report.periodYear}-${String(report.periodMonth).padStart(2, '0')}`;
+    const reportLabel =
+      formatMonthLabelFromKey(monthKey) ||
+      (report.reportDate ? new Date(report.reportDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : null);
+
+    const dateCell = document.createElement('td');
+    dateCell.textContent = reportLabel || monthKey;
+
+    const assetCell = document.createElement('td');
+    assetCell.className = 'numeric';
+    assetCell.textContent = Number.isFinite(report.assetSize)
+      ? currencyFormatter.format(report.assetSize)
+      : '—';
+
+    const indirectCell = document.createElement('td');
+    indirectCell.className = 'numeric';
+    indirectCell.textContent = Number.isFinite(report.indirectLoans)
+      ? currencyFormatter.format(report.indirectLoans)
+      : '—';
+
+    const loanCell = document.createElement('td');
+    loanCell.className = 'numeric';
+    const loanLineCount = Array.isArray(report.loanData) ? report.loanData.length : 0;
+    loanCell.textContent = loanLineCount ? `${loanLineCount} loan line${loanLineCount === 1 ? '' : 's'}` : '—';
+
+    row.append(dateCell, assetCell, indirectCell, loanCell);
+    fragment.append(row);
+  });
+
+  body.append(fragment);
 }
 
 async function saveProspectFromRow(row, creditUnionId) {
@@ -917,6 +1018,51 @@ async function saveActiveFromRow(row, creditUnionId) {
   }
   await createIncomeStream(payload);
   return 'Active stream created.';
+}
+
+async function submitMissingRow(row, button) {
+  if (!row) return;
+  const amountInput = row.querySelector('input[name="amount"]');
+  if (!amountInput) return;
+
+  const incomeStreamId = row.dataset.streamId;
+  const year = Number(row.dataset.year);
+  const month = Number(row.dataset.month);
+  const rawAmount = amountInput.value.trim();
+
+  if (!incomeStreamId || !Number.isFinite(year) || !Number.isFinite(month)) {
+    setFeedback(selectors.missingFeedback, 'Missing stream information for this row.', 'error');
+    return;
+  }
+
+  if (!rawAmount) {
+    setFeedback(selectors.missingFeedback, 'Enter an amount before saving.', 'error');
+    amountInput.focus();
+    return;
+  }
+
+  const amount = Number(rawAmount);
+  if (!Number.isFinite(amount)) {
+    setFeedback(selectors.missingFeedback, 'Amount must be a valid number.', 'error');
+    amountInput.focus();
+    return;
+  }
+
+  button.disabled = true;
+  amountInput.disabled = true;
+  setFeedback(selectors.missingFeedback, 'Saving revenue...', 'info');
+
+  try {
+    await saveRevenueEntry({ incomeStreamId, year, month, amount });
+    setFeedback(selectors.missingFeedback, 'Revenue saved.', 'success');
+    await loadIncomeStreams();
+    await loadMissingUpdates();
+  } catch (error) {
+    setFeedback(selectors.missingFeedback, error.message, 'error');
+  } finally {
+    button.disabled = false;
+    amountInput.disabled = false;
+  }
 }
 
 async function submitAccountRow(row, button) {
@@ -1246,6 +1392,54 @@ async function loadProspectStreams() {
   renderAccountWorkspace();
 }
 
+async function loadCallReports(creditUnionId) {
+  if (!selectors.callReportList) {
+    return;
+  }
+
+  if (!creditUnionId) {
+    appState.callReports = [];
+    renderCallReports();
+    return;
+  }
+
+  try {
+    const data = await request(`/api/credit-unions/${creditUnionId}/call-reports`);
+    appState.callReports = Array.isArray(data) ? data : [];
+  } catch (error) {
+    appState.callReports = [];
+    setCallReportFeedback(error.message, 'error');
+  }
+
+  renderCallReports();
+}
+
+async function uploadCallReport(file, creditUnionId) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('creditUnionId', creditUnionId);
+
+  const response = await fetch('/api/call-reports', {
+    method: 'POST',
+    body: formData
+  });
+
+  if (!response.ok) {
+    let message = `Upload failed (${response.status})`;
+    try {
+      const data = await response.json();
+      if (data?.error) {
+        message = data.error;
+      }
+    } catch (_error) {
+      // Ignore JSON parsing errors and fall back to the generic message.
+    }
+    throw new Error(message);
+  }
+
+  return response.json();
+}
+
 async function createCreditUnion(name) {
   const result = await request('/api/credit-unions', {
     method: 'POST',
@@ -1425,6 +1619,34 @@ async function loadMonthlyDetail(monthKey, creditUnionId) {
   renderMonthlyDetail(data, { monthKey, creditUnionId, creditUnionName });
 }
 
+async function loadMissingUpdates(params = {}) {
+  if (!selectors.missingBody) return;
+
+  if (selectors.missingFeedback) {
+    setFeedback(selectors.missingFeedback, '', 'info');
+  }
+
+  const searchParams = new URLSearchParams();
+  const month = params.month ?? appState.missingFilters.month;
+  const revenueType = params.revenueType ?? appState.missingFilters.revenueType;
+
+  if (month) {
+    searchParams.set('month', month);
+  }
+  if (revenueType && revenueType !== 'all') {
+    searchParams.set('revenueType', revenueType);
+  }
+
+  const query = searchParams.toString();
+  const data = await request(`/api/reports/missing${query ? `?${query}` : ''}`);
+  appState.missingUpdates = Array.isArray(data?.items) ? data.items : [];
+  appState.missingFilters = {
+    month: month ?? data?.month?.key ?? null,
+    revenueType: revenueType ?? data?.revenueType ?? 'all'
+  };
+  renderMissingUpdates(data);
+}
+
 async function loadSummary(params = {}) {
   const searchParams = new URLSearchParams();
   if (params.start) searchParams.set('start', params.start);
@@ -1497,6 +1719,93 @@ function renderSummary() {
       selectors.timelineSubtitle.textContent = 'Monthly totals across all income streams';
     }
   }
+}
+
+function renderMissingUpdates(payload) {
+  if (!selectors.missingBody) return;
+
+  const totalMissing = Number(payload?.totalMissing ?? 0);
+  if (selectors.missingTotal) {
+    selectors.missingTotal.textContent = totalMissing.toLocaleString();
+  }
+
+  const monthLabel =
+    payload?.month?.label || (appState.missingFilters.month ? formatMonthLabelFromKey(appState.missingFilters.month) : null);
+  const revenueType = payload?.revenueType ?? appState.missingFilters.revenueType ?? 'all';
+  const summaryTextParts = [];
+  if (payload?.items?.length) {
+    summaryTextParts.push(`${payload.items.length} missing update${payload.items.length === 1 ? '' : 's'}`);
+  }
+  if (monthLabel) {
+    summaryTextParts.push(`for ${monthLabel}`);
+  }
+  if (revenueType && revenueType !== 'all') {
+    summaryTextParts.push(`(${revenueType})`);
+  }
+  if (selectors.missingSummary) {
+    selectors.missingSummary.textContent = summaryTextParts.length
+      ? summaryTextParts.join(' ')
+      : 'Select a month to list missing revenue entries.';
+  }
+
+  const body = selectors.missingBody;
+  body.replaceChildren();
+
+  const items = Array.isArray(payload?.items) ? payload.items : [];
+  const shouldShowTable = items.length > 0;
+  if (selectors.missingEmptyState) {
+    selectors.missingEmptyState.hidden = shouldShowTable;
+  }
+
+  if (!shouldShowTable) {
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  items.forEach((item) => {
+    const row = document.createElement('tr');
+    row.dataset.streamId = item.incomeStreamId;
+    row.dataset.year = item.year;
+    row.dataset.month = item.month;
+
+    const creditUnionCell = document.createElement('td');
+    creditUnionCell.textContent = item.creditUnionName || 'Unknown credit union';
+
+    const productCell = document.createElement('td');
+    productCell.textContent = `${item.product ?? 'Unknown product'} (${item.revenueType ?? 'Type'})`;
+
+    const monthCell = document.createElement('td');
+    monthCell.textContent = formatMonthLabelFromKey(`${item.year}-${String(item.month).padStart(2, '0')}`) ??
+      `${item.year}-${String(item.month).padStart(2, '0')}`;
+
+    const amountCell = document.createElement('td');
+    amountCell.className = 'numeric';
+    const amountInput = document.createElement('input');
+    amountInput.type = 'number';
+    amountInput.name = 'amount';
+    amountInput.step = '0.01';
+    amountInput.inputMode = 'decimal';
+    amountInput.placeholder = '0.00';
+    amountInput.dataset.streamId = item.incomeStreamId;
+    amountInput.dataset.year = item.year;
+    amountInput.dataset.month = item.month;
+    amountInput.className = 'table-input';
+    amountCell.append(amountInput);
+
+    const actionCell = document.createElement('td');
+    actionCell.className = 'numeric';
+    const submitButton = document.createElement('button');
+    submitButton.type = 'button';
+    submitButton.className = 'primary-button';
+    submitButton.dataset.action = 'submit-missing';
+    submitButton.textContent = 'Save';
+    actionCell.append(submitButton);
+
+    row.append(creditUnionCell, productCell, monthCell, amountCell, actionCell);
+    fragment.append(row);
+  });
+
+  body.append(fragment);
 }
 
 function renderMonthlyCompletion() {
@@ -2139,9 +2448,14 @@ selectors.editRevenueForm?.addEventListener('submit', async (event) => {
   }
 });
 
-selectors.accountCreditUnionSelect?.addEventListener('change', (event) => {
+selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => {
   appState.accountSelectionId = event.currentTarget.value || null;
   renderAccountWorkspace();
+  try {
+    await loadCallReports(appState.accountSelectionId);
+  } catch (error) {
+    setCallReportFeedback(error.message, 'error');
+  }
 });
 
 selectors.accountStatusBody?.addEventListener('change', handleAccountStatusChange);
@@ -2161,6 +2475,63 @@ selectors.accountStatusBody?.addEventListener('click', (event) => {
 selectors.prospectAccountFilter?.addEventListener('input', (event) => {
   appState.prospectAccountFilter = event.currentTarget.value || '';
   renderProspectAccountList();
+});
+
+selectors.callReportUploadBtn?.addEventListener('click', () => {
+  if (!appState.accountSelectionId) {
+    setCallReportFeedback('Select a credit union before uploading a call report.', 'error');
+    return;
+  }
+  selectors.callReportFileInput?.click();
+});
+
+selectors.callReportFileInput?.addEventListener('change', async (event) => {
+  const file = event.currentTarget.files?.[0];
+  if (!file) return;
+
+  if (!appState.accountSelectionId) {
+    setCallReportFeedback('Select a credit union before uploading a call report.', 'error');
+    event.currentTarget.value = '';
+    return;
+  }
+
+  setCallReportFeedback('Reading call report...', 'info');
+
+  try {
+    await uploadCallReport(file, appState.accountSelectionId);
+    setCallReportFeedback('Call report captured and stored.', 'success');
+    await loadCallReports(appState.accountSelectionId);
+  } catch (error) {
+    setCallReportFeedback(error.message, 'error');
+  } finally {
+    event.currentTarget.value = '';
+  }
+});
+
+selectors.missingFilterForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const month = form.month.value || null;
+  const revenueType = form.revenueType.value || 'all';
+  appState.missingFilters = { month, revenueType };
+  try {
+    await loadMissingUpdates({ month, revenueType });
+  } catch (error) {
+    setFeedback(selectors.missingFeedback, error.message, 'error');
+  }
+});
+
+selectors.missingBody?.addEventListener('click', async (event) => {
+  const button = event.target.closest('[data-action="submit-missing"]');
+  if (!button || !selectors.missingBody.contains(button)) {
+    return;
+  }
+  const row = button.closest('tr');
+  try {
+    await submitMissingRow(row, button);
+  } catch (error) {
+    setFeedback(selectors.missingFeedback, error.message, 'error');
+  }
 });
 
 selectors.revenueForm?.addEventListener('submit', async (event) => {
@@ -2239,6 +2610,7 @@ async function bootstrap() {
     const end = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     const startDate = new Date(now.getFullYear(), now.getMonth() - 11, 1);
     const start = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`;
+    const defaultMissingMonth = end;
     appState.reportingWindow = { start, end };
     if (selectors.reportingForm) {
       selectors.reportingForm.start.value = start;
@@ -2250,6 +2622,13 @@ async function bootstrap() {
         selectors.reportingCreditUnionSelect.value = 'all';
       }
       appState.selectedCreditUnion = selectors.reportingCreditUnionSelect.value || 'all';
+    }
+
+    if (selectors.missingMonthInput && !selectors.missingMonthInput.value) {
+      selectors.missingMonthInput.value = defaultMissingMonth;
+    }
+    if (!appState.missingFilters.month) {
+      appState.missingFilters.month = defaultMissingMonth;
     }
 
     const shouldLoadSummary =
@@ -2267,6 +2646,10 @@ async function bootstrap() {
 
     if (shouldLoadSummary) {
       await loadSummary({ ...appState.reportingWindow, creditUnionId: appState.selectedCreditUnion });
+    }
+
+    if (selectors.missingBody) {
+      await loadMissingUpdates({ month: appState.missingFilters.month, revenueType: appState.missingFilters.revenueType });
     }
   } catch (error) {
     console.error(error);
