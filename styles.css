@@ -704,6 +704,28 @@ input[type='month']:focus-visible {
   color: #ef5350;
 }
 
+.empty-state {
+  border: 1px dashed #c5ccd4;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #f8fafc;
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
+.table-input {
+  width: 100%;
+  max-width: 140px;
+}
+
+.call-report__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
 .stream-overview {
   display: grid;
   gap: 1rem;
