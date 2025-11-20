@@ -162,3 +162,4 @@ Document or extend new features so they reuse these formulas without re-defining
 2027-01-07: Rebuilt ancillary revenue modeling with 36-month direct auto pacing, new debt protection remittance math, and updated CPI/Fidelity/AFG income assumptions site-wide.
 
 2025-11-10: Enabled negative revenue entries across the UI and API so refunds can be logged as negative amounts.
+2025-11-20: Added call report metric extraction (assets, income, loan segments, indirect balances) with dashboard trends and quarter coverage grids back to 2020 after updating the parser for the Ascension September 2025 template.
