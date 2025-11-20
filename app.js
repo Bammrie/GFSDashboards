@@ -889,6 +889,26 @@ function setCallReportFeedback(message, state = 'info') {
   selectors.callReportFeedback.dataset.state = state;
 }
 
+function sortCallReports(reports) {
+  return [...reports].sort((a, b) => {
+    const aYear = Number(a?.periodYear) || 0;
+    const bYear = Number(b?.periodYear) || 0;
+    if (aYear !== bYear) {
+      return aYear - bYear;
+    }
+
+    const aMonth = Number(a?.periodMonth) || 0;
+    const bMonth = Number(b?.periodMonth) || 0;
+    if (aMonth !== bMonth) {
+      return aMonth - bMonth;
+    }
+
+    const aDate = a?.reportDate ? new Date(a.reportDate).getTime() : 0;
+    const bDate = b?.reportDate ? new Date(b.reportDate).getTime() : 0;
+    return aDate - bDate;
+  });
+}
+
 function renderCallReports() {
   if (!selectors.callReportList) return;
 
@@ -905,7 +925,7 @@ function renderCallReports() {
   }
 
   const summary = selectors.callReportSummary;
-  const reports = Array.isArray(appState.callReports) ? appState.callReports : [];
+  const reports = sortCallReports(Array.isArray(appState.callReports) ? appState.callReports : []);
   if (!creditUnionId) {
     if (summary) {
       summary.textContent = 'Select a credit union to upload call reports and capture loan balances.';
@@ -973,7 +993,7 @@ function renderCallReportMetrics() {
   const container = selectors.callReportMetrics;
   if (!container) return;
 
-  const reports = Array.isArray(appState.callReports) ? [...appState.callReports] : [];
+  const reports = sortCallReports(Array.isArray(appState.callReports) ? appState.callReports : []);
   container.replaceChildren();
 
   if (!appState.accountSelectionId) {
@@ -1662,7 +1682,7 @@ async function loadCallReports(creditUnionId) {
 
   try {
     const data = await request(`/api/credit-unions/${creditUnionId}/call-reports`);
-    appState.callReports = Array.isArray(data) ? data : [];
+    appState.callReports = sortCallReports(Array.isArray(data) ? data : []);
   } catch (error) {
     appState.callReports = [];
     setCallReportFeedback(error.message, 'error');
