@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2025-11-20: Sorted call reports chronologically in the account dashboard so graphs and tables follow quarter/year order instead of upload order.
 2025-11-19: Rebuilt Reporting into a missing-revenue workspace, added call report upload/extraction to account dashboards, and removed the standalone Revenue Updates tab while keeping revenue entry inline.
 2027-01-27: Removed commission-only income stream options for GAP and Debt Protection and tightened page spacing so more content stays visible without scrolling.
 2027-01-26: Added a startup backfill that sets missing income stream statuses to active and regenerates reporting requirements so historical revenue reappears.
