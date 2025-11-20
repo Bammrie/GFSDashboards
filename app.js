@@ -26,6 +26,7 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2
 });
+const integerFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
 const selectors = {
   addCreditUnionBtn: document.getElementById('add-credit-union-btn'),
@@ -97,7 +98,9 @@ const selectors = {
   callReportFileInput: document.getElementById('call-report-file-input'),
   callReportFeedback: document.getElementById('call-report-feedback'),
   callReportList: document.getElementById('call-report-list'),
-  callReportSummary: document.getElementById('call-report-summary')
+  callReportSummary: document.getElementById('call-report-summary'),
+  callReportMetrics: document.getElementById('call-report-metrics'),
+  callReportCoverage: document.getElementById('call-report-coverage')
 };
 
 const appState = {
@@ -961,6 +964,260 @@ function renderCallReports() {
   });
 
   body.append(fragment);
+
+  renderCallReportMetrics();
+  renderCallReportCoverage();
+}
+
+function renderCallReportMetrics() {
+  const container = selectors.callReportMetrics;
+  if (!container) return;
+
+  const reports = Array.isArray(appState.callReports) ? [...appState.callReports] : [];
+  container.replaceChildren();
+
+  if (!appState.accountSelectionId) {
+    const message = document.createElement('p');
+    message.className = 'coverage-missing';
+    message.textContent = 'Select a credit union to see extracted metrics.';
+    container.append(message);
+    return;
+  }
+
+  if (!reports.length) {
+    const message = document.createElement('p');
+    message.className = 'coverage-missing';
+    message.textContent = 'Upload a call report to unlock trends and loan mix insights.';
+    container.append(message);
+    return;
+  }
+
+  reports.sort((a, b) => formatPeriodValue(a.periodYear, a.periodMonth) - formatPeriodValue(b.periodYear, b.periodMonth));
+
+  const metricConfigs = [
+    { key: 'assetSize', label: 'Total assets', accessor: (report) => report.assetSize, formatter: currencyFormatter.format },
+    {
+      key: 'netInterestIncome',
+      label: 'Net interest income',
+      accessor: (report) => report.netInterestIncome,
+      formatter: currencyFormatter.format
+    },
+    {
+      key: 'totalNonInterestIncome',
+      label: 'Total non-interest income',
+      accessor: (report) => report.totalNonInterestIncome,
+      formatter: currencyFormatter.format
+    },
+    {
+      key: 'netIncomeYtd',
+      label: 'Net income YTD',
+      accessor: (report) => report.netIncomeYtd,
+      formatter: currencyFormatter.format
+    },
+    {
+      key: 'averageMonthlyNetIncome',
+      label: 'Avg monthly net income',
+      accessor: (report) => report.averageMonthlyNetIncome,
+      formatter: currencyFormatter.format
+    },
+    {
+      key: 'totalLoansAmount',
+      label: 'Total loans',
+      accessor: (report) => report.totalLoans?.amount,
+      formatter: currencyFormatter.format
+    },
+    {
+      key: 'totalLoansCount',
+      label: 'Total loans (count)',
+      accessor: (report) => report.totalLoans?.count,
+      formatter: (value) => integerFormatter.format(value)
+    },
+    {
+      key: 'loansGrantedYtd',
+      label: 'Loans granted YTD',
+      accessor: (report) => report.loansGrantedYtd?.amount,
+      formatter: currencyFormatter.format
+    },
+    {
+      key: 'monthlyLoansGenerated',
+      label: 'Monthly loans generated',
+      accessor: (report) => report.loansGrantedYtd?.monthlyAverage,
+      formatter: currencyFormatter.format
+    },
+    {
+      key: 'outstandingIndirectLoans',
+      label: 'Outstanding indirect loans',
+      accessor: (report) => report.outstandingIndirectLoans,
+      formatter: currencyFormatter.format
+    }
+  ];
+
+  const fragment = document.createDocumentFragment();
+
+  metricConfigs.forEach((config) => {
+    const values = reports.map((report) => config.accessor(report)).filter((value) => Number.isFinite(value));
+    if (!values.length) return;
+
+    const latestValue = values[values.length - 1];
+    const card = document.createElement('div');
+    card.className = 'metric-card';
+
+    const label = document.createElement('p');
+    label.className = 'metric-card__label';
+    label.textContent = config.label;
+
+    const valueEl = document.createElement('p');
+    valueEl.className = 'metric-card__value';
+    valueEl.textContent = config.formatter(latestValue);
+
+    card.append(label, valueEl);
+
+    if (values.length > 1) {
+      const sparkline = createSparkline(values);
+      if (sparkline) {
+        card.append(sparkline);
+      }
+    }
+
+    fragment.append(card);
+  });
+
+  container.append(fragment);
+
+  const latestReport = reports[reports.length - 1];
+  const segments = Array.isArray(latestReport?.loanSegments) ? latestReport.loanSegments : [];
+  if (segments.length) {
+    const segmentTable = document.createElement('table');
+    segmentTable.className = 'data-table';
+
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+    ['Loan segment', 'Count', 'Amount'].forEach((heading, index) => {
+      const th = document.createElement('th');
+      th.scope = 'col';
+      th.textContent = heading;
+      if (index > 0) {
+        th.className = 'numeric';
+      }
+      headRow.append(th);
+    });
+    thead.append(headRow);
+
+    const tbody = document.createElement('tbody');
+    segments.forEach((segment) => {
+      const row = document.createElement('tr');
+
+      const labelCell = document.createElement('td');
+      labelCell.textContent = segment.label;
+
+      const countCell = document.createElement('td');
+      countCell.className = 'numeric';
+      countCell.textContent = Number.isFinite(segment.count) ? integerFormatter.format(segment.count) : '—';
+
+      const amountCell = document.createElement('td');
+      amountCell.className = 'numeric';
+      amountCell.textContent = Number.isFinite(segment.amount)
+        ? currencyFormatter.format(segment.amount)
+        : '—';
+
+      row.append(labelCell, countCell, amountCell);
+      tbody.append(row);
+    });
+
+    segmentTable.append(thead, tbody);
+    container.append(segmentTable);
+  }
+}
+
+function renderCallReportCoverage() {
+  const body = selectors.callReportCoverage;
+  if (!body) return;
+
+  body.replaceChildren();
+
+  if (!appState.accountSelectionId) {
+    const row = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = 5;
+    cell.className = 'coverage-missing';
+    cell.textContent = 'Select a credit union to see reporting coverage.';
+    row.append(cell);
+    body.append(row);
+    return;
+  }
+
+  const reports = Array.isArray(appState.callReports) ? appState.callReports : [];
+  const coverageMap = new Map();
+  reports.forEach((report) => {
+    if (!report?.periodYear || !report?.periodMonth) return;
+    const quarter = Math.min(4, Math.ceil(report.periodMonth / 3));
+    const yearCoverage = coverageMap.get(report.periodYear) || { 1: false, 2: false, 3: false, 4: false };
+    yearCoverage[quarter] = true;
+    coverageMap.set(report.periodYear, yearCoverage);
+  });
+
+  const startYear = 2020;
+  const currentYear = new Date().getFullYear();
+
+  for (let year = currentYear; year >= startYear; year -= 1) {
+    const row = document.createElement('tr');
+    const yearCell = document.createElement('th');
+    yearCell.scope = 'row';
+    yearCell.textContent = year;
+    row.append(yearCell);
+
+    const yearCoverage = coverageMap.get(year) || { 1: false, 2: false, 3: false, 4: false };
+    [1, 2, 3, 4].forEach((quarter) => {
+      const cell = document.createElement('td');
+      cell.className = 'numeric';
+      const hasReport = yearCoverage[quarter];
+      cell.textContent = hasReport ? '✓' : '—';
+      cell.classList.add(hasReport ? 'coverage-complete' : 'coverage-missed');
+      row.append(cell);
+    });
+
+    body.append(row);
+  }
+}
+
+function createSparkline(values) {
+  const filtered = values.filter((value) => Number.isFinite(value));
+  if (filtered.length < 2) return null;
+
+  const width = 160;
+  const height = 60;
+  const min = Math.min(...filtered);
+  const max = Math.max(...filtered);
+  const range = max - min || 1;
+
+  const points = filtered
+    .map((value, index) => {
+      const x = (index / (filtered.length - 1)) * width;
+      const y = height - ((value - min) / range) * height;
+      return `${x},${y}`;
+    })
+    .join(' ');
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.setAttribute('class', 'sparkline');
+
+  const baseline = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  baseline.setAttribute('x1', '0');
+  baseline.setAttribute('y1', height.toString());
+  baseline.setAttribute('x2', width.toString());
+  baseline.setAttribute('y2', height.toString());
+  baseline.setAttribute('stroke', 'rgba(255,255,255,0.12)');
+  baseline.setAttribute('stroke-width', '1');
+
+  const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  polyline.setAttribute('fill', 'none');
+  polyline.setAttribute('stroke', 'var(--accent)');
+  polyline.setAttribute('stroke-width', '2');
+  polyline.setAttribute('points', points);
+
+  svg.append(baseline, polyline);
+  return svg;
 }
 
 async function saveProspectFromRow(row, creditUnionId) {

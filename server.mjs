@@ -154,7 +154,28 @@ const callReportSchema = new mongoose.Schema(
     periodYear: { type: Number, required: true },
     periodMonth: { type: Number, required: true },
     assetSize: { type: Number, default: null },
+    netInterestIncome: { type: Number, default: null },
+    totalNonInterestIncome: { type: Number, default: null },
+    netIncomeYtd: { type: Number, default: null },
+    averageMonthlyNetIncome: { type: Number, default: null },
     indirectLoans: { type: Number, default: null },
+    outstandingIndirectLoans: { type: Number, default: null },
+    totalLoans: {
+      count: { type: Number, default: null },
+      amount: { type: Number, default: null }
+    },
+    loansGrantedYtd: {
+      count: { type: Number, default: null },
+      amount: { type: Number, default: null },
+      monthlyAverage: { type: Number, default: null }
+    },
+    loanSegments: [
+      {
+        label: { type: String, required: true },
+        count: { type: Number, default: null },
+        amount: { type: Number, default: null }
+      }
+    ],
     loanData: [
       {
         label: { type: String, required: true },
@@ -1400,8 +1421,24 @@ app.post('/api/call-reports', upload.single('file'), async (req, res, next) => {
     const periodYear = reportDate.getFullYear();
     const periodMonth = reportDate.getMonth() + 1;
 
-    const assetSize = extractNumberByLabels(text, ['total assets', 'assets']);
+    const assetSize = extractNumberNearLabel(pages[5] ?? text, 'TOTAL ASSETS');
+    const netInterestIncome = extractNumberNearLabel(pages[7] ?? text, 'NET INTEREST INCOME');
+    const totalNonInterestIncome = extractNumberNearLabel(pages[8] ?? text, 'TOTAL NON-INTEREST INCOME');
+    const netIncomeYtd = extractNumberNearLabel(pages[8] ?? text, 'NET INCOME YEAR-TO-DATE');
+    const averageMonthlyNetIncome =
+      netIncomeYtd && periodMonth
+        ? Number.isFinite(netIncomeYtd / periodMonth)
+          ? netIncomeYtd / periodMonth
+          : null
+        : null;
+
+    const { segments, totals } = extractLoanSegments(pages[9] ?? text, periodMonth);
+
     const indirectLoans = extractNumberByLabels(text, ['indirect']);
+    const outstandingIndirectLoans = extractNumberNearLabel(
+      pages[13] ?? text,
+      'TOTAL OUTSTANDING INDIRECT LOANS'
+    );
     const loanData = extractLoanData(pages[5] ?? pages[0] ?? text);
 
     const created = await CallReport.create({
@@ -1410,7 +1447,15 @@ app.post('/api/call-reports', upload.single('file'), async (req, res, next) => {
       periodYear,
       periodMonth,
       assetSize,
+      netInterestIncome,
+      totalNonInterestIncome,
+      netIncomeYtd,
+      averageMonthlyNetIncome,
       indirectLoans,
+      outstandingIndirectLoans,
+      totalLoans: totals.totalLoans,
+      loansGrantedYtd: totals.loansGrantedYtd,
+      loanSegments: segments,
       loanData,
       sourceName: req.file.originalname ?? null
     });
@@ -1519,6 +1564,91 @@ function extractNumberByLabels(text, labels = []) {
   return null;
 }
 
+function extractNumberNearLabel(text, label) {
+  if (!text || !label) return null;
+  const lower = text.toLowerCase();
+  const index = lower.lastIndexOf(label.toLowerCase());
+  if (index < 0) return extractNumberByLabels(text, [label]);
+
+  const start = Math.max(0, index - 120);
+  const end = Math.min(text.length, index + 220);
+  const snippet = text.slice(start, end);
+  const figures = parseNumbersFromLine(snippet);
+  if (!figures.length) return null;
+  return figures.reduce((best, value) => {
+    if (best === null || Math.abs(value) > Math.abs(best)) {
+      return value;
+    }
+    return best;
+  }, null);
+}
+
+function extractLoanSegments(pageText, monthsProcessed = null) {
+  const totals = {
+    totalLoans: { count: null, amount: null },
+    loansGrantedYtd: { count: null, amount: null, monthlyAverage: null }
+  };
+
+  if (!pageText) return { segments: [], totals };
+
+  const rawNumbers = pageText.match(/-?[\d,]+(?:\.\d+)?/g) || [];
+  const values = rawNumbers.map((value) => Number.parseFloat(value.replace(/,/g, '')));
+
+  let countsStart = -1;
+  for (let i = 0; i < values.length - 20; i += 1) {
+    const slice = values.slice(i, i + 10);
+    const hasCounts = slice.every((value) => Number.isInteger(value)) && slice.some((value) => value >= 500);
+    const amountsWindow = values.slice(i + 10, i + 18);
+    const hasAmounts = amountsWindow.some((value) => Math.abs(value) > 1_000_000);
+    if (hasCounts && hasAmounts) {
+      countsStart = i;
+      break;
+    }
+  }
+
+  if (countsStart < 0) {
+    return { segments: [], totals };
+  }
+
+  const counts = values.slice(countsStart, countsStart + 10).map((value) => (Number.isFinite(value) ? value : null));
+  const amounts = values.slice(countsStart + 10, countsStart + 18).map((value) => (Number.isFinite(value) ? value : null));
+
+  const firstLienAmount = Number.isFinite(values[countsStart + 42]) ? values[countsStart + 42] : null;
+  const secondLienAmount = Number.isFinite(values[countsStart + 43]) ? values[countsStart + 43] : null;
+
+  const segments = [
+    { label: 'Credit Cards', count: counts[0] ?? null, amount: amounts[0] ?? null },
+    { label: 'Other Unsecured/LOC', count: counts[2] ?? null, amount: amounts[2] ?? null },
+    { label: 'New Vehicle Loans', count: counts[3] ?? null, amount: amounts[3] ?? null },
+    { label: 'Used Vehicle Loans', count: counts[4] ?? null, amount: amounts[4] ?? null },
+    { label: 'Other Secured Non-RE/LOC', count: counts[6] ?? null, amount: amounts[6] ?? null },
+    { label: 'First Lien Real Estate', count: counts[7] ?? null, amount: firstLienAmount },
+    { label: '2nd Lien Real Estate', count: counts[8] ?? null, amount: secondLienAmount }
+  ];
+
+  const totalLoansCount = values[countsStart + 22];
+  const totalLoansAmount = values[countsStart + 25];
+  totals.totalLoans = {
+    count: Number.isFinite(totalLoansCount) ? totalLoansCount : null,
+    amount: Number.isFinite(totalLoansAmount) ? totalLoansAmount : null
+  };
+
+  const loansGrantedCount = values[countsStart + 26];
+  const loansGrantedAmount = values[countsStart + 27];
+  const monthlyAverage =
+    Number.isFinite(loansGrantedAmount) && monthsProcessed
+      ? loansGrantedAmount / monthsProcessed
+      : null;
+
+  totals.loansGrantedYtd = {
+    count: Number.isFinite(loansGrantedCount) ? loansGrantedCount : null,
+    amount: Number.isFinite(loansGrantedAmount) ? loansGrantedAmount : null,
+    monthlyAverage: Number.isFinite(monthlyAverage) ? monthlyAverage : null
+  };
+
+  return { segments, totals };
+}
+
 function extractLoanData(pageText) {
   if (!pageText) return [];
   const lines = pageText
@@ -1559,7 +1689,21 @@ function formatCallReportPayload(report, creditUnionName = null) {
     periodYear: report.periodYear,
     periodMonth: report.periodMonth,
     assetSize: report.assetSize,
+    netInterestIncome: report.netInterestIncome ?? null,
+    totalNonInterestIncome: report.totalNonInterestIncome ?? null,
+    netIncomeYtd: report.netIncomeYtd ?? null,
+    averageMonthlyNetIncome: report.averageMonthlyNetIncome ?? null,
     indirectLoans: report.indirectLoans,
+    outstandingIndirectLoans: report.outstandingIndirectLoans ?? null,
+    totalLoans: report.totalLoans ?? { count: null, amount: null },
+    loansGrantedYtd: report.loansGrantedYtd ?? { count: null, amount: null, monthlyAverage: null },
+    loanSegments: Array.isArray(report.loanSegments)
+      ? report.loanSegments.map((segment) => ({
+          label: segment.label,
+          count: Number.isFinite(segment.count) ? segment.count : null,
+          amount: Number.isFinite(segment.amount) ? segment.amount : null
+        }))
+      : [],
     loanData: Array.isArray(report.loanData)
       ? report.loanData.map((row) => ({ label: row.label, figures: row.figures ?? [] }))
       : [],
