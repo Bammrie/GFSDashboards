@@ -1421,10 +1421,10 @@ app.post('/api/call-reports', upload.single('file'), async (req, res, next) => {
     const periodYear = reportDate.getFullYear();
     const periodMonth = reportDate.getMonth() + 1;
 
-    const assetSize = extractNumberNearLabel(pages[5] ?? text, 'TOTAL ASSETS');
-    const netInterestIncome = extractNumberNearLabel(pages[7] ?? text, 'NET INTEREST INCOME');
-    const totalNonInterestIncome = extractNumberNearLabel(pages[8] ?? text, 'TOTAL NON-INTEREST INCOME');
-    const netIncomeYtd = extractNumberNearLabel(pages[8] ?? text, 'NET INCOME YEAR-TO-DATE');
+    const assetSize = extractLargestNumber(pages[5] ?? text);
+    const netInterestIncome = extractNetInterestIncome(pages[7] ?? text);
+    const totalNonInterestIncome = extractTotalNonInterestIncome(pages[8] ?? text);
+    const netIncomeYtd = extractNetIncomeYtd(pages[8] ?? text);
     const averageMonthlyNetIncome =
       netIncomeYtd && periodMonth
         ? Number.isFinite(netIncomeYtd / periodMonth)
@@ -1437,7 +1437,8 @@ app.post('/api/call-reports', upload.single('file'), async (req, res, next) => {
     const indirectLoans = extractNumberByLabels(text, ['indirect']);
     const outstandingIndirectLoans = extractNumberNearLabel(
       pages[13] ?? text,
-      'TOTAL OUTSTANDING INDIRECT LOANS'
+      'TOTAL OUTSTANDING INDIRECT LOANS',
+      'last'
     );
     const loanData = extractLoanData(pages[5] ?? pages[0] ?? text);
 
@@ -1564,23 +1565,73 @@ function extractNumberByLabels(text, labels = []) {
   return null;
 }
 
-function extractNumberNearLabel(text, label) {
+function extractNumberNearLabel(text, label, pick = 'largest') {
   if (!text || !label) return null;
   const lower = text.toLowerCase();
   const index = lower.lastIndexOf(label.toLowerCase());
   if (index < 0) return extractNumberByLabels(text, [label]);
 
-  const start = Math.max(0, index - 120);
-  const end = Math.min(text.length, index + 220);
-  const snippet = text.slice(start, end);
+  const snippet = text.slice(index);
   const figures = parseNumbersFromLine(snippet);
   if (!figures.length) return null;
+
+  if (pick === 'first') {
+    return figures[0];
+  }
+
+  if (pick === 'last') {
+    return figures[figures.length - 1];
+  }
+
   return figures.reduce((best, value) => {
     if (best === null || Math.abs(value) > Math.abs(best)) {
       return value;
     }
     return best;
   }, null);
+}
+
+function parseNumericToken(token) {
+  if (!token) return null;
+  const cleaned = token.replace(/[^\d\-.]/g, '');
+  if (!cleaned) return null;
+  const number = Number.parseFloat(cleaned.replace(/,/g, ''));
+  return Number.isFinite(number) ? number : null;
+}
+
+function extractLargestNumber(text) {
+  if (!text) return null;
+  const numbers = parseNumbersFromLine(text);
+  if (!numbers.length) return null;
+  return numbers.reduce((max, value) => (Math.abs(value) > Math.abs(max) ? value : max), numbers[0]);
+}
+
+function extractNetInterestIncome(pageText) {
+  if (!pageText) return null;
+  const numbers = parseNumbersFromLine(pageText.slice(pageText.toLowerCase().lastIndexOf('net interest income')));
+  const millionPlus = numbers.filter((value) => Math.abs(value) >= 1_000_000);
+  if (millionPlus.length) {
+    return millionPlus[millionPlus.length - 1];
+  }
+  return numbers.length ? numbers[numbers.length - 1] : null;
+}
+
+function extractTotalNonInterestIncome(pageText) {
+  if (!pageText) return null;
+  const numbers = parseNumbersFromLine(
+    pageText.slice(pageText.toLowerCase().lastIndexOf('total non-interest income'))
+  );
+  const millionPlus = numbers.filter((value) => Math.abs(value) >= 1_000_000);
+  if (millionPlus.length) {
+    return millionPlus[0];
+  }
+  return numbers.find((value) => Math.abs(value) >= 1_000) ?? null;
+}
+
+function extractNetIncomeYtd(pageText) {
+  if (!pageText) return null;
+  const numbers = parseNumbersFromLine(pageText.slice(pageText.toLowerCase().lastIndexOf('net income year-to-date')));
+  return numbers.find((value) => Math.abs(value) >= 100_000) ?? numbers.find((value) => Math.abs(value) >= 1_000) ?? null;
 }
 
 function extractLoanSegments(pageText, monthsProcessed = null) {
@@ -1591,60 +1642,84 @@ function extractLoanSegments(pageText, monthsProcessed = null) {
 
   if (!pageText) return { segments: [], totals };
 
-  const rawNumbers = pageText.match(/-?[\d,]+(?:\.\d+)?/g) || [];
-  const values = rawNumbers.map((value) => Number.parseFloat(value.replace(/,/g, '')));
+  const startIndex = pageText.indexOf('SEPTEMBER');
+  const content = startIndex >= 0 ? pageText.slice(startIndex) : pageText;
+  const tokens = content.split(/\s+/).filter(Boolean);
+  const firstDollarIndex = tokens.findIndex((token) => token.startsWith('$'));
 
-  let countsStart = -1;
-  for (let i = 0; i < values.length - 20; i += 1) {
-    const slice = values.slice(i, i + 10);
-    const hasCounts = slice.every((value) => Number.isInteger(value)) && slice.some((value) => value >= 500);
-    const amountsWindow = values.slice(i + 10, i + 18);
-    const hasAmounts = amountsWindow.some((value) => Math.abs(value) > 1_000_000);
-    if (hasCounts && hasAmounts) {
-      countsStart = i;
-      break;
-    }
-  }
+  const countTokens = (firstDollarIndex >= 0 ? tokens.slice(0, firstDollarIndex) : tokens).filter((token) =>
+    /^[-\d,]+$/.test(token)
+  );
+  const numericCounts = countTokens
+    .map((token) => parseNumericToken(token))
+    .filter((value) => Number.isFinite(value));
+  const trimmedCounts = numericCounts.slice(-10);
 
-  if (countsStart < 0) {
-    return { segments: [], totals };
-  }
+  const amountTokens = firstDollarIndex >= 0 ? tokens.slice(firstDollarIndex) : [];
+  const numericAmounts = amountTokens
+    .filter((token) => token.startsWith('$'))
+    .map((token) => parseNumericToken(token))
+    .filter((value) => Number.isFinite(value));
 
-  const counts = values.slice(countsStart, countsStart + 10).map((value) => (Number.isFinite(value) ? value : null));
-  const amounts = values.slice(countsStart + 10, countsStart + 18).map((value) => (Number.isFinite(value) ? value : null));
+  const postDollarCounts = amountTokens
+    .filter((token) => /^[-\d,]+$/.test(token))
+    .map((token) => parseNumericToken(token))
+    .filter((value) => Number.isFinite(value) && value < 20000);
 
-  const firstLienAmount = Number.isFinite(values[countsStart + 42]) ? values[countsStart + 42] : null;
-  const secondLienAmount = Number.isFinite(values[countsStart + 43]) ? values[countsStart + 43] : null;
+  const totalLoansCount = postDollarCounts.find((value) => value >= 1000) ?? null;
+  const loansGrantedCount = postDollarCounts.find((value) => value >= 1000 && value !== totalLoansCount) ?? null;
 
-  const segments = [
-    { label: 'Credit Cards', count: counts[0] ?? null, amount: amounts[0] ?? null },
-    { label: 'Other Unsecured/LOC', count: counts[2] ?? null, amount: amounts[2] ?? null },
-    { label: 'New Vehicle Loans', count: counts[3] ?? null, amount: amounts[3] ?? null },
-    { label: 'Used Vehicle Loans', count: counts[4] ?? null, amount: amounts[4] ?? null },
-    { label: 'Other Secured Non-RE/LOC', count: counts[6] ?? null, amount: amounts[6] ?? null },
-    { label: 'First Lien Real Estate', count: counts[7] ?? null, amount: firstLienAmount },
-    { label: '2nd Lien Real Estate', count: counts[8] ?? null, amount: secondLienAmount }
-  ];
-
-  const totalLoansCount = values[countsStart + 22];
-  const totalLoansAmount = values[countsStart + 25];
   totals.totalLoans = {
-    count: Number.isFinite(totalLoansCount) ? totalLoansCount : null,
-    amount: Number.isFinite(totalLoansAmount) ? totalLoansAmount : null
+    count: totalLoansCount,
+    amount: Number.isFinite(numericAmounts[10]) ? numericAmounts[10] : null
   };
 
-  const loansGrantedCount = values[countsStart + 26];
-  const loansGrantedAmount = values[countsStart + 27];
   const monthlyAverage =
-    Number.isFinite(loansGrantedAmount) && monthsProcessed
-      ? loansGrantedAmount / monthsProcessed
-      : null;
+    Number.isFinite(numericAmounts[11]) && monthsProcessed ? numericAmounts[11] / monthsProcessed : null;
 
   totals.loansGrantedYtd = {
-    count: Number.isFinite(loansGrantedCount) ? loansGrantedCount : null,
-    amount: Number.isFinite(loansGrantedAmount) ? loansGrantedAmount : null,
+    count: loansGrantedCount,
+    amount: Number.isFinite(numericAmounts[11]) ? numericAmounts[11] : null,
     monthlyAverage: Number.isFinite(monthlyAverage) ? monthlyAverage : null
   };
+
+  const segments = [
+    {
+      label: 'Credit Cards',
+      count: trimmedCounts[0] ?? null,
+      amount: Number.isFinite(numericAmounts[0]) ? numericAmounts[0] : null
+    },
+    {
+      label: 'Other Unsecured/LOC',
+      count: trimmedCounts[2] ?? null,
+      amount: Number.isFinite(numericAmounts[2]) ? numericAmounts[2] : null
+    },
+    {
+      label: 'New Vehicle Loans',
+      count: trimmedCounts[3] ?? null,
+      amount: Number.isFinite(numericAmounts[3]) ? numericAmounts[3] : null
+    },
+    {
+      label: 'Used Vehicle Loans',
+      count: trimmedCounts[4] ?? null,
+      amount: Number.isFinite(numericAmounts[4]) ? numericAmounts[4] : null
+    },
+    {
+      label: 'Other Secured Non-RE/LOC',
+      count: trimmedCounts[6] ?? null,
+      amount: Number.isFinite(numericAmounts[6]) ? numericAmounts[6] : null
+    },
+    {
+      label: 'First Lien Real Estate',
+      count: trimmedCounts[7] ?? null,
+      amount: Number.isFinite(numericAmounts.at(-2)) ? numericAmounts.at(-2) : null
+    },
+    {
+      label: '2nd Lien Real Estate',
+      count: trimmedCounts[8] ?? null,
+      amount: Number.isFinite(numericAmounts.at(-1)) ? numericAmounts.at(-1) : null
+    }
+  ];
 
   return { segments, totals };
 }
@@ -1673,9 +1748,14 @@ function extractLoanData(pageText) {
 }
 
 function parseNumbersFromLine(line) {
-  const matches = line.match(/-?[\d,]+(?:\.\d+)?/g) || [];
+  const matches = line.match(/\(?-?[\d,]+(?:\.\d+)?\)?/g) || [];
   return matches
-    .map((value) => Number.parseFloat(value.replace(/,/g, '')))
+    .map((value) => {
+      const numeric = value.replace(/[()]/g, '');
+      const parsed = Number.parseFloat(numeric.replace(/,/g, ''));
+      if (!Number.isFinite(parsed)) return null;
+      return value.trim().startsWith('(') ? -parsed : parsed;
+    })
     .filter((value) => Number.isFinite(value));
 }
 
