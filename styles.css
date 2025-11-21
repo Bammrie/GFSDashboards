@@ -1109,7 +1109,7 @@ input[type='month']:focus-visible {
 }
 
 .account-directory__table {
-  min-width: 940px;
+  min-width: 1100px;
 }
 
 .status-chip {

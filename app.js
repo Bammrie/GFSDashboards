@@ -26,6 +26,12 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2
 });
+const currencyFormatterNoCents = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0
+});
 const integerFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 
 const selectors = {
@@ -894,6 +900,23 @@ function getLatestCallReportForCreditUnion(creditUnionId) {
   return appState.latestCallReports.find((report) => report.creditUnionId === creditUnionId) || null;
 }
 
+function formatLatestMonetaryLabel(latestReport, value, formatter = currencyFormatterNoCents) {
+  if (!latestReport) {
+    return 'No call report yet';
+  }
+
+  if (Number.isFinite(value)) {
+    const periodLabel =
+      latestReport?.periodYear && latestReport?.periodMonth
+        ? ` (${formatPeriodLabel(latestReport.periodYear, latestReport.periodMonth)})`
+        : '';
+
+    return `${formatter.format(value)}${periodLabel}`;
+  }
+
+  return 'Call report uploaded';
+}
+
 function renderAccountDirectory() {
   const body = selectors.accountDirectoryBody;
   if (!body) return;
@@ -928,15 +951,9 @@ function renderAccountDirectory() {
     totalInactive += counts.none;
 
     const latestReport = getLatestCallReportForCreditUnion(creditUnion.id);
-    const assetLabel = Number.isFinite(latestReport?.assetSize)
-      ? `${currencyFormatter.format(latestReport.assetSize)}${
-          latestReport?.periodYear && latestReport?.periodMonth
-            ? ` (${formatPeriodLabel(latestReport.periodYear, latestReport.periodMonth)})`
-            : ''
-        }`
-      : latestReport
-        ? 'Call report uploaded'
-        : 'No call report yet';
+    const consumerLoanTotal = latestReport ? getConsumerLoanTotal(latestReport) : null;
+    const assetLabel = formatLatestMonetaryLabel(latestReport, latestReport?.assetSize);
+    const consumerLabel = formatLatestMonetaryLabel(latestReport, consumerLoanTotal);
 
     const row = document.createElement('tr');
 
@@ -988,7 +1005,11 @@ function renderAccountDirectory() {
     assetCell.className = 'numeric';
     assetCell.textContent = assetLabel;
 
-    row.append(nameCell, activeCell, prospectCell, inactiveCell, assetCell);
+    const consumerCell = document.createElement('td');
+    consumerCell.className = 'numeric';
+    consumerCell.textContent = consumerLabel;
+
+    row.append(nameCell, activeCell, prospectCell, inactiveCell, assetCell, consumerCell);
     fragment.append(row);
   });
 
