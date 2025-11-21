@@ -39,6 +39,10 @@ const selectors = {
   accountStatusSummary: document.getElementById('account-status-summary'),
   accountDetailTitle: document.getElementById('account-detail-title'),
   accountEmptyState: document.getElementById('account-empty-state'),
+  accountDirectoryBody: document.getElementById('account-directory-body'),
+  accountDirectorySummary: document.getElementById('account-directory-summary'),
+  accountDirectoryEmpty: document.getElementById('account-directory-empty'),
+  accountDirectoryTable: document.getElementById('account-directory-table'),
   openCallReportBtn: document.getElementById('open-call-report-btn'),
   callReportDialog: document.getElementById('call-report-dialog'),
   closeCallReportDialogBtn: document.getElementById('close-call-report-dialog'),
@@ -148,6 +152,7 @@ const appState = {
   reportingWindow: { start: null, end: null },
   selectedCreditUnion: 'all',
   accountSelectionId: null,
+  latestCallReports: [],
   currentStreamId: null,
   currentStreamDetail: null,
   currentStreamMonths: [],
@@ -405,6 +410,15 @@ function getDetailCreditUnionNameFromQuery() {
   return value ? value : null;
 }
 
+function getAccountSelectionFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const value = params.get('creditUnionId');
+  if (!value || value === 'all') {
+    return null;
+  }
+  return value;
+}
+
 function isValidPeriodValue(value) {
   return typeof value === 'string' && /^\d{4}-\d{2}$/.test(value);
 }
@@ -479,20 +493,17 @@ function renderCreditUnionOptions() {
       appState.accountSelectionId = null;
     }
 
-    if (!appState.accountSelectionId && sortedCreditUnions.length) {
-      appState.accountSelectionId = sortedCreditUnions[0].id;
-    }
-
-    if (appState.accountSelectionId) {
-      accountSelect.value = appState.accountSelectionId;
-      accountSelect.removeAttribute('disabled');
-    } else {
+    if (!sortedCreditUnions.length) {
       accountSelect.value = '';
       accountSelect.setAttribute('disabled', 'disabled');
+    } else {
+      accountSelect.removeAttribute('disabled');
+      accountSelect.value = appState.accountSelectionId || '';
     }
   }
 
   renderAccountWorkspace();
+  renderAccountDirectory();
 }
 
 function renderIncomeStreamList() {
@@ -859,6 +870,133 @@ function getAccountRowsForCreditUnion(creditUnionId) {
       prospectStream
     };
   });
+}
+
+function getAccountStatusCounts(creditUnionId) {
+  const rows = getAccountRowsForCreditUnion(creditUnionId);
+  return rows.reduce(
+    (counts, row) => {
+      if (row.status === 'active') {
+        counts.active += 1;
+      } else if (row.status === 'prospect') {
+        counts.prospect += 1;
+      } else {
+        counts.none += 1;
+      }
+      return counts;
+    },
+    { active: 0, prospect: 0, none: 0 }
+  );
+}
+
+function getLatestCallReportForCreditUnion(creditUnionId) {
+  if (!creditUnionId) return null;
+  return appState.latestCallReports.find((report) => report.creditUnionId === creditUnionId) || null;
+}
+
+function renderAccountDirectory() {
+  const body = selectors.accountDirectoryBody;
+  if (!body) return;
+
+  const emptyState = selectors.accountDirectoryEmpty;
+  const tableContainer = selectors.accountDirectoryTable;
+  const summary = selectors.accountDirectorySummary;
+
+  const creditUnions = appState.creditUnions.slice().sort((a, b) => a.name.localeCompare(b.name));
+
+  body.replaceChildren();
+
+  if (!creditUnions.length) {
+    if (emptyState) emptyState.hidden = false;
+    if (tableContainer) tableContainer.hidden = true;
+    if (summary) summary.textContent = '';
+    return;
+  }
+
+  if (emptyState) emptyState.hidden = true;
+  if (tableContainer) tableContainer.hidden = false;
+
+  const fragment = document.createDocumentFragment();
+  let totalActive = 0;
+  let totalProspect = 0;
+  let totalInactive = 0;
+
+  creditUnions.forEach((creditUnion) => {
+    const counts = getAccountStatusCounts(creditUnion.id);
+    totalActive += counts.active;
+    totalProspect += counts.prospect;
+    totalInactive += counts.none;
+
+    const latestReport = getLatestCallReportForCreditUnion(creditUnion.id);
+    const assetLabel = Number.isFinite(latestReport?.assetSize)
+      ? `${currencyFormatter.format(latestReport.assetSize)}${
+          latestReport?.periodYear && latestReport?.periodMonth
+            ? ` (${formatPeriodLabel(latestReport.periodYear, latestReport.periodMonth)})`
+            : ''
+        }`
+      : latestReport
+        ? 'Call report uploaded'
+        : 'No call report yet';
+
+    const row = document.createElement('tr');
+
+    const nameCell = document.createElement('td');
+    const nameLink = document.createElement('a');
+    nameLink.href = `account-workspace.html?creditUnionId=${encodeURIComponent(creditUnion.id)}`;
+    nameLink.className = 'table-link';
+    nameLink.textContent = creditUnion.name;
+    nameLink.title = 'Open account workspace';
+    nameCell.append(nameLink);
+
+    const activeCell = document.createElement('td');
+    const activeChip = document.createElement('span');
+    activeChip.className = 'status-chip status-chip--green';
+    const activeDot = document.createElement('span');
+    activeDot.className = 'status-chip__dot';
+    const activeCount = document.createElement('span');
+    activeCount.textContent = integerFormatter.format(counts.active);
+    const activeLabel = document.createElement('span');
+    activeLabel.textContent = 'green';
+    activeChip.append(activeDot, activeCount, activeLabel);
+    activeCell.append(activeChip);
+
+    const prospectCell = document.createElement('td');
+    const prospectChip = document.createElement('span');
+    prospectChip.className = 'status-chip status-chip--yellow';
+    const prospectDot = document.createElement('span');
+    prospectDot.className = 'status-chip__dot';
+    const prospectCount = document.createElement('span');
+    prospectCount.textContent = integerFormatter.format(counts.prospect);
+    const prospectLabel = document.createElement('span');
+    prospectLabel.textContent = 'yellow';
+    prospectChip.append(prospectDot, prospectCount, prospectLabel);
+    prospectCell.append(prospectChip);
+
+    const inactiveCell = document.createElement('td');
+    const inactiveChip = document.createElement('span');
+    inactiveChip.className = 'status-chip status-chip--red';
+    const inactiveDot = document.createElement('span');
+    inactiveDot.className = 'status-chip__dot';
+    const inactiveCount = document.createElement('span');
+    inactiveCount.textContent = integerFormatter.format(counts.none);
+    const inactiveLabel = document.createElement('span');
+    inactiveLabel.textContent = 'red';
+    inactiveChip.append(inactiveDot, inactiveCount, inactiveLabel);
+    inactiveCell.append(inactiveChip);
+
+    const assetCell = document.createElement('td');
+    assetCell.className = 'numeric';
+    assetCell.textContent = assetLabel;
+
+    row.append(nameCell, activeCell, prospectCell, inactiveCell, assetCell);
+    fragment.append(row);
+  });
+
+  body.append(fragment);
+
+  if (summary) {
+    summary.textContent = `${creditUnions.length} account${creditUnions.length === 1 ? '' : 's'} • ${totalActive} green • ${totalProspect} yellow • ${totalInactive} red`;
+  }
 }
 
 function renderAccountWorkspace() {
@@ -2030,6 +2168,7 @@ async function loadIncomeStreams() {
   renderCreditUnionOptions();
   renderIncomeStreamList();
   renderProspectAccountList();
+  renderAccountDirectory();
 }
 
 async function loadProspectStreams() {
@@ -2046,6 +2185,21 @@ async function loadProspectStreams() {
     updatedAt: stream.updatedAt ? new Date(stream.updatedAt).getTime() : 0
   }));
   renderAccountWorkspace();
+  renderAccountDirectory();
+}
+
+async function loadLatestCallReports() {
+  if (!selectors.accountDirectoryBody) return;
+
+  try {
+    const data = await request('/api/call-reports/latest');
+    appState.latestCallReports = Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error(error);
+    appState.latestCallReports = [];
+  }
+
+  renderAccountDirectory();
 }
 
 async function loadCallReports(creditUnionId) {
@@ -3272,6 +3426,7 @@ selectors.callReportFileInput?.addEventListener('change', async (event) => {
     await uploadCallReport(file, appState.accountSelectionId);
     setCallReportFeedback('Call report captured and stored.', 'success');
     await loadCallReports(appState.accountSelectionId);
+    await loadLatestCallReports();
   } catch (error) {
     setCallReportFeedback(error.message, 'error');
   } finally {
@@ -3301,6 +3456,7 @@ selectors.callReportList?.addEventListener('click', async (event) => {
     await deleteCallReport(reportId);
     setCallReportFeedback('Call report removed.', 'success');
     await loadCallReports(appState.accountSelectionId);
+    await loadLatestCallReports();
   } catch (error) {
     setCallReportFeedback(error.message, 'error');
   } finally {
@@ -3393,6 +3549,7 @@ async function bootstrap() {
   appState.detailCreditUnionName = getDetailCreditUnionNameFromQuery();
   appState.detailStart = getDetailStartFromQuery();
   appState.detailEnd = getDetailEndFromQuery();
+  appState.accountSelectionId = getAccountSelectionFromQuery();
   try {
     await Promise.all([loadCreditUnions(), loadIncomeStreams()]);
   } catch (error) {
@@ -3467,6 +3624,14 @@ async function bootstrap() {
   if (selectors.accountStatusBody) {
     try {
       await loadProspectStreams();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  if (selectors.accountDirectoryBody) {
+    try {
+      await loadLatestCallReports();
     } catch (error) {
       console.error(error);
     }

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Account Workspace | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Account workspace</h1>
+        <p class="site-subtitle">Choose a credit union and mark every product as No Inquiry, Prospect, or Active.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a href="accounts.html" class="header-link" aria-current="page">Accounts</a>
+        <a href="index.html" class="header-link">Income Streams</a>
+        <a href="reporting.html" class="header-link">Reporting</a>
+        <a href="monthly.html" class="header-link">Monthly Totals</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <p class="back-link"><a href="accounts.html">&larr; Back to Accounts directory</a></p>
+
+    <section class="panel" aria-labelledby="account-select-heading">
+      <header class="panel__header panel__header--split">
+        <div>
+          <h2 id="account-select-heading" class="panel__title">Select an account</h2>
+          <p class="panel__description">
+            All coverage creation now happens here. Pick a partner, then light up the products that are in play.
+          </p>
+        </div>
+        <button type="button" class="secondary-button" id="open-call-report-btn">Call Reports</button>
+      </header>
+
+      <div class="account-select-grid">
+        <div class="field-group">
+          <label for="account-credit-union-select">Credit union / entity</label>
+          <div class="field-with-action">
+            <select id="account-credit-union-select" name="creditUnionId" required>
+              <option value="" disabled selected>Select a credit union</option>
+            </select>
+            <button type="button" id="add-credit-union-btn" class="icon-button" aria-label="Add credit union">
+              <span aria-hidden="true">＋</span>
+            </button>
+          </div>
+          <p class="field-help">Use the plus button to add a new partner if it isn&rsquo;t listed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="account-notes-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="account-notes-heading" class="panel__title">Account notes</h2>
+          <p class="panel__description">Capture context on the current situation for this account.</p>
+        </div>
+      </header>
+
+      <form id="account-notes-form" class="notes-form">
+        <div class="notes-grid">
+          <div class="field-group">
+            <label for="account-note-author">Who is commenting?</label>
+            <input type="text" id="account-note-author" name="author" placeholder="Your name" required />
+          </div>
+          <div class="field-group">
+            <label for="account-note-text">Notes / current situation</label>
+            <textarea
+              id="account-note-text"
+              name="note"
+              rows="3"
+              placeholder="Summarize what is happening at this account"
+              required
+            ></textarea>
+          </div>
+        </div>
+        <div class="notes-actions">
+          <p class="feedback" id="account-notes-feedback" role="status" aria-live="polite"></p>
+          <button type="submit" class="primary-button">Add note</button>
+        </div>
+      </form>
+
+      <div id="account-notes-empty" class="empty-state" hidden>
+        <p>No notes recorded yet. Add a quick update to keep the team in sync.</p>
+      </div>
+      <ul id="account-notes-list" class="notes-list" aria-live="polite"></ul>
+    </section>
+
+    <section class="panel" id="account-status-panel" aria-labelledby="account-status-heading">
+      <header class="panel__header account-status__header">
+        <div>
+          <h2 id="account-status-heading" class="panel__title">Coverage by product</h2>
+          <p id="account-detail-title" class="panel__description">Select an account to load coverage details.</p>
+        </div>
+        <p id="account-status-summary" class="account-status__summary"></p>
+      </header>
+
+      <div id="account-empty-state" class="account-empty-state" role="status">
+        <p>Select a credit union to begin managing product coverage.</p>
+      </div>
+
+      <div class="account-status" aria-live="polite">
+        <table class="account-status__table">
+          <caption class="sr-only">Product statuses for the selected credit union</caption>
+          <thead>
+            <tr>
+              <th scope="col">Product / revenue type</th>
+              <th scope="col">No Inquiry</th>
+              <th scope="col">Prospect</th>
+              <th scope="col">Active</th>
+              <th scope="col" class="account-status__notes">Details</th>
+            </tr>
+          </thead>
+          <tbody id="account-status-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="call-report-dialog" aria-labelledby="call-report-dialog-title">
+    <form method="dialog" class="dialog-form dialog-form--wide" id="call-report-dialog-form">
+      <header class="dialog-header">
+        <div>
+          <h2 id="call-report-dialog-title">Call reports</h2>
+          <p id="call-report-summary" class="dialog-subtitle">
+            Upload and review call report extractions without cluttering the workspace.
+          </p>
+        </div>
+        <button type="button" class="icon-button" id="close-call-report-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+
+      <div class="dialog-body call-report-dialog__body">
+        <div class="call-report__actions">
+          <input type="file" id="call-report-file-input" accept=".pdf,.txt,.csv,.json" hidden />
+          <button type="button" id="call-report-upload-btn" class="primary-button" disabled>Upload call report</button>
+          <p class="field-help">Files are read for data extraction only; they are not stored on the server.</p>
+        </div>
+
+        <div class="feedback" id="call-report-feedback" role="status" aria-live="polite"></div>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">Captured filings</h3>
+            <p class="table-description">Asset size, indirect loans, and loan-line counts extracted from uploaded reports.</p>
+          </header>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Report date</th>
+                <th scope="col" class="numeric">Assets</th>
+                <th scope="col" class="numeric">Indirect loans</th>
+                <th scope="col" class="numeric">Loan lines stored</th>
+                <th scope="col" class="numeric">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="call-report-list"></tbody>
+          </table>
+        </section>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">Extracted call report metrics</h3>
+            <p class="table-description">Asset size, consumer lending depth, income, and indirect exposure.</p>
+          </header>
+          <div id="call-report-metrics" class="metric-grid"></div>
+        </section>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">Asset growth</h3>
+            <p class="table-description">Shows how assets have changed across uploaded call reports.</p>
+          </header>
+          <div class="call-report-chart__body">
+            <div id="call-report-asset-chart" class="call-report-chart" role="img" aria-label="Asset growth chart"></div>
+          </div>
+        </section>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">Quarterly coverage</h3>
+            <p class="table-description">Tracks which quarters back to 2020 have a stored call report for this account.</p>
+          </header>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Year</th>
+                <th scope="col" class="numeric">Q1</th>
+                <th scope="col" class="numeric">Q2</th>
+                <th scope="col" class="numeric">Q3</th>
+                <th scope="col" class="numeric">Q4</th>
+              </tr>
+            </thead>
+            <tbody id="call-report-coverage"></tbody>
+          </table>
+        </section>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="credit-union-dialog" aria-labelledby="credit-union-dialog-title">
+    <form method="dialog" id="credit-union-form" class="dialog-form" autocomplete="off">
+      <header class="dialog-header">
+        <h2 id="credit-union-dialog-title">Add a credit union / entity</h2>
+        <button type="button" class="icon-button" id="close-credit-union-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+      <div class="dialog-body">
+        <label for="credit-union-name">Name</label>
+        <input type="text" id="credit-union-name" name="name" placeholder="Example: CommonCents" required />
+      </div>
+      <footer class="dialog-footer">
+        <button type="submit" class="primary-button">Save credit union</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
