@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2027-01-30: Widened the accounts workspace and income stream table so desktop layouts can display more columns without wrapping while keeping the page compact.
 2027-01-29: Added the ability to update an income stream's first reporting month and rebuild reporting requirements from the new start date.
 2027-01-28: Added call report deletion controls (API + UI) so uploads can be removed after parser tweaks.
 2025-11-21: Moved call report tooling into a modal, added account-level notes capture, and tightened indirect loan extraction to avoid false positives.
