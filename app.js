@@ -1166,11 +1166,10 @@ function renderCallReports() {
       ? currencyFormatter.format(report.assetSize)
       : '—';
 
-    const indirectCell = document.createElement('td');
-    indirectCell.className = 'numeric';
-    indirectCell.textContent = Number.isFinite(report.indirectLoans)
-      ? currencyFormatter.format(report.indirectLoans)
-      : '—';
+    const consumerTotal = getConsumerLoanTotal(report);
+    const consumerCell = document.createElement('td');
+    consumerCell.className = 'numeric';
+    consumerCell.textContent = Number.isFinite(consumerTotal) ? currencyFormatter.format(consumerTotal) : '—';
 
     const loanCell = document.createElement('td');
     loanCell.className = 'numeric';
@@ -1195,7 +1194,7 @@ function renderCallReports() {
 
     actionsCell.append(deleteButton);
 
-    row.append(dateCell, assetCell, indirectCell, loanCell, actionsCell);
+    row.append(dateCell, assetCell, consumerCell, loanCell, actionsCell);
     fragment.append(row);
   });
 
