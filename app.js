@@ -85,6 +85,12 @@ const selectors = {
   monthlyDetailSummary: document.getElementById('monthly-detail-summary'),
   monthlyDetailBody: document.getElementById('monthly-detail-body'),
   monthlyDetailDescription: document.getElementById('monthly-detail-description'),
+  updateStartMonthBtn: document.getElementById('update-start-month-btn'),
+  updateStartMonthDialog: document.getElementById('update-start-month-dialog'),
+  updateStartMonthForm: document.getElementById('update-start-month-form'),
+  updateStartMonthInput: document.getElementById('update-start-month'),
+  updateStartMonthMessage: document.getElementById('update-start-month-message'),
+  closeUpdateStartMonthDialogBtn: document.getElementById('close-update-start-month-dialog'),
   cancelStreamBtn: document.getElementById('cancel-stream-btn'),
   cancelStreamDialog: document.getElementById('cancel-stream-dialog'),
   cancelStreamForm: document.getElementById('cancel-stream-form'),
@@ -1664,8 +1670,16 @@ function renderStreamOverview(stream) {
 
   appState.currentStreamDetail = stream;
 
+  const [defaultStartYear, defaultStartMonth] = REPORTING_START_PERIOD.split('-').map((value) => Number.parseInt(value, 10));
+  const firstReportLabel = stream.firstReport?.label ?? formatPeriodLabel(defaultStartYear, defaultStartMonth);
+
   if (selectors.streamName) {
     selectors.streamName.textContent = stream.label;
+  }
+
+  if (selectors.updateStartMonthBtn) {
+    selectors.updateStartMonthBtn.hidden = false;
+    selectors.updateStartMonthBtn.setAttribute('aria-label', 'Update the first reporting month for this income stream');
   }
 
   if (selectors.cancelStreamBtn) {
@@ -1687,6 +1701,7 @@ function renderStreamOverview(stream) {
       ['Credit union / entity', stream.creditUnionName],
       ['Product / service', stream.product],
       ['Revenue type', stream.revenueType],
+      ['First reporting month', firstReportLabel],
       ['Created on', formatDateString(stream.createdAt)],
       ['Last updated', formatDateString(stream.updatedAt)],
       [
@@ -2049,6 +2064,13 @@ async function cancelIncomeStream(streamId, finalMonth) {
   return request(`/api/income-streams/${streamId}/cancel`, {
     method: 'PATCH',
     body: JSON.stringify({ finalMonth })
+  });
+}
+
+async function updateIncomeStreamStart(streamId, firstReportMonth) {
+  return request(`/api/income-streams/${streamId}/start`, {
+    method: 'PATCH',
+    body: JSON.stringify({ firstReportMonth })
   });
 }
 
@@ -2805,6 +2827,31 @@ selectors.creditUnionForm?.addEventListener('submit', async (event) => {
   }
 });
 
+selectors.updateStartMonthBtn?.addEventListener('click', () => {
+  if (!selectors.updateStartMonthDialog || !selectors.updateStartMonthInput) return;
+  const startKey = appState.currentStreamDetail?.firstReport?.key || REPORTING_START_PERIOD;
+  selectors.updateStartMonthInput.value = startKey;
+  selectors.updateStartMonthInput.min = REPORTING_START_PERIOD;
+  selectors.updateStartMonthInput.max = getCurrentPeriodValue();
+
+  if (selectors.updateStartMonthMessage) {
+    setFeedback(selectors.updateStartMonthMessage, '', 'info');
+  }
+
+  showDialog(selectors.updateStartMonthDialog);
+  setTimeout(() => selectors.updateStartMonthInput?.focus(), 75);
+});
+
+selectors.closeUpdateStartMonthDialogBtn?.addEventListener('click', () => {
+  closeDialog(selectors.updateStartMonthDialog);
+});
+
+selectors.updateStartMonthDialog?.addEventListener('close', () => {
+  if (selectors.updateStartMonthMessage) {
+    setFeedback(selectors.updateStartMonthMessage, '', 'info');
+  }
+});
+
 selectors.cancelStreamBtn?.addEventListener('click', () => {
   if (!appState.currentStreamId || !selectors.cancelStreamDialog) return;
 
@@ -2849,6 +2896,35 @@ selectors.openCallReportBtn?.addEventListener('click', () => {
 
 selectors.closeCallReportDialogBtn?.addEventListener('click', () => {
   closeDialog(selectors.callReportDialog);
+});
+
+selectors.updateStartMonthForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!appState.currentStreamId || !selectors.updateStartMonthInput) return;
+
+  const firstReportMonth = selectors.updateStartMonthInput.value;
+  if (!firstReportMonth) {
+    if (selectors.updateStartMonthMessage) {
+      setFeedback(selectors.updateStartMonthMessage, 'Select the month when reporting starts.', 'error');
+    }
+    return;
+  }
+
+  try {
+    const result = await updateIncomeStreamStart(appState.currentStreamId, firstReportMonth);
+    renderStreamOverview(result);
+    await Promise.all([
+      loadIncomeStreamReportingStatus(appState.currentStreamId),
+      loadIncomeStreams()
+    ]);
+    closeDialog(selectors.updateStartMonthDialog);
+  } catch (error) {
+    if (selectors.updateStartMonthMessage) {
+      setFeedback(selectors.updateStartMonthMessage, error.message, 'error');
+    } else {
+      alert(error.message);
+    }
+  }
 });
 
 selectors.cancelStreamForm?.addEventListener('submit', async (event) => {

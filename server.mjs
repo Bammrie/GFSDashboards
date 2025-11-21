@@ -629,6 +629,134 @@ app.patch('/api/income-streams/:id/estimate', async (req, res, next) => {
   }
 });
 
+app.patch('/api/income-streams/:id/start', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    const firstReportInput = typeof req.body?.firstReportMonth === 'string' ? req.body.firstReportMonth.trim() : '';
+    const requestedFirstReport = parseReportingMonth(firstReportInput);
+
+    if (!requestedFirstReport) {
+      res.status(400).json({ error: 'First reporting month must be in YYYY-MM format.' });
+      return;
+    }
+
+    const minimumPeriodKey = REPORTING_START_YEAR * 100 + REPORTING_START_MONTH;
+    if (requestedFirstReport.periodKey < minimumPeriodKey) {
+      res.status(400).json({ error: 'First reporting month cannot be before Jan 2023.' });
+      return;
+    }
+
+    const now = new Date();
+    const currentPeriodKey = now.getFullYear() * 100 + (now.getMonth() + 1);
+    if (requestedFirstReport.periodKey > currentPeriodKey) {
+      res.status(400).json({ error: 'First reporting month cannot be in the future.' });
+      return;
+    }
+
+    const stream = await IncomeStream.findById(id).populate('creditUnion').lean();
+    if (!stream) {
+      res.status(404).json({ error: 'Income stream not found.' });
+      return;
+    }
+
+    if (stream.status !== 'active') {
+      res.status(400).json({ error: 'Prospect income streams cannot be assigned a reporting start month yet.' });
+      return;
+    }
+
+    if (stream.finalReportPeriodKey && requestedFirstReport.periodKey > stream.finalReportPeriodKey) {
+      res.status(400).json({
+        error: `First reporting month cannot be after the final reporting month of ${formatMonthLabel(
+          stream.finalReportYear,
+          stream.finalReportMonth
+        )}.`
+      });
+      return;
+    }
+
+    const earliestEntry = await RevenueEntry.findOne({ incomeStream: stream._id })
+      .sort({ periodKey: 1 })
+      .lean();
+
+    if (earliestEntry && requestedFirstReport.periodKey > earliestEntry.periodKey) {
+      res.status(400).json({
+        error: `Revenue has already been reported for ${formatMonthLabel(
+          earliestEntry.year,
+          earliestEntry.month
+        )}. Remove or adjust those entries before moving the start forward.`
+      });
+      return;
+    }
+
+    const updatedStream = await IncomeStream.findByIdAndUpdate(
+      stream._id,
+      {
+        $set: {
+          firstReportYear: requestedFirstReport.year,
+          firstReportMonth: requestedFirstReport.month,
+          firstReportPeriodKey: requestedFirstReport.periodKey,
+          updatedAt: new Date()
+        }
+      },
+      { new: true }
+    )
+      .populate('creditUnion')
+      .lean();
+
+    await ReportingRequirement.deleteMany({
+      incomeStream: stream._id,
+      periodKey: { $lt: requestedFirstReport.periodKey }
+    });
+
+    await ensureReportingRequirementsForStream(updatedStream._id);
+
+    const pendingCount = await ReportingRequirement.countDocuments({
+      incomeStream: updatedStream._id,
+      completedAt: null
+    });
+
+    const reportedCount = await ReportingRequirement.countDocuments({
+      incomeStream: updatedStream._id,
+      completedAt: { $ne: null }
+    });
+
+    const finalReport =
+      updatedStream.finalReportPeriodKey && updatedStream.finalReportYear && updatedStream.finalReportMonth
+        ? {
+            year: updatedStream.finalReportYear,
+            month: updatedStream.finalReportMonth,
+            periodKey: updatedStream.finalReportPeriodKey,
+            label: formatMonthLabel(updatedStream.finalReportYear, updatedStream.finalReportMonth)
+          }
+        : null;
+
+    res.json({
+      id: updatedStream._id.toString(),
+      creditUnionId: updatedStream.creditUnion?._id?.toString() ?? null,
+      creditUnionName: updatedStream.creditUnion?.name ?? 'Unknown credit union',
+      product: updatedStream.product,
+      revenueType: updatedStream.revenueType,
+      status: updatedStream.status,
+      monthlyIncomeEstimate: updatedStream.monthlyIncomeEstimate,
+      label: `${updatedStream.creditUnion?.name ?? 'Unknown'} – ${updatedStream.product} (${updatedStream.revenueType})`,
+      createdAt: updatedStream.createdAt,
+      updatedAt: updatedStream.updatedAt,
+      pendingCount,
+      reportedCount,
+      firstReport: buildFirstReportPayload(updatedStream),
+      finalReport,
+      canceledAt: updatedStream.canceledAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.patch('/api/income-streams/:id/activate', async (req, res, next) => {
   try {
     const { id } = req.params;

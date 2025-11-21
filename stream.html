@@ -30,6 +30,7 @@
         <p class="panel__description">Every month requires an amount, even when the value is $0.00. Missing months are highlighted in red until they are reported.</p>
       </header>
       <div class="panel__actions">
+        <button type="button" id="update-start-month-btn" class="secondary-button" hidden>Update start month</button>
         <button type="button" id="cancel-stream-btn" class="secondary-button" hidden>Cancel income stream</button>
       </div>
       <div class="stream-overview">
@@ -78,6 +79,26 @@
       </div>
       <footer class="dialog-footer">
         <button type="submit" class="primary-button">Save final month</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog id="update-start-month-dialog" aria-labelledby="update-start-month-dialog-title">
+    <form method="dialog" id="update-start-month-form" class="dialog-form" autocomplete="off">
+      <header class="dialog-header">
+        <h2 id="update-start-month-dialog-title">Update start month</h2>
+        <button type="button" class="icon-button" id="close-update-start-month-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+      <div class="dialog-body">
+        <p>Adjust the first reporting month to rebuild the expected revenue requirements.</p>
+        <label for="update-start-month">Which month should reporting start?</label>
+        <input type="month" id="update-start-month" name="firstReportMonth" required />
+        <p id="update-start-month-message" class="feedback" data-state="info"></p>
+      </div>
+      <footer class="dialog-footer">
+        <button type="submit" class="primary-button">Save start month</button>
       </footer>
     </form>
   </dialog>
