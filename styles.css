@@ -125,6 +125,14 @@ body {
   margin-bottom: 1.25rem;
 }
 
+.panel__header--split {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .panel__actions {
   display: flex;
   flex-wrap: wrap;
@@ -726,6 +734,64 @@ input[type='month']:focus-visible {
   margin-bottom: 0.5rem;
 }
 
+.notes-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.notes-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.notes-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.notes-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.note-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.note-card__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.note-card__author {
+  font-weight: 600;
+}
+
+.note-card__date {
+  font-variant-numeric: tabular-nums;
+}
+
+.note-card__text {
+  margin: 0;
+  line-height: 1.5;
+}
+
 .stream-overview {
   display: grid;
   gap: 1rem;
@@ -1011,6 +1077,10 @@ input[type='month']:focus-visible {
   padding: 0;
 }
 
+.dialog-form--wide {
+  width: min(1100px, 95vw);
+}
+
 .dialog-header,
 .dialog-footer {
   padding: 1.25rem 1.5rem;
@@ -1019,10 +1089,20 @@ input[type='month']:focus-visible {
   justify-content: space-between;
 }
 
+.dialog-subtitle {
+  margin: 0.35rem 0 0;
+  color: var(--text-secondary);
+}
+
 .dialog-body {
   padding: 0 1.5rem 1.5rem;
   display: grid;
   gap: 0.75rem;
+}
+
+.call-report-dialog__body {
+  max-height: min(80vh, 1200px);
+  overflow-y: auto;
 }
 
 .prospect-item {
@@ -1293,6 +1373,13 @@ input[type='month']:focus-visible {
   margin: 0;
   color: var(--text-secondary);
   font-size: 0.9rem;
+}
+
+.metric-card__meta {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .sparkline {

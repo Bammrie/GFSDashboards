@@ -1434,12 +1434,8 @@ app.post('/api/call-reports', upload.single('file'), async (req, res, next) => {
 
     const { segments, totals } = extractLoanSegments(pages[9] ?? text, periodMonth);
 
-    const indirectLoans = extractNumberByLabels(text, ['indirect']);
-    const outstandingIndirectLoans = extractNumberNearLabel(
-      pages[13] ?? text,
-      'TOTAL OUTSTANDING INDIRECT LOANS',
-      'last'
-    );
+    const indirectLoans = extractIndirectLoans(text);
+    const outstandingIndirectLoans = extractOutstandingIndirectLoans(pages[13] ?? text);
     const loanData = extractLoanData(pages[5] ?? pages[0] ?? text);
 
     const created = await CallReport.create({
@@ -1548,6 +1544,55 @@ function extractReportDate(text) {
   }
 
   return new Date();
+}
+
+function getLabelSnippet(text, label, span = 200) {
+  if (!text || !label) return null;
+  const lower = text.toLowerCase();
+  const index = lower.lastIndexOf(label.toLowerCase());
+  if (index < 0) return null;
+  return text.slice(index, index + span);
+}
+
+function pickAmountFigure(figures = []) {
+  if (!Array.isArray(figures) || !figures.length) return null;
+  const amounts = figures.filter((value) => Math.abs(value) >= 1000);
+  if (amounts.length) {
+    return amounts[0];
+  }
+  if (figures.some((value) => value === 0)) {
+    return 0;
+  }
+  return null;
+}
+
+function extractIndirectLoans(text) {
+  if (!text) return null;
+  const labels = ['indirect loans', 'indirect auto loans', 'total indirect loans'];
+  for (const label of labels) {
+    const snippet = getLabelSnippet(text, label);
+    if (!snippet) continue;
+    const figures = parseNumbersFromLine(snippet);
+    const value = pickAmountFigure(figures);
+    if (value !== null) {
+      return value;
+    }
+  }
+  return null;
+}
+
+function extractOutstandingIndirectLoans(text) {
+  if (!text) return null;
+  const snippet = getLabelSnippet(text, 'TOTAL OUTSTANDING INDIRECT LOANS');
+  if (snippet) {
+    const figures = parseNumbersFromLine(snippet);
+    const value = pickAmountFigure(figures);
+    if (value !== null) {
+      return value;
+    }
+  }
+
+  return extractIndirectLoans(text);
 }
 
 function extractNumberByLabels(text, labels = []) {

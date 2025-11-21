@@ -25,11 +25,14 @@
 
   <main class="layout">
     <section class="panel" aria-labelledby="account-select-heading">
-      <header class="panel__header">
-        <h2 id="account-select-heading" class="panel__title">Select an account</h2>
-        <p class="panel__description">
-          All coverage creation now happens here. Pick a partner, then light up the products that are in play.
-        </p>
+      <header class="panel__header panel__header--split">
+        <div>
+          <h2 id="account-select-heading" class="panel__title">Select an account</h2>
+          <p class="panel__description">
+            All coverage creation now happens here. Pick a partner, then light up the products that are in play.
+          </p>
+        </div>
+        <button type="button" class="secondary-button" id="open-call-report-btn">Call Reports</button>
       </header>
 
       <div class="account-select-grid">
@@ -48,66 +51,35 @@
       </div>
     </section>
 
-    <section class="panel" aria-labelledby="call-report-heading">
+    <section class="panel" aria-labelledby="account-notes-heading">
       <header class="panel__header">
-        <h2 id="call-report-heading" class="panel__title">Call reports</h2>
-        <p id="call-report-summary" class="panel__description">
-          Upload a call report to capture loan balances, indirect exposure, and asset size for the selected credit union.
-        </p>
+        <div>
+          <h2 id="account-notes-heading" class="panel__title">Account notes</h2>
+          <p class="panel__description">Capture context on the current situation for this account.</p>
+        </div>
       </header>
 
-      <div class="call-report__actions">
-        <input type="file" id="call-report-file-input" accept=".pdf,.txt,.csv,.json" hidden />
-        <button type="button" id="call-report-upload-btn" class="primary-button" disabled>Upload call report</button>
-        <p class="field-help">Files are read for data extraction only; they are not stored on the server.</p>
+      <form id="account-notes-form" class="notes-form">
+        <div class="notes-grid">
+          <div class="field-group">
+            <label for="account-note-author">Who is commenting?</label>
+            <input type="text" id="account-note-author" name="author" placeholder="Your name" required />
+          </div>
+          <div class="field-group">
+            <label for="account-note-text">Notes / current situation</label>
+            <textarea id="account-note-text" name="note" rows="3" placeholder="Summarize what is happening at this account" required></textarea>
+          </div>
+        </div>
+        <div class="notes-actions">
+          <p class="feedback" id="account-notes-feedback" role="status" aria-live="polite"></p>
+          <button type="submit" class="primary-button">Add note</button>
+        </div>
+      </form>
+
+      <div id="account-notes-empty" class="empty-state" hidden>
+        <p>No notes recorded yet. Add a quick update to keep the team in sync.</p>
       </div>
-
-      <div class="feedback" id="call-report-feedback" role="status" aria-live="polite"></div>
-
-      <section class="table-card" aria-live="polite">
-        <header class="table-header">
-          <h3 class="table-title">Captured filings</h3>
-          <p class="table-description">Asset size, indirect loans, and loan-line counts extracted from uploaded reports.</p>
-        </header>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th scope="col">Report date</th>
-              <th scope="col" class="numeric">Assets</th>
-              <th scope="col" class="numeric">Indirect loans</th>
-              <th scope="col" class="numeric">Loan lines stored</th>
-            </tr>
-          </thead>
-          <tbody id="call-report-list"></tbody>
-        </table>
-      </section>
-
-      <section class="table-card" aria-live="polite">
-        <header class="table-header">
-          <h3 class="table-title">Extracted call report metrics</h3>
-          <p class="table-description">Net income, loan mix, and indirect exposure pulled from the uploaded filing.</p>
-        </header>
-        <div id="call-report-metrics" class="metric-grid"></div>
-      </section>
-
-      <section class="table-card" aria-live="polite">
-        <header class="table-header">
-          <h3 class="table-title">Quarterly coverage</h3>
-          <p class="table-description">Tracks which quarters back to 2020 have a stored call report for this account.</p>
-        </header>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th scope="col">Year</th>
-              <th scope="col" class="numeric">Q1</th>
-              <th scope="col" class="numeric">Q2</th>
-              <th scope="col" class="numeric">Q3</th>
-              <th scope="col" class="numeric">Q4</th>
-            </tr>
-          </thead>
-          <tbody id="call-report-coverage"></tbody>
-        </table>
-      </section>
+      <ul id="account-notes-list" class="notes-list" aria-live="polite"></ul>
     </section>
 
     <section class="panel" id="account-status-panel" aria-labelledby="account-status-heading">
@@ -140,6 +112,77 @@
       </div>
     </section>
   </main>
+
+  <dialog id="call-report-dialog" aria-labelledby="call-report-dialog-title">
+    <form method="dialog" class="dialog-form dialog-form--wide" id="call-report-dialog-form">
+      <header class="dialog-header">
+        <div>
+          <h2 id="call-report-dialog-title">Call reports</h2>
+          <p id="call-report-summary" class="dialog-subtitle">
+            Upload and review call report extractions without cluttering the workspace.
+          </p>
+        </div>
+        <button type="button" class="icon-button" id="close-call-report-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+
+      <div class="dialog-body call-report-dialog__body">
+        <div class="call-report__actions">
+          <input type="file" id="call-report-file-input" accept=".pdf,.txt,.csv,.json" hidden />
+          <button type="button" id="call-report-upload-btn" class="primary-button" disabled>Upload call report</button>
+          <p class="field-help">Files are read for data extraction only; they are not stored on the server.</p>
+        </div>
+
+        <div class="feedback" id="call-report-feedback" role="status" aria-live="polite"></div>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">Captured filings</h3>
+            <p class="table-description">Asset size, indirect loans, and loan-line counts extracted from uploaded reports.</p>
+          </header>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Report date</th>
+                <th scope="col" class="numeric">Assets</th>
+                <th scope="col" class="numeric">Indirect loans</th>
+                <th scope="col" class="numeric">Loan lines stored</th>
+              </tr>
+            </thead>
+            <tbody id="call-report-list"></tbody>
+          </table>
+        </section>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">Extracted call report metrics</h3>
+            <p class="table-description">Asset size, consumer lending depth, income, and indirect exposure.</p>
+          </header>
+          <div id="call-report-metrics" class="metric-grid"></div>
+        </section>
+
+        <section class="table-card" aria-live="polite">
+          <header class="table-header">
+            <h3 class="table-title">Quarterly coverage</h3>
+            <p class="table-description">Tracks which quarters back to 2020 have a stored call report for this account.</p>
+          </header>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Year</th>
+                <th scope="col" class="numeric">Q1</th>
+                <th scope="col" class="numeric">Q2</th>
+                <th scope="col" class="numeric">Q3</th>
+                <th scope="col" class="numeric">Q4</th>
+              </tr>
+            </thead>
+            <tbody id="call-report-coverage"></tbody>
+          </table>
+        </section>
+      </div>
+    </form>
+  </dialog>
 
   <dialog id="credit-union-dialog" aria-labelledby="credit-union-dialog-title">
     <form method="dialog" id="credit-union-form" class="dialog-form" autocomplete="off">

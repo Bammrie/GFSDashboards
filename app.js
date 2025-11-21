@@ -39,6 +39,9 @@ const selectors = {
   accountStatusSummary: document.getElementById('account-status-summary'),
   accountDetailTitle: document.getElementById('account-detail-title'),
   accountEmptyState: document.getElementById('account-empty-state'),
+  openCallReportBtn: document.getElementById('open-call-report-btn'),
+  callReportDialog: document.getElementById('call-report-dialog'),
+  closeCallReportDialogBtn: document.getElementById('close-call-report-dialog'),
   incomeStreamList: document.getElementById('income-stream-list'),
   incomeStreamCount: document.getElementById('income-stream-count'),
   revenueForm: document.getElementById('revenue-form'),
@@ -100,8 +103,34 @@ const selectors = {
   callReportList: document.getElementById('call-report-list'),
   callReportSummary: document.getElementById('call-report-summary'),
   callReportMetrics: document.getElementById('call-report-metrics'),
-  callReportCoverage: document.getElementById('call-report-coverage')
+  callReportCoverage: document.getElementById('call-report-coverage'),
+  accountNotesForm: document.getElementById('account-notes-form'),
+  accountNotesAuthor: document.getElementById('account-note-author'),
+  accountNotesText: document.getElementById('account-note-text'),
+  accountNotesFeedback: document.getElementById('account-notes-feedback'),
+  accountNotesList: document.getElementById('account-notes-list'),
+  accountNotesEmpty: document.getElementById('account-notes-empty')
 };
+
+function getStoredAccountNotes() {
+  if (typeof localStorage === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem('accountNotes');
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (_error) {
+    return {};
+  }
+}
+
+function persistAccountNotes(notes) {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem('accountNotes', JSON.stringify(notes));
+  } catch (error) {
+    console.error('Unable to persist account notes', error);
+  }
+}
 
 const appState = {
   creditUnions: [],
@@ -125,7 +154,8 @@ const appState = {
   prospectAccountFilter: '',
   missingUpdates: [],
   missingFilters: { month: null, revenueType: 'all' },
-  callReports: []
+  callReports: [],
+  accountNotes: getStoredAccountNotes()
 };
 
 function showDialog(dialog) {
@@ -848,6 +878,7 @@ function renderAccountWorkspace() {
     if (emptyState) {
       emptyState.hidden = false;
     }
+    renderAccountNotes();
     return;
   }
 
@@ -881,6 +912,7 @@ function renderAccountWorkspace() {
   }
 
   renderCallReports();
+  renderAccountNotes();
 }
 
 function setCallReportFeedback(message, state = 'info') {
@@ -989,6 +1021,39 @@ function renderCallReports() {
   renderCallReportCoverage();
 }
 
+function getConsumerLoanTotal(report) {
+  if (!report || !Array.isArray(report.loanSegments)) return null;
+  const consumerLabels = [
+    'Credit Cards',
+    'Other Unsecured/LOC',
+    'New Vehicle Loans',
+    'Used Vehicle Loans',
+    'Other Secured Non-RE/LOC'
+  ];
+
+  let total = 0;
+  let hasValue = false;
+
+  report.loanSegments.forEach((segment) => {
+    if (consumerLabels.includes(segment.label) && Number.isFinite(segment.amount)) {
+      total += segment.amount;
+      hasValue = true;
+    }
+  });
+
+  return hasValue ? total : null;
+}
+
+function formatDelta(latest, previous, formatter) {
+  if (!Number.isFinite(latest) || !Number.isFinite(previous)) return null;
+  const delta = latest - previous;
+  const arrow = delta >= 0 ? '▲' : '▼';
+  const changeText = formatter(Math.abs(delta));
+  const percent = previous !== 0 ? Math.abs((delta / Math.abs(previous)) * 100) : null;
+  const percentText = Number.isFinite(percent) ? ` (${percent.toFixed(1)}%)` : '';
+  return `${arrow} ${changeText} since last report${percentText}`;
+}
+
 function renderCallReportMetrics() {
   const container = selectors.callReportMetrics;
   if (!container) return;
@@ -1015,7 +1080,21 @@ function renderCallReportMetrics() {
   reports.sort((a, b) => formatPeriodValue(a.periodYear, a.periodMonth) - formatPeriodValue(b.periodYear, b.periodMonth));
 
   const metricConfigs = [
-    { key: 'assetSize', label: 'Total assets', accessor: (report) => report.assetSize, formatter: currencyFormatter.format },
+    {
+      key: 'assetSize',
+      label: 'Total assets',
+      accessor: (report) => report.assetSize,
+      formatter: currencyFormatter.format,
+      showDelta: true
+    },
+    {
+      key: 'consumerLoans',
+      label: 'Consumer lending portfolio',
+      accessor: (report) => getConsumerLoanTotal(report),
+      formatter: currencyFormatter.format,
+      showDelta: true,
+      subtext: 'Credit cards, vehicles, unsecured, and other secured non-RE'
+    },
     {
       key: 'netInterestIncome',
       label: 'Net interest income',
@@ -1079,6 +1158,7 @@ function renderCallReportMetrics() {
     if (!values.length) return;
 
     const latestValue = values[values.length - 1];
+    const previousValue = values.length > 1 ? values[values.length - 2] : null;
     const card = document.createElement('div');
     card.className = 'metric-card';
 
@@ -1091,6 +1171,23 @@ function renderCallReportMetrics() {
     valueEl.textContent = config.formatter(latestValue);
 
     card.append(label, valueEl);
+
+    if (config.subtext) {
+      const subtext = document.createElement('p');
+      subtext.className = 'metric-card__subtext';
+      subtext.textContent = config.subtext;
+      card.append(subtext);
+    }
+
+    if (config.showDelta) {
+      const deltaText = formatDelta(latestValue, previousValue, config.formatter);
+      if (deltaText) {
+        const meta = document.createElement('p');
+        meta.className = 'metric-card__meta';
+        meta.textContent = deltaText;
+        card.append(meta);
+      }
+    }
 
     if (values.length > 1) {
       const sparkline = createSparkline(values);
@@ -1198,6 +1295,83 @@ function renderCallReportCoverage() {
 
     body.append(row);
   }
+}
+
+function formatNoteDate(timestamp) {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+}
+
+function renderAccountNotes() {
+  if (!selectors.accountNotesList || !selectors.accountNotesEmpty) return;
+
+  const creditUnionId = appState.accountSelectionId;
+  const notes = creditUnionId && Array.isArray(appState.accountNotes[creditUnionId])
+    ? appState.accountNotes[creditUnionId]
+    : [];
+
+  const list = selectors.accountNotesList;
+  const empty = selectors.accountNotesEmpty;
+  const feedback = selectors.accountNotesFeedback;
+  const authorInput = selectors.accountNotesAuthor;
+  const noteInput = selectors.accountNotesText;
+  const submitButton = selectors.accountNotesForm?.querySelector('button[type="submit"]');
+
+  const shouldDisable = !creditUnionId;
+  [authorInput, noteInput, submitButton].forEach((el) => {
+    if (!el) return;
+    el.disabled = shouldDisable;
+  });
+
+  if (!creditUnionId) {
+    setFeedback(feedback, 'Select a credit union to capture notes.', 'info');
+  } else {
+    setFeedback(feedback, '', 'info');
+  }
+
+  list.replaceChildren();
+
+  if (!notes.length) {
+    empty.hidden = false;
+    return;
+  }
+
+  empty.hidden = true;
+  const fragment = document.createDocumentFragment();
+  notes.forEach((note) => {
+    const item = document.createElement('li');
+    item.className = 'note-card';
+
+    const header = document.createElement('div');
+    header.className = 'note-card__meta';
+
+    const author = document.createElement('span');
+    author.className = 'note-card__author';
+    author.textContent = note.author || 'Unknown team member';
+
+    const date = document.createElement('span');
+    date.className = 'note-card__date';
+    date.textContent = formatNoteDate(note.createdAt);
+
+    header.append(author, date);
+
+    const body = document.createElement('p');
+    body.className = 'note-card__text';
+    body.textContent = note.text;
+
+    item.append(header, body);
+    fragment.append(item);
+  });
+
+  list.append(fragment);
 }
 
 function createSparkline(values) {
@@ -2634,6 +2808,14 @@ selectors.cancelStreamDialog?.addEventListener('close', () => {
   }
 });
 
+selectors.openCallReportBtn?.addEventListener('click', () => {
+  showDialog(selectors.callReportDialog);
+});
+
+selectors.closeCallReportDialogBtn?.addEventListener('click', () => {
+  closeDialog(selectors.callReportDialog);
+});
+
 selectors.cancelStreamForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (!appState.currentStreamId || !selectors.cancelStreamInput) return;
@@ -2733,6 +2915,35 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   } catch (error) {
     setCallReportFeedback(error.message, 'error');
   }
+});
+
+selectors.accountNotesForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    setFeedback(selectors.accountNotesFeedback, 'Select a credit union before adding a note.', 'error');
+    return;
+  }
+
+  const author = selectors.accountNotesAuthor?.value.trim();
+  const text = selectors.accountNotesText?.value.trim();
+
+  if (!author || !text) {
+    setFeedback(selectors.accountNotesFeedback, 'Add your name and note to save it.', 'error');
+    return;
+  }
+
+  const noteEntry = { author, text, createdAt: new Date().toISOString() };
+  const existingNotes = Array.isArray(appState.accountNotes[creditUnionId]) ? appState.accountNotes[creditUnionId] : [];
+  appState.accountNotes = {
+    ...appState.accountNotes,
+    [creditUnionId]: [noteEntry, ...existingNotes]
+  };
+  persistAccountNotes(appState.accountNotes);
+
+  selectors.accountNotesForm.reset();
+  setFeedback(selectors.accountNotesFeedback, 'Note saved.', 'success');
+  renderAccountNotes();
 });
 
 selectors.accountStatusBody?.addEventListener('change', handleAccountStatusChange);
@@ -2945,6 +3156,15 @@ async function bootstrap() {
       await loadProspectStreams();
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  if (selectors.callReportList && appState.accountSelectionId) {
+    try {
+      await loadCallReports(appState.accountSelectionId);
+    } catch (error) {
+      console.error(error);
+      setCallReportFeedback(error.message, 'error');
     }
   }
 
