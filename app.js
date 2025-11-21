@@ -109,6 +109,7 @@ const selectors = {
   callReportList: document.getElementById('call-report-list'),
   callReportSummary: document.getElementById('call-report-summary'),
   callReportMetrics: document.getElementById('call-report-metrics'),
+  callReportAssetChart: document.getElementById('call-report-asset-chart'),
   callReportCoverage: document.getElementById('call-report-coverage'),
   accountNotesForm: document.getElementById('account-notes-form'),
   accountNotesAuthor: document.getElementById('account-note-author'),
@@ -1042,7 +1043,78 @@ function renderCallReports() {
   body.append(fragment);
 
   renderCallReportMetrics();
+  renderCallReportAssetChart();
   renderCallReportCoverage();
+}
+
+function renderCallReportAssetChart() {
+  const container = selectors.callReportAssetChart;
+  if (!container) return;
+
+  const reports = sortCallReports(Array.isArray(appState.callReports) ? appState.callReports : []);
+  container.replaceChildren();
+
+  const addMessage = (text) => {
+    const message = document.createElement('p');
+    message.className = 'coverage-missing';
+    message.textContent = text;
+    container.append(message);
+  };
+
+  if (!appState.accountSelectionId) {
+    addMessage('Select a credit union to view asset trends.');
+    return;
+  }
+
+  if (!reports.length) {
+    addMessage('Upload a call report to see asset growth.');
+    return;
+  }
+
+  const dataPoints = reports
+    .map((report) => {
+      const monthKey = report.periodYear && report.periodMonth
+        ? `${report.periodYear}-${String(report.periodMonth).padStart(2, '0')}`
+        : null;
+      const periodLabel = monthKey ? formatMonthLabelFromKey(monthKey) : null;
+      const fallbackLabel = report.reportDate
+        ? new Date(report.reportDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+        : null;
+      return {
+        label: periodLabel || fallbackLabel,
+        value: Number(report.assetSize)
+      };
+    })
+    .filter((point) => Number.isFinite(point.value) && point.label);
+
+  if (!dataPoints.length) {
+    addMessage('Asset totals are missing from these call reports.');
+    return;
+  }
+
+  const chart = createLineChart(dataPoints, {
+    ariaLabel: 'Asset growth across uploaded call reports',
+    valueFormatter: currencyFormatter.format
+  });
+
+  if (chart) {
+    chart.classList.add('call-report-chart__svg');
+    container.append(chart);
+  }
+
+  const firstPoint = dataPoints[0];
+  const latestPoint = dataPoints[dataPoints.length - 1];
+  const change = latestPoint.value - firstPoint.value;
+  const summary = document.createElement('p');
+  summary.className = 'chart-summary';
+
+  const timeRange = firstPoint.label && latestPoint.label ? `${firstPoint.label} to ${latestPoint.label}` : 'the available period';
+  const direction = change >= 0 ? 'increased' : 'decreased';
+  const changeText = currencyFormatter.format(Math.abs(change));
+  const latestText = currencyFormatter.format(latestPoint.value);
+
+  summary.textContent = `Assets ${direction} by ${changeText} from ${timeRange}, reaching ${latestText}.`;
+  container.append(summary);
 }
 
 function getConsumerLoanTotal(report) {
@@ -1435,6 +1507,106 @@ function createSparkline(values) {
   polyline.setAttribute('points', points);
 
   svg.append(baseline, polyline);
+  return svg;
+}
+
+function createLineChart(points, options = {}) {
+  const validPoints = Array.isArray(points)
+    ? points.filter((point) => Number.isFinite(point?.value) && point.label)
+    : [];
+  if (!validPoints.length) return null;
+
+  const width = options.width ?? 820;
+  const height = options.height ?? 320;
+  const padding = options.padding ?? 56;
+  const strokeColor = options.strokeColor || 'var(--accent)';
+  const fillColor = options.fillColor || 'rgba(255, 255, 255, 0.04)';
+  const valueFormatter = typeof options.valueFormatter === 'function' ? options.valueFormatter : (value) => value;
+
+  const values = validPoints.map((point) => point.value);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+  const chartWidth = width - padding * 2;
+  const chartHeight = height - padding * 2;
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.setAttribute('class', 'line-chart');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', options.ariaLabel || 'Line chart');
+
+  const grid = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  grid.setAttribute('stroke', 'rgba(255, 255, 255, 0.08)');
+  grid.setAttribute('stroke-width', '1');
+
+  for (let i = 0; i <= 4; i += 1) {
+    const y = padding + (i / 4) * chartHeight;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', padding.toString());
+    line.setAttribute('x2', (width - padding).toString());
+    line.setAttribute('y1', y.toString());
+    line.setAttribute('y2', y.toString());
+    grid.append(line);
+  }
+
+  const areaPoints = validPoints
+    .map((point, index) => {
+      const x = padding + (validPoints.length > 1 ? (index / (validPoints.length - 1)) * chartWidth : chartWidth / 2);
+      const y = padding + (1 - (point.value - min) / range) * chartHeight;
+      return `${x},${y}`;
+    })
+    .join(' ');
+
+  const area = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+  area.setAttribute('fill', fillColor);
+  area.setAttribute('points', `${padding},${height - padding} ${areaPoints} ${width - padding},${height - padding}`);
+
+  const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  polyline.setAttribute('fill', 'none');
+  polyline.setAttribute('stroke', strokeColor);
+  polyline.setAttribute('stroke-width', '3');
+  polyline.setAttribute('points', areaPoints);
+  polyline.setAttribute('stroke-linejoin', 'round');
+  polyline.setAttribute('stroke-linecap', 'round');
+
+  const pointsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  pointsGroup.setAttribute('fill', strokeColor);
+
+  validPoints.forEach((point, index) => {
+    const x = padding + (validPoints.length > 1 ? (index / (validPoints.length - 1)) * chartWidth : chartWidth / 2);
+    const y = padding + (1 - (point.value - min) / range) * chartHeight;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', x.toString());
+    circle.setAttribute('cy', y.toString());
+    circle.setAttribute('r', '4');
+
+    const tooltip = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    tooltip.textContent = `${point.label}: ${valueFormatter(point.value)}`;
+    circle.append(tooltip);
+
+    pointsGroup.append(circle);
+  });
+
+  const labelsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  labelsGroup.setAttribute('fill', 'var(--text-secondary)');
+  labelsGroup.setAttribute('font-size', '12');
+
+  const minLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  minLabel.setAttribute('x', (padding - 10).toString());
+  minLabel.setAttribute('y', (height - padding).toString());
+  minLabel.setAttribute('text-anchor', 'end');
+  minLabel.textContent = valueFormatter(min);
+
+  const maxLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  maxLabel.setAttribute('x', (padding - 10).toString());
+  maxLabel.setAttribute('y', padding.toString());
+  maxLabel.setAttribute('text-anchor', 'end');
+  maxLabel.textContent = valueFormatter(max);
+
+  labelsGroup.append(minLabel, maxLabel);
+
+  svg.append(grid, area, polyline, pointsGroup, labelsGroup);
   return svg;
 }
 
