@@ -942,7 +942,7 @@ function renderAccountDirectory() {
 
     const nameCell = document.createElement('td');
     const nameLink = document.createElement('a');
-    nameLink.href = `accounts.html?creditUnionId=${encodeURIComponent(creditUnion.id)}`;
+    nameLink.href = `account-workspace.html?creditUnionId=${encodeURIComponent(creditUnion.id)}`;
     nameLink.className = 'table-link';
     nameLink.textContent = creditUnion.name;
     nameLink.title = 'Open account workspace';
