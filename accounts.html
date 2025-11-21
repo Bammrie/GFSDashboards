@@ -15,8 +15,8 @@
         <p class="site-subtitle">Choose a credit union and mark every product as No Inquiry, Prospect, or Active.</p>
       </div>
       <nav class="header-actions" aria-label="Primary navigation">
-        <a href="index.html" class="header-link">Income Streams</a>
         <a href="accounts.html" class="header-link" aria-current="page">Accounts</a>
+        <a href="index.html" class="header-link">Income Streams</a>
         <a href="reporting.html" class="header-link">Reporting</a>
         <a href="monthly.html" class="header-link">Monthly Totals</a>
       </nav>
@@ -24,6 +24,39 @@
   </header>
 
   <main class="layout">
+    <section class="panel" aria-labelledby="account-directory-heading">
+      <header class="panel__header panel__header--split">
+        <div>
+          <h2 id="account-directory-heading" class="panel__title">Account directory</h2>
+          <p class="panel__description">
+            Scan every credit union at a glance, then open their workspace to adjust coverage or upload call reports.
+          </p>
+        </div>
+        <p id="account-directory-summary" class="panel__description"></p>
+      </header>
+
+      <div class="account-directory" aria-live="polite">
+        <div id="account-directory-empty" class="empty-state">
+          <p>Add your first credit union to see coverage progress and call report assets.</p>
+        </div>
+
+        <div class="table-scroll" id="account-directory-table" hidden>
+          <table class="data-table account-directory__table" aria-describedby="account-directory-heading">
+            <thead>
+              <tr>
+                <th scope="col">Credit union</th>
+                <th scope="col">Green (active)</th>
+                <th scope="col">Yellow (prospect)</th>
+                <th scope="col">Red (not started)</th>
+                <th scope="col" class="numeric">Assets (latest)</th>
+              </tr>
+            </thead>
+            <tbody id="account-directory-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <section class="panel" aria-labelledby="account-select-heading">
       <header class="panel__header panel__header--split">
         <div>
