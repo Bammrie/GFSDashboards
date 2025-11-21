@@ -976,7 +976,7 @@ function renderCallReports() {
   if (!reports.length) {
     const row = document.createElement('tr');
     const cell = document.createElement('td');
-    cell.colSpan = 4;
+    cell.colSpan = 5;
     cell.textContent = 'No call reports uploaded yet.';
     row.append(cell);
     body.append(row);
@@ -1011,7 +1011,25 @@ function renderCallReports() {
     const loanLineCount = Array.isArray(report.loanData) ? report.loanData.length : 0;
     loanCell.textContent = loanLineCount ? `${loanLineCount} loan line${loanLineCount === 1 ? '' : 's'}` : '—';
 
-    row.append(dateCell, assetCell, indirectCell, loanCell);
+    const actionsCell = document.createElement('td');
+    actionsCell.className = 'numeric';
+
+    const deleteButton = document.createElement('button');
+    deleteButton.type = 'button';
+    deleteButton.className = 'table-action-button table-action-button--danger';
+    deleteButton.dataset.action = 'delete-call-report';
+    deleteButton.dataset.reportId = report.id;
+    deleteButton.dataset.reportLabel = reportLabel || monthKey;
+    deleteButton.textContent = 'Delete';
+    const reportLabelText = reportLabel || monthKey;
+    deleteButton.setAttribute(
+      'aria-label',
+      `Delete the ${reportLabelText} call report${report.sourceName ? ` (${report.sourceName})` : ''}`
+    );
+
+    actionsCell.append(deleteButton);
+
+    row.append(dateCell, assetCell, indirectCell, loanCell, actionsCell);
     fragment.append(row);
   });
 
@@ -1889,6 +1907,23 @@ async function uploadCallReport(file, creditUnionId) {
   }
 
   return response.json();
+}
+
+async function deleteCallReport(reportId) {
+  const response = await fetch(`/api/call-reports/${reportId}`, { method: 'DELETE' });
+
+  if (!response.ok) {
+    let message = `Delete failed (${response.status})`;
+    try {
+      const data = await response.json();
+      if (data?.error) {
+        message = data.error;
+      }
+    } catch (_error) {
+      // Ignore JSON parsing errors and fall back to the generic message.
+    }
+    throw new Error(message);
+  }
 }
 
 async function createCreditUnion(name) {
@@ -2993,6 +3028,36 @@ selectors.callReportFileInput?.addEventListener('change', async (event) => {
     setCallReportFeedback(error.message, 'error');
   } finally {
     event.currentTarget.value = '';
+  }
+});
+
+selectors.callReportList?.addEventListener('click', async (event) => {
+  const button = event.target.closest('[data-action="delete-call-report"]');
+  if (!button || !selectors.callReportList.contains(button)) {
+    return;
+  }
+
+  const reportId = button.dataset.reportId;
+  if (!reportId) return;
+
+  const reportLabel = button.dataset.reportLabel || 'this call report';
+  const confirmed = window.confirm(`Delete ${reportLabel}? This cannot be undone.`);
+  if (!confirmed) return;
+
+  const previousText = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Deleting...';
+  setCallReportFeedback('Deleting call report...', 'info');
+
+  try {
+    await deleteCallReport(reportId);
+    setCallReportFeedback('Call report removed.', 'success');
+    await loadCallReports(appState.accountSelectionId);
+  } catch (error) {
+    setCallReportFeedback(error.message, 'error');
+  } finally {
+    button.disabled = false;
+    button.textContent = previousText;
   }
 });
 

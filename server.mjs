@@ -1463,6 +1463,26 @@ app.post('/api/call-reports', upload.single('file'), async (req, res, next) => {
   }
 });
 
+app.delete('/api/call-reports/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ error: 'Call report not found.' });
+      return;
+    }
+
+    const deleted = await CallReport.findByIdAndDelete(id);
+    if (!deleted) {
+      res.status(404).json({ error: 'Call report not found.' });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get('/api/credit-unions/:id/call-reports', async (req, res, next) => {
   try {
     const { id } = req.params;
