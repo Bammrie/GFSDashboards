@@ -1064,6 +1064,10 @@ input[type='month']:focus-visible {
   text-decoration: underline;
 }
 
+.table-scroll {
+  overflow-x: auto;
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -1102,6 +1106,39 @@ input[type='month']:focus-visible {
 .data-table .table-link:hover,
 .data-table .table-link:focus {
   text-decoration: underline;
+}
+
+.account-directory__table {
+  min-width: 940px;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.status-chip__dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.35), 0 0 12px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+
+.status-chip--green .status-chip__dot {
+  background: linear-gradient(145deg, #81c784, #4caf50);
+}
+
+.status-chip--yellow .status-chip__dot {
+  background: linear-gradient(145deg, #ffeb3b, #fbc02d);
+}
+
+.status-chip--red .status-chip__dot {
+  background: linear-gradient(145deg, #ff867c, #ff5252);
 }
 
 .numeric {

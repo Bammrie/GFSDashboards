@@ -1591,6 +1591,27 @@ app.post('/api/call-reports', upload.single('file'), async (req, res, next) => {
   }
 });
 
+app.get('/api/call-reports/latest', async (req, res, next) => {
+  try {
+    const latestByCreditUnion = await CallReport.aggregate([
+      { $sort: { reportDate: -1 } },
+      { $group: { _id: '$creditUnion', report: { $first: '$$ROOT' } } }
+    ]);
+
+    const creditUnionIds = latestByCreditUnion.map((item) => item._id).filter(Boolean);
+    const creditUnions = await CreditUnion.find({ _id: { $in: creditUnionIds } }).lean();
+    const creditUnionNames = new Map(creditUnions.map((creditUnion) => [creditUnion._id.toString(), creditUnion.name]));
+
+    res.json(
+      latestByCreditUnion
+        .filter((item) => item.report)
+        .map((item) => formatCallReportPayload(item.report, creditUnionNames.get(item._id?.toString())))
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.delete('/api/call-reports/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
