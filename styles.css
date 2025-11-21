@@ -987,6 +987,36 @@ input[type='month']:focus-visible {
   height: 240px;
 }
 
+.call-report-chart__body {
+  padding: 1.25rem;
+}
+
+.call-report-chart {
+  width: 100%;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.call-report-chart__svg {
+  width: 100%;
+  height: auto;
+  max-height: 360px;
+}
+
+.line-chart text {
+  fill: var(--text-secondary);
+}
+
+.chart-summary {
+  margin: 0.5rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
 .grid-columns {
   display: grid;
   gap: 1.5rem;
