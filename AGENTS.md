@@ -1,4 +1,5 @@
 REMINDER COMMAND: After every website request/PR, run `nano AGENTS.md` and log what was created and why it was created so the history is preserved.
+2027-01-28: Added call report deletion controls (API + UI) so uploads can be removed after parser tweaks.
 2025-11-21: Moved call report tooling into a modal, added account-level notes capture, and tightened indirect loan extraction to avoid false positives.
 2025-11-20: Sorted call reports chronologically in the account dashboard so graphs and tables follow quarter/year order instead of upload order.
 2025-11-19: Rebuilt Reporting into a missing-revenue workspace, added call report upload/extraction to account dashboards, and removed the standalone Revenue Updates tab while keeping revenue entry inline.
