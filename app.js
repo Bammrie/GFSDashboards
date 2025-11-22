@@ -129,51 +129,6 @@ const selectors = {
   accountNotesEmpty: document.getElementById('account-notes-empty')
 };
 
-const GT_TOOLTIP_HOST = 'paxdei.gaming.tools';
-const GT_TOOLTIP_DATA_FLAG = 'gtTooltipReady';
-
-function enhanceGamingToolLinks(root = document) {
-  if (!root?.querySelectorAll) return;
-
-  root
-    .querySelectorAll(`a[href*="${GT_TOOLTIP_HOST}"]:not([data-${GT_TOOLTIP_DATA_FLAG}])`)
-    .forEach((link) => {
-      link.dataset[GT_TOOLTIP_DATA_FLAG] = 'true';
-      link.target = link.target || '_blank';
-
-      const relParts = new Set(
-        (link.rel || '')
-          .split(/\s+/)
-          .map((value) => value.trim())
-          .filter(Boolean)
-      );
-      relParts.add('noopener');
-      relParts.add('noreferrer');
-      link.rel = Array.from(relParts).join(' ');
-    });
-}
-
-function observeGamingToolLinks() {
-  if (typeof document === 'undefined' || !document.body || typeof MutationObserver === 'undefined') {
-    return;
-  }
-
-  enhanceGamingToolLinks(document);
-
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (!(node instanceof Element)) return;
-        enhanceGamingToolLinks(node);
-      });
-    });
-  });
-
-  observer.observe(document.body, { childList: true, subtree: true });
-}
-
-observeGamingToolLinks();
-
 function getStoredAccountNotes() {
   if (typeof localStorage === 'undefined') return {};
   try {
