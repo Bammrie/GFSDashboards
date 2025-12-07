@@ -33,6 +33,11 @@ const currencyFormatterNoCents = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 0
 });
 const integerFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+const CLASSIFICATIONS = ['account', 'prospect'];
+
+function normalizeClassification(value) {
+  return CLASSIFICATIONS.includes(value) ? value : 'account';
+}
 
 const selectors = {
   addCreditUnionBtn: document.getElementById('add-credit-union-btn'),
@@ -943,12 +948,16 @@ function renderAccountDirectory() {
   let totalActive = 0;
   let totalProspect = 0;
   let totalInactive = 0;
+  const classificationCounts = { account: 0, prospect: 0 };
 
   creditUnions.forEach((creditUnion) => {
     const counts = getAccountStatusCounts(creditUnion.id);
     totalActive += counts.active;
     totalProspect += counts.prospect;
     totalInactive += counts.none;
+
+    const classification = normalizeClassification(creditUnion.classification);
+    classificationCounts[classification] += 1;
 
     const latestReport = getLatestCallReportForCreditUnion(creditUnion.id);
     const consumerLoanTotal = latestReport ? getConsumerLoanTotal(latestReport) : null;
@@ -964,6 +973,32 @@ function renderAccountDirectory() {
     nameLink.textContent = creditUnion.name;
     nameLink.title = 'Open account workspace';
     nameCell.append(nameLink);
+
+    const classificationCell = document.createElement('td');
+    const classificationWrapper = document.createElement('div');
+    classificationWrapper.className = 'account-classification';
+
+    const classificationSelect = document.createElement('select');
+    classificationSelect.className = 'account-classification__select';
+    classificationSelect.dataset.creditUnionId = creditUnion.id;
+    classificationSelect.setAttribute('aria-label', `Classification for ${creditUnion.name}`);
+
+    CLASSIFICATIONS.forEach((type) => {
+      const option = document.createElement('option');
+      option.value = type;
+      option.textContent = type === 'prospect' ? 'Prospect' : 'Account';
+      if (type === classification) {
+        option.selected = true;
+      }
+      classificationSelect.append(option);
+    });
+
+    const classificationChip = document.createElement('span');
+    classificationChip.className = 'account-classification__chip';
+    classificationChip.textContent = classification === 'prospect' ? 'Prospect' : 'Account';
+
+    classificationWrapper.append(classificationSelect, classificationChip);
+    classificationCell.append(classificationWrapper);
 
     const activeCell = document.createElement('td');
     const activeChip = document.createElement('span');
@@ -1009,14 +1044,16 @@ function renderAccountDirectory() {
     consumerCell.className = 'numeric';
     consumerCell.textContent = consumerLabel;
 
-    row.append(nameCell, activeCell, prospectCell, inactiveCell, assetCell, consumerCell);
+    row.append(nameCell, classificationCell, activeCell, prospectCell, inactiveCell, assetCell, consumerCell);
     fragment.append(row);
   });
 
   body.append(fragment);
 
   if (summary) {
-    summary.textContent = `${creditUnions.length} account${creditUnions.length === 1 ? '' : 's'} • ${totalActive} green • ${totalProspect} yellow • ${totalInactive} red`;
+    summary.textContent = `${creditUnions.length} account${creditUnions.length === 1 ? '' : 's'} • ${classificationCounts.account} account${
+      classificationCounts.account === 1 ? '' : 's'
+    } • ${classificationCounts.prospect} prospect${classificationCounts.prospect === 1 ? '' : 's'} • ${totalActive} green • ${totalProspect} yellow • ${totalInactive} red`;
   }
 }
 
@@ -2143,7 +2180,11 @@ function renderReportingStatus(data) {
 
 async function loadCreditUnions() {
   const data = await request('/api/credit-unions');
-  appState.creditUnions = data.map((item) => ({ id: item.id, name: item.name }));
+  appState.creditUnions = data.map((item) => ({
+    id: item.id,
+    name: item.name,
+    classification: normalizeClassification(item.classification)
+  }));
   renderCreditUnionOptions();
   renderProspectAccountList();
 }
@@ -2292,12 +2333,31 @@ async function createCreditUnion(name) {
     method: 'POST',
     body: JSON.stringify({ name })
   });
-  appState.creditUnions.push({ id: result.id, name: result.name });
+  appState.creditUnions.push({
+    id: result.id,
+    name: result.name,
+    classification: normalizeClassification(result.classification)
+  });
   appState.accountSelectionId = result.id;
   renderCreditUnionOptions();
   if (selectors.accountCreditUnionSelect) {
     selectors.accountCreditUnionSelect.value = result.id;
   }
+}
+
+async function updateCreditUnionClassification(creditUnionId, classification) {
+  const normalizedClassification = normalizeClassification(classification);
+  const result = await request(`/api/credit-unions/${encodeURIComponent(creditUnionId)}/classification`, {
+    method: 'PATCH',
+    body: JSON.stringify({ classification: normalizedClassification })
+  });
+
+  const target = appState.creditUnions.find((creditUnion) => creditUnion.id === creditUnionId);
+  if (target) {
+    target.classification = normalizeClassification(result.classification);
+  }
+
+  return normalizeClassification(result.classification);
 }
 
 async function createIncomeStream(payload) {
@@ -3415,6 +3475,30 @@ selectors.accountStatusBody?.addEventListener('click', (event) => {
     return;
   }
   submitAccountRow(row, button);
+});
+
+selectors.accountDirectoryBody?.addEventListener('change', async (event) => {
+  const select = event.target.closest('.account-classification__select');
+  if (!select || !selectors.accountDirectoryBody.contains(select)) {
+    return;
+  }
+
+  const creditUnionId = select.dataset.creditUnionId;
+  const previousClassification = normalizeClassification(
+    appState.creditUnions.find((creditUnion) => creditUnion.id === creditUnionId)?.classification
+  );
+
+  select.disabled = true;
+  try {
+    const updatedClassification = await updateCreditUnionClassification(creditUnionId, select.value);
+    select.value = updatedClassification;
+    renderAccountDirectory();
+  } catch (error) {
+    alert(error.message);
+    select.value = previousClassification;
+  } finally {
+    select.disabled = false;
+  }
 });
 
 selectors.prospectAccountFilter?.addEventListener('input', (event) => {
