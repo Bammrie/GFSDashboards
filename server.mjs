@@ -83,7 +83,8 @@ const REPORTING_START_MONTH = 1;
 const creditUnionSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    normalizedName: { type: String, required: true, unique: true }
+    normalizedName: { type: String, required: true, unique: true },
+    classification: { type: String, enum: ['account', 'prospect'], default: 'account', index: true }
   },
   { timestamps: true }
 );
@@ -223,7 +224,8 @@ app.get('/api/credit-unions', async (req, res, next) => {
     res.json(
       creditUnions.map((creditUnion) => ({
         id: creditUnion._id.toString(),
-        name: creditUnion.name
+        name: creditUnion.name,
+        classification: creditUnion.classification || 'account'
       }))
     );
   } catch (error) {
@@ -234,6 +236,7 @@ app.get('/api/credit-unions', async (req, res, next) => {
 app.post('/api/credit-unions', async (req, res, next) => {
   try {
     const name = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
+    const classification = req.body?.classification === 'prospect' ? 'prospect' : 'account';
     if (!name) {
       res.status(400).json({ error: 'Credit union name is required.' });
       return;
@@ -245,8 +248,34 @@ app.post('/api/credit-unions', async (req, res, next) => {
       return;
     }
 
-    const created = await CreditUnion.create({ name });
-    res.status(201).json({ id: created._id.toString(), name: created.name });
+    const created = await CreditUnion.create({ name, classification });
+    res.status(201).json({ id: created._id.toString(), name: created.name, classification: created.classification });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch('/api/credit-unions/:id/classification', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ error: 'Invalid credit union selection.' });
+      return;
+    }
+
+    const classification = req.body?.classification === 'prospect' ? 'prospect' : req.body?.classification === 'account' ? 'account' : null;
+    if (!classification) {
+      res.status(400).json({ error: 'Classification must be either "account" or "prospect".' });
+      return;
+    }
+
+    const updated = await CreditUnion.findByIdAndUpdate(id, { classification }, { new: true }).lean();
+    if (!updated) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    res.json({ id: updated._id.toString(), classification: updated.classification || 'account' });
   } catch (error) {
     next(error);
   }

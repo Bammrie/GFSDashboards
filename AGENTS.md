@@ -1,3 +1,4 @@
+2028-08-24: Added classification controls in the Accounts directory so each credit union can be marked as a prospect or a full account, persisting the choice in the API.
 2025-11-21: Split Accounts into a directory landing page and a dedicated workspace page so the overview stays separate from account detail work.
 2025-11-21: Reordered the site navigation to lead with Accounts and added an Accounts directory table with status lights and latest call report assets.
 2025-11-21: Added an asset growth chart to the Accounts call report dialog so assets display over time.
