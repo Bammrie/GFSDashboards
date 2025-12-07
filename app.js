@@ -39,6 +39,24 @@ function normalizeClassification(value) {
   return CLASSIFICATIONS.includes(value) ? value : 'account';
 }
 
+function normalizeNameForComparison(name) {
+  return (name || '').toString().trim().toLowerCase();
+}
+
+function scrubDuplicateCoastlife(entries) {
+  if (!Array.isArray(entries)) return [];
+
+  const hasPreferredRecord = entries.some(
+    (item) => normalizeNameForComparison(item.name) === 'coastlife cu'
+  );
+
+  if (!hasPreferredRecord) {
+    return entries;
+  }
+
+  return entries.filter((item) => normalizeNameForComparison(item.name) !== 'coastlife');
+}
+
 const selectors = {
   addCreditUnionBtn: document.getElementById('add-credit-union-btn'),
   creditUnionDialog: document.getElementById('credit-union-dialog'),
@@ -53,6 +71,7 @@ const selectors = {
   accountDirectoryBody: document.getElementById('account-directory-body'),
   accountDirectorySummary: document.getElementById('account-directory-summary'),
   accountDirectoryEmpty: document.getElementById('account-directory-empty'),
+  accountDirectoryTabs: document.getElementById('account-directory-tabs'),
   accountDirectoryTable: document.getElementById('account-directory-table'),
   openCallReportBtn: document.getElementById('open-call-report-btn'),
   callReportDialog: document.getElementById('call-report-dialog'),
@@ -163,6 +182,7 @@ const appState = {
   reportingWindow: { start: null, end: null },
   selectedCreditUnion: 'all',
   accountSelectionId: null,
+  accountDirectoryView: 'account',
   latestCallReports: [],
   currentStreamId: null,
   currentStreamDetail: null,
@@ -922,6 +942,17 @@ function formatLatestMonetaryLabel(latestReport, value, formatter = currencyForm
   return 'Call report uploaded';
 }
 
+function updateAccountDirectoryTabs(view) {
+  const tabs = selectors.accountDirectoryTabs?.querySelectorAll('[data-view]');
+  if (!tabs) return;
+
+  tabs.forEach((tab) => {
+    const isActive = tab.dataset.view === view;
+    tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    tab.tabIndex = isActive ? 0 : -1;
+  });
+}
+
 function renderAccountDirectory() {
   const body = selectors.accountDirectoryBody;
   if (!body) return;
@@ -931,13 +962,45 @@ function renderAccountDirectory() {
   const summary = selectors.accountDirectorySummary;
 
   const creditUnions = appState.creditUnions.slice().sort((a, b) => a.name.localeCompare(b.name));
+  const view = CLASSIFICATIONS.includes(appState.accountDirectoryView)
+    ? appState.accountDirectoryView
+    : 'account';
+  const totalsByClassification = creditUnions.reduce(
+    (acc, creditUnion) => {
+      const classification = normalizeClassification(creditUnion.classification);
+      acc[classification] += 1;
+      return acc;
+    },
+    { account: 0, prospect: 0 }
+  );
+  const filteredCreditUnions = creditUnions.filter(
+    (creditUnion) => normalizeClassification(creditUnion.classification) === view
+  );
+
+  updateAccountDirectoryTabs(view);
 
   body.replaceChildren();
 
-  if (!creditUnions.length) {
-    if (emptyState) emptyState.hidden = false;
+  const emptyMessage = emptyState?.querySelector('p');
+  if (!creditUnions.length || !filteredCreditUnions.length) {
+    if (emptyState) {
+      emptyState.hidden = false;
+      if (emptyMessage) {
+        emptyMessage.textContent = creditUnions.length
+          ? `No ${view === 'prospect' ? 'prospects' : 'accounts'} are in this list yet.`
+          : 'Add your first credit union to see coverage progress and call report assets.';
+      }
+    }
     if (tableContainer) tableContainer.hidden = true;
-    if (summary) summary.textContent = '';
+    if (summary) {
+      const accountLabel = `${totalsByClassification.account} account${
+        totalsByClassification.account === 1 ? '' : 's'
+      }`;
+      const prospectLabel = `${totalsByClassification.prospect} prospect${
+        totalsByClassification.prospect === 1 ? '' : 's'
+      }`;
+      summary.textContent = creditUnions.length ? `${accountLabel} • ${prospectLabel}` : '';
+    }
     return;
   }
 
@@ -948,16 +1011,14 @@ function renderAccountDirectory() {
   let totalActive = 0;
   let totalProspect = 0;
   let totalInactive = 0;
-  const classificationCounts = { account: 0, prospect: 0 };
 
-  creditUnions.forEach((creditUnion) => {
+  filteredCreditUnions.forEach((creditUnion) => {
     const counts = getAccountStatusCounts(creditUnion.id);
     totalActive += counts.active;
     totalProspect += counts.prospect;
     totalInactive += counts.none;
 
     const classification = normalizeClassification(creditUnion.classification);
-    classificationCounts[classification] += 1;
 
     const latestReport = getLatestCallReportForCreditUnion(creditUnion.id);
     const consumerLoanTotal = latestReport ? getConsumerLoanTotal(latestReport) : null;
@@ -978,26 +1039,18 @@ function renderAccountDirectory() {
     const classificationWrapper = document.createElement('div');
     classificationWrapper.className = 'account-classification';
 
-    const classificationSelect = document.createElement('select');
-    classificationSelect.className = 'account-classification__select';
-    classificationSelect.dataset.creditUnionId = creditUnion.id;
-    classificationSelect.setAttribute('aria-label', `Classification for ${creditUnion.name}`);
-
-    CLASSIFICATIONS.forEach((type) => {
-      const option = document.createElement('option');
-      option.value = type;
-      option.textContent = type === 'prospect' ? 'Prospect' : 'Account';
-      if (type === classification) {
-        option.selected = true;
-      }
-      classificationSelect.append(option);
-    });
-
     const classificationChip = document.createElement('span');
     classificationChip.className = 'account-classification__chip';
     classificationChip.textContent = classification === 'prospect' ? 'Prospect' : 'Account';
+    const toggleButton = document.createElement('button');
+    toggleButton.type = 'button';
+    toggleButton.className = 'account-classification__button';
+    toggleButton.dataset.creditUnionId = creditUnion.id;
+    toggleButton.dataset.targetClassification = classification === 'prospect' ? 'account' : 'prospect';
+    toggleButton.textContent =
+      classification === 'prospect' ? 'Move to Accounts' : 'Move to Prospects';
 
-    classificationWrapper.append(classificationSelect, classificationChip);
+    classificationWrapper.append(classificationChip, toggleButton);
     classificationCell.append(classificationWrapper);
 
     const activeCell = document.createElement('td');
@@ -1051,9 +1104,18 @@ function renderAccountDirectory() {
   body.append(fragment);
 
   if (summary) {
-    summary.textContent = `${creditUnions.length} account${creditUnions.length === 1 ? '' : 's'} • ${classificationCounts.account} account${
-      classificationCounts.account === 1 ? '' : 's'
-    } • ${classificationCounts.prospect} prospect${classificationCounts.prospect === 1 ? '' : 's'} • ${totalActive} green • ${totalProspect} yellow • ${totalInactive} red`;
+    const viewLabel = view === 'prospect' ? 'prospect' : 'account';
+    const filteredLabel = `${filteredCreditUnions.length} ${viewLabel}${
+      filteredCreditUnions.length === 1 ? '' : 's'
+    } shown`;
+    const accountLabel = `${totalsByClassification.account} account${
+      totalsByClassification.account === 1 ? '' : 's'
+    }`;
+    const prospectLabel = `${totalsByClassification.prospect} prospect${
+      totalsByClassification.prospect === 1 ? '' : 's'
+    }`;
+
+    summary.textContent = `${filteredLabel} • ${accountLabel} • ${prospectLabel} • ${totalActive} green • ${totalProspect} yellow • ${totalInactive} red`;
   }
 }
 
@@ -2180,13 +2242,15 @@ function renderReportingStatus(data) {
 
 async function loadCreditUnions() {
   const data = await request('/api/credit-unions');
-  appState.creditUnions = data.map((item) => ({
+  const cleanedCreditUnions = scrubDuplicateCoastlife(data);
+  appState.creditUnions = cleanedCreditUnions.map((item) => ({
     id: item.id,
     name: item.name,
     classification: normalizeClassification(item.classification)
   }));
   renderCreditUnionOptions();
   renderProspectAccountList();
+  renderAccountDirectory();
 }
 
 async function loadIncomeStreams() {
@@ -3477,28 +3541,46 @@ selectors.accountStatusBody?.addEventListener('click', (event) => {
   submitAccountRow(row, button);
 });
 
-selectors.accountDirectoryBody?.addEventListener('change', async (event) => {
-  const select = event.target.closest('.account-classification__select');
-  if (!select || !selectors.accountDirectoryBody.contains(select)) {
+selectors.accountDirectoryBody?.addEventListener('click', async (event) => {
+  const button = event.target.closest('.account-classification__button');
+  if (!button || !selectors.accountDirectoryBody.contains(button)) {
     return;
   }
 
-  const creditUnionId = select.dataset.creditUnionId;
-  const previousClassification = normalizeClassification(
-    appState.creditUnions.find((creditUnion) => creditUnion.id === creditUnionId)?.classification
-  );
+  const creditUnionId = button.dataset.creditUnionId;
+  const targetClassification = button.dataset.targetClassification;
+  if (!creditUnionId || !targetClassification) {
+    return;
+  }
 
-  select.disabled = true;
+  button.disabled = true;
+  const previousText = button.textContent;
+  button.textContent = 'Moving...';
+
   try {
-    const updatedClassification = await updateCreditUnionClassification(creditUnionId, select.value);
-    select.value = updatedClassification;
+    const updatedClassification = await updateCreditUnionClassification(
+      creditUnionId,
+      targetClassification
+    );
+    appState.accountDirectoryView = updatedClassification;
     renderAccountDirectory();
   } catch (error) {
     alert(error.message);
-    select.value = previousClassification;
   } finally {
-    select.disabled = false;
+    button.disabled = false;
+    button.textContent = previousText;
   }
+});
+
+selectors.accountDirectoryTabs?.addEventListener('click', (event) => {
+  const tab = event.target.closest('[data-view]');
+  if (!tab || !selectors.accountDirectoryTabs.contains(tab)) {
+    return;
+  }
+
+  const selectedView = CLASSIFICATIONS.includes(tab.dataset.view) ? tab.dataset.view : 'account';
+  appState.accountDirectoryView = selectedView;
+  renderAccountDirectory();
 });
 
 selectors.prospectAccountFilter?.addEventListener('input', (event) => {

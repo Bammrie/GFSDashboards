@@ -32,8 +32,38 @@
             Scan every credit union at a glance, then open their workspace to adjust coverage or upload call reports.
           </p>
         </div>
-        <p id="account-directory-summary" class="panel__description"></p>
+        <div
+          class="account-directory__tabs"
+          id="account-directory-tabs"
+          role="tablist"
+          aria-label="Toggle between accounts and prospects"
+        >
+          <button
+            type="button"
+            class="tab"
+            role="tab"
+            aria-selected="true"
+            data-view="account"
+            id="account-directory-tab-accounts"
+            aria-controls="account-directory-table"
+          >
+            Accounts
+          </button>
+          <button
+            type="button"
+            class="tab"
+            role="tab"
+            aria-selected="false"
+            data-view="prospect"
+            id="account-directory-tab-prospects"
+            aria-controls="account-directory-table"
+          >
+            Prospects
+          </button>
+        </div>
       </header>
+
+      <p id="account-directory-summary" class="panel__description"></p>
 
       <div class="account-directory" aria-live="polite">
         <div id="account-directory-empty" class="empty-state">
@@ -45,7 +75,7 @@
             <thead>
               <tr>
                 <th scope="col">Credit union</th>
-                <th scope="col">Classification</th>
+                <th scope="col">Placement</th>
                 <th scope="col">Green (active)</th>
                 <th scope="col">Yellow (prospect)</th>
                 <th scope="col">Red (not started)</th>
