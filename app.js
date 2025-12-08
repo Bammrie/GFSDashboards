@@ -931,15 +931,30 @@ function formatLatestMonetaryLabel(latestReport, value, formatter = currencyForm
   }
 
   if (Number.isFinite(value)) {
-    const periodLabel =
-      latestReport?.periodYear && latestReport?.periodMonth
-        ? ` (${formatPeriodLabel(latestReport.periodYear, latestReport.periodMonth)})`
-        : '';
-
-    return `${formatter.format(value)}${periodLabel}`;
+    return formatter.format(value);
   }
 
   return 'Call report uploaded';
+}
+
+function getLatestReportPeriod(latestReport) {
+  if (!latestReport) {
+    return { label: 'No call report yet', tone: 'muted' };
+  }
+
+  if (latestReport?.periodYear && latestReport?.periodMonth) {
+    return { label: formatPeriodLabel(latestReport.periodYear, latestReport.periodMonth), tone: 'accent' };
+  }
+
+  if (latestReport?.reportDate) {
+    const dateLabel = new Date(latestReport.reportDate).toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric'
+    });
+    return { label: dateLabel, tone: 'accent' };
+  }
+
+  return { label: 'Call report uploaded', tone: 'muted' };
 }
 
 function updateAccountDirectoryTabs(view) {
@@ -1024,6 +1039,7 @@ function renderAccountDirectory() {
     const consumerLoanTotal = latestReport ? getConsumerLoanTotal(latestReport) : null;
     const assetLabel = formatLatestMonetaryLabel(latestReport, latestReport?.assetSize);
     const consumerLabel = formatLatestMonetaryLabel(latestReport, consumerLoanTotal);
+    const periodInfo = getLatestReportPeriod(latestReport);
 
     const row = document.createElement('tr');
 
@@ -1089,15 +1105,29 @@ function renderAccountDirectory() {
     inactiveChip.append(inactiveDot, inactiveCount, inactiveLabel);
     inactiveCell.append(inactiveChip);
 
+    const periodCell = document.createElement('td');
+    periodCell.className = 'period-cell';
+    periodCell.textContent = periodInfo.label;
+    periodCell.dataset.tone = periodInfo.tone;
+
     const assetCell = document.createElement('td');
-    assetCell.className = 'numeric';
+    assetCell.className = 'numeric numeric--monospace';
     assetCell.textContent = assetLabel;
 
     const consumerCell = document.createElement('td');
-    consumerCell.className = 'numeric';
+    consumerCell.className = 'numeric numeric--monospace';
     consumerCell.textContent = consumerLabel;
 
-    row.append(nameCell, classificationCell, activeCell, prospectCell, inactiveCell, assetCell, consumerCell);
+    row.append(
+      nameCell,
+      classificationCell,
+      activeCell,
+      prospectCell,
+      inactiveCell,
+      periodCell,
+      assetCell,
+      consumerCell
+    );
     fragment.append(row);
   });
 
