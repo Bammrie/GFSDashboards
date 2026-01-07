@@ -150,7 +150,13 @@ const selectors = {
   accountNotesText: document.getElementById('account-note-text'),
   accountNotesFeedback: document.getElementById('account-notes-feedback'),
   accountNotesList: document.getElementById('account-notes-list'),
-  accountNotesEmpty: document.getElementById('account-notes-empty')
+  accountNotesEmpty: document.getElementById('account-notes-empty'),
+  accountReviewForm: document.getElementById('account-review-form'),
+  accountReviewLocked: document.getElementById('account-review-locked'),
+  accountReviewFeedback: document.getElementById('account-review-feedback'),
+  accountReviewUpdated: document.getElementById('account-review-updated'),
+  accountChangeLog: document.getElementById('account-change-log'),
+  accountChangeLogEmpty: document.getElementById('account-change-log-empty')
 };
 
 function getStoredAccountNotes() {
@@ -170,6 +176,46 @@ function persistAccountNotes(notes) {
     localStorage.setItem('accountNotes', JSON.stringify(notes));
   } catch (error) {
     console.error('Unable to persist account notes', error);
+  }
+}
+
+function getStoredAccountReviewData() {
+  if (typeof localStorage === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem('accountReviewData');
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (_error) {
+    return {};
+  }
+}
+
+function persistAccountReviewData(reviewData) {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem('accountReviewData', JSON.stringify(reviewData));
+  } catch (error) {
+    console.error('Unable to persist account review data', error);
+  }
+}
+
+function getStoredAccountChangeLog() {
+  if (typeof localStorage === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem('accountChangeLog');
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (_error) {
+    return {};
+  }
+}
+
+function persistAccountChangeLog(logData) {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem('accountChangeLog', JSON.stringify(logData));
+  } catch (error) {
+    console.error('Unable to persist account change log', error);
   }
 }
 
@@ -198,7 +244,9 @@ const appState = {
   missingUpdates: [],
   missingFilters: { month: null, revenueType: 'all' },
   callReports: [],
-  accountNotes: getStoredAccountNotes()
+  accountNotes: getStoredAccountNotes(),
+  accountReviewData: getStoredAccountReviewData(),
+  accountChangeLog: getStoredAccountChangeLog()
 };
 
 function showDialog(dialog) {
@@ -367,6 +415,11 @@ function getCreditUnionNameById(id) {
   if (!id) return null;
   const match = appState.creditUnions.find((creditUnion) => creditUnion.id === id);
   return match ? match.name : null;
+}
+
+function getCreditUnionById(id) {
+  if (!id) return null;
+  return appState.creditUnions.find((creditUnion) => creditUnion.id === id) || null;
 }
 
 function formatMonthLabelFromKey(key) {
@@ -1174,6 +1227,8 @@ function renderAccountWorkspace() {
       emptyState.hidden = false;
     }
     renderAccountNotes();
+    renderAccountReview();
+    renderAccountChangeLog();
     return;
   }
 
@@ -1208,6 +1263,8 @@ function renderAccountWorkspace() {
 
   renderCallReports();
   renderAccountNotes();
+  renderAccountReview();
+  renderAccountChangeLog();
 }
 
 function setCallReportFeedback(message, state = 'info') {
@@ -1757,6 +1814,211 @@ function renderAccountNotes() {
   list.append(fragment);
 }
 
+function formatLogTimestamp(timestamp) {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+}
+
+function addAccountChangeLog({ creditUnionId, action, details, actor }) {
+  if (!creditUnionId || !action) return;
+  const entry = {
+    id: `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    action,
+    details: details || '',
+    actor: actor || 'Workspace user',
+    timestamp: new Date().toISOString()
+  };
+  const existing = Array.isArray(appState.accountChangeLog[creditUnionId])
+    ? appState.accountChangeLog[creditUnionId]
+    : [];
+  appState.accountChangeLog = {
+    ...appState.accountChangeLog,
+    [creditUnionId]: [entry, ...existing].slice(0, 200)
+  };
+  persistAccountChangeLog(appState.accountChangeLog);
+  renderAccountChangeLog();
+}
+
+function renderAccountChangeLog() {
+  const list = selectors.accountChangeLog;
+  const empty = selectors.accountChangeLogEmpty;
+  if (!list || !empty) return;
+
+  const creditUnionId = appState.accountSelectionId;
+  list.replaceChildren();
+
+  const emptyMessage = empty.querySelector('p');
+  if (!creditUnionId) {
+    empty.hidden = false;
+    if (emptyMessage) {
+      emptyMessage.textContent = 'Select a credit union to view the account change log.';
+    }
+    return;
+  }
+
+  const entries = Array.isArray(appState.accountChangeLog[creditUnionId])
+    ? appState.accountChangeLog[creditUnionId]
+    : [];
+
+  if (!entries.length) {
+    empty.hidden = false;
+    if (emptyMessage) {
+      emptyMessage.textContent = 'No changes logged yet. Updates will appear once account activity is recorded.';
+    }
+    return;
+  }
+
+  empty.hidden = true;
+  const fragment = document.createDocumentFragment();
+  entries.forEach((entry) => {
+    const item = document.createElement('li');
+    item.className = 'change-log__item';
+
+    const header = document.createElement('div');
+    header.className = 'change-log__header';
+
+    const action = document.createElement('span');
+    action.className = 'change-log__title';
+    action.textContent = entry.action;
+
+    const timestamp = document.createElement('span');
+    timestamp.textContent = formatLogTimestamp(entry.timestamp);
+
+    header.append(action, timestamp);
+
+    const details = document.createElement('p');
+    details.className = 'change-log__details';
+    details.textContent = entry.details || '—';
+
+    const meta = document.createElement('div');
+    meta.className = 'change-log__meta';
+    const actor = document.createElement('span');
+    actor.textContent = `By: ${entry.actor || 'Workspace user'}`;
+    meta.append(actor);
+
+    item.append(header, details, meta);
+    fragment.append(item);
+  });
+
+  list.append(fragment);
+}
+
+function setFormDisabled(form, isDisabled) {
+  if (!form) return;
+  form.querySelectorAll('input, select, textarea, button').forEach((element) => {
+    element.disabled = isDisabled;
+  });
+}
+
+function getReviewValue(data, path) {
+  return path.split('.').reduce((value, key) => {
+    if (value && typeof value === 'object') {
+      return value[key];
+    }
+    return undefined;
+  }, data);
+}
+
+function setReviewValue(target, path, value) {
+  const parts = path.split('.');
+  let current = target;
+  parts.forEach((part, index) => {
+    if (index === parts.length - 1) {
+      current[part] = value;
+    } else {
+      if (!current[part] || typeof current[part] !== 'object') {
+        current[part] = {};
+      }
+      current = current[part];
+    }
+  });
+}
+
+function renderAccountReview() {
+  const form = selectors.accountReviewForm;
+  const locked = selectors.accountReviewLocked;
+  const feedback = selectors.accountReviewFeedback;
+  const updatedLabel = selectors.accountReviewUpdated;
+  if (!form || !locked) return;
+
+  const creditUnionId = appState.accountSelectionId;
+  const creditUnion = getCreditUnionById(creditUnionId);
+  const isAccount = creditUnion?.classification === 'account';
+
+  if (!creditUnionId || !isAccount) {
+    form.hidden = true;
+    locked.hidden = false;
+    const lockedMessage = locked.querySelector('p');
+    if (lockedMessage) {
+      if (!creditUnionId) {
+        lockedMessage.textContent = 'Select an account to start the year end review.';
+      } else {
+        lockedMessage.textContent =
+          'This credit union is still marked as a prospect. Move it to Accounts to unlock the year end review fields.';
+      }
+    }
+    setFormDisabled(form, true);
+    if (feedback) {
+      setFeedback(feedback, '', 'info');
+    }
+    if (updatedLabel) {
+      updatedLabel.textContent = '—';
+    }
+    return;
+  }
+
+  form.hidden = false;
+  locked.hidden = true;
+  setFormDisabled(form, false);
+
+  const stored = appState.accountReviewData[creditUnionId] || {};
+  const reviewData = {
+    year: stored.year ?? new Date().getFullYear(),
+    reviewedBy: stored.reviewedBy ?? '',
+    program: stored.program ?? {},
+    integration: stored.integration ?? {},
+    coreProcessor: stored.coreProcessor ?? '',
+    losProvider: stored.losProvider ?? '',
+    updatedAt: stored.updatedAt ?? null
+  };
+
+  form.querySelectorAll('[data-review-path]').forEach((input) => {
+    const path = input.dataset.reviewPath;
+    if (!path) return;
+    const value = getReviewValue(reviewData, path);
+    if (input instanceof HTMLInputElement || input instanceof HTMLSelectElement) {
+      input.value = value ?? '';
+    }
+  });
+
+  if (updatedLabel) {
+    updatedLabel.textContent = reviewData.updatedAt ? formatLogTimestamp(reviewData.updatedAt) : '—';
+  }
+
+  if (feedback) {
+    setFeedback(feedback, '', 'info');
+  }
+}
+
+function collectReviewFormData(form) {
+  const data = {};
+  form.querySelectorAll('[data-review-path]').forEach((input) => {
+    const path = input.dataset.reviewPath;
+    if (!path) return;
+    const value = input instanceof HTMLInputElement || input instanceof HTMLSelectElement ? input.value.trim() : '';
+    setReviewValue(data, path, value);
+  });
+  return data;
+}
+
 function createSparkline(values) {
   const filtered = values.filter((value) => Number.isFinite(value));
   if (filtered.length < 2) return null;
@@ -2039,6 +2301,12 @@ async function submitAccountRow(row, button) {
     const refreshedRow = getAccountRowElement(product, revenueType) || row;
     setAccountRowFeedback(refreshedRow, message, 'success');
     updateAccountRowInteractionState(refreshedRow);
+    addAccountChangeLog({
+      creditUnionId,
+      action: message,
+      details: `${product} · ${revenueType}`,
+      actor: 'Workspace user'
+    });
   } catch (error) {
     const refreshedRow = getAccountRowElement(product, revenueType) || row;
     setAccountRowFeedback(
@@ -3555,6 +3823,63 @@ selectors.accountNotesForm?.addEventListener('submit', (event) => {
   selectors.accountNotesForm.reset();
   setFeedback(selectors.accountNotesFeedback, 'Note saved.', 'success');
   renderAccountNotes();
+  addAccountChangeLog({
+    creditUnionId,
+    action: 'Added account note',
+    details: text,
+    actor: author
+  });
+});
+
+selectors.accountReviewForm?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    if (selectors.accountReviewFeedback) {
+      setFeedback(selectors.accountReviewFeedback, 'Select a credit union before saving a review.', 'error');
+    }
+    return;
+  }
+
+  const creditUnion = getCreditUnionById(creditUnionId);
+  if (creditUnion?.classification !== 'account') {
+    if (selectors.accountReviewFeedback) {
+      setFeedback(selectors.accountReviewFeedback, 'Move this prospect to Accounts before saving review data.', 'error');
+    }
+    return;
+  }
+
+  const form = event.currentTarget;
+  const data = collectReviewFormData(form);
+  const stored = appState.accountReviewData[creditUnionId] || {};
+  const yearValue = data.year || stored.year || new Date().getFullYear();
+  const updatedAt = new Date().toISOString();
+  const updatedReview = {
+    ...stored,
+    ...data,
+    year: yearValue,
+    updatedAt
+  };
+
+  appState.accountReviewData = {
+    ...appState.accountReviewData,
+    [creditUnionId]: updatedReview
+  };
+  persistAccountReviewData(appState.accountReviewData);
+
+  if (selectors.accountReviewUpdated) {
+    selectors.accountReviewUpdated.textContent = formatLogTimestamp(updatedAt);
+  }
+  if (selectors.accountReviewFeedback) {
+    setFeedback(selectors.accountReviewFeedback, 'Year end review saved.', 'success');
+  }
+
+  addAccountChangeLog({
+    creditUnionId,
+    action: 'Updated year end review',
+    details: `Saved ${yearValue} review data.`,
+    actor: data.reviewedBy || 'Workspace user'
+  });
 });
 
 selectors.accountStatusBody?.addEventListener('change', handleAccountStatusChange);
@@ -3594,6 +3919,12 @@ selectors.accountDirectoryBody?.addEventListener('click', async (event) => {
     );
     appState.accountDirectoryView = updatedClassification;
     renderAccountDirectory();
+    addAccountChangeLog({
+      creditUnionId,
+      action: 'Updated account classification',
+      details: `Set classification to ${updatedClassification}.`,
+      actor: 'Workspace user'
+    });
   } catch (error) {
     alert(error.message);
   } finally {
@@ -3643,6 +3974,12 @@ selectors.callReportFileInput?.addEventListener('change', async (event) => {
     setCallReportFeedback('Call report captured and stored.', 'success');
     await loadCallReports(appState.accountSelectionId);
     await loadLatestCallReports();
+    addAccountChangeLog({
+      creditUnionId: appState.accountSelectionId,
+      action: 'Uploaded call report',
+      details: file.name ? `File ${file.name} uploaded.` : 'Call report uploaded.',
+      actor: 'Workspace user'
+    });
   } catch (error) {
     setCallReportFeedback(error.message, 'error');
   } finally {
@@ -3673,6 +4010,12 @@ selectors.callReportList?.addEventListener('click', async (event) => {
     setCallReportFeedback('Call report removed.', 'success');
     await loadCallReports(appState.accountSelectionId);
     await loadLatestCallReports();
+    addAccountChangeLog({
+      creditUnionId: appState.accountSelectionId,
+      action: 'Deleted call report',
+      details: `Removed ${reportLabel}.`,
+      actor: 'Workspace user'
+    });
   } catch (error) {
     setCallReportFeedback(error.message, 'error');
   } finally {

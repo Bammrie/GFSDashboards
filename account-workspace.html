@@ -90,6 +90,180 @@
       <ul id="account-notes-list" class="notes-list" aria-live="polite"></ul>
     </section>
 
+    <section class="panel" aria-labelledby="account-review-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="account-review-heading" class="panel__title">Year end review</h2>
+          <p class="panel__description">
+            Capture the current PMAC program, integrations, and core systems for annual account reviews.
+          </p>
+        </div>
+      </header>
+
+      <div id="account-review-locked" class="empty-state" hidden>
+        <p>Select an account to start the year end review. Prospect entries unlock this section once they move to Accounts.</p>
+      </div>
+
+      <form id="account-review-form" class="review-form">
+        <div class="review-meta">
+          <div class="field-group">
+            <label for="account-review-year">Review year</label>
+            <input type="number" id="account-review-year" data-review-path="year" min="2000" max="2100" />
+          </div>
+          <div class="field-group">
+            <label for="account-review-owner">Reviewed by</label>
+            <input type="text" id="account-review-owner" data-review-path="reviewedBy" placeholder="Team member name" />
+          </div>
+          <div class="field-group review-meta__status">
+            <label>Last updated</label>
+            <p id="account-review-updated" class="review-updated">—</p>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <h3 class="review-card__title">Current PMAC Program</h3>
+          <div class="review-table__wrapper">
+            <table class="review-table">
+              <thead>
+                <tr>
+                  <th scope="col">Field</th>
+                  <th scope="col">Life</th>
+                  <th scope="col">A/H</th>
+                  <th scope="col">IUI</th>
+                  <th scope="col">GAP</th>
+                  <th scope="col">VSC</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Rates</th>
+                  <td><input type="text" data-review-path="program.life.rates" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.ah.rates" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.iui.rates" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.gap.rates" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.vsc.rates" class="review-input" /></td>
+                </tr>
+                <tr>
+                  <th scope="row">Limits</th>
+                  <td><input type="text" data-review-path="program.life.limits" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.ah.limits" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.iui.limits" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.gap.limits" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.vsc.limits" class="review-input" /></td>
+                </tr>
+                <tr>
+                  <th scope="row">Coverages</th>
+                  <td><input type="text" data-review-path="program.life.coverages" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.ah.coverages" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.iui.coverages" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.gap.coverages" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.vsc.coverages" class="review-input" /></td>
+                </tr>
+                <tr>
+                  <th scope="row">Income incentives</th>
+                  <td><input type="text" data-review-path="program.life.incentives" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.ah.incentives" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.iui.incentives" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.gap.incentives" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.vsc.incentives" class="review-input" /></td>
+                </tr>
+                <tr>
+                  <th scope="row">Menu term extension</th>
+                  <td colspan="5">
+                    <select data-review-path="program.menuTermExtension" class="review-input">
+                      <option value="">Select</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <h3 class="review-card__title">Integration</h3>
+          <div class="review-table__wrapper">
+            <table class="review-table">
+              <thead>
+                <tr>
+                  <th scope="col">Field</th>
+                  <th scope="col">CSO</th>
+                  <th scope="col">ASG</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">Member detail</th>
+                  <td>
+                    <select data-review-path="integration.cso.memberDetail" class="review-input">
+                      <option value="">Select</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select data-review-path="integration.asg.memberDetail" class="review-input">
+                      <option value="">Select</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Sales</th>
+                  <td>
+                    <select data-review-path="integration.cso.sales" class="review-input">
+                      <option value="">Select</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select data-review-path="integration.asg.sales" class="review-input">
+                      <option value="">Select</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="review-systems">
+          <div class="field-group">
+            <label for="account-review-core">Core processor</label>
+            <input type="text" id="account-review-core" data-review-path="coreProcessor" />
+          </div>
+          <div class="field-group">
+            <label for="account-review-los">LOS provider</label>
+            <input type="text" id="account-review-los" data-review-path="losProvider" />
+          </div>
+        </div>
+
+        <div class="review-actions">
+          <p class="feedback" id="account-review-feedback" role="status" aria-live="polite"></p>
+          <button type="submit" class="primary-button">Save year end review</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="account-change-log-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="account-change-log-heading" class="panel__title">Account change log</h2>
+          <p class="panel__description">Every saved update to account data appears here for quick audit history.</p>
+        </div>
+      </header>
+      <div id="account-change-log-empty" class="empty-state" hidden>
+        <p>No changes logged yet. Updates will appear once account activity is recorded.</p>
+      </div>
+      <ul id="account-change-log" class="change-log" aria-live="polite"></ul>
+    </section>
+
     <section class="panel" id="account-status-panel" aria-labelledby="account-status-heading">
       <header class="panel__header account-status__header">
         <div>
