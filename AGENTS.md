@@ -178,3 +178,5 @@ Document or extend new features so they reuse these formulas without re-defining
 
 2025-11-19: Corrected call report field mapping to the uploaded Ascension template (assets, income totals, loan segments, indirects).
 2025-11-21: Updated the account directory to drop cents from asset displays and show the latest consumer lending total alongside assets.
+
+2026-01-07: Added year end review fields and an account change log section on the account workspace to support annual reviews and audit history.
