@@ -1990,6 +1990,7 @@ function renderAccountReview() {
   const reviewData = {
     year: stored.year ?? new Date().getFullYear(),
     reviewedBy: stored.reviewedBy ?? '',
+    trainingFrequency: stored.trainingFrequency ?? '',
     program: stored.program ?? {},
     integration: stored.integration ?? {},
     coreProcessor: stored.coreProcessor ?? '',
@@ -2034,8 +2035,16 @@ function formatReviewField(value) {
   if (typeof value === 'string') {
     const trimmed = value.trim();
     if (!trimmed) return '—';
-    if (trimmed.toLowerCase() === 'yes') return 'Yes';
-    if (trimmed.toLowerCase() === 'no') return 'No';
+    const lower = trimmed.toLowerCase();
+    if (lower === 'yes') return 'Yes';
+    if (lower === 'no') return 'No';
+    if (lower === 'manual') return 'Manual';
+    if (lower === 'ach') return 'ACH';
+    if (lower === 'weekly') return 'Weekly';
+    if (lower === 'monthly') return 'Monthly';
+    if (lower === 'bi-monthly') return 'Bi-Monthly';
+    if (lower === 'quarterly') return 'Quarterly';
+    if (lower === 'yearly') return 'Yearly';
     return trimmed;
   }
   return String(value);
@@ -2168,21 +2177,22 @@ async function downloadYearEndReviewPdf() {
 
   const logoDataUrl = await loadReviewLogoDataUrl();
   if (logoDataUrl) {
-    doc.addImage(logoDataUrl, 'PNG', margin, y, 64, 64);
+    doc.addImage(logoDataUrl, 'PNG', margin, y, 140, 40);
   }
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(20);
-  doc.text('Year End Review', margin + 80, y + 26);
+  doc.text('Year End Review', margin + 160, y + 24);
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
-  doc.text(creditUnion.name || 'Credit union', margin + 80, y + 46);
-  y += 86;
+  doc.text(creditUnion.name || 'Credit union', margin + 160, y + 42);
+  y += 70;
 
   y = addPdfSectionTitle(doc, 'Review summary', margin, y);
   const summaryRows = [
     { label: 'Review year', value: reviewData.year },
     { label: 'Reviewed by', value: reviewData.reviewedBy },
+    { label: 'Training frequency', value: reviewData.trainingFrequency },
     { label: 'Last updated', value: reviewData.updatedAt ? formatLogTimestamp(reviewData.updatedAt) : '—' }
   ];
   y = addPdfKeyValueRows(doc, summaryRows, margin, y, pageWidth - margin * 2, margin, pageHeight);
@@ -2214,12 +2224,28 @@ async function downloadYearEndReviewPdf() {
       reviewData.program?.vsc?.coverages
     ],
     [
-      'Income incentives',
+      'Income',
+      reviewData.program?.life?.income,
+      reviewData.program?.ah?.income,
+      reviewData.program?.iui?.income,
+      reviewData.program?.gap?.income,
+      reviewData.program?.vsc?.income
+    ],
+    [
+      'Incentives',
       reviewData.program?.life?.incentives,
       reviewData.program?.ah?.incentives,
       reviewData.program?.iui?.incentives,
       reviewData.program?.gap?.incentives,
       reviewData.program?.vsc?.incentives
+    ],
+    [
+      'Term extension',
+      reviewData.program?.life?.termExtension,
+      reviewData.program?.ah?.termExtension,
+      reviewData.program?.iui?.termExtension,
+      reviewData.program?.gap?.termExtension,
+      reviewData.program?.vsc?.termExtension
     ]
   ];
 
@@ -2237,25 +2263,31 @@ async function downloadYearEndReviewPdf() {
     pageHeight
   );
 
-  y = addPdfKeyValueRows(
-    doc,
-    [{ label: 'Menu term extension', value: reviewData.program?.menuTermExtension }],
-    margin,
-    y,
-    pageWidth - margin * 2,
-    margin,
-    pageHeight
-  );
-  y += 10;
-
   y = addPdfTable(
     doc,
     {
       title: 'Integration',
-      headers: ['Field', 'CSO', 'ASG'],
+      headers: ['Field', 'CSO', 'ASG', 'HUB'],
       rows: [
-        ['Member detail', reviewData.integration?.cso?.memberDetail, reviewData.integration?.asg?.memberDetail],
-        ['Sales', reviewData.integration?.cso?.sales, reviewData.integration?.asg?.sales]
+        [
+          'Member detail',
+          reviewData.integration?.cso?.memberDetail,
+          reviewData.integration?.asg?.memberDetail,
+          reviewData.integration?.hub?.memberDetail
+        ],
+        ['Sales', reviewData.integration?.cso?.sales, reviewData.integration?.asg?.sales, reviewData.integration?.hub?.sales],
+        [
+          'Premium remittance',
+          reviewData.integration?.cso?.premiumRemittance || 'Manual / ACH',
+          reviewData.integration?.asg?.premiumRemittance || 'Manual / ACH',
+          reviewData.integration?.hub?.premiumRemittance || 'Manual / ACH'
+        ],
+        [
+          'Claim payments',
+          reviewData.integration?.cso?.claimPayments || 'Manual / ACH',
+          reviewData.integration?.asg?.claimPayments || 'Manual / ACH',
+          reviewData.integration?.hub?.claimPayments || 'Manual / ACH'
+        ]
       ]
     },
     margin,

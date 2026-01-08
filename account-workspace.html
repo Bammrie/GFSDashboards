@@ -114,6 +114,17 @@
             <label for="account-review-owner">Reviewed by</label>
             <input type="text" id="account-review-owner" data-review-path="reviewedBy" placeholder="Team member name" />
           </div>
+          <div class="field-group">
+            <label for="account-review-training-frequency">Training frequency</label>
+            <select id="account-review-training-frequency" data-review-path="trainingFrequency">
+              <option value="">Select</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="bi-monthly">Bi-Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
           <div class="field-group review-meta__status">
             <label>Last updated</label>
             <p id="account-review-updated" class="review-updated">—</p>
@@ -160,7 +171,15 @@
                   <td><input type="text" data-review-path="program.vsc.coverages" class="review-input" /></td>
                 </tr>
                 <tr>
-                  <th scope="row">Income incentives</th>
+                  <th scope="row">Income</th>
+                  <td><input type="text" data-review-path="program.life.income" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.ah.income" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.iui.income" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.gap.income" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.vsc.income" class="review-input" /></td>
+                </tr>
+                <tr>
+                  <th scope="row">Incentives</th>
                   <td><input type="text" data-review-path="program.life.incentives" class="review-input" /></td>
                   <td><input type="text" data-review-path="program.ah.incentives" class="review-input" /></td>
                   <td><input type="text" data-review-path="program.iui.incentives" class="review-input" /></td>
@@ -168,14 +187,12 @@
                   <td><input type="text" data-review-path="program.vsc.incentives" class="review-input" /></td>
                 </tr>
                 <tr>
-                  <th scope="row">Menu term extension</th>
-                  <td colspan="5">
-                    <select data-review-path="program.menuTermExtension" class="review-input">
-                      <option value="">Select</option>
-                      <option value="yes">Yes</option>
-                      <option value="no">No</option>
-                    </select>
-                  </td>
+                  <th scope="row">Term extension</th>
+                  <td><input type="text" data-review-path="program.life.termExtension" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.ah.termExtension" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.iui.termExtension" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.gap.termExtension" class="review-input" /></td>
+                  <td><input type="text" data-review-path="program.vsc.termExtension" class="review-input" /></td>
                 </tr>
               </tbody>
             </table>
@@ -191,6 +208,7 @@
                   <th scope="col">Field</th>
                   <th scope="col">CSO</th>
                   <th scope="col">ASG</th>
+                  <th scope="col">HUB</th>
                 </tr>
               </thead>
               <tbody>
@@ -205,6 +223,13 @@
                   </td>
                   <td>
                     <select data-review-path="integration.asg.memberDetail" class="review-input">
+                      <option value="">Select</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select data-review-path="integration.hub.memberDetail" class="review-input">
                       <option value="">Select</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
@@ -225,6 +250,61 @@
                       <option value="">Select</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select data-review-path="integration.hub.sales" class="review-input">
+                      <option value="">Select</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Premium remittance</th>
+                  <td>
+                    <select data-review-path="integration.cso.premiumRemittance" class="review-input">
+                      <option value="">Manual / ACH</option>
+                      <option value="manual">Manual</option>
+                      <option value="ach">ACH</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select data-review-path="integration.asg.premiumRemittance" class="review-input">
+                      <option value="">Manual / ACH</option>
+                      <option value="manual">Manual</option>
+                      <option value="ach">ACH</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select data-review-path="integration.hub.premiumRemittance" class="review-input">
+                      <option value="">Manual / ACH</option>
+                      <option value="manual">Manual</option>
+                      <option value="ach">ACH</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">Claim payments</th>
+                  <td>
+                    <select data-review-path="integration.cso.claimPayments" class="review-input">
+                      <option value="">Manual / ACH</option>
+                      <option value="manual">Manual</option>
+                      <option value="ach">ACH</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select data-review-path="integration.asg.claimPayments" class="review-input">
+                      <option value="">Manual / ACH</option>
+                      <option value="manual">Manual</option>
+                      <option value="ach">ACH</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select data-review-path="integration.hub.claimPayments" class="review-input">
+                      <option value="">Manual / ACH</option>
+                      <option value="manual">Manual</option>
+                      <option value="ach">ACH</option>
                     </select>
                   </td>
                 </tr>
