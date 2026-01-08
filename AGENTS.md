@@ -1,4 +1,5 @@
 2026-01-08: Added a year end review PDF download button that generates a branded report with the credit union details for sharing.
+2026-01-08: Updated the year end review worksheet fields (training frequency, income/incentives split, term extensions, integration options) and refreshed the PDF logo layout for client printouts.
 2025-03-18: Added a dedicated last reported month column to the Accounts directory, aligned the latest assets/consumer lending amounts, and highlighted the month label for easier scanning.
 2025-03-07: Split the Accounts directory into Accounts/Prospects tabs, added move buttons for reclassifying entries, and filtered out the duplicate CoastLife record when CoastLife CU is present.
 2028-08-24: Added classification controls in the Accounts directory so each credit union can be marked as a prospect or a full account, persisting the choice in the API.
