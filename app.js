@@ -155,6 +155,7 @@ const selectors = {
   accountReviewLocked: document.getElementById('account-review-locked'),
   accountReviewFeedback: document.getElementById('account-review-feedback'),
   accountReviewUpdated: document.getElementById('account-review-updated'),
+  accountReviewDownload: document.getElementById('account-review-download'),
   accountChangeLog: document.getElementById('account-change-log'),
   accountChangeLogEmpty: document.getElementById('account-change-log-empty')
 };
@@ -1972,12 +1973,18 @@ function renderAccountReview() {
     if (updatedLabel) {
       updatedLabel.textContent = '—';
     }
+    if (selectors.accountReviewDownload) {
+      selectors.accountReviewDownload.disabled = true;
+    }
     return;
   }
 
   form.hidden = false;
   locked.hidden = true;
   setFormDisabled(form, false);
+  if (selectors.accountReviewDownload) {
+    selectors.accountReviewDownload.disabled = false;
+  }
 
   const stored = appState.accountReviewData[creditUnionId] || {};
   const reviewData = {
@@ -2017,6 +2024,265 @@ function collectReviewFormData(form) {
     setReviewValue(data, path, value);
   });
   return data;
+}
+
+const reviewLogoUrl = new URL('GFS Logo.png', window.location.href).toString();
+let cachedReviewLogoDataUrl = null;
+
+function formatReviewField(value) {
+  if (value === null || value === undefined) return '—';
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return '—';
+    if (trimmed.toLowerCase() === 'yes') return 'Yes';
+    if (trimmed.toLowerCase() === 'no') return 'No';
+    return trimmed;
+  }
+  return String(value);
+}
+
+function getReviewPdfData(creditUnionId) {
+  const stored = appState.accountReviewData[creditUnionId] || {};
+  const form = selectors.accountReviewForm;
+  const formData = form ? collectReviewFormData(form) : {};
+  const yearValue = formData.year || stored.year || new Date().getFullYear();
+
+  return {
+    ...stored,
+    ...formData,
+    year: yearValue,
+    updatedAt: stored.updatedAt ?? null
+  };
+}
+
+function ensurePdfSpace(doc, currentY, requiredHeight, margin, pageHeight) {
+  if (currentY + requiredHeight <= pageHeight - margin) {
+    return currentY;
+  }
+  doc.addPage();
+  return margin;
+}
+
+function addPdfSectionTitle(doc, title, x, y) {
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.text(title, x, y);
+  doc.setFont('helvetica', 'normal');
+  return y + 16;
+}
+
+function addPdfKeyValueRows(doc, rows, x, y, maxWidth, margin, pageHeight) {
+  const labelWidth = Math.min(170, maxWidth * 0.35);
+  const valueWidth = maxWidth - labelWidth;
+  const lineHeight = 14;
+
+  rows.forEach(({ label, value }) => {
+    const safeValue = formatReviewField(value);
+    const labelLines = doc.splitTextToSize(label, labelWidth - 6);
+    const valueLines = doc.splitTextToSize(safeValue, valueWidth - 6);
+    const rowHeight = Math.max(labelLines.length, valueLines.length) * lineHeight + 4;
+    y = ensurePdfSpace(doc, y, rowHeight, margin, pageHeight);
+
+    doc.setFont('helvetica', 'bold');
+    doc.text(labelLines, x, y);
+    doc.setFont('helvetica', 'normal');
+    doc.text(valueLines, x + labelWidth, y);
+    y += rowHeight;
+  });
+
+  return y;
+}
+
+function addPdfTable(doc, { title, headers, rows }, x, y, maxWidth, margin, pageHeight) {
+  y = addPdfSectionTitle(doc, title, x, y);
+  const columnWidth = maxWidth / headers.length;
+  const lineHeight = 14;
+
+  const headerHeight = lineHeight + 6;
+  y = ensurePdfSpace(doc, y, headerHeight, margin, pageHeight);
+  doc.setFont('helvetica', 'bold');
+  headers.forEach((header, index) => {
+    doc.text(header, x + columnWidth * index + 2, y);
+  });
+  y += headerHeight;
+  doc.setFont('helvetica', 'normal');
+
+  rows.forEach((row) => {
+    const cellLines = row.map((cell) => doc.splitTextToSize(formatReviewField(cell), columnWidth - 6));
+    const maxLines = Math.max(...cellLines.map((lines) => lines.length));
+    const rowHeight = Math.max(1, maxLines) * lineHeight + 4;
+    y = ensurePdfSpace(doc, y, rowHeight, margin, pageHeight);
+
+    cellLines.forEach((lines, index) => {
+      doc.text(lines, x + columnWidth * index + 2, y);
+    });
+    y += rowHeight;
+  });
+
+  return y + 6;
+}
+
+async function loadReviewLogoDataUrl() {
+  if (cachedReviewLogoDataUrl) return cachedReviewLogoDataUrl;
+  try {
+    const response = await fetch(reviewLogoUrl);
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    const dataUrl = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+    cachedReviewLogoDataUrl = dataUrl;
+    return dataUrl;
+  } catch (_error) {
+    return null;
+  }
+}
+
+async function downloadYearEndReviewPdf() {
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    setFeedback(selectors.accountReviewFeedback, 'Select a credit union before downloading a PDF.', 'error');
+    return;
+  }
+
+  const creditUnion = getCreditUnionById(creditUnionId);
+  if (creditUnion?.classification !== 'account') {
+    setFeedback(selectors.accountReviewFeedback, 'Move this prospect to Accounts before downloading a PDF.', 'error');
+    return;
+  }
+
+  if (!window.jspdf?.jsPDF) {
+    setFeedback(selectors.accountReviewFeedback, 'PDF tools are still loading. Please try again in a moment.', 'error');
+    return;
+  }
+
+  const reviewData = getReviewPdfData(creditUnionId);
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+  const margin = 48;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  let y = margin;
+
+  const logoDataUrl = await loadReviewLogoDataUrl();
+  if (logoDataUrl) {
+    doc.addImage(logoDataUrl, 'PNG', margin, y, 64, 64);
+  }
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.text('Year End Review', margin + 80, y + 26);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'normal');
+  doc.text(creditUnion.name || 'Credit union', margin + 80, y + 46);
+  y += 86;
+
+  y = addPdfSectionTitle(doc, 'Review summary', margin, y);
+  const summaryRows = [
+    { label: 'Review year', value: reviewData.year },
+    { label: 'Reviewed by', value: reviewData.reviewedBy },
+    { label: 'Last updated', value: reviewData.updatedAt ? formatLogTimestamp(reviewData.updatedAt) : '—' }
+  ];
+  y = addPdfKeyValueRows(doc, summaryRows, margin, y, pageWidth - margin * 2, margin, pageHeight);
+  y += 10;
+
+  const programRows = [
+    [
+      'Rates',
+      reviewData.program?.life?.rates,
+      reviewData.program?.ah?.rates,
+      reviewData.program?.iui?.rates,
+      reviewData.program?.gap?.rates,
+      reviewData.program?.vsc?.rates
+    ],
+    [
+      'Limits',
+      reviewData.program?.life?.limits,
+      reviewData.program?.ah?.limits,
+      reviewData.program?.iui?.limits,
+      reviewData.program?.gap?.limits,
+      reviewData.program?.vsc?.limits
+    ],
+    [
+      'Coverages',
+      reviewData.program?.life?.coverages,
+      reviewData.program?.ah?.coverages,
+      reviewData.program?.iui?.coverages,
+      reviewData.program?.gap?.coverages,
+      reviewData.program?.vsc?.coverages
+    ],
+    [
+      'Income incentives',
+      reviewData.program?.life?.incentives,
+      reviewData.program?.ah?.incentives,
+      reviewData.program?.iui?.incentives,
+      reviewData.program?.gap?.incentives,
+      reviewData.program?.vsc?.incentives
+    ]
+  ];
+
+  y = addPdfTable(
+    doc,
+    {
+      title: 'Current PMAC program',
+      headers: ['Field', 'Life', 'A/H', 'IUI', 'GAP', 'VSC'],
+      rows: programRows
+    },
+    margin,
+    y,
+    pageWidth - margin * 2,
+    margin,
+    pageHeight
+  );
+
+  y = addPdfKeyValueRows(
+    doc,
+    [{ label: 'Menu term extension', value: reviewData.program?.menuTermExtension }],
+    margin,
+    y,
+    pageWidth - margin * 2,
+    margin,
+    pageHeight
+  );
+  y += 10;
+
+  y = addPdfTable(
+    doc,
+    {
+      title: 'Integration',
+      headers: ['Field', 'CSO', 'ASG'],
+      rows: [
+        ['Member detail', reviewData.integration?.cso?.memberDetail, reviewData.integration?.asg?.memberDetail],
+        ['Sales', reviewData.integration?.cso?.sales, reviewData.integration?.asg?.sales]
+      ]
+    },
+    margin,
+    y,
+    pageWidth - margin * 2,
+    margin,
+    pageHeight
+  );
+
+  y = addPdfSectionTitle(doc, 'Core systems', margin, y);
+  y = addPdfKeyValueRows(
+    doc,
+    [
+      { label: 'Core processor', value: reviewData.coreProcessor },
+      { label: 'LOS provider', value: reviewData.losProvider }
+    ],
+    margin,
+    y,
+    pageWidth - margin * 2,
+    margin,
+    pageHeight
+  );
+
+  const safeName = (creditUnion.name || 'Credit union').replace(/[^\w\s-]+/g, '').trim() || 'credit-union';
+  const fileName = `${safeName.replace(/\s+/g, ' ')}-${reviewData.year || 'review'}-year-end-review.pdf`;
+  doc.save(fileName);
+  setFeedback(selectors.accountReviewFeedback, 'Year end review PDF downloaded.', 'success');
 }
 
 function createSparkline(values) {
@@ -3880,6 +4146,10 @@ selectors.accountReviewForm?.addEventListener('submit', (event) => {
     details: `Saved ${yearValue} review data.`,
     actor: data.reviewedBy || 'Workspace user'
   });
+});
+
+selectors.accountReviewDownload?.addEventListener('click', () => {
+  downloadYearEndReviewPdf();
 });
 
 selectors.accountStatusBody?.addEventListener('change', handleAccountStatusChange);
