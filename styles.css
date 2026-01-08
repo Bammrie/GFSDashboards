@@ -912,6 +912,13 @@ input[type='month']:focus-visible {
   flex-wrap: wrap;
 }
 
+.review-action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .change-log {
   list-style: none;
   padding: 0;
