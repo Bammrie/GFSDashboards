@@ -76,6 +76,7 @@ const selectors = {
   openCallReportBtn: document.getElementById('open-call-report-btn'),
   callReportDialog: document.getElementById('call-report-dialog'),
   closeCallReportDialogBtn: document.getElementById('close-call-report-dialog'),
+  incomeStreamFilter: document.getElementById('income-stream-filter'),
   incomeStreamList: document.getElementById('income-stream-list'),
   incomeStreamCount: document.getElementById('income-stream-count'),
   revenueForm: document.getElementById('revenue-form'),
@@ -228,6 +229,7 @@ const appState = {
   monthlyCompletion: [],
   reportingWindow: { start: null, end: null },
   selectedCreditUnion: 'all',
+  incomeStreamFilterId: 'all',
   accountSelectionId: null,
   accountDirectoryView: 'account',
   latestCallReports: [],
@@ -565,6 +567,29 @@ function renderCreditUnionOptions() {
     }
   }
 
+  const streamFilter = selectors.incomeStreamFilter;
+  if (streamFilter) {
+    const currentSelection = streamFilter.value || appState.incomeStreamFilterId || 'all';
+    const options = [createOption('all', 'All credit unions', false, currentSelection === 'all')];
+
+    appState.creditUnions
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((creditUnion) => {
+        options.push(createOption(creditUnion.id, creditUnion.name, false, creditUnion.id === currentSelection));
+      });
+
+    streamFilter.replaceChildren(...options);
+
+    if (currentSelection !== 'all' && !appState.creditUnions.some((creditUnion) => creditUnion.id === currentSelection)) {
+      streamFilter.value = 'all';
+      appState.incomeStreamFilterId = 'all';
+    } else {
+      streamFilter.value = currentSelection;
+      appState.incomeStreamFilterId = streamFilter.value || 'all';
+    }
+  }
+
   if (accountSelect) {
     const placeholder = createOption('', 'Select a credit union', true, true);
     accountSelect.replaceChildren(placeholder);
@@ -598,23 +623,11 @@ function renderIncomeStreamList() {
 
   list.replaceChildren();
 
-  if (!appState.incomeStreams.length) {
-    const empty = document.createElement('li');
-    empty.className = 'item';
-    const heading = document.createElement('p');
-    heading.className = 'item__title';
-    heading.textContent = 'No income streams yet';
-    const sub = document.createElement('p');
-    sub.className = 'item__subtitle';
-    sub.textContent = 'Create your first stream to begin tracking revenue.';
-    empty.append(heading);
-    empty.append(sub);
-    list.append(empty);
-    if (selectors.incomeStreamCount) {
-      selectors.incomeStreamCount.textContent = '0 streams';
-    }
-    return;
-  }
+  const selectedFilter = appState.incomeStreamFilterId || 'all';
+  const visibleStreams =
+    selectedFilter === 'all'
+      ? appState.incomeStreams
+      : appState.incomeStreams.filter((stream) => stream.creditUnionId === selectedFilter);
 
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'decimal',
@@ -622,78 +635,132 @@ function renderIncomeStreamList() {
     maximumFractionDigits: 0
   });
 
-  appState.incomeStreams
-    .slice()
-    .sort((a, b) => b.updatedAt - a.updatedAt)
-    .forEach((stream) => {
-      const fragment = template.content.cloneNode(true);
-      const listItem = fragment.querySelector('.item');
-      const link = fragment.querySelector('.item__link');
-      const title = fragment.querySelector('.item__title');
-      const subtitle = fragment.querySelector('.item__subtitle');
-      const meta = fragment.querySelector('.item__meta');
-      const metric = fragment.querySelector('.item__metric');
-      const productKey = getProductKey(stream.product);
-
-      title.textContent = stream.label;
-
-      if (listItem) {
-        if (productKey) {
-          listItem.dataset.productKey = productKey;
-        } else {
-          delete listItem.dataset.productKey;
-        }
+  if (!visibleStreams.length) {
+    const empty = document.createElement('div');
+    empty.className = 'item';
+    const heading = document.createElement('p');
+    heading.className = 'item__title';
+    const creditUnionName = getCreditUnionNameById(selectedFilter);
+    heading.textContent = selectedFilter === 'all' ? 'No income streams yet' : 'No income streams for this credit union';
+    const sub = document.createElement('p');
+    sub.className = 'item__subtitle';
+    sub.textContent =
+      selectedFilter === 'all' || !creditUnionName
+        ? 'Create your first stream to begin tracking revenue.'
+        : `Create a new stream for ${creditUnionName} to begin tracking revenue.`;
+    empty.append(heading, sub);
+    list.append(empty);
+  } else {
+    const grouped = visibleStreams.reduce((map, stream) => {
+      const key = stream.creditUnionId || 'unknown';
+      if (!map.has(key)) {
+        map.set(key, {
+          id: key,
+          name: stream.creditUnionName || 'Unassigned credit union',
+          streams: []
+        });
       }
+      map.get(key).streams.push(stream);
+      return map;
+    }, new Map());
 
-      if (subtitle) {
-        subtitle.replaceChildren();
-        const segments = [
-          createSubtitleText(stream.creditUnionName),
-          createSubtitleDivider(),
-          createProductBadge(stream.product, productKey),
-          createSubtitleDivider(),
-          createSubtitleText(stream.revenueType)
-        ];
-        segments.forEach((segment) => subtitle.append(segment));
-      }
+    Array.from(grouped.values())
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((group) => {
+        const groupSection = document.createElement('section');
+        groupSection.className = 'stream-group';
+        const header = document.createElement('header');
+        header.className = 'stream-group__header';
+        const title = document.createElement('h4');
+        title.className = 'stream-group__title';
+        title.textContent = group.name;
+        const count = document.createElement('p');
+        count.className = 'stream-group__count';
+        count.textContent = `${formatter.format(group.streams.length)} stream${group.streams.length === 1 ? '' : 's'}`;
+        header.append(title, count);
 
-      if (link) {
-        link.href = `stream.html?id=${encodeURIComponent(stream.id)}`;
-        link.setAttribute('aria-label', `View monthly reporting status for ${stream.label}`);
-      }
+        const groupList = document.createElement('ul');
+        groupList.className = 'item-list';
+        groupList.setAttribute('role', 'list');
 
-      const metaSegments = [];
-      if (stream.lastReport) {
-        const { month, year, amount } = stream.lastReport;
-        metaSegments.push(`Last reported ${currencyFormatter.format(amount)} in ${formatPeriodLabel(year, month)}`);
-      } else {
-        metaSegments.push('No revenue logged yet');
-      }
+        group.streams
+          .slice()
+          .sort((a, b) => b.updatedAt - a.updatedAt)
+          .forEach((stream) => {
+            const fragment = template.content.cloneNode(true);
+            const listItem = fragment.querySelector('.item');
+            const link = fragment.querySelector('.item__link');
+            const titleElement = fragment.querySelector('.item__title');
+            const subtitle = fragment.querySelector('.item__subtitle');
+            const meta = fragment.querySelector('.item__meta');
+            const metric = fragment.querySelector('.item__metric');
+            const productKey = getProductKey(stream.product);
 
-      if (stream.finalReport) {
-        metaSegments.push(`Final reporting month: ${stream.finalReport.label}`);
-      }
+            titleElement.textContent = stream.label;
 
-      meta.textContent = metaSegments.join(' • ');
+            if (listItem) {
+              if (productKey) {
+                listItem.dataset.productKey = productKey;
+              } else {
+                delete listItem.dataset.productKey;
+              }
+            }
 
-      const reportedMonths = Number(stream.reportedCount ?? 0);
-      const hasReporting = reportedMonths > 0;
+            if (subtitle) {
+              subtitle.replaceChildren();
+              const segments = [
+                createSubtitleText(stream.creditUnionName),
+                createSubtitleDivider(),
+                createProductBadge(stream.product, productKey),
+                createSubtitleDivider(),
+                createSubtitleText(stream.revenueType)
+              ];
+              segments.forEach((segment) => subtitle.append(segment));
+            }
 
-      if (hasReporting) {
-        metric.textContent = `${reportedMonths} reported month${reportedMonths === 1 ? '' : 's'}`;
-        metric.dataset.status = 'complete';
-      } else {
-        metric.textContent = 'No reports yet';
-        metric.dataset.status = 'pending';
-      }
+            if (link) {
+              link.href = `stream.html?id=${encodeURIComponent(stream.id)}`;
+              link.setAttribute('aria-label', `View monthly reporting status for ${stream.label}`);
+            }
 
-      list.append(fragment);
-    });
+            const metaSegments = [];
+            if (stream.lastReport) {
+              const { month, year, amount } = stream.lastReport;
+              metaSegments.push(`Last reported ${currencyFormatter.format(amount)} in ${formatPeriodLabel(year, month)}`);
+            } else {
+              metaSegments.push('No revenue logged yet');
+            }
+
+            if (stream.finalReport) {
+              metaSegments.push(`Final reporting month: ${stream.finalReport.label}`);
+            }
+
+            meta.textContent = metaSegments.join(' • ');
+
+            const reportedMonths = Number(stream.reportedCount ?? 0);
+            const hasReporting = reportedMonths > 0;
+
+            if (hasReporting) {
+              metric.textContent = `${reportedMonths} reported month${reportedMonths === 1 ? '' : 's'}`;
+              metric.dataset.status = 'complete';
+            } else {
+              metric.textContent = 'No reports yet';
+              metric.dataset.status = 'pending';
+            }
+
+            groupList.append(fragment);
+          });
+
+        groupSection.append(header, groupList);
+        list.append(groupSection);
+      });
+  }
 
   if (selectors.incomeStreamCount) {
-    selectors.incomeStreamCount.textContent = `${formatter.format(appState.incomeStreams.length)} stream${
-      appState.incomeStreams.length === 1 ? '' : 's'
-    }`;
+    const creditUnionName = getCreditUnionNameById(selectedFilter);
+    const countLabel = `${formatter.format(visibleStreams.length)} stream${visibleStreams.length === 1 ? '' : 's'}`;
+    selectors.incomeStreamCount.textContent =
+      selectedFilter !== 'all' && creditUnionName ? `${countLabel} for ${creditUnionName}` : countLabel;
   }
 }
 
@@ -4402,6 +4469,12 @@ selectors.reportingCreditUnionSelect?.addEventListener('change', async (event) =
   } catch (error) {
     alert(error.message);
   }
+});
+
+selectors.incomeStreamFilter?.addEventListener('change', (event) => {
+  const select = event.currentTarget;
+  appState.incomeStreamFilterId = select.value || 'all';
+  renderIncomeStreamList();
 });
 
 async function bootstrap() {

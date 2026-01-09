@@ -41,12 +41,22 @@
         <a class="primary-button" href="accounts.html">Open Accounts workspace</a>
       </div>
 
+      <div class="stream-filter">
+        <div class="field-group">
+          <label for="income-stream-filter">Filter by credit union</label>
+          <select id="income-stream-filter" name="incomeStreamFilter">
+            <option value="all">All credit unions</option>
+          </select>
+          <p class="field-help">Choose a credit union to focus the list on its active income streams.</p>
+        </div>
+      </div>
+
       <section class="panel__list" aria-live="polite">
         <header class="list-header">
           <h3 class="list-title">Active income streams</h3>
           <p class="list-subtitle" id="income-stream-count">Loading&hellip;</p>
         </header>
-        <ul id="income-stream-list" class="item-list" role="list"></ul>
+        <div id="income-stream-list" class="stream-groups" role="list"></div>
       </section>
     </section>
   </main>
