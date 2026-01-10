@@ -582,7 +582,9 @@ async function decodeVin(vin) {
     }
 
     const errorText = (decoded['Error Text'] || '').trim();
-    if (errorText && errorText !== '0' && errorText !== '0 - VIN decoded cleanly') {
+    const isCleanDecode =
+      errorText === '0' || errorText.startsWith('0 - VIN decoded clean');
+    if (errorText && !isCleanDecode) {
       renderVinResults(null, errorText);
       return;
     }

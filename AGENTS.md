@@ -1,3 +1,4 @@
+2028-09-08: Allowed VIN decode clean message variants so newer NHTSA responses are treated as successful decodes.
 2026-01-10: Improved subtitle contrast on light panels, surfaced VIN decode Make/Model/Year results, and moved the account change log into a dialog for cleaner workflows.
 2028-09-07: Updated the VIN decoder to use the NHTSA DecodeVin endpoint with validation and clearer errors.
 2028-09-06: Expanded the account selection panel to span the full workspace width while keeping the back link aligned top-left.
