@@ -167,7 +167,25 @@ const selectors = {
   trainingMonthGrid: document.getElementById('training-month-grid'),
   trainingCommitmentBody: document.getElementById('training-commitment-body'),
   trainingEmptyState: document.getElementById('training-empty-state'),
-  trainingTableCard: document.getElementById('training-table-card')
+  trainingTableCard: document.getElementById('training-table-card'),
+  loanOfficerSummary: document.getElementById('loan-officer-summary'),
+  loanAmountInput: document.getElementById('loan-amount'),
+  loanTermInput: document.getElementById('loan-term'),
+  loanAprInput: document.getElementById('loan-apr'),
+  loanMilesInput: document.getElementById('loan-miles'),
+  loanVinInput: document.getElementById('loan-vin'),
+  loanVinDecodeBtn: document.getElementById('loan-vin-decode-btn'),
+  loanWarrantyCostInput: document.getElementById('loan-warranty-cost'),
+  loanCreditUnionMarkupInput: document.getElementById('loan-credit-union-markup'),
+  loanGfsMarkupInput: document.getElementById('loan-gfs-markup'),
+  loanWarrantyFetchBtn: document.getElementById('loan-warranty-fetch-btn'),
+  loanWarrantyFeedback: document.getElementById('loan-warranty-feedback'),
+  loanVinResults: document.getElementById('loan-vin-results'),
+  loanBasePayment: document.getElementById('loan-base-payment'),
+  loanWarrantyRetail: document.getElementById('loan-warranty-retail'),
+  loanTotalAmount: document.getElementById('loan-total-amount'),
+  loanPaymentWithWarranty: document.getElementById('loan-payment-with-warranty'),
+  loanPaymentDelta: document.getElementById('loan-payment-delta')
 };
 
 function getStoredAccountNotes() {
@@ -230,6 +248,273 @@ function persistAccountChangeLog(logData) {
   }
 }
 
+function getStoredWarrantyConfigs() {
+  if (typeof localStorage === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem('accountWarrantyConfigs');
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (_error) {
+    return {};
+  }
+}
+
+function persistWarrantyConfigs(configs) {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem('accountWarrantyConfigs', JSON.stringify(configs));
+  } catch (error) {
+    console.error('Unable to persist warranty configs', error);
+  }
+}
+
+function parseNumericInput(value) {
+  if (value === null || value === undefined) return null;
+  const normalized = String(value).replace(/,/g, '').trim();
+  if (!normalized) return null;
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatCurrencyValue(value) {
+  return Number.isFinite(value) ? currencyFormatter.format(value) : '—';
+}
+
+function calculateMonthlyPayment(amount, apr, termMonths) {
+  if (!Number.isFinite(amount) || !Number.isFinite(termMonths) || termMonths <= 0) return null;
+  const rate = Number.isFinite(apr) ? apr / 100 / 12 : 0;
+  if (!rate) {
+    return amount / termMonths;
+  }
+  const factor = Math.pow(1 + rate, termMonths);
+  return amount * ((rate * factor) / (factor - 1));
+}
+
+function estimateWarrantyCost({ miles, termMonths }) {
+  const normalizedMiles = Number.isFinite(miles) ? miles : 0;
+  const normalizedTerm = Number.isFinite(termMonths) ? termMonths : 0;
+  const mileageFactor = Math.max(0, normalizedMiles - 12000) / 1000 * 8;
+  const termFactor = normalizedTerm ? (normalizedTerm / 12) * 35 : 0;
+  return Math.max(650, 1200 + mileageFactor + termFactor);
+}
+
+function setLoanWarrantyFeedback(message, state = 'info') {
+  if (!selectors.loanWarrantyFeedback) return;
+  selectors.loanWarrantyFeedback.textContent = message;
+  selectors.loanWarrantyFeedback.dataset.state = state;
+}
+
+function getWarrantyConfigForCreditUnion(creditUnionId) {
+  const stored = appState.accountWarrantyConfigs?.[creditUnionId];
+  return stored && typeof stored === 'object'
+    ? stored
+    : { creditUnionMarkup: null, gfsMarkup: null };
+}
+
+function saveWarrantyConfig(creditUnionId, updates) {
+  if (!creditUnionId) return;
+  const current = getWarrantyConfigForCreditUnion(creditUnionId);
+  const next = { ...current, ...updates };
+  appState.accountWarrantyConfigs = {
+    ...appState.accountWarrantyConfigs,
+    [creditUnionId]: next
+  };
+  persistWarrantyConfigs(appState.accountWarrantyConfigs);
+}
+
+function renderVinResults(result, message) {
+  if (!selectors.loanVinResults) return;
+  const container = selectors.loanVinResults;
+  container.replaceChildren();
+
+  if (!result) {
+    const empty = document.createElement('p');
+    empty.className = 'vin-results__empty';
+    empty.textContent = message || 'Enter a VIN to decode vehicle details.';
+    container.append(empty);
+    return;
+  }
+
+  const fields = [
+    { label: 'Model year', value: result.year },
+    { label: 'Make', value: result.make },
+    { label: 'Model', value: result.model },
+    { label: 'Trim', value: result.trim },
+    { label: 'Body', value: result.bodyClass },
+    { label: 'Drive type', value: result.driveType },
+    { label: 'Fuel type', value: result.fuelType }
+  ];
+
+  fields.forEach((field) => {
+    if (!field.value) return;
+    const row = document.createElement('div');
+    row.className = 'vin-results__item';
+    const label = document.createElement('span');
+    label.className = 'vin-results__label';
+    label.textContent = field.label;
+    const value = document.createElement('span');
+    value.className = 'vin-results__value';
+    value.textContent = field.value;
+    row.append(label, value);
+    container.append(row);
+  });
+}
+
+function updateLoanIllustration() {
+  if (!selectors.loanBasePayment) return;
+
+  const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
+  const termMonths = parseNumericInput(selectors.loanTermInput?.value);
+  const apr = parseNumericInput(selectors.loanAprInput?.value);
+  const warrantyCost = parseNumericInput(selectors.loanWarrantyCostInput?.value);
+  const creditUnionMarkup = parseNumericInput(selectors.loanCreditUnionMarkupInput?.value);
+  const gfsMarkup = parseNumericInput(selectors.loanGfsMarkupInput?.value);
+
+  const basePayment = calculateMonthlyPayment(loanAmount, apr, termMonths);
+  const hasWarrantyInputs = [warrantyCost, creditUnionMarkup, gfsMarkup].some(Number.isFinite);
+  const retailCost = hasWarrantyInputs
+    ? (warrantyCost || 0) + (creditUnionMarkup || 0) + (gfsMarkup || 0)
+    : null;
+  const totalAmount = Number.isFinite(loanAmount) && Number.isFinite(retailCost)
+    ? loanAmount + retailCost
+    : null;
+  const paymentWithWarranty = calculateMonthlyPayment(totalAmount, apr, termMonths);
+  const paymentDelta =
+    Number.isFinite(basePayment) && Number.isFinite(paymentWithWarranty)
+      ? paymentWithWarranty - basePayment
+      : null;
+
+  selectors.loanBasePayment.textContent = formatCurrencyValue(basePayment);
+  if (selectors.loanWarrantyRetail) {
+    selectors.loanWarrantyRetail.textContent = formatCurrencyValue(retailCost);
+  }
+  if (selectors.loanTotalAmount) {
+    selectors.loanTotalAmount.textContent = formatCurrencyValue(totalAmount);
+  }
+  if (selectors.loanPaymentWithWarranty) {
+    selectors.loanPaymentWithWarranty.textContent = formatCurrencyValue(paymentWithWarranty);
+  }
+  if (selectors.loanPaymentDelta) {
+    selectors.loanPaymentDelta.textContent = formatCurrencyValue(paymentDelta);
+  }
+}
+
+function setLoanOfficerDisabled(isDisabled) {
+  const elements = [
+    selectors.loanAmountInput,
+    selectors.loanTermInput,
+    selectors.loanAprInput,
+    selectors.loanMilesInput,
+    selectors.loanVinInput,
+    selectors.loanVinDecodeBtn,
+    selectors.loanWarrantyCostInput,
+    selectors.loanCreditUnionMarkupInput,
+    selectors.loanGfsMarkupInput,
+    selectors.loanWarrantyFetchBtn
+  ];
+  elements.forEach((element) => {
+    if (element) {
+      element.disabled = isDisabled;
+    }
+  });
+}
+
+function renderLoanOfficerCalculator() {
+  if (!selectors.loanOfficerSummary) return;
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    selectors.loanOfficerSummary.textContent = 'Select a credit union to start an illustration.';
+    setLoanOfficerDisabled(true);
+    updateLoanIllustration();
+    renderVinResults(null);
+    setLoanWarrantyFeedback('');
+    return;
+  }
+
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || 'Selected credit union';
+  selectors.loanOfficerSummary.textContent = `Showing a loan illustration for ${creditUnionName}.`;
+  setLoanOfficerDisabled(false);
+
+  const config = getWarrantyConfigForCreditUnion(creditUnionId);
+  if (selectors.loanCreditUnionMarkupInput) {
+    selectors.loanCreditUnionMarkupInput.value =
+      Number.isFinite(config.creditUnionMarkup) ? config.creditUnionMarkup : '';
+  }
+  if (selectors.loanGfsMarkupInput) {
+    selectors.loanGfsMarkupInput.value = Number.isFinite(config.gfsMarkup) ? config.gfsMarkup : '';
+  }
+
+  updateLoanIllustration();
+}
+
+function handleWarrantyMarkupChange() {
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) return;
+  const creditUnionMarkup = parseNumericInput(selectors.loanCreditUnionMarkupInput?.value);
+  const gfsMarkup = parseNumericInput(selectors.loanGfsMarkupInput?.value);
+  saveWarrantyConfig(creditUnionId, { creditUnionMarkup, gfsMarkup });
+}
+
+async function fetchWarrantyCost() {
+  if (!selectors.loanWarrantyCostInput) return;
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    setLoanWarrantyFeedback('Select a credit union before fetching warranty cost.', 'error');
+    return;
+  }
+
+  const miles = parseNumericInput(selectors.loanMilesInput?.value);
+  const termMonths = parseNumericInput(selectors.loanTermInput?.value);
+  const vin = selectors.loanVinInput?.value?.trim();
+
+  setLoanWarrantyFeedback('Fetching warranty cost…', 'info');
+
+  const estimatedCost = estimateWarrantyCost({ miles, termMonths, vin });
+  selectors.loanWarrantyCostInput.value = Math.round(estimatedCost);
+  setLoanWarrantyFeedback('Warranty pricing API pending. Using estimated cost for now.', 'info');
+  updateLoanIllustration();
+}
+
+async function decodeVin(vin) {
+  const trimmedVin = vin?.trim();
+  if (!trimmedVin) {
+    renderVinResults(null, 'Enter a VIN to decode vehicle details.');
+    return;
+  }
+
+  renderVinResults(null, 'Decoding VIN...');
+  const response = await fetch(
+    `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvaluesextended/${encodeURIComponent(trimmedVin)}?format=json`
+  );
+  if (!response.ok) {
+    renderVinResults(null, 'Unable to decode VIN. Please try again.');
+    return;
+  }
+
+  const data = await response.json();
+  const result = Array.isArray(data?.Results) ? data.Results[0] : null;
+  if (!result) {
+    renderVinResults(null, 'VIN decode returned no results.');
+    return;
+  }
+
+  const errorText = (result.ErrorText || '').trim();
+  if (errorText && errorText !== '0' && errorText !== '0 - VIN decoded cleanly') {
+    renderVinResults(null, errorText);
+    return;
+  }
+
+  renderVinResults({
+    year: result.ModelYear,
+    make: result.Make,
+    model: result.Model,
+    trim: result.Trim,
+    bodyClass: result.BodyClass,
+    driveType: result.DriveType,
+    fuelType: result.FuelTypePrimary
+  });
+}
+
 const appState = {
   creditUnions: [],
   incomeStreams: [],
@@ -258,7 +543,8 @@ const appState = {
   callReports: [],
   accountNotes: getStoredAccountNotes(),
   accountReviewData: getStoredAccountReviewData(),
-  accountChangeLog: getStoredAccountChangeLog()
+  accountChangeLog: getStoredAccountChangeLog(),
+  accountWarrantyConfigs: getStoredWarrantyConfigs()
 };
 
 function showDialog(dialog) {
@@ -1312,6 +1598,7 @@ function renderAccountWorkspace() {
     renderAccountNotes();
     renderAccountReview();
     renderAccountChangeLog();
+    renderLoanOfficerCalculator();
     return;
   }
 
@@ -1360,6 +1647,7 @@ function renderAccountWorkspace() {
   renderAccountNotes();
   renderAccountReview();
   renderAccountChangeLog();
+  renderLoanOfficerCalculator();
 }
 
 function setCallReportFeedback(message, state = 'info') {
@@ -4324,6 +4612,42 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
     await loadCallReports(appState.accountSelectionId);
   } catch (error) {
     setCallReportFeedback(error.message, 'error');
+  }
+});
+
+[
+  selectors.loanAmountInput,
+  selectors.loanTermInput,
+  selectors.loanAprInput,
+  selectors.loanMilesInput,
+  selectors.loanWarrantyCostInput
+].forEach((element) => {
+  element?.addEventListener('input', () => {
+    updateLoanIllustration();
+  });
+});
+
+selectors.loanCreditUnionMarkupInput?.addEventListener('input', () => {
+  handleWarrantyMarkupChange();
+  updateLoanIllustration();
+});
+
+selectors.loanGfsMarkupInput?.addEventListener('input', () => {
+  handleWarrantyMarkupChange();
+  updateLoanIllustration();
+});
+
+selectors.loanWarrantyFetchBtn?.addEventListener('click', () => {
+  fetchWarrantyCost();
+});
+
+selectors.loanVinDecodeBtn?.addEventListener('click', () => {
+  decodeVin(selectors.loanVinInput?.value);
+});
+
+selectors.loanVinInput?.addEventListener('input', (event) => {
+  if (!event.currentTarget.value) {
+    renderVinResults(null);
   }
 });
 
