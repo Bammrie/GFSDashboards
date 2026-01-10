@@ -200,3 +200,5 @@ Document or extend new features so they reuse these formulas without re-defining
 
 2028-09-04: Condensed the account workspace coverage section into an add-only product list and shifted the workspace into a two-column layout to reduce scrolling.
 2028-09-08: Updated panel subheader colors to maroon/black so headings stay readable on white panels.
+
+2028-09-10: Updated Menu Presentation payment illustration text color to white for readability on maroon background.
