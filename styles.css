@@ -157,7 +157,7 @@ body {
 
 .panel {
   --text-primary: #0f0f0f;
-  --text-secondary: rgba(15, 15, 15, 0.7);
+  --text-secondary: rgba(15, 15, 15, 0.82);
   --surface-card: rgba(17, 17, 17, 0.06);
   --surface-highlight: rgba(17, 17, 17, 0.08);
   --border: rgba(17, 17, 17, 0.18);
@@ -1676,7 +1676,7 @@ input[type='month']:focus-visible {
 .dialog-form {
   width: min(420px, 90vw);
   --text-primary: #0f0f0f;
-  --text-secondary: rgba(15, 15, 15, 0.7);
+  --text-secondary: rgba(15, 15, 15, 0.82);
   --surface-card: rgba(17, 17, 17, 0.06);
   --surface-highlight: rgba(17, 17, 17, 0.08);
   --border: rgba(17, 17, 17, 0.18);

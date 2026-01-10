@@ -1,3 +1,4 @@
+2026-01-10: Improved subtitle contrast on light panels, surfaced VIN decode Make/Model/Year results, and moved the account change log into a dialog for cleaner workflows.
 2028-09-07: Updated the VIN decoder to use the NHTSA DecodeVin endpoint with validation and clearer errors.
 2028-09-06: Expanded the account selection panel to span the full workspace width while keeping the back link aligned top-left.
 2026-01-10: Restyled the UI with a maroon/black/white palette and sharp-cornered panels/buttons to deliver a crisper financial look.
