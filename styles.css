@@ -116,6 +116,11 @@ body {
   grid-column: 1 / -1;
 }
 
+.layout--account .back-link {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
 @media (max-width: 900px) {
   .layout--account {
     grid-template-columns: 1fr;
