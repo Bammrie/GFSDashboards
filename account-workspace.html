@@ -91,6 +91,102 @@
       <ul id="account-notes-list" class="notes-list" aria-live="polite"></ul>
     </section>
 
+    <section class="panel" aria-labelledby="loan-officer-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="loan-officer-heading" class="panel__title">Loan officer coverage illustration</h2>
+          <p class="panel__description">
+            Build a member-facing payment illustration by combining the auto loan terms with warranty coverage and markup settings.
+          </p>
+        </div>
+      </header>
+
+      <p id="loan-officer-summary" class="panel__note">Select a credit union to start an illustration.</p>
+
+      <div class="loan-officer-grid">
+        <div class="loan-officer-card">
+          <h3 class="loan-officer-card__title">Loan details</h3>
+          <div class="loan-officer-fields">
+            <div class="field-group">
+              <label for="loan-amount">Loan amount</label>
+              <input type="number" id="loan-amount" inputmode="decimal" min="0" placeholder="25,000" />
+            </div>
+            <div class="field-group">
+              <label for="loan-term">Term (months)</label>
+              <input type="number" id="loan-term" inputmode="numeric" min="1" placeholder="72" />
+            </div>
+            <div class="field-group">
+              <label for="loan-apr">APR (%)</label>
+              <input type="number" id="loan-apr" inputmode="decimal" step="0.01" min="0" placeholder="6.99" />
+            </div>
+            <div class="field-group">
+              <label for="loan-miles">Miles on vehicle</label>
+              <input type="number" id="loan-miles" inputmode="numeric" min="0" placeholder="42,000" />
+            </div>
+            <div class="field-group">
+              <label for="loan-vin">VIN</label>
+              <input type="text" id="loan-vin" placeholder="1FTFW1E50JFC12345" />
+            </div>
+            <button type="button" id="loan-vin-decode-btn" class="secondary-button">Decode VIN</button>
+          </div>
+        </div>
+
+        <div class="loan-officer-card">
+          <h3 class="loan-officer-card__title">Warranty pricing inputs</h3>
+          <div class="loan-officer-fields">
+            <div class="field-group">
+              <label for="loan-warranty-cost">Warranty cost (API)</label>
+              <input type="number" id="loan-warranty-cost" inputmode="decimal" min="0" placeholder="1,850" />
+              <p class="field-help">Used as the base cost returned from the VIN + mileage pricing API.</p>
+            </div>
+            <div class="field-group">
+              <label for="loan-credit-union-markup">Credit union markup</label>
+              <input type="number" id="loan-credit-union-markup" inputmode="decimal" min="0" placeholder="250" />
+            </div>
+            <div class="field-group">
+              <label for="loan-gfs-markup">GFS markup</label>
+              <input type="number" id="loan-gfs-markup" inputmode="decimal" min="0" placeholder="400" />
+            </div>
+            <button type="button" id="loan-warranty-fetch-btn" class="secondary-button">Fetch warranty cost</button>
+            <p id="loan-warranty-feedback" class="field-help" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="loan-officer-card">
+          <h3 class="loan-officer-card__title">VIN decode</h3>
+          <div id="loan-vin-results" class="vin-results">
+            <p class="vin-results__empty">Enter a VIN to decode vehicle details.</p>
+          </div>
+        </div>
+
+        <div class="loan-officer-card loan-officer-card--summary">
+          <h3 class="loan-officer-card__title">Payment illustration</h3>
+          <div class="payment-summary">
+            <div class="payment-row">
+              <span>Base monthly payment</span>
+              <strong id="loan-base-payment">—</strong>
+            </div>
+            <div class="payment-row">
+              <span>Warranty retail cost</span>
+              <strong id="loan-warranty-retail">—</strong>
+            </div>
+            <div class="payment-row">
+              <span>Total amount financed</span>
+              <strong id="loan-total-amount">—</strong>
+            </div>
+            <div class="payment-row">
+              <span>Payment with warranty</span>
+              <strong id="loan-payment-with-warranty">—</strong>
+            </div>
+            <div class="payment-row payment-row--highlight">
+              <span>Added per month</span>
+              <strong id="loan-payment-delta">—</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="panel" aria-labelledby="account-review-heading">
       <header class="panel__header">
         <div>

@@ -834,6 +834,94 @@ input[type='month']:focus-visible {
   gap: 0.75rem;
 }
 
+.panel__note {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.loan-officer-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.loan-officer-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.loan-officer-card--summary {
+  background: linear-gradient(140deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.85));
+}
+
+.loan-officer-card__title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.loan-officer-fields {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.vin-results {
+  display: grid;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.vin-results__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.vin-results__label {
+  color: var(--text-secondary);
+}
+
+.vin-results__value {
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: right;
+}
+
+.vin-results__empty {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.payment-summary {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.payment-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+
+.payment-row strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.payment-row--highlight {
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(79, 195, 247, 0.18);
+  color: var(--text-primary);
+}
+
 .note-card {
   background: var(--surface-card);
   border: 1px solid var(--border);
