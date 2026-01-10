@@ -106,6 +106,24 @@ body {
   margin: 0 auto;
 }
 
+.layout--account {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.layout--account .panel {
+  padding: 1rem;
+}
+
+.layout--account .panel__header {
+  margin-bottom: 0.75rem;
+}
+
+.layout--account .panel__description {
+  margin-top: 0.35rem;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1744,164 +1762,48 @@ input[type='month']:focus-visible {
   display: none;
 }
 
-.account-status {
-  overflow-x: auto;
-}
-
-.account-status__table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 1180px;
-}
-
-.account-status__table th,
-.account-status__table td {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 1rem 0.75rem;
-  text-align: left;
-  vertical-align: top;
-}
-
-.account-status__table th:first-child,
-.account-status__table td:first-child {
-  padding-left: 0;
-}
-
-.account-status__table th:last-child,
-.account-status__table td:last-child {
-  padding-right: 0;
-}
-
-.account-status__product-name {
-  margin: 0;
-  font-weight: 600;
-}
-
-.account-status__product-meta,
-.account-status__revenue-type {
-  margin: 0.35rem 0 0;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.account-status__revenue-type {
-  margin: 0;
-  font-weight: 600;
-}
-
-.status-light-group {
-  display: flex;
-  align-items: center;
+.account-status__controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 0.75rem;
+  align-items: end;
+  margin-bottom: 1rem;
 }
 
-.status-light {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+.account-status__controls .feedback {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.account-status__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.account-status__item {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.6rem 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
   font-weight: 600;
-  cursor: pointer;
-  position: relative;
-}
-
-.status-light__input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.status-light__indicator {
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.35);
-  opacity: 0.45;
-  transition: opacity 0.2s ease, box-shadow 0.2s ease;
-}
-
-.status-light__text {
-  font-size: 0.9rem;
-}
-
-.status-light--red .status-light__indicator {
-  background: linear-gradient(145deg, #ff867c, #ff5252);
-}
-
-.status-light--yellow .status-light__indicator {
-  background: linear-gradient(145deg, #ffeb3b, #fbc02d);
-}
-
-.status-light--green .status-light__indicator {
-  background: linear-gradient(145deg, #81c784, #4caf50);
-}
-
-.status-light__input:checked + .status-light__indicator {
-  opacity: 1;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
-}
-
-.status-light__input:focus-visible + .status-light__indicator {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.status-light__field {
-  margin-top: 0.75rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.status-light__field label {
+.account-status__item--empty {
+  border-style: dashed;
+  background: transparent;
+}
+
+.account-status__item-note {
+  color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.status-light__field input {
-  width: 100%;
-}
-
-.account-status__notes {
-  width: 28%;
-}
-
-.account-status__details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.account-status__state {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-.account-status__feedback {
-  margin: 0;
-  font-size: 0.85rem;
-}
-
-.account-status__feedback[data-state='error'] {
-  color: #ff8a80;
-}
-
-.account-status__feedback[data-state='success'] {
-  color: #9ccc65;
-}
-
-.account-status__action {
-  align-self: flex-start;
-}
-
-@media (max-width: 900px) {
-  .account-status__notes {
-    width: auto;
-  }
 }
 
 .prospect-estimate-display {
