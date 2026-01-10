@@ -107,9 +107,19 @@ body {
 }
 
 .layout--account {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   align-items: start;
+}
+
+.layout--account .panel--full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .layout--account {
+    grid-template-columns: 1fr;
+  }
 }
 
 .layout--account .panel {
