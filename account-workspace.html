@@ -47,6 +47,7 @@
           <button type="button" class="secondary-button" id="open-account-notes-btn">Account Notes</button>
           <button type="button" class="secondary-button" id="open-account-change-log-btn">Change Log</button>
           <button type="button" class="secondary-button" id="open-call-report-btn">Call Reports</button>
+          <button type="button" class="secondary-button" id="open-menu-pricing-btn">Menu Pricing</button>
         </div>
       </header>
       <p class="field-help account-select-help">Use the plus button to add a new partner if it isn&rsquo;t listed.</p>
@@ -341,9 +342,9 @@
     <section class="panel panel--full" aria-labelledby="loan-officer-heading">
       <header class="panel__header">
         <div>
-          <h2 id="loan-officer-heading" class="panel__title">Loan officer coverage illustration</h2>
+          <h2 id="loan-officer-heading" class="panel__title">Menu Presentation</h2>
           <p class="panel__description">
-            Build a member-facing payment illustration by combining the auto loan terms with warranty coverage and markup settings.
+            Build a member-facing payment illustration by combining the auto loan terms with warranty coverage selections.
           </p>
         </div>
       </header>
@@ -375,46 +376,6 @@
               <input type="text" id="loan-vin" placeholder="1FTFW1E50JFC12345" />
             </div>
             <button type="button" id="loan-vin-decode-btn" class="secondary-button">Decode VIN</button>
-          </div>
-        </div>
-
-        <div class="loan-officer-card">
-          <h3 class="loan-officer-card__title">Warranty pricing inputs (VSC)</h3>
-          <div class="loan-officer-fields">
-            <div class="field-group">
-              <label for="loan-warranty-cost">Warranty cost (API)</label>
-              <input type="number" id="loan-warranty-cost" inputmode="decimal" min="0" placeholder="1,850" />
-              <p class="field-help">Used as the base cost returned from the VIN + mileage pricing API.</p>
-            </div>
-            <div class="field-group">
-              <label for="loan-credit-union-markup">Credit union markup</label>
-              <input type="number" id="loan-credit-union-markup" inputmode="decimal" min="0" placeholder="250" />
-            </div>
-            <div class="field-group">
-              <label for="loan-gfs-markup">GFS markup</label>
-              <input type="number" id="loan-gfs-markup" inputmode="decimal" min="0" placeholder="400" />
-            </div>
-            <button type="button" id="loan-warranty-fetch-btn" class="secondary-button">Fetch warranty cost</button>
-            <p id="loan-warranty-feedback" class="field-help" role="status" aria-live="polite"></p>
-          </div>
-        </div>
-
-        <div class="loan-officer-card">
-          <h3 class="loan-officer-card__title">GAP pricing inputs</h3>
-          <div class="loan-officer-fields">
-            <div class="field-group">
-              <label for="loan-gap-cost">GAP fixed cost</label>
-              <input type="number" id="loan-gap-cost" inputmode="decimal" min="0" placeholder="795" />
-              <p class="field-help">Stored per credit union as the baseline GAP price.</p>
-            </div>
-            <div class="field-group">
-              <label for="loan-gap-credit-union-markup">Credit union markup</label>
-              <input type="number" id="loan-gap-credit-union-markup" inputmode="decimal" min="0" placeholder="200" />
-            </div>
-            <div class="field-group">
-              <label for="loan-gap-gfs-markup">GFS markup</label>
-              <input type="number" id="loan-gap-gfs-markup" inputmode="decimal" min="0" placeholder="150" />
-            </div>
           </div>
         </div>
 
@@ -601,6 +562,66 @@
             <tbody id="call-report-coverage"></tbody>
           </table>
         </section>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="menu-pricing-dialog" aria-labelledby="menu-pricing-dialog-title">
+    <form method="dialog" class="dialog-form dialog-form--wide">
+      <header class="dialog-header">
+        <div>
+          <h2 id="menu-pricing-dialog-title">Menu Pricing</h2>
+          <p class="dialog-subtitle">
+            Maintain the warranty and GAP pricing inputs used for menu presentations.
+          </p>
+        </div>
+        <button type="button" class="icon-button" id="close-menu-pricing-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+
+      <div class="dialog-body">
+        <div class="loan-officer-grid">
+          <div class="loan-officer-card">
+            <h3 class="loan-officer-card__title">Warranty pricing inputs (VSC)</h3>
+            <div class="loan-officer-fields">
+              <div class="field-group">
+                <label for="loan-warranty-cost">Warranty cost (API)</label>
+                <input type="number" id="loan-warranty-cost" inputmode="decimal" min="0" placeholder="1,850" />
+                <p class="field-help">Used as the base cost returned from the VIN + mileage pricing API.</p>
+              </div>
+              <div class="field-group">
+                <label for="loan-credit-union-markup">Credit union markup</label>
+                <input type="number" id="loan-credit-union-markup" inputmode="decimal" min="0" placeholder="250" />
+              </div>
+              <div class="field-group">
+                <label for="loan-gfs-markup">GFS markup</label>
+                <input type="number" id="loan-gfs-markup" inputmode="decimal" min="0" placeholder="400" />
+              </div>
+              <button type="button" id="loan-warranty-fetch-btn" class="secondary-button">Fetch warranty cost</button>
+              <p id="loan-warranty-feedback" class="field-help" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <div class="loan-officer-card">
+            <h3 class="loan-officer-card__title">GAP pricing inputs</h3>
+            <div class="loan-officer-fields">
+              <div class="field-group">
+                <label for="loan-gap-cost">GAP fixed cost</label>
+                <input type="number" id="loan-gap-cost" inputmode="decimal" min="0" placeholder="795" />
+                <p class="field-help">Stored per credit union as the baseline GAP price.</p>
+              </div>
+              <div class="field-group">
+                <label for="loan-gap-credit-union-markup">Credit union markup</label>
+                <input type="number" id="loan-gap-credit-union-markup" inputmode="decimal" min="0" placeholder="200" />
+              </div>
+              <div class="field-group">
+                <label for="loan-gap-gfs-markup">GFS markup</label>
+                <input type="number" id="loan-gap-gfs-markup" inputmode="decimal" min="0" placeholder="150" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </form>
   </dialog>

@@ -82,6 +82,9 @@ const selectors = {
   openCallReportBtn: document.getElementById('open-call-report-btn'),
   callReportDialog: document.getElementById('call-report-dialog'),
   closeCallReportDialogBtn: document.getElementById('close-call-report-dialog'),
+  openMenuPricingBtn: document.getElementById('open-menu-pricing-btn'),
+  menuPricingDialog: document.getElementById('menu-pricing-dialog'),
+  closeMenuPricingDialogBtn: document.getElementById('close-menu-pricing-dialog'),
   openAccountChangeLogBtn: document.getElementById('open-account-change-log-btn'),
   accountChangeLogDialog: document.getElementById('account-change-log-dialog'),
   closeAccountChangeLogDialogBtn: document.getElementById('close-account-change-log-dialog'),
@@ -4279,6 +4282,14 @@ selectors.openCallReportBtn?.addEventListener('click', () => {
 
 selectors.closeCallReportDialogBtn?.addEventListener('click', () => {
   closeDialog(selectors.callReportDialog);
+});
+
+selectors.openMenuPricingBtn?.addEventListener('click', () => {
+  showDialog(selectors.menuPricingDialog);
+});
+
+selectors.closeMenuPricingDialogBtn?.addEventListener('click', () => {
+  closeDialog(selectors.menuPricingDialog);
 });
 
 selectors.openAccountChangeLogBtn?.addEventListener('click', () => {
