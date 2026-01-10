@@ -82,6 +82,9 @@ const selectors = {
   openCallReportBtn: document.getElementById('open-call-report-btn'),
   callReportDialog: document.getElementById('call-report-dialog'),
   closeCallReportDialogBtn: document.getElementById('close-call-report-dialog'),
+  openAccountNotesBtn: document.getElementById('open-account-notes-btn'),
+  accountNotesDialog: document.getElementById('account-notes-dialog'),
+  closeAccountNotesDialogBtn: document.getElementById('close-account-notes-dialog'),
   incomeStreamFilter: document.getElementById('income-stream-filter'),
   incomeStreamList: document.getElementById('income-stream-list'),
   incomeStreamCount: document.getElementById('income-stream-count'),
@@ -4252,6 +4255,21 @@ selectors.openCallReportBtn?.addEventListener('click', () => {
 
 selectors.closeCallReportDialogBtn?.addEventListener('click', () => {
   closeDialog(selectors.callReportDialog);
+});
+
+selectors.openAccountNotesBtn?.addEventListener('click', () => {
+  showDialog(selectors.accountNotesDialog);
+  setTimeout(() => selectors.accountNotesAuthor?.focus(), 75);
+});
+
+selectors.closeAccountNotesDialogBtn?.addEventListener('click', () => {
+  closeDialog(selectors.accountNotesDialog);
+});
+
+selectors.accountNotesDialog?.addEventListener('close', () => {
+  if (selectors.accountNotesFeedback) {
+    setFeedback(selectors.accountNotesFeedback, '', 'info');
+  }
 });
 
 selectors.updateStartMonthForm?.addEventListener('submit', async (event) => {

@@ -35,7 +35,10 @@
             All coverage creation now happens here. Pick a partner, then add the products that are in play.
           </p>
         </div>
-        <button type="button" class="secondary-button" id="open-call-report-btn">Call Reports</button>
+        <div class="panel__actions">
+          <button type="button" class="secondary-button" id="open-account-notes-btn">Account Notes</button>
+          <button type="button" class="secondary-button" id="open-call-report-btn">Call Reports</button>
+        </div>
       </header>
 
       <div class="account-select-grid">
@@ -54,47 +57,40 @@
       </div>
     </section>
 
-    <section class="panel" aria-labelledby="account-notes-heading">
-      <header class="panel__header">
+    <section class="panel" id="account-status-panel" aria-labelledby="account-status-heading">
+      <header class="panel__header account-status__header">
         <div>
-          <h2 id="account-notes-heading" class="panel__title">Account notes</h2>
-          <p class="panel__description">Capture context on the current situation for this account.</p>
+          <h2 id="account-status-heading" class="panel__title">Active Lines of Business</h2>
+          <p id="account-detail-title" class="panel__description">Select an account to load coverage details.</p>
         </div>
+        <p id="account-status-summary" class="account-status__summary"></p>
       </header>
 
-      <form id="account-notes-form" class="notes-form">
-        <div class="notes-grid">
-          <div class="field-group">
-            <label for="account-note-author">Who is commenting?</label>
-            <input type="text" id="account-note-author" name="author" placeholder="Your name" required />
-          </div>
-          <div class="field-group">
-            <label for="account-note-text">Notes / current situation</label>
-            <textarea
-              id="account-note-text"
-              name="note"
-              rows="3"
-              placeholder="Summarize what is happening at this account"
-              required
-            ></textarea>
-          </div>
-        </div>
-        <div class="notes-actions">
-          <p class="feedback" id="account-notes-feedback" role="status" aria-live="polite"></p>
-          <button type="submit" class="primary-button">Add note</button>
-        </div>
-      </form>
-
-      <div id="account-notes-empty" class="empty-state" hidden>
-        <p>No notes recorded yet. Add a quick update to keep the team in sync.</p>
+      <div id="account-empty-state" class="account-empty-state" role="status">
+        <p>Select a credit union to begin managing product coverage.</p>
       </div>
-      <ul id="account-notes-list" class="notes-list" aria-live="polite"></ul>
+
+      <div class="account-status" aria-live="polite">
+        <div class="account-status__controls">
+          <div class="field-group">
+            <label for="account-product-select">Add product line</label>
+            <select id="account-product-select" name="product"></select>
+          </div>
+          <div class="field-group">
+            <label for="account-revenue-select">Revenue line</label>
+            <select id="account-revenue-select" name="revenueType"></select>
+          </div>
+          <button type="button" class="primary-button" id="account-add-product">Add product</button>
+          <p class="feedback" id="account-status-feedback" role="status" aria-live="polite"></p>
+        </div>
+        <ul id="account-status-list" class="account-status__list" aria-label="Selected product lines"></ul>
+      </div>
     </section>
 
     <section class="panel" aria-labelledby="account-review-heading">
       <header class="panel__header">
         <div>
-          <h2 id="account-review-heading" class="panel__title">Year end review</h2>
+          <h2 id="account-review-heading" class="panel__title">Account details</h2>
           <p class="panel__description">
             Capture the current PMAC program, integrations, and core systems for annual account reviews.
           </p>
@@ -329,7 +325,7 @@
           <p class="feedback" id="account-review-feedback" role="status" aria-live="polite"></p>
           <div class="review-action-buttons">
             <button type="button" class="secondary-button" id="account-review-download">Download PDF</button>
-            <button type="submit" class="primary-button">Save year end review</button>
+            <button type="submit" class="primary-button">Save account details</button>
           </div>
         </div>
       </form>
@@ -346,36 +342,6 @@
         <p>No changes logged yet. Updates will appear once account activity is recorded.</p>
       </div>
       <ul id="account-change-log" class="change-log" aria-live="polite"></ul>
-    </section>
-
-    <section class="panel" id="account-status-panel" aria-labelledby="account-status-heading">
-      <header class="panel__header account-status__header">
-        <div>
-          <h2 id="account-status-heading" class="panel__title">Coverage by product</h2>
-          <p id="account-detail-title" class="panel__description">Select an account to load coverage details.</p>
-        </div>
-        <p id="account-status-summary" class="account-status__summary"></p>
-      </header>
-
-      <div id="account-empty-state" class="account-empty-state" role="status">
-        <p>Select a credit union to begin managing product coverage.</p>
-      </div>
-
-      <div class="account-status" aria-live="polite">
-        <div class="account-status__controls">
-          <div class="field-group">
-            <label for="account-product-select">Add product line</label>
-            <select id="account-product-select" name="product"></select>
-          </div>
-          <div class="field-group">
-            <label for="account-revenue-select">Revenue line</label>
-            <select id="account-revenue-select" name="revenueType"></select>
-          </div>
-          <button type="button" class="primary-button" id="account-add-product">Add product</button>
-          <p class="feedback" id="account-status-feedback" role="status" aria-live="polite"></p>
-        </div>
-        <ul id="account-status-list" class="account-status__list" aria-label="Selected product lines"></ul>
-      </div>
     </section>
 
     <section class="panel panel--full" aria-labelledby="loan-officer-heading">
@@ -508,6 +474,50 @@
       </div>
     </section>
   </main>
+
+  <dialog id="account-notes-dialog" aria-labelledby="account-notes-dialog-title">
+    <div class="dialog-form dialog-form--wide">
+      <header class="dialog-header">
+        <div>
+          <h2 id="account-notes-dialog-title">Account notes</h2>
+          <p class="dialog-subtitle">Capture context on the current situation for this account.</p>
+        </div>
+        <button type="button" class="icon-button" id="close-account-notes-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+
+      <div class="dialog-body">
+        <form id="account-notes-form" class="notes-form">
+          <div class="notes-grid">
+            <div class="field-group">
+              <label for="account-note-author">Who is commenting?</label>
+              <input type="text" id="account-note-author" name="author" placeholder="Your name" required />
+            </div>
+            <div class="field-group">
+              <label for="account-note-text">Notes / current situation</label>
+              <textarea
+                id="account-note-text"
+                name="note"
+                rows="3"
+                placeholder="Summarize what is happening at this account"
+                required
+              ></textarea>
+            </div>
+          </div>
+          <div class="notes-actions">
+            <p class="feedback" id="account-notes-feedback" role="status" aria-live="polite"></p>
+            <button type="submit" class="primary-button">Add note</button>
+          </div>
+        </form>
+
+        <div id="account-notes-empty" class="empty-state" hidden>
+          <p>No notes recorded yet. Add a quick update to keep the team in sync.</p>
+        </div>
+        <ul id="account-notes-list" class="notes-list" aria-live="polite"></ul>
+      </div>
+    </div>
+  </dialog>
 
   <dialog id="call-report-dialog" aria-labelledby="call-report-dialog-title">
     <form method="dialog" class="dialog-form dialog-form--wide" id="call-report-dialog-form">
