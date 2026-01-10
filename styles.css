@@ -869,6 +869,27 @@ input[type='month']:focus-visible {
   gap: 0.75rem;
 }
 
+.field-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.field-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.field-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
 .vin-results {
   display: grid;
   gap: 0.6rem;

@@ -1,3 +1,4 @@
+2028-09-03: Added GAP pricing inputs and coverage selection toggles to the loan officer illustration so VSC/GAP payment deltas can be compared.
 2028-09-02: Moved the loan officer coverage illustration panel to the bottom of the account workspace so the new loan calculator stays out of focus until launch.
 2028-09-01: Added the Training page to summarize year end review training frequencies with monthly cadence rollups.
 2026-02-14: Grouped frontend/backend revenue lines under each product row in the account workspace and added backend tracking for VSC to keep coverage views concise.
