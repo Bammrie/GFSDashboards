@@ -420,7 +420,7 @@
         </div>
 
         <div class="loan-officer-card">
-          <h3 class="loan-officer-card__title">Warranty pricing inputs</h3>
+          <h3 class="loan-officer-card__title">Warranty pricing inputs (VSC)</h3>
           <div class="loan-officer-fields">
             <div class="field-group">
               <label for="loan-warranty-cost">Warranty cost (API)</label>
@@ -441,6 +441,25 @@
         </div>
 
         <div class="loan-officer-card">
+          <h3 class="loan-officer-card__title">GAP pricing inputs</h3>
+          <div class="loan-officer-fields">
+            <div class="field-group">
+              <label for="loan-gap-cost">GAP fixed cost</label>
+              <input type="number" id="loan-gap-cost" inputmode="decimal" min="0" placeholder="795" />
+              <p class="field-help">Stored per credit union as the baseline GAP price.</p>
+            </div>
+            <div class="field-group">
+              <label for="loan-gap-credit-union-markup">Credit union markup</label>
+              <input type="number" id="loan-gap-credit-union-markup" inputmode="decimal" min="0" placeholder="200" />
+            </div>
+            <div class="field-group">
+              <label for="loan-gap-gfs-markup">GFS markup</label>
+              <input type="number" id="loan-gap-gfs-markup" inputmode="decimal" min="0" placeholder="150" />
+            </div>
+          </div>
+        </div>
+
+        <div class="loan-officer-card">
           <h3 class="loan-officer-card__title">VIN decode</h3>
           <div id="loan-vin-results" class="vin-results">
             <p class="vin-results__empty">Enter a VIN to decode vehicle details.</p>
@@ -449,13 +468,28 @@
 
         <div class="loan-officer-card loan-officer-card--summary">
           <h3 class="loan-officer-card__title">Payment illustration</h3>
+          <div class="loan-officer-fields">
+            <div class="field-group">
+              <span class="field-label">Coverage selection</span>
+              <div class="field-options">
+                <label class="field-option">
+                  <input type="checkbox" id="loan-coverage-vsc" checked />
+                  VSC
+                </label>
+                <label class="field-option">
+                  <input type="checkbox" id="loan-coverage-gap" />
+                  GAP
+                </label>
+              </div>
+            </div>
+          </div>
           <div class="payment-summary">
             <div class="payment-row">
               <span>Base monthly payment</span>
               <strong id="loan-base-payment">—</strong>
             </div>
             <div class="payment-row">
-              <span>Warranty retail cost</span>
+              <span>Selected coverage cost</span>
               <strong id="loan-warranty-retail">—</strong>
             </div>
             <div class="payment-row">
@@ -463,7 +497,7 @@
               <strong id="loan-total-amount">—</strong>
             </div>
             <div class="payment-row">
-              <span>Payment with warranty</span>
+              <span>Payment with coverage</span>
               <strong id="loan-payment-with-warranty">—</strong>
             </div>
             <div class="payment-row payment-row--highlight">

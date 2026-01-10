@@ -178,6 +178,9 @@ const selectors = {
   loanWarrantyCostInput: document.getElementById('loan-warranty-cost'),
   loanCreditUnionMarkupInput: document.getElementById('loan-credit-union-markup'),
   loanGfsMarkupInput: document.getElementById('loan-gfs-markup'),
+  loanGapCostInput: document.getElementById('loan-gap-cost'),
+  loanGapCreditUnionMarkupInput: document.getElementById('loan-gap-credit-union-markup'),
+  loanGapGfsMarkupInput: document.getElementById('loan-gap-gfs-markup'),
   loanWarrantyFetchBtn: document.getElementById('loan-warranty-fetch-btn'),
   loanWarrantyFeedback: document.getElementById('loan-warranty-feedback'),
   loanVinResults: document.getElementById('loan-vin-results'),
@@ -185,7 +188,9 @@ const selectors = {
   loanWarrantyRetail: document.getElementById('loan-warranty-retail'),
   loanTotalAmount: document.getElementById('loan-total-amount'),
   loanPaymentWithWarranty: document.getElementById('loan-payment-with-warranty'),
-  loanPaymentDelta: document.getElementById('loan-payment-delta')
+  loanPaymentDelta: document.getElementById('loan-payment-delta'),
+  loanCoverageVscToggle: document.getElementById('loan-coverage-vsc'),
+  loanCoverageGapToggle: document.getElementById('loan-coverage-gap')
 };
 
 function getStoredAccountNotes() {
@@ -308,7 +313,13 @@ function getWarrantyConfigForCreditUnion(creditUnionId) {
   const stored = appState.accountWarrantyConfigs?.[creditUnionId];
   return stored && typeof stored === 'object'
     ? stored
-    : { creditUnionMarkup: null, gfsMarkup: null };
+    : {
+      creditUnionMarkup: null,
+      gfsMarkup: null,
+      gapCost: null,
+      gapCreditUnionMarkup: null,
+      gapGfsMarkup: null
+    };
 }
 
 function saveWarrantyConfig(creditUnionId, updates) {
@@ -369,12 +380,29 @@ function updateLoanIllustration() {
   const warrantyCost = parseNumericInput(selectors.loanWarrantyCostInput?.value);
   const creditUnionMarkup = parseNumericInput(selectors.loanCreditUnionMarkupInput?.value);
   const gfsMarkup = parseNumericInput(selectors.loanGfsMarkupInput?.value);
+  const gapCost = parseNumericInput(selectors.loanGapCostInput?.value);
+  const gapCreditUnionMarkup = parseNumericInput(selectors.loanGapCreditUnionMarkupInput?.value);
+  const gapGfsMarkup = parseNumericInput(selectors.loanGapGfsMarkupInput?.value);
+  const includeVsc = selectors.loanCoverageVscToggle?.checked ?? false;
+  const includeGap = selectors.loanCoverageGapToggle?.checked ?? false;
 
   const basePayment = calculateMonthlyPayment(loanAmount, apr, termMonths);
   const hasWarrantyInputs = [warrantyCost, creditUnionMarkup, gfsMarkup].some(Number.isFinite);
-  const retailCost = hasWarrantyInputs
+  const vscRetail = hasWarrantyInputs
     ? (warrantyCost || 0) + (creditUnionMarkup || 0) + (gfsMarkup || 0)
     : null;
+  const hasGapInputs = [gapCost, gapCreditUnionMarkup, gapGfsMarkup].some(Number.isFinite);
+  const gapRetail = hasGapInputs
+    ? (gapCost || 0) + (gapCreditUnionMarkup || 0) + (gapGfsMarkup || 0)
+    : null;
+  const coverageTotals = [];
+  if (includeVsc && Number.isFinite(vscRetail)) {
+    coverageTotals.push(vscRetail);
+  }
+  if (includeGap && Number.isFinite(gapRetail)) {
+    coverageTotals.push(gapRetail);
+  }
+  const retailCost = coverageTotals.length ? coverageTotals.reduce((sum, value) => sum + value, 0) : null;
   const totalAmount = Number.isFinite(loanAmount) && Number.isFinite(retailCost)
     ? loanAmount + retailCost
     : null;
@@ -410,6 +438,9 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.loanWarrantyCostInput,
     selectors.loanCreditUnionMarkupInput,
     selectors.loanGfsMarkupInput,
+    selectors.loanGapCostInput,
+    selectors.loanGapCreditUnionMarkupInput,
+    selectors.loanGapGfsMarkupInput,
     selectors.loanWarrantyFetchBtn
   ];
   elements.forEach((element) => {
@@ -417,6 +448,12 @@ function setLoanOfficerDisabled(isDisabled) {
       element.disabled = isDisabled;
     }
   });
+  if (selectors.loanCoverageVscToggle) {
+    selectors.loanCoverageVscToggle.disabled = isDisabled;
+  }
+  if (selectors.loanCoverageGapToggle) {
+    selectors.loanCoverageGapToggle.disabled = isDisabled;
+  }
 }
 
 function renderLoanOfficerCalculator() {
@@ -443,6 +480,17 @@ function renderLoanOfficerCalculator() {
   if (selectors.loanGfsMarkupInput) {
     selectors.loanGfsMarkupInput.value = Number.isFinite(config.gfsMarkup) ? config.gfsMarkup : '';
   }
+  if (selectors.loanGapCostInput) {
+    selectors.loanGapCostInput.value = Number.isFinite(config.gapCost) ? config.gapCost : '';
+  }
+  if (selectors.loanGapCreditUnionMarkupInput) {
+    selectors.loanGapCreditUnionMarkupInput.value =
+      Number.isFinite(config.gapCreditUnionMarkup) ? config.gapCreditUnionMarkup : '';
+  }
+  if (selectors.loanGapGfsMarkupInput) {
+    selectors.loanGapGfsMarkupInput.value =
+      Number.isFinite(config.gapGfsMarkup) ? config.gapGfsMarkup : '';
+  }
 
   updateLoanIllustration();
 }
@@ -453,6 +501,15 @@ function handleWarrantyMarkupChange() {
   const creditUnionMarkup = parseNumericInput(selectors.loanCreditUnionMarkupInput?.value);
   const gfsMarkup = parseNumericInput(selectors.loanGfsMarkupInput?.value);
   saveWarrantyConfig(creditUnionId, { creditUnionMarkup, gfsMarkup });
+}
+
+function handleGapPricingChange() {
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) return;
+  const gapCost = parseNumericInput(selectors.loanGapCostInput?.value);
+  const gapCreditUnionMarkup = parseNumericInput(selectors.loanGapCreditUnionMarkupInput?.value);
+  const gapGfsMarkup = parseNumericInput(selectors.loanGapGfsMarkupInput?.value);
+  saveWarrantyConfig(creditUnionId, { gapCost, gapCreditUnionMarkup, gapGfsMarkup });
 }
 
 async function fetchWarrantyCost() {
@@ -4620,7 +4677,10 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   selectors.loanTermInput,
   selectors.loanAprInput,
   selectors.loanMilesInput,
-  selectors.loanWarrantyCostInput
+  selectors.loanWarrantyCostInput,
+  selectors.loanGapCostInput,
+  selectors.loanGapCreditUnionMarkupInput,
+  selectors.loanGapGfsMarkupInput
 ].forEach((element) => {
   element?.addEventListener('input', () => {
     updateLoanIllustration();
@@ -4634,6 +4694,29 @@ selectors.loanCreditUnionMarkupInput?.addEventListener('input', () => {
 
 selectors.loanGfsMarkupInput?.addEventListener('input', () => {
   handleWarrantyMarkupChange();
+  updateLoanIllustration();
+});
+
+selectors.loanGapCostInput?.addEventListener('input', () => {
+  handleGapPricingChange();
+  updateLoanIllustration();
+});
+
+selectors.loanGapCreditUnionMarkupInput?.addEventListener('input', () => {
+  handleGapPricingChange();
+  updateLoanIllustration();
+});
+
+selectors.loanGapGfsMarkupInput?.addEventListener('input', () => {
+  handleGapPricingChange();
+  updateLoanIllustration();
+});
+
+selectors.loanCoverageVscToggle?.addEventListener('change', () => {
+  updateLoanIllustration();
+});
+
+selectors.loanCoverageGapToggle?.addEventListener('change', () => {
   updateLoanIllustration();
 });
 
