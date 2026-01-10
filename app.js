@@ -82,6 +82,9 @@ const selectors = {
   openCallReportBtn: document.getElementById('open-call-report-btn'),
   callReportDialog: document.getElementById('call-report-dialog'),
   closeCallReportDialogBtn: document.getElementById('close-call-report-dialog'),
+  openAccountChangeLogBtn: document.getElementById('open-account-change-log-btn'),
+  accountChangeLogDialog: document.getElementById('account-change-log-dialog'),
+  closeAccountChangeLogDialogBtn: document.getElementById('close-account-change-log-dialog'),
   openAccountNotesBtn: document.getElementById('open-account-notes-btn'),
   accountNotesDialog: document.getElementById('account-notes-dialog'),
   closeAccountNotesDialogBtn: document.getElementById('close-account-notes-dialog'),
@@ -354,9 +357,9 @@ function renderVinResults(result, message) {
   }
 
   const fields = [
-    { label: 'Model year', value: result.year },
-    { label: 'Make', value: result.make },
-    { label: 'Model', value: result.model },
+    { label: 'Model year', value: result.year, required: true },
+    { label: 'Make', value: result.make, required: true },
+    { label: 'Model', value: result.model, required: true },
     { label: 'Trim', value: result.trim },
     { label: 'Body', value: result.bodyClass },
     { label: 'Drive type', value: result.driveType },
@@ -364,7 +367,7 @@ function renderVinResults(result, message) {
   ];
 
   fields.forEach((field) => {
-    if (!field.value) return;
+    if (!field.value && !field.required) return;
     const row = document.createElement('div');
     row.className = 'vin-results__item';
     const label = document.createElement('span');
@@ -372,7 +375,7 @@ function renderVinResults(result, message) {
     label.textContent = field.label;
     const value = document.createElement('span');
     value.className = 'vin-results__value';
-    value.textContent = field.value;
+    value.textContent = field.value || 'Not reported';
     row.append(label, value);
     container.append(row);
   });
@@ -4274,6 +4277,14 @@ selectors.openCallReportBtn?.addEventListener('click', () => {
 
 selectors.closeCallReportDialogBtn?.addEventListener('click', () => {
   closeDialog(selectors.callReportDialog);
+});
+
+selectors.openAccountChangeLogBtn?.addEventListener('click', () => {
+  showDialog(selectors.accountChangeLogDialog);
+});
+
+selectors.closeAccountChangeLogDialogBtn?.addEventListener('click', () => {
+  closeDialog(selectors.accountChangeLogDialog);
 });
 
 selectors.openAccountNotesBtn?.addEventListener('click', () => {

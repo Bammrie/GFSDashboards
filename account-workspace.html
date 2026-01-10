@@ -45,6 +45,7 @@
         </div>
         <div class="panel__actions">
           <button type="button" class="secondary-button" id="open-account-notes-btn">Account Notes</button>
+          <button type="button" class="secondary-button" id="open-account-change-log-btn">Change Log</button>
           <button type="button" class="secondary-button" id="open-call-report-btn">Call Reports</button>
         </div>
       </header>
@@ -337,19 +338,6 @@
       </form>
     </section>
 
-    <section class="panel" aria-labelledby="account-change-log-heading">
-      <header class="panel__header">
-        <div>
-          <h2 id="account-change-log-heading" class="panel__title">Account change log</h2>
-          <p class="panel__description">Every saved update to account data appears here for quick audit history.</p>
-        </div>
-      </header>
-      <div id="account-change-log-empty" class="empty-state" hidden>
-        <p>No changes logged yet. Updates will appear once account activity is recorded.</p>
-      </div>
-      <ul id="account-change-log" class="change-log" aria-live="polite"></ul>
-    </section>
-
     <section class="panel panel--full" aria-labelledby="loan-officer-heading">
       <header class="panel__header">
         <div>
@@ -521,6 +509,26 @@
           <p>No notes recorded yet. Add a quick update to keep the team in sync.</p>
         </div>
         <ul id="account-notes-list" class="notes-list" aria-live="polite"></ul>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="account-change-log-dialog" aria-labelledby="account-change-log-dialog-title">
+    <div class="dialog-form dialog-form--wide">
+      <header class="dialog-header">
+        <div>
+          <h2 id="account-change-log-dialog-title">Account change log</h2>
+          <p class="dialog-subtitle">Every saved update to account data appears here for quick audit history.</p>
+        </div>
+        <button type="button" class="icon-button" id="close-account-change-log-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+      <div class="dialog-body">
+        <div id="account-change-log-empty" class="empty-state" hidden>
+          <p>No changes logged yet. Updates will appear once account activity is recorded.</p>
+        </div>
+        <ul id="account-change-log" class="change-log" aria-live="polite"></ul>
       </div>
     </div>
   </dialog>
