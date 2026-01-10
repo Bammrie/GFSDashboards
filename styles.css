@@ -1751,6 +1751,21 @@ input[type='month']:focus-visible {
   gap: 1.5rem;
 }
 
+.account-select-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.account-select-field {
+  margin: 0;
+}
+
+.account-select-help {
+  margin: 0;
+}
+
 .account-status__header {
   align-items: flex-start;
   display: flex;
