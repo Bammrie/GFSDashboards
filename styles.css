@@ -901,6 +901,13 @@ input[type='month']:focus-visible {
 
 .loan-officer-card--summary {
   background: linear-gradient(140deg, rgba(20, 6, 10, 0.95), rgba(60, 16, 26, 0.9));
+  color: #fff;
+}
+
+.loan-officer-card--summary .field-label,
+.loan-officer-card--summary .field-option,
+.loan-officer-card--summary .payment-row {
+  color: #fff;
 }
 
 .loan-officer-card__title {
