@@ -10,7 +10,8 @@ const PRODUCT_OPTIONS = [
 
 const PRODUCT_REVENUE_TYPES = {
   'Credit Insurance/Debt Protection - Consumer': ['Frontend', 'Backend'],
-  'GAP': ['Frontend', 'Backend']
+  'GAP': ['Frontend', 'Backend'],
+  'VSC': ['Frontend', 'Backend']
 };
 
 const DEFAULT_REVENUE_TYPES = ['Commission'];
@@ -787,7 +788,7 @@ function createStatusLight({ value, label, color, name, checked, disabled }) {
   return wrapper;
 }
 
-function createAccountStatusRow(entry, index) {
+function createAccountStatusRow(entry, index, { showProductName = true, productRowSpan = 1 } = {}) {
   const row = document.createElement('tr');
   row.className = 'account-status__row';
   row.dataset.productRow = 'true';
@@ -806,16 +807,22 @@ function createAccountStatusRow(entry, index) {
     row.dataset.prospectId = entry.prospectStream.id;
   }
 
-  const productCell = document.createElement('th');
-  productCell.scope = 'row';
-  const name = document.createElement('p');
-  name.className = 'account-status__product-name';
-  name.textContent = entry.product;
-  const meta = document.createElement('p');
-  meta.className = 'account-status__product-meta';
-  meta.textContent = entry.revenueType;
-  productCell.append(name, meta);
-  row.append(productCell);
+  if (showProductName) {
+    const productCell = document.createElement('th');
+    productCell.scope = 'rowgroup';
+    productCell.rowSpan = Math.max(productRowSpan, 1);
+    const name = document.createElement('p');
+    name.className = 'account-status__product-name';
+    name.textContent = entry.product;
+    productCell.append(name);
+    row.append(productCell);
+  }
+
+  const revenueCell = document.createElement('th');
+  revenueCell.scope = 'row';
+  revenueCell.className = 'account-status__revenue-type';
+  revenueCell.textContent = entry.revenueType;
+  row.append(revenueCell);
 
   const radioName = `account-status-${index}`;
 
@@ -1312,14 +1319,26 @@ function renderAccountWorkspace() {
   const fragment = document.createDocumentFragment();
   let activeCount = 0;
   let prospectCount = 0;
+  let rowIndex = 0;
 
-  entries.forEach((entry, index) => {
-    if (entry.status === 'active') {
-      activeCount += 1;
-    } else if (entry.status === 'prospect') {
-      prospectCount += 1;
-    }
-    fragment.append(createAccountStatusRow(entry, index));
+  PRODUCT_OPTIONS.forEach((product) => {
+    const groupEntries = entries.filter((entry) => entry.product === product);
+    if (!groupEntries.length) return;
+
+    groupEntries.forEach((entry, entryIndex) => {
+      if (entry.status === 'active') {
+        activeCount += 1;
+      } else if (entry.status === 'prospect') {
+        prospectCount += 1;
+      }
+      fragment.append(
+        createAccountStatusRow(entry, rowIndex, {
+          showProductName: entryIndex === 0,
+          productRowSpan: groupEntries.length
+        })
+      );
+      rowIndex += 1;
+    });
   });
 
   body.replaceChildren(fragment);

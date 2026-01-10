@@ -1568,7 +1568,7 @@ input[type='month']:focus-visible {
 .account-status__table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1080px;
+  min-width: 1180px;
 }
 
 .account-status__table th,
@@ -1594,12 +1594,18 @@ input[type='month']:focus-visible {
   font-weight: 600;
 }
 
-.account-status__product-meta {
+.account-status__product-meta,
+.account-status__revenue-type {
   margin: 0.35rem 0 0;
   font-size: 0.85rem;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.account-status__revenue-type {
+  margin: 0;
+  font-weight: 600;
 }
 
 .status-light-group {

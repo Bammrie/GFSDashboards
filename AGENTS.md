@@ -1,3 +1,4 @@
+2026-02-14: Grouped frontend/backend revenue lines under each product row in the account workspace and added backend tracking for VSC to keep coverage views concise.
 2026-01-08: Added a year end review PDF download button that generates a branded report with the credit union details for sharing.
 2026-01-08: Updated the year end review worksheet fields (training frequency, income/incentives split, term extensions, integration options) and refreshed the PDF logo layout for client printouts.
 2025-03-18: Added a dedicated last reported month column to the Accounts directory, aligned the latest assets/consumer lending amounts, and highlighted the month label for easier scanning.
