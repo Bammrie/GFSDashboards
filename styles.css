@@ -1,16 +1,19 @@
 :root {
-  color-scheme: light dark;
-  --surface: #10141b;
-  --surface-elevated: rgba(255, 255, 255, 0.04);
-  --surface-card: rgba(255, 255, 255, 0.07);
-  --surface-highlight: rgba(255, 255, 255, 0.1);
-  --border: rgba(255, 255, 255, 0.12);
-  --text-primary: #e2f1ff;
-  --text-secondary: rgba(196, 223, 255, 0.82);
-  --accent: #4fc3f7;
-  --accent-strong: #29b6f6;
-  --danger: #ef5350;
-  --success: #4caf50;
+  color-scheme: light;
+  --surface: #0c0b0b;
+  --surface-elevated: rgba(255, 255, 255, 0.06);
+  --surface-card: rgba(255, 255, 255, 0.1);
+  --surface-highlight: rgba(255, 255, 255, 0.16);
+  --border: rgba(255, 255, 255, 0.18);
+  --text-primary: #f7f5f5;
+  --text-secondary: rgba(247, 245, 245, 0.72);
+  --accent: #7a1e2c;
+  --accent-strong: #9b2838;
+  --danger: #cf3f3f;
+  --success: #2f7a4f;
+  --panel-bg: #ffffff;
+  --panel-border: rgba(14, 14, 14, 0.2);
+  --panel-shadow: 0 18px 48px rgba(8, 6, 7, 0.35);
   --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   --shadow-soft: 0 18px 48px rgba(15, 23, 42, 0.22);
   background-color: var(--surface);
@@ -24,9 +27,10 @@
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: radial-gradient(circle at top left, rgba(79, 195, 247, 0.12), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(21, 101, 192, 0.12), transparent 45%),
-    var(--surface);
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.92)),
+    repeating-linear-gradient(135deg, rgba(122, 30, 44, 0.28) 0 32px, rgba(0, 0, 0, 0.25) 32px 64px),
+    #16090d;
   color: var(--text-primary);
   min-height: 100vh;
 }
@@ -34,9 +38,9 @@ body {
 .site-header {
   position: sticky;
   top: 0;
-  backdrop-filter: blur(18px);
-  background: rgba(10, 14, 21, 0.85);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: none;
+  background: rgba(8, 8, 8, 0.98);
+  border-bottom: 2px solid rgba(122, 30, 44, 0.5);
   z-index: 10;
 }
 
@@ -79,7 +83,7 @@ body {
   font-weight: 600;
   font-size: 0.95rem;
   padding: 0.4rem 0.75rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 1px solid transparent;
   transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
@@ -94,8 +98,8 @@ body {
 
 .header-link[aria-current='page'] {
   color: var(--text-primary);
-  border-color: rgba(79, 195, 247, 0.35);
-  background: rgba(79, 195, 247, 0.2);
+  border-color: rgba(122, 30, 44, 0.65);
+  background: rgba(122, 30, 44, 0.2);
 }
 
 .layout {
@@ -152,10 +156,15 @@ body {
 }
 
 .panel {
-  background: rgba(10, 14, 21, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  box-shadow: var(--shadow-soft);
+  --text-primary: #0f0f0f;
+  --text-secondary: rgba(15, 15, 15, 0.7);
+  --surface-card: rgba(17, 17, 17, 0.06);
+  --surface-highlight: rgba(17, 17, 17, 0.08);
+  --border: rgba(17, 17, 17, 0.18);
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 0;
+  box-shadow: var(--panel-shadow);
   padding: clamp(1rem, 2.5vw, 2rem);
 }
 
@@ -201,9 +210,9 @@ body {
 }
 
 .info-callout {
-  border: 1px dashed rgba(255, 255, 255, 0.25);
-  background: rgba(79, 195, 247, 0.06);
-  border-radius: 18px;
+  border: 1px dashed rgba(122, 30, 44, 0.5);
+  background: rgba(122, 30, 44, 0.08);
+  border-radius: 0;
   padding: 0.9rem 1.1rem;
   line-height: 1.5;
   color: var(--text-secondary);
@@ -241,9 +250,9 @@ input[type='text'],
 input[type='number'],
 input[type='month'] {
   background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--border);
   color: var(--text-primary);
-  border-radius: 14px;
+  border-radius: 0;
   padding: 0.65rem 0.9rem;
   font-size: 0.95rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -260,8 +269,8 @@ input[type='text']:focus-visible,
 input[type='number']:focus-visible,
 input[type='month']:focus-visible {
   outline: none;
-  border-color: rgba(79, 195, 247, 0.8);
-  box-shadow: 0 0 0 4px rgba(79, 195, 247, 0.24);
+  border-color: rgba(122, 30, 44, 0.8);
+  box-shadow: 0 0 0 4px rgba(122, 30, 44, 0.2);
 }
 
 .field-with-action {
@@ -293,14 +302,14 @@ input[type='month']:focus-visible {
 
 .icon-button:hover,
 .icon-button:focus-visible {
-  background: rgba(79, 195, 247, 0.18);
+  background: rgba(122, 30, 44, 0.18);
   transform: translateY(-1px);
   outline: none;
 }
 
 .primary-button,
 .secondary-button {
-  border-radius: 999px;
+  border-radius: 0;
   border: none;
   font-weight: 600;
   padding: 0.75rem 1.5rem;
@@ -311,28 +320,28 @@ input[type='month']:focus-visible {
 
 .primary-button {
   background: linear-gradient(135deg, var(--accent-strong), var(--accent));
-  color: #04121c;
-  box-shadow: 0 12px 30px rgba(79, 195, 247, 0.35);
+  color: #ffffff;
+  box-shadow: 0 12px 30px rgba(122, 30, 44, 0.35);
 }
 
 .primary-button:hover,
 .primary-button:focus-visible {
   transform: translateY(-1px);
-  box-shadow: 0 14px 34px rgba(79, 195, 247, 0.45);
+  box-shadow: 0 14px 34px rgba(122, 30, 44, 0.45);
   outline: none;
 }
 
 .secondary-button {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.08);
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border);
 }
 
 .secondary-button:hover,
 .secondary-button:focus-visible {
   transform: translateY(-1px);
   outline: none;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(122, 30, 44, 0.1);
 }
 
 .table-action-button {
@@ -341,7 +350,7 @@ input[type='month']:focus-visible {
   color: var(--text-secondary);
   font-weight: 600;
   padding: 0.35rem 0.75rem;
-  border-radius: 10px;
+  border-radius: 0;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -367,8 +376,8 @@ input[type='month']:focus-visible {
   display: flex;
   align-items: center;
   background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 14px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding-left: 0.85rem;
 }
 
@@ -447,8 +456,8 @@ input[type='month']:focus-visible {
 
 .account-card {
   background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -493,9 +502,9 @@ input[type='month']:focus-visible {
   font-weight: 600;
   font-size: 0.9rem;
   padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.06);
+  border-radius: 0;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .account-card__total--active {
@@ -569,8 +578,8 @@ input[type='month']:focus-visible {
 
 .product-status {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding: 0.85rem 1rem;
   display: flex;
   flex-direction: column;
@@ -578,13 +587,13 @@ input[type='month']:focus-visible {
 }
 
 .product-status[data-state='active'] {
-  border-color: rgba(129, 199, 132, 0.35);
-  background: rgba(129, 199, 132, 0.15);
+  border-color: rgba(47, 122, 79, 0.4);
+  background: rgba(47, 122, 79, 0.12);
 }
 
 .product-status[data-state='prospect'] {
-  border-color: rgba(255, 224, 130, 0.35);
-  background: rgba(255, 224, 130, 0.12);
+  border-color: rgba(122, 30, 44, 0.4);
+  background: rgba(122, 30, 44, 0.12);
 }
 
 .product-status__title {
@@ -656,14 +665,14 @@ input[type='month']:focus-visible {
 
 .item {
   background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 18px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   overflow: hidden;
   position: relative;
   isolation: isolate;
-  --product-color: rgba(79, 195, 247, 0.9);
-  --product-color-soft: rgba(79, 195, 247, 0.18);
-  --product-color-border: rgba(79, 195, 247, 0.4);
+  --product-color: rgba(122, 30, 44, 0.9);
+  --product-color-soft: rgba(122, 30, 44, 0.18);
+  --product-color-border: rgba(122, 30, 44, 0.4);
 }
 
 .item::before {
@@ -690,8 +699,8 @@ input[type='month']:focus-visible {
 
 .item__link:hover,
 .item__link:focus-visible {
-  background: rgba(79, 195, 247, 0.12);
-  border-color: rgba(79, 195, 247, 0.32);
+  background: rgba(122, 30, 44, 0.12);
+  border-color: rgba(122, 30, 44, 0.32);
   outline: none;
 }
 
@@ -712,7 +721,7 @@ input[type='month']:focus-visible {
 }
 
 .item__divider {
-  color: rgba(196, 223, 255, 0.5);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .item__product-badge {
@@ -720,7 +729,7 @@ input[type='month']:focus-visible {
   align-items: center;
   gap: 0.35rem;
   padding: 0.2rem 0.65rem;
-  border-radius: 999px;
+  border-radius: 0;
   background: var(--product-color-soft);
   border: 1px solid var(--product-color-border);
   color: var(--text-primary);
@@ -741,7 +750,7 @@ input[type='month']:focus-visible {
 
 .item__meta {
   margin: 0.45rem 0 0;
-  color: rgba(196, 223, 255, 0.68);
+  color: rgba(255, 255, 255, 0.68);
   font-size: 0.85rem;
 }
 
@@ -762,45 +771,45 @@ input[type='month']:focus-visible {
 }
 
 .item[data-product-key='credit-insurance-debt-protection-consumer'] {
-  --product-color: rgba(79, 195, 247, 0.95);
-  --product-color-soft: rgba(79, 195, 247, 0.22);
-  --product-color-border: rgba(79, 195, 247, 0.48);
+  --product-color: rgba(122, 30, 44, 0.95);
+  --product-color-soft: rgba(122, 30, 44, 0.22);
+  --product-color-border: rgba(122, 30, 44, 0.48);
 }
 
 .item[data-product-key='credit-insurance-mortgage'] {
-  --product-color: rgba(149, 117, 205, 0.95);
-  --product-color-soft: rgba(149, 117, 205, 0.24);
-  --product-color-border: rgba(149, 117, 205, 0.5);
+  --product-color: rgba(98, 21, 31, 0.95);
+  --product-color-soft: rgba(98, 21, 31, 0.24);
+  --product-color-border: rgba(98, 21, 31, 0.5);
 }
 
 .item[data-product-key='gap'] {
-  --product-color: rgba(255, 183, 77, 0.95);
-  --product-color-soft: rgba(255, 183, 77, 0.24);
-  --product-color-border: rgba(255, 183, 77, 0.48);
+  --product-color: rgba(132, 34, 49, 0.95);
+  --product-color-soft: rgba(132, 34, 49, 0.24);
+  --product-color-border: rgba(132, 34, 49, 0.48);
 }
 
 .item[data-product-key='vsc'] {
-  --product-color: rgba(240, 98, 146, 0.95);
-  --product-color-soft: rgba(240, 98, 146, 0.24);
-  --product-color-border: rgba(240, 98, 146, 0.5);
+  --product-color: rgba(160, 45, 60, 0.95);
+  --product-color-soft: rgba(160, 45, 60, 0.24);
+  --product-color-border: rgba(160, 45, 60, 0.5);
 }
 
 .item[data-product-key='collateral-protection-insurance-cpi'] {
-  --product-color: rgba(38, 166, 154, 0.95);
-  --product-color-soft: rgba(38, 166, 154, 0.24);
-  --product-color-border: rgba(38, 166, 154, 0.52);
+  --product-color: rgba(74, 21, 30, 0.95);
+  --product-color-soft: rgba(74, 21, 30, 0.24);
+  --product-color-border: rgba(74, 21, 30, 0.52);
 }
 
 .item[data-product-key='fidelity-bond'] {
-  --product-color: rgba(129, 199, 132, 0.95);
-  --product-color-soft: rgba(129, 199, 132, 0.24);
-  --product-color-border: rgba(129, 199, 132, 0.5);
+  --product-color: rgba(114, 28, 40, 0.95);
+  --product-color-soft: rgba(114, 28, 40, 0.24);
+  --product-color-border: rgba(114, 28, 40, 0.5);
 }
 
 .item[data-product-key='afg-balloon-loans'] {
-  --product-color: rgba(121, 134, 203, 0.95);
-  --product-color-soft: rgba(121, 134, 203, 0.24);
-  --product-color-border: rgba(121, 134, 203, 0.5);
+  --product-color: rgba(140, 36, 51, 0.95);
+  --product-color-soft: rgba(140, 36, 51, 0.24);
+  --product-color-border: rgba(140, 36, 51, 0.5);
 }
 
 .feedback {
@@ -819,11 +828,11 @@ input[type='month']:focus-visible {
 }
 
 .empty-state {
-  border: 1px dashed #c5ccd4;
-  border-radius: 12px;
+  border: 1px dashed rgba(15, 15, 15, 0.3);
+  border-radius: 0;
   padding: 1rem;
-  background: #f8fafc;
-  color: #4b5563;
+  background: #ffffff;
+  color: #1f1f1f;
   margin-bottom: 1rem;
 }
 
@@ -882,14 +891,14 @@ input[type='month']:focus-visible {
 .loan-officer-card {
   background: var(--surface-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 1rem;
   display: grid;
   gap: 0.85rem;
 }
 
 .loan-officer-card--summary {
-  background: linear-gradient(140deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.85));
+  background: linear-gradient(140deg, rgba(20, 6, 10, 0.95), rgba(60, 16, 26, 0.9));
 }
 
 .loan-officer-card__title {
@@ -971,15 +980,15 @@ input[type='month']:focus-visible {
 
 .payment-row--highlight {
   padding: 0.5rem 0.75rem;
-  border-radius: 12px;
-  background: rgba(79, 195, 247, 0.18);
+  border-radius: 0;
+  background: rgba(122, 30, 44, 0.18);
   color: var(--text-primary);
 }
 
 .note-card {
   background: var(--surface-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 0.9rem 1rem;
   display: grid;
   gap: 0.4rem;
@@ -1034,7 +1043,7 @@ input[type='month']:focus-visible {
 .review-card {
   background: var(--surface-card);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 1rem;
   display: grid;
   gap: 0.75rem;
@@ -1112,7 +1121,7 @@ input[type='month']:focus-visible {
 .change-log__item {
   background: var(--surface-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 0.85rem 1rem;
   display: grid;
   gap: 0.4rem;
@@ -1166,8 +1175,8 @@ input[type='month']:focus-visible {
 
 .stream-overview__detail {
   background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding: 0.75rem 1rem;
   display: grid;
   gap: 0.35rem;
@@ -1192,8 +1201,8 @@ input[type='month']:focus-visible {
 
 .status-card {
   background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding: 1rem 1.1rem;
   display: grid;
   gap: 0.75rem;
@@ -1201,13 +1210,13 @@ input[type='month']:focus-visible {
 }
 
 .status-card[data-state='complete'] {
-  border-color: rgba(76, 175, 80, 0.45);
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  border-color: rgba(47, 122, 79, 0.45);
+  box-shadow: 0 0 0 2px rgba(47, 122, 79, 0.2);
 }
 
 .status-card[data-state='pending'] {
-  border-color: rgba(239, 83, 80, 0.45);
-  box-shadow: 0 0 0 2px rgba(239, 83, 80, 0.18);
+  border-color: rgba(122, 30, 44, 0.45);
+  box-shadow: 0 0 0 2px rgba(122, 30, 44, 0.18);
 }
 
 .status-card[data-interactive='true'] {
@@ -1217,7 +1226,7 @@ input[type='month']:focus-visible {
 .status-card[data-interactive='true']:hover,
 .status-card[data-interactive='true']:focus-visible {
   transform: translateY(-1px);
-  box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.35);
+  box-shadow: 0 0 0 2px rgba(122, 30, 44, 0.35);
   outline: none;
 }
 
@@ -1231,8 +1240,8 @@ input[type='month']:focus-visible {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #ef5350;
-  box-shadow: 0 0 12px rgba(239, 83, 80, 0.45);
+  background: #7a1e2c;
+  box-shadow: 0 0 12px rgba(122, 30, 44, 0.45);
 }
 
 .status-card[data-state='complete'] .status-card__indicator {
@@ -1260,8 +1269,8 @@ input[type='month']:focus-visible {
 
 .insight-card {
   background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding: 1.25rem;
   display: grid;
   gap: 0.5rem;
@@ -1283,8 +1292,8 @@ input[type='month']:focus-visible {
 
 .chart-card {
   background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding: 1.5rem;
 }
 
@@ -1354,8 +1363,8 @@ input[type='month']:focus-visible {
 
 .training-summary-card {
   background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 18px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding: 1.35rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -1391,8 +1400,8 @@ input[type='month']:focus-visible {
 
 .training-month-card {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   padding: 1.1rem 1.2rem;
   display: flex;
   flex-direction: column;
@@ -1421,8 +1430,8 @@ input[type='month']:focus-visible {
 
 .table-card {
   background: var(--surface-card);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
+  border: 1px solid var(--border);
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -1533,8 +1542,8 @@ input[type='month']:focus-visible {
   gap: 0.4rem;
   align-items: center;
   padding: 0.2rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid var(--border);
 }
 
@@ -1544,13 +1553,13 @@ input[type='month']:focus-visible {
   color: var(--text-secondary);
   font-weight: 700;
   padding: 0.35rem 0.85rem;
-  border-radius: 999px;
+  border-radius: 0;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .tab[aria-selected='true'] {
-  background: rgba(79, 195, 247, 0.15);
+  background: rgba(122, 30, 44, 0.2);
   color: var(--text-primary);
   transform: translateY(-1px);
 }
@@ -1576,7 +1585,7 @@ input[type='month']:focus-visible {
   align-items: center;
   gap: 0.35rem;
   padding: 0.2rem 0.55rem;
-  border-radius: 999px;
+  border-radius: 0;
   background: rgba(0, 0, 0, 0.05);
   font-weight: 600;
   text-transform: capitalize;
@@ -1586,7 +1595,7 @@ input[type='month']:focus-visible {
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-primary);
-  border-radius: 10px;
+  border-radius: 0;
   padding: 0.35rem 0.75rem;
   cursor: pointer;
   font-weight: 700;
@@ -1595,8 +1604,8 @@ input[type='month']:focus-visible {
 
 .account-classification__button:hover,
 .account-classification__button:focus-visible {
-  background: rgba(79, 195, 247, 0.18);
-  border-color: rgba(79, 195, 247, 0.6);
+  background: rgba(122, 30, 44, 0.18);
+  border-color: rgba(122, 30, 44, 0.6);
   outline: none;
   transform: translateY(-1px);
 }
@@ -1666,9 +1675,14 @@ input[type='month']:focus-visible {
 
 .dialog-form {
   width: min(420px, 90vw);
-  background: rgba(10, 14, 21, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
+  --text-primary: #0f0f0f;
+  --text-secondary: rgba(15, 15, 15, 0.7);
+  --surface-card: rgba(17, 17, 17, 0.06);
+  --surface-highlight: rgba(17, 17, 17, 0.08);
+  --border: rgba(17, 17, 17, 0.18);
+  background: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.2);
+  border-radius: 0;
   padding: 0;
 }
 
@@ -1781,8 +1795,8 @@ input[type='month']:focus-visible {
 }
 
 .account-empty-state {
-  border: 1px dashed rgba(255, 255, 255, 0.25);
-  border-radius: 16px;
+  border: 1px dashed rgba(15, 15, 15, 0.35);
+  border-radius: 0;
   padding: 1.25rem 1.5rem;
   margin-bottom: 1.25rem;
   color: var(--text-secondary);
@@ -1815,10 +1829,10 @@ input[type='month']:focus-visible {
 }
 
 .account-status__item {
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0;
+  border: 1px solid var(--border);
   padding: 0.6rem 0.85rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.04);
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -1850,7 +1864,7 @@ input[type='month']:focus-visible {
 .metric-card {
   background: var(--surface-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 1rem 1.1rem;
   display: grid;
   gap: 0.4rem;

@@ -1,5 +1,6 @@
 2028-09-07: Updated the VIN decoder to use the NHTSA DecodeVin endpoint with validation and clearer errors.
 2028-09-06: Expanded the account selection panel to span the full workspace width while keeping the back link aligned top-left.
+2026-01-10: Restyled the UI with a maroon/black/white palette and sharp-cornered panels/buttons to deliver a crisper financial look.
 2026-01-10: Renamed coverage and year end review headings, moved account notes into a modal, and repositioned the coverage panel under account selection for the account workspace layout update.
 2028-09-05: Expanded the account workspace panels to a two-column layout while keeping the loan officer illustration full width.
 2028-09-03: Added GAP pricing inputs and coverage selection toggles to the loan officer illustration so VSC/GAP payment deltas can be compared.
