@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Training | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Training</h1>
+        <p class="site-subtitle">Track training commitments from year end reviews at a glance.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <a href="accounts.html" class="header-link">Accounts</a>
+        <a href="index.html" class="header-link">Income Streams</a>
+        <a href="reporting.html" class="header-link">Reporting</a>
+        <a href="monthly.html" class="header-link">Monthly Totals</a>
+        <a href="training.html" class="header-link" aria-current="page">Training</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-labelledby="training-summary-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="training-summary-heading" class="panel__title">Training commitments</h2>
+          <p class="panel__description">
+            Commitments are pulled from year end review training frequencies and normalized to a monthly cadence.
+          </p>
+        </div>
+      </header>
+
+      <div class="training-summary">
+        <article class="training-summary-card">
+          <p class="training-summary-label">Accounts with commitments</p>
+          <p class="training-summary-value" id="training-total-accounts">0</p>
+        </article>
+        <article class="training-summary-card">
+          <p class="training-summary-label">Monthly commitment</p>
+          <p class="training-summary-value" id="training-monthly-total">0</p>
+          <p class="training-summary-meta">Estimated sessions per month</p>
+        </article>
+        <article class="training-summary-card">
+          <p class="training-summary-label">Annual commitment</p>
+          <p class="training-summary-value" id="training-annual-total">0</p>
+          <p class="training-summary-meta">Estimated sessions per year</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="training-cadence-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="training-cadence-heading" class="panel__title">Monthly cadence</h2>
+          <p class="panel__description">
+            Months assume a January kickoff for bi-monthly, quarterly, and yearly schedules.
+          </p>
+        </div>
+      </header>
+
+      <div id="training-month-grid" class="training-month-grid" role="list"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="training-accounts-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="training-accounts-heading" class="panel__title">Account commitments</h2>
+          <p class="panel__description">
+            Review each account’s expected training cadence and the estimated sessions it adds to the calendar.
+          </p>
+        </div>
+      </header>
+
+      <div id="training-empty-state" class="empty-state" hidden>
+        <p>No training commitments yet. Add a training frequency in the Year End Review to populate this page.</p>
+      </div>
+
+      <div class="table-card" id="training-table-card">
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Account</th>
+                <th scope="col">Frequency</th>
+                <th scope="col" class="numeric">Monthly est.</th>
+                <th scope="col" class="numeric">Annual est.</th>
+                <th scope="col">Last review</th>
+              </tr>
+            </thead>
+            <tbody id="training-commitment-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
