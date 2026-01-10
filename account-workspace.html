@@ -12,7 +12,7 @@
     <div class="header-content">
       <div class="branding">
         <h1 class="site-title">Account workspace</h1>
-        <p class="site-subtitle">Choose a credit union and mark every product as No Inquiry, Prospect, or Active.</p>
+        <p class="site-subtitle">Choose a credit union and add only the products you want to track.</p>
       </div>
       <nav class="header-actions" aria-label="Primary navigation">
         <a href="accounts.html" class="header-link" aria-current="page">Accounts</a>
@@ -24,7 +24,7 @@
     </div>
   </header>
 
-  <main class="layout">
+  <main class="layout layout--account">
     <p class="back-link"><a href="accounts.html">&larr; Back to Accounts directory</a></p>
 
     <section class="panel" aria-labelledby="account-select-heading">
@@ -32,7 +32,7 @@
         <div>
           <h2 id="account-select-heading" class="panel__title">Select an account</h2>
           <p class="panel__description">
-            All coverage creation now happens here. Pick a partner, then light up the products that are in play.
+            All coverage creation now happens here. Pick a partner, then add the products that are in play.
           </p>
         </div>
         <button type="button" class="secondary-button" id="open-call-report-btn">Call Reports</button>
@@ -362,20 +362,19 @@
       </div>
 
       <div class="account-status" aria-live="polite">
-        <table class="account-status__table">
-          <caption class="sr-only">Product statuses for the selected credit union</caption>
-          <thead>
-            <tr>
-              <th scope="col">Product</th>
-              <th scope="col">Revenue line</th>
-              <th scope="col">No Inquiry</th>
-              <th scope="col">Prospect</th>
-              <th scope="col">Active</th>
-              <th scope="col" class="account-status__notes">Details</th>
-            </tr>
-          </thead>
-          <tbody id="account-status-body"></tbody>
-        </table>
+        <div class="account-status__controls">
+          <div class="field-group">
+            <label for="account-product-select">Add product line</label>
+            <select id="account-product-select" name="product"></select>
+          </div>
+          <div class="field-group">
+            <label for="account-revenue-select">Revenue line</label>
+            <select id="account-revenue-select" name="revenueType"></select>
+          </div>
+          <button type="button" class="primary-button" id="account-add-product">Add product</button>
+          <p class="feedback" id="account-status-feedback" role="status" aria-live="polite"></p>
+        </div>
+        <ul id="account-status-list" class="account-status__list" aria-label="Selected product lines"></ul>
       </div>
     </section>
 
