@@ -29,32 +29,26 @@
 
     <section class="panel panel--full" aria-labelledby="account-select-heading">
       <header class="panel__header panel__header--split">
-        <div>
+        <div class="account-select-header">
           <h2 id="account-select-heading" class="panel__title">Select an account</h2>
-          <p class="panel__description">
-            All coverage creation now happens here. Pick a partner, then add the products that are in play.
-          </p>
+          <div class="field-group account-select-field">
+            <label for="account-credit-union-select" class="sr-only">Credit union / entity</label>
+            <div class="field-with-action">
+              <select id="account-credit-union-select" name="creditUnionId" required>
+                <option value="" disabled selected>Select a credit union</option>
+              </select>
+              <button type="button" id="add-credit-union-btn" class="icon-button" aria-label="Add credit union">
+                <span aria-hidden="true">＋</span>
+              </button>
+            </div>
+          </div>
         </div>
         <div class="panel__actions">
           <button type="button" class="secondary-button" id="open-account-notes-btn">Account Notes</button>
           <button type="button" class="secondary-button" id="open-call-report-btn">Call Reports</button>
         </div>
       </header>
-
-      <div class="account-select-grid">
-        <div class="field-group">
-          <label for="account-credit-union-select">Credit union / entity</label>
-          <div class="field-with-action">
-            <select id="account-credit-union-select" name="creditUnionId" required>
-              <option value="" disabled selected>Select a credit union</option>
-            </select>
-            <button type="button" id="add-credit-union-btn" class="icon-button" aria-label="Add credit union">
-              <span aria-hidden="true">＋</span>
-            </button>
-          </div>
-          <p class="field-help">Use the plus button to add a new partner if it isn&rsquo;t listed.</p>
-        </div>
-      </div>
+      <p class="field-help account-select-help">Use the plus button to add a new partner if it isn&rsquo;t listed.</p>
     </section>
 
     <section class="panel" id="account-status-panel" aria-labelledby="account-status-heading">
@@ -87,7 +81,19 @@
       </div>
     </section>
 
-    <section class="panel" aria-labelledby="account-review-heading">
+    <section class="panel" aria-labelledby="account-asset-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="account-asset-heading" class="panel__title">Asset growth</h2>
+          <p class="panel__description">Shows how assets have changed across uploaded call reports.</p>
+        </div>
+      </header>
+      <div class="call-report-chart__body">
+        <div id="call-report-asset-chart" class="call-report-chart" role="img" aria-label="Asset growth chart"></div>
+      </div>
+    </section>
+
+    <section class="panel panel--full" aria-labelledby="account-review-heading">
       <header class="panel__header">
         <div>
           <h2 id="account-review-heading" class="panel__title">Account details</h2>
@@ -567,16 +573,6 @@
             <p class="table-description">Asset size, consumer lending depth, income, and indirect exposure.</p>
           </header>
           <div id="call-report-metrics" class="metric-grid"></div>
-        </section>
-
-        <section class="table-card" aria-live="polite">
-          <header class="table-header">
-            <h3 class="table-title">Asset growth</h3>
-            <p class="table-description">Shows how assets have changed across uploaded call reports.</p>
-          </header>
-          <div class="call-report-chart__body">
-            <div id="call-report-asset-chart" class="call-report-chart" role="img" aria-label="Asset growth chart"></div>
-          </div>
         </section>
 
         <section class="table-card" aria-live="polite">
