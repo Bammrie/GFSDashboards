@@ -161,6 +161,7 @@ body {
   --surface-card: rgba(17, 17, 17, 0.06);
   --surface-highlight: rgba(17, 17, 17, 0.08);
   --border: rgba(17, 17, 17, 0.18);
+  color: var(--text-primary);
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   border-radius: 0;
@@ -190,6 +191,7 @@ body {
 .panel__title {
   margin: 0;
   font-size: clamp(1.2rem, 2.1vw, 1.75rem);
+  color: var(--accent);
 }
 
 .panel__description {

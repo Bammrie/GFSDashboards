@@ -197,3 +197,4 @@ Document or extend new features so they reuse these formulas without re-defining
 2026-01-07: Added year end review fields and an account change log section on the account workspace to support annual reviews and audit history.
 
 2028-09-04: Condensed the account workspace coverage section into an add-only product list and shifted the workspace into a two-column layout to reduce scrolling.
+2028-09-08: Updated panel subheader colors to maroon/black so headings stay readable on white panels.
