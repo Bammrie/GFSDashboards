@@ -545,38 +545,57 @@ async function decodeVin(vin) {
     renderVinResults(null, 'Enter a VIN to decode vehicle details.');
     return;
   }
+  if (trimmedVin.length !== 17) {
+    renderVinResults(null, 'VIN must be a 17-character string.');
+    return;
+  }
 
   renderVinResults(null, 'Decoding VIN...');
-  const response = await fetch(
-    `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvaluesextended/${encodeURIComponent(trimmedVin)}?format=json`
-  );
-  if (!response.ok) {
-    renderVinResults(null, 'Unable to decode VIN. Please try again.');
-    return;
-  }
+  try {
+    const response = await fetch(
+      `https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVin/${encodeURIComponent(trimmedVin)}?format=json`
+    );
+    if (!response.ok) {
+      throw new Error('Unable to decode VIN. Please try again.');
+    }
 
-  const data = await response.json();
-  const result = Array.isArray(data?.Results) ? data.Results[0] : null;
-  if (!result) {
-    renderVinResults(null, 'VIN decode returned no results.');
-    return;
-  }
+    const data = await response.json();
+    const results = Array.isArray(data?.Results) ? data.Results : [];
+    if (!results.length) {
+      renderVinResults(null, 'VIN decode returned no results.');
+      return;
+    }
 
-  const errorText = (result.ErrorText || '').trim();
-  if (errorText && errorText !== '0' && errorText !== '0 - VIN decoded cleanly') {
-    renderVinResults(null, errorText);
-    return;
-  }
+    const decoded = results.reduce((acc, item) => {
+      if (item?.Variable && item?.Value) {
+        acc[item.Variable] = item.Value;
+      }
+      return acc;
+    }, {});
 
-  renderVinResults({
-    year: result.ModelYear,
-    make: result.Make,
-    model: result.Model,
-    trim: result.Trim,
-    bodyClass: result.BodyClass,
-    driveType: result.DriveType,
-    fuelType: result.FuelTypePrimary
-  });
+    if (!Object.keys(decoded).length) {
+      renderVinResults(null, 'No data found for this VIN.');
+      return;
+    }
+
+    const errorText = (decoded['Error Text'] || '').trim();
+    if (errorText && errorText !== '0' && errorText !== '0 - VIN decoded cleanly') {
+      renderVinResults(null, errorText);
+      return;
+    }
+
+    renderVinResults({
+      year: decoded['Model Year'],
+      make: decoded.Make,
+      model: decoded.Model,
+      trim: decoded.Trim,
+      bodyClass: decoded['Body Class'],
+      driveType: decoded['Drive Type'],
+      fuelType: decoded['Fuel Type - Primary']
+    });
+  } catch (error) {
+    renderVinResults(null, error?.message || 'Unable to decode VIN. Please try again.');
+  }
 }
 
 const appState = {
