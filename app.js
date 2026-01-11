@@ -197,13 +197,22 @@ const selectors = {
   loanWarrantyFetchBtn: document.getElementById('loan-warranty-fetch-btn'),
   loanWarrantyFeedback: document.getElementById('loan-warranty-feedback'),
   loanVinResults: document.getElementById('loan-vin-results'),
+  loanStandardTerm: document.getElementById('loan-standard-term'),
   loanBasePayment: document.getElementById('loan-base-payment'),
   loanWarrantyRetail: document.getElementById('loan-warranty-retail'),
   loanTotalAmount: document.getElementById('loan-total-amount'),
   loanPaymentWithWarranty: document.getElementById('loan-payment-with-warranty'),
   loanPaymentDelta: document.getElementById('loan-payment-delta'),
+  loanExtensionOption: document.getElementById('loan-extension-option'),
+  loanExtensionTerm: document.getElementById('loan-extension-term'),
+  loanExtensionPayment: document.getElementById('loan-extension-payment'),
+  loanExtensionDelta: document.getElementById('loan-extension-delta'),
   loanCoverageVscToggle: document.getElementById('loan-coverage-vsc'),
-  loanCoverageGapToggle: document.getElementById('loan-coverage-gap')
+  loanCoverageGapToggle: document.getElementById('loan-coverage-gap'),
+  loanTermExtensionToggle: document.getElementById('loan-term-extension-toggle'),
+  loanTermExtensionFields: document.getElementById('loan-term-extension-fields'),
+  loanVscTermExtensionInput: document.getElementById('loan-vsc-term-extension'),
+  loanGapTermExtensionInput: document.getElementById('loan-gap-term-extension')
 };
 
 function getStoredAccountNotes() {
@@ -331,7 +340,10 @@ function getWarrantyConfigForCreditUnion(creditUnionId) {
       gfsMarkup: null,
       gapCost: null,
       gapCreditUnionMarkup: null,
-      gapGfsMarkup: null
+      gapGfsMarkup: null,
+      termExtensionsEnabled: false,
+      vscTermExtension: null,
+      gapTermExtension: null
     };
 }
 
@@ -398,8 +410,14 @@ function updateLoanIllustration() {
   const gapGfsMarkup = parseNumericInput(selectors.loanGapGfsMarkupInput?.value);
   const includeVsc = selectors.loanCoverageVscToggle?.checked ?? false;
   const includeGap = selectors.loanCoverageGapToggle?.checked ?? false;
+  const termExtensionsEnabled = selectors.loanTermExtensionToggle?.checked ?? false;
+  const vscTermExtension = parseNumericInput(selectors.loanVscTermExtensionInput?.value);
+  const gapTermExtension = parseNumericInput(selectors.loanGapTermExtensionInput?.value);
 
   const basePayment = calculateMonthlyPayment(loanAmount, apr, termMonths);
+  if (selectors.loanStandardTerm) {
+    selectors.loanStandardTerm.textContent = Number.isFinite(termMonths) ? `${termMonths}-month term` : '—';
+  }
   const hasWarrantyInputs = [warrantyCost, creditUnionMarkup, gfsMarkup].some(Number.isFinite);
   const vscRetail = hasWarrantyInputs
     ? (warrantyCost || 0) + (creditUnionMarkup || 0) + (gfsMarkup || 0)
@@ -424,6 +442,28 @@ function updateLoanIllustration() {
     Number.isFinite(basePayment) && Number.isFinite(paymentWithWarranty)
       ? paymentWithWarranty - basePayment
       : null;
+  const termExtensionMonths = termExtensionsEnabled
+    ? (includeVsc && Number.isFinite(vscTermExtension) ? vscTermExtension : 0) +
+      (includeGap && Number.isFinite(gapTermExtension) ? gapTermExtension : 0)
+    : 0;
+  const extendedTermMonths =
+    Number.isFinite(termMonths) && Number.isFinite(termExtensionMonths)
+      ? termMonths + termExtensionMonths
+      : null;
+  const paymentWithExtension =
+    Number.isFinite(extendedTermMonths) && extendedTermMonths > 0
+      ? calculateMonthlyPayment(totalAmount, apr, extendedTermMonths)
+      : null;
+  const paymentExtensionDelta =
+    Number.isFinite(basePayment) && Number.isFinite(paymentWithExtension)
+      ? paymentWithExtension - basePayment
+      : null;
+  const showExtensionOption =
+    termExtensionsEnabled &&
+    Number.isFinite(termExtensionMonths) &&
+    termExtensionMonths > 0 &&
+    (includeVsc || includeGap) &&
+    Number.isFinite(paymentWithExtension);
 
   selectors.loanBasePayment.textContent = formatCurrencyValue(basePayment);
   if (selectors.loanWarrantyRetail) {
@@ -437,6 +477,19 @@ function updateLoanIllustration() {
   }
   if (selectors.loanPaymentDelta) {
     selectors.loanPaymentDelta.textContent = formatCurrencyValue(paymentDelta);
+  }
+  if (selectors.loanExtensionOption) {
+    selectors.loanExtensionOption.hidden = !showExtensionOption;
+  }
+  if (selectors.loanExtensionTerm) {
+    selectors.loanExtensionTerm.textContent =
+      showExtensionOption && Number.isFinite(extendedTermMonths) ? `${extendedTermMonths}-month term` : '—';
+  }
+  if (selectors.loanExtensionPayment) {
+    selectors.loanExtensionPayment.textContent = formatCurrencyValue(paymentWithExtension);
+  }
+  if (selectors.loanExtensionDelta) {
+    selectors.loanExtensionDelta.textContent = formatCurrencyValue(paymentExtensionDelta);
   }
 }
 
@@ -454,7 +507,10 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.loanGapCostInput,
     selectors.loanGapCreditUnionMarkupInput,
     selectors.loanGapGfsMarkupInput,
-    selectors.loanWarrantyFetchBtn
+    selectors.loanWarrantyFetchBtn,
+    selectors.loanTermExtensionToggle,
+    selectors.loanVscTermExtensionInput,
+    selectors.loanGapTermExtensionInput
   ];
   elements.forEach((element) => {
     if (element) {
@@ -475,6 +531,7 @@ function renderLoanOfficerCalculator() {
   if (!creditUnionId) {
     selectors.loanOfficerSummary.textContent = 'Select a credit union to start an illustration.';
     setLoanOfficerDisabled(true);
+    setTermExtensionFieldVisibility(false);
     updateLoanIllustration();
     renderVinResults(null);
     setLoanWarrantyFeedback('');
@@ -504,6 +561,18 @@ function renderLoanOfficerCalculator() {
     selectors.loanGapGfsMarkupInput.value =
       Number.isFinite(config.gapGfsMarkup) ? config.gapGfsMarkup : '';
   }
+  if (selectors.loanTermExtensionToggle) {
+    selectors.loanTermExtensionToggle.checked = Boolean(config.termExtensionsEnabled);
+  }
+  if (selectors.loanVscTermExtensionInput) {
+    selectors.loanVscTermExtensionInput.value =
+      Number.isFinite(config.vscTermExtension) ? config.vscTermExtension : '';
+  }
+  if (selectors.loanGapTermExtensionInput) {
+    selectors.loanGapTermExtensionInput.value =
+      Number.isFinite(config.gapTermExtension) ? config.gapTermExtension : '';
+  }
+  setTermExtensionFieldVisibility(Boolean(config.termExtensionsEnabled));
 
   updateLoanIllustration();
 }
@@ -523,6 +592,22 @@ function handleGapPricingChange() {
   const gapCreditUnionMarkup = parseNumericInput(selectors.loanGapCreditUnionMarkupInput?.value);
   const gapGfsMarkup = parseNumericInput(selectors.loanGapGfsMarkupInput?.value);
   saveWarrantyConfig(creditUnionId, { gapCost, gapCreditUnionMarkup, gapGfsMarkup });
+}
+
+function setTermExtensionFieldVisibility(isEnabled) {
+  if (selectors.loanTermExtensionFields) {
+    selectors.loanTermExtensionFields.hidden = !isEnabled;
+  }
+}
+
+function handleTermExtensionChange() {
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) return;
+  const termExtensionsEnabled = selectors.loanTermExtensionToggle?.checked ?? false;
+  const vscTermExtension = parseNumericInput(selectors.loanVscTermExtensionInput?.value);
+  const gapTermExtension = parseNumericInput(selectors.loanGapTermExtensionInput?.value);
+  saveWarrantyConfig(creditUnionId, { termExtensionsEnabled, vscTermExtension, gapTermExtension });
+  setTermExtensionFieldVisibility(termExtensionsEnabled);
 }
 
 async function fetchWarrantyCost() {
@@ -4453,7 +4538,9 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   selectors.loanWarrantyCostInput,
   selectors.loanGapCostInput,
   selectors.loanGapCreditUnionMarkupInput,
-  selectors.loanGapGfsMarkupInput
+  selectors.loanGapGfsMarkupInput,
+  selectors.loanVscTermExtensionInput,
+  selectors.loanGapTermExtensionInput
 ].forEach((element) => {
   element?.addEventListener('input', () => {
     updateLoanIllustration();
@@ -4482,6 +4569,21 @@ selectors.loanGapCreditUnionMarkupInput?.addEventListener('input', () => {
 
 selectors.loanGapGfsMarkupInput?.addEventListener('input', () => {
   handleGapPricingChange();
+  updateLoanIllustration();
+});
+
+selectors.loanTermExtensionToggle?.addEventListener('change', () => {
+  handleTermExtensionChange();
+  updateLoanIllustration();
+});
+
+selectors.loanVscTermExtensionInput?.addEventListener('input', () => {
+  handleTermExtensionChange();
+  updateLoanIllustration();
+});
+
+selectors.loanGapTermExtensionInput?.addEventListener('input', () => {
+  handleTermExtensionChange();
   updateLoanIllustration();
 });
 
