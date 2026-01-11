@@ -944,6 +944,10 @@ input[type='month']:focus-visible {
   color: #fff;
 }
 
+.loan-officer-card--summary .field-help {
+  color: rgba(255, 255, 255, 0.7);
+}
+
 .loan-officer-card__title {
   margin: 0;
   font-size: 1rem;
