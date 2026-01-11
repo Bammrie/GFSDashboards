@@ -1,3 +1,4 @@
+2028-09-13: Renamed the payment illustration heading to Coverage Selection to align menu presentation labeling.
 2028-09-12: Added term extension controls to Menu Pricing and a dual-option payment illustration so menu presentations show standard vs extended terms.
 2028-09-09: Renamed the loan officer coverage illustration panel to Menu Presentation and moved GAP/VSC pricing inputs into the Menu Pricing dialog alongside Call Reports to keep the workspace uncluttered.
 2028-09-08: Allowed VIN decode clean message variants so newer NHTSA responses are treated as successful decodes.
