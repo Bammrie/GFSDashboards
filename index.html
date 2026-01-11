@@ -4,77 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Income Streams | Income Stream Dashboard</title>
+  <meta http-equiv="refresh" content="0; url=accounts.html" />
+  <title>Accounts | Income Stream Dashboard</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-content">
-      <div class="branding">
-        <h1 class="site-title">Add Income Stream</h1>
-        <p class="site-subtitle">Track every revenue source across your partners in one place.</p>
-      </div>
-      <nav class="header-actions" aria-label="Primary navigation">
-        <a href="accounts.html" class="header-link">Accounts</a>
-        <a href="index.html" class="header-link" aria-current="page">Income Streams</a>
-        <a href="reporting.html" class="header-link">Reporting</a>
-        <a href="monthly.html" class="header-link">Monthly Totals</a>
-        <a href="training.html" class="header-link">Training</a>
-      </nav>
-    </div>
-  </header>
-
   <main class="layout">
-    <section id="income-streams" class="panel" aria-labelledby="income-streams-heading">
+    <section class="panel" aria-labelledby="redirect-heading">
       <header class="panel__header">
-        <h2 id="income-streams-heading" class="panel__title">Create income streams</h2>
-        <p class="panel__description">
-          Each income stream links a credit union and one product line, with the frontend and backend tracked underneath the same
-          product wherever both apply.
-        </p>
+        <h1 id="redirect-heading" class="panel__title">Opening Accounts</h1>
+        <p class="panel__description">The dashboard now opens on the Accounts workspace.</p>
       </header>
-
-      <div class="info-callout">
-        <p>
-          New income streams now start inside the <strong>Accounts</strong> workspace so that status lights, prospect estimates,
-          and activation dates stay in sync. Use the button below to open the workflow and light up a product.
-        </p>
-        <a class="primary-button" href="accounts.html">Open Accounts workspace</a>
-      </div>
-
-      <div class="stream-filter">
-        <div class="field-group">
-          <label for="income-stream-filter">Filter by credit union</label>
-          <select id="income-stream-filter" name="incomeStreamFilter">
-            <option value="all">All credit unions</option>
-          </select>
-          <p class="field-help">Choose a credit union to focus the list on its active income streams.</p>
-        </div>
-      </div>
-
-      <section class="panel__list" aria-live="polite">
-        <header class="list-header">
-          <h3 class="list-title">Active income streams</h3>
-          <p class="list-subtitle" id="income-stream-count">Loading&hellip;</p>
-        </header>
-        <div id="income-stream-list" class="stream-groups" role="list"></div>
-      </section>
+      <a class="primary-button" href="accounts.html">Go to Accounts</a>
     </section>
   </main>
-
-  <template id="income-stream-template">
-    <li class="item">
-      <a class="item__link" href="#">
-        <div class="item__primary">
-          <p class="item__title"></p>
-          <p class="item__subtitle"></p>
-          <p class="item__meta"></p>
-        </div>
-        <p class="item__metric" data-status=""></p>
-      </a>
-    </li>
-  </template>
-
-  <script type="module" src="app.js"></script>
+  <script>
+    window.location.replace('accounts.html');
+  </script>
 </body>
 </html>

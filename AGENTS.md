@@ -202,3 +202,5 @@ Document or extend new features so they reuse these formulas without re-defining
 2028-09-08: Updated panel subheader colors to maroon/black so headings stay readable on white panels.
 
 2028-09-10: Updated Menu Presentation payment illustration text color to white for readability on maroon background.
+
+2028-09-11: Grouped the top navigation into Main vs. Income & Reporting sections, moved the Income Streams screen to income-streams.html, and set the dashboard root to load Accounts by default.

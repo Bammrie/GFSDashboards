@@ -74,6 +74,32 @@ body {
 
 .header-actions {
   display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  align-items: flex-end;
+}
+
+.header-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.header-group__label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.header-group__links {
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
@@ -128,6 +154,14 @@ body {
 @media (max-width: 900px) {
   .layout--account {
     grid-template-columns: 1fr;
+  }
+
+  .header-actions {
+    align-items: flex-start;
+  }
+
+  .header-group {
+    justify-content: flex-start;
   }
 }
 
