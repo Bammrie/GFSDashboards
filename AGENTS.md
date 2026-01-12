@@ -1,4 +1,5 @@
 2028-09-15: Refined the year end review PDF layout with cleaner print-friendly styling for client review meetings.
+2028-09-15: Reorganized the Menu Presentation payment quoter layout so coverage options stay on their own row with a clearer summary block.
 2026-01-11: Added MOB credit insurance/debt protection setup and declining balance premium estimates to the payment illustration and menu pricing controls.
 2028-09-13: Renamed the payment illustration heading to Coverage Selection to align menu presentation labeling.
 2028-09-14: Expanded the Menu Presentation coverage section with enhanced maroon gradients and payment combination cards for every coverage bundle.
