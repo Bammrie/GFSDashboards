@@ -1019,6 +1019,21 @@ input[type='month']:focus-visible {
   gap: 1rem;
 }
 
+.loan-officer-quote {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.loan-officer-quote__options {
+  display: grid;
+  gap: 1rem;
+}
+
+.loan-officer-quote__summary {
+  display: grid;
+  gap: 0.75rem;
+}
+
 .coverage-combo-header {
   display: grid;
   gap: 0.25rem;
@@ -1089,9 +1104,17 @@ input[type='month']:focus-visible {
 .mob-premium-card {
   display: grid;
   gap: 0.6rem;
-  padding: 0.75rem;
+  padding: 0.9rem;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(0, 0, 0, 0.2);
+}
+
+.mob-premium-card__title {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .payment-row {
