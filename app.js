@@ -2690,7 +2690,7 @@ function collectReviewFormData(form) {
 }
 
 const reviewLogoUrl = new URL('GFS Logo.png', window.location.href).toString();
-let cachedReviewLogoDataUrl = null;
+let cachedReviewLogoData = null;
 
 function formatReviewField(value) {
   if (value === null || value === undefined) return '—';
@@ -2968,21 +2968,30 @@ function addPdfTable(doc, { title, headers, rows }, x, y, maxWidth, margin, page
   return y + 6;
 }
 
-function addPdfHeader(doc, { title, subtitle, meta }, margin, pageWidth, logoDataUrl) {
-  if (logoDataUrl) {
-    doc.addImage(logoDataUrl, 'PNG', margin, margin - 6, 140, 40);
+function addPdfHeader(doc, { title, subtitle, meta }, margin, pageWidth, logoData) {
+  const logoMaxWidth = 140;
+  const logoMaxHeight = 40;
+
+  if (logoData?.dataUrl) {
+    const intrinsicWidth = logoData.width || logoMaxWidth;
+    const intrinsicHeight = logoData.height || logoMaxHeight;
+    const scale = Math.min(logoMaxWidth / intrinsicWidth, logoMaxHeight / intrinsicHeight, 1);
+    const renderWidth = intrinsicWidth * scale;
+    const renderHeight = intrinsicHeight * scale;
+    doc.addImage(logoData.dataUrl, 'PNG', margin, margin - 6, renderWidth, renderHeight);
   }
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(20);
   doc.setTextColor(...pdfTheme.primary);
-  doc.text(title, margin + 170, margin + 16);
+  const textOffset = logoData?.dataUrl ? logoMaxWidth + 30 : 0;
+  doc.text(title, margin + textOffset, margin + 16);
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(...pdfTheme.muted);
-  doc.text(subtitle, margin + 170, margin + 32);
+  doc.text(subtitle, margin + textOffset, margin + 32);
   if (meta) {
-    doc.text(meta, margin + 170, margin + 48);
+    doc.text(meta, margin + textOffset, margin + 48);
   }
 
   doc.setDrawColor(...pdfTheme.border);
@@ -2991,8 +3000,8 @@ function addPdfHeader(doc, { title, subtitle, meta }, margin, pageWidth, logoDat
   return margin + 78;
 }
 
-async function loadReviewLogoDataUrl() {
-  if (cachedReviewLogoDataUrl) return cachedReviewLogoDataUrl;
+async function loadReviewLogoData() {
+  if (cachedReviewLogoData) return cachedReviewLogoData;
   try {
     const response = await fetch(reviewLogoUrl);
     if (!response.ok) return null;
@@ -3002,8 +3011,18 @@ async function loadReviewLogoDataUrl() {
       reader.onloadend = () => resolve(reader.result);
       reader.readAsDataURL(blob);
     });
-    cachedReviewLogoDataUrl = dataUrl;
-    return dataUrl;
+    const image = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('Logo image failed to load.'));
+      img.src = dataUrl;
+    });
+    cachedReviewLogoData = {
+      dataUrl,
+      width: image.naturalWidth || image.width,
+      height: image.naturalHeight || image.height
+    };
+    return cachedReviewLogoData;
   } catch (_error) {
     return null;
   }
@@ -3034,7 +3053,7 @@ async function downloadYearEndReviewPdf() {
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
 
-  const logoDataUrl = await loadReviewLogoDataUrl();
+  const logoData = await loadReviewLogoData();
   const preparedFor = creditUnion.name || 'Credit union';
   const reviewedBy = formatReviewField(reviewData.reviewedBy);
   const yearLabel = reviewData.year || new Date().getFullYear();
@@ -3048,7 +3067,7 @@ async function downloadYearEndReviewPdf() {
     },
     margin,
     pageWidth,
-    logoDataUrl
+    logoData
   );
 
   y = addPdfSectionTitle(doc, 'Review summary', margin, y, pageWidth - margin * 2);
