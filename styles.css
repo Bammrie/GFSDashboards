@@ -924,6 +924,14 @@ input[type='month']:focus-visible {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
+.loan-officer-grid--menu {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.loan-officer-card--mob {
+  grid-column: 1 / -1;
+}
+
 .loan-officer-card {
   background: var(--surface-card);
   border: 1px solid var(--border);
