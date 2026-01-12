@@ -199,19 +199,9 @@ const selectors = {
   loanVinResults: document.getElementById('loan-vin-results'),
   loanStandardTerm: document.getElementById('loan-standard-term'),
   loanBasePayment: document.getElementById('loan-base-payment'),
-  loanWarrantyRetail: document.getElementById('loan-warranty-retail'),
-  loanTotalAmount: document.getElementById('loan-total-amount'),
-  loanPaymentWithWarranty: document.getElementById('loan-payment-with-warranty'),
-  loanPaymentDelta: document.getElementById('loan-payment-delta'),
   loanMobPremiumStart: document.getElementById('loan-mob-premium-start'),
   loanMobPremiumAverage: document.getElementById('loan-mob-premium-average'),
   loanPaymentWithMob: document.getElementById('loan-payment-with-mob'),
-  loanExtensionOption: document.getElementById('loan-extension-option'),
-  loanExtensionTerm: document.getElementById('loan-extension-term'),
-  loanExtensionPayment: document.getElementById('loan-extension-payment'),
-  loanExtensionDelta: document.getElementById('loan-extension-delta'),
-  loanCoverageVscToggle: document.getElementById('loan-coverage-vsc'),
-  loanCoverageGapToggle: document.getElementById('loan-coverage-gap'),
   mobCoverageTypeSelect: document.getElementById('mob-coverage-type'),
   mobCreditControls: document.getElementById('mob-credit-controls'),
   mobDebtControls: document.getElementById('mob-debt-controls'),
@@ -487,8 +477,6 @@ function updateLoanIllustration() {
   const gapCost = parseNumericInput(selectors.loanGapCostInput?.value);
   const gapCreditUnionMarkup = parseNumericInput(selectors.loanGapCreditUnionMarkupInput?.value);
   const gapGfsMarkup = parseNumericInput(selectors.loanGapGfsMarkupInput?.value);
-  const includeVsc = selectors.loanCoverageVscToggle?.checked ?? false;
-  const includeGap = selectors.loanCoverageGapToggle?.checked ?? false;
   const termExtensionsEnabled = selectors.loanTermExtensionToggle?.checked ?? false;
   const vscTermExtension = parseNumericInput(selectors.loanVscTermExtensionInput?.value);
   const gapTermExtension = parseNumericInput(selectors.loanGapTermExtensionInput?.value);
@@ -519,44 +507,45 @@ function updateLoanIllustration() {
   const gapRetail = hasGapInputs
     ? (gapCost || 0) + (gapCreditUnionMarkup || 0) + (gapGfsMarkup || 0)
     : null;
-  const coverageTotals = [];
-  if (includeVsc && Number.isFinite(vscRetail)) {
-    coverageTotals.push(vscRetail);
-  }
-  if (includeGap && Number.isFinite(gapRetail)) {
-    coverageTotals.push(gapRetail);
-  }
-  const retailCost = coverageTotals.length ? coverageTotals.reduce((sum, value) => sum + value, 0) : null;
-  const totalAmount = Number.isFinite(loanAmount) && Number.isFinite(retailCost)
-    ? loanAmount + retailCost
-    : null;
-  const paymentWithWarranty = calculateMonthlyPayment(totalAmount, apr, termMonths);
-  const paymentDelta =
-    Number.isFinite(basePayment) && Number.isFinite(paymentWithWarranty)
-      ? paymentWithWarranty - basePayment
-      : null;
-  const termExtensionMonths = termExtensionsEnabled
-    ? (includeVsc && Number.isFinite(vscTermExtension) ? vscTermExtension : 0) +
-      (includeGap && Number.isFinite(gapTermExtension) ? gapTermExtension : 0)
-    : 0;
-  const extendedTermMonths =
-    Number.isFinite(termMonths) && Number.isFinite(termExtensionMonths)
-      ? termMonths + termExtensionMonths
-      : null;
-  const paymentWithExtension =
-    Number.isFinite(extendedTermMonths) && extendedTermMonths > 0
-      ? calculateMonthlyPayment(totalAmount, apr, extendedTermMonths)
-      : null;
-  const paymentExtensionDelta =
-    Number.isFinite(basePayment) && Number.isFinite(paymentWithExtension)
-      ? paymentWithExtension - basePayment
-      : null;
-  const showExtensionOption =
-    termExtensionsEnabled &&
-    Number.isFinite(termExtensionMonths) &&
-    termExtensionMonths > 0 &&
-    (includeVsc || includeGap) &&
-    Number.isFinite(paymentWithExtension);
+  const coverageCombos = [
+    { id: 'base', includeVsc: false, includeGap: false },
+    { id: 'vsc', includeVsc: true, includeGap: false },
+    { id: 'gap', includeVsc: false, includeGap: true },
+    { id: 'vsc-gap', includeVsc: true, includeGap: true }
+  ];
+  const comboResults = new Map();
+  coverageCombos.forEach((combo) => {
+    const missingVscPricing = combo.includeVsc && !Number.isFinite(vscRetail);
+    const missingGapPricing = combo.includeGap && !Number.isFinite(gapRetail);
+    const coverageCost =
+      missingVscPricing || missingGapPricing
+        ? null
+        : (combo.includeVsc ? vscRetail : 0) + (combo.includeGap ? gapRetail : 0);
+    const totalAmount =
+      Number.isFinite(loanAmount) && Number.isFinite(coverageCost) ? loanAmount + coverageCost : null;
+    const payment = calculateMonthlyPayment(totalAmount, apr, termMonths);
+    const delta =
+      Number.isFinite(basePayment) && Number.isFinite(payment)
+        ? payment - basePayment
+        : null;
+    const termExtensionMonths = termExtensionsEnabled
+      ? (combo.includeVsc && Number.isFinite(vscTermExtension) ? vscTermExtension : 0) +
+        (combo.includeGap && Number.isFinite(gapTermExtension) ? gapTermExtension : 0)
+      : 0;
+    const extendedTermMonths =
+      Number.isFinite(termMonths) && termExtensionMonths > 0 ? termMonths + termExtensionMonths : null;
+    const extensionPayment =
+      Number.isFinite(extendedTermMonths) && Number.isFinite(totalAmount)
+        ? calculateMonthlyPayment(totalAmount, apr, extendedTermMonths)
+        : null;
+    comboResults.set(combo.id, {
+      payment,
+      delta,
+      totalAmount,
+      extendedTermMonths,
+      extensionPayment
+    });
+  });
 
   let mobRatePerThousand = null;
   if (mobCoverageType === 'debt-protection') {
@@ -600,25 +589,44 @@ function updateLoanIllustration() {
     apr,
     ratePerThousand: mobRatePerThousand
   });
-  const basePaymentForMob = Number.isFinite(paymentWithWarranty) ? paymentWithWarranty : basePayment;
+  const basePaymentForMob = basePayment;
   const paymentWithMob =
     Number.isFinite(basePaymentForMob) && Number.isFinite(mobPremiumStart)
       ? basePaymentForMob + mobPremiumStart
       : null;
 
   selectors.loanBasePayment.textContent = formatCurrencyValue(basePayment);
-  if (selectors.loanWarrantyRetail) {
-    selectors.loanWarrantyRetail.textContent = formatCurrencyValue(retailCost);
-  }
-  if (selectors.loanTotalAmount) {
-    selectors.loanTotalAmount.textContent = formatCurrencyValue(totalAmount);
-  }
-  if (selectors.loanPaymentWithWarranty) {
-    selectors.loanPaymentWithWarranty.textContent = formatCurrencyValue(paymentWithWarranty);
-  }
-  if (selectors.loanPaymentDelta) {
-    selectors.loanPaymentDelta.textContent = formatCurrencyValue(paymentDelta);
-  }
+  document.querySelectorAll('[data-coverage-combo]').forEach((card) => {
+    const comboId = card.dataset.coverageCombo;
+    const combo = comboResults.get(comboId);
+    if (!combo) return;
+    const paymentField = card.querySelector('[data-coverage-field="payment"]');
+    const deltaField = card.querySelector('[data-coverage-field="delta"]');
+    const totalField = card.querySelector('[data-coverage-field="total"]');
+    const extensionRow = card.querySelector('[data-coverage-field="extension-row"]');
+    const extensionTermField = card.querySelector('[data-coverage-field="extension-term"]');
+    const extensionPaymentField = card.querySelector('[data-coverage-field="extension-payment"]');
+    if (paymentField) {
+      paymentField.textContent = formatCurrencyValue(combo.payment);
+    }
+    if (deltaField) {
+      const baseDelta = Number.isFinite(basePayment) ? 0 : null;
+      deltaField.textContent =
+        comboId === 'base' ? formatCurrencyValue(baseDelta) : formatCurrencyValue(combo.delta);
+    }
+    if (totalField) {
+      totalField.textContent = formatCurrencyValue(combo.totalAmount);
+    }
+    if (extensionRow && extensionTermField && extensionPaymentField) {
+      const showExtension = Number.isFinite(combo.extensionPayment);
+      extensionRow.hidden = !showExtension;
+      extensionTermField.textContent =
+        showExtension && Number.isFinite(combo.extendedTermMonths)
+          ? `Extended ${combo.extendedTermMonths}-month payment`
+          : 'Extended term payment';
+      extensionPaymentField.textContent = formatCurrencyValue(combo.extensionPayment);
+    }
+  });
   if (selectors.loanMobPremiumStart) {
     selectors.loanMobPremiumStart.textContent = formatCurrencyValue(mobPremiumStart);
   }
@@ -627,19 +635,6 @@ function updateLoanIllustration() {
   }
   if (selectors.loanPaymentWithMob) {
     selectors.loanPaymentWithMob.textContent = formatCurrencyValue(paymentWithMob);
-  }
-  if (selectors.loanExtensionOption) {
-    selectors.loanExtensionOption.hidden = !showExtensionOption;
-  }
-  if (selectors.loanExtensionTerm) {
-    selectors.loanExtensionTerm.textContent =
-      showExtensionOption && Number.isFinite(extendedTermMonths) ? `${extendedTermMonths}-month term` : '—';
-  }
-  if (selectors.loanExtensionPayment) {
-    selectors.loanExtensionPayment.textContent = formatCurrencyValue(paymentWithExtension);
-  }
-  if (selectors.loanExtensionDelta) {
-    selectors.loanExtensionDelta.textContent = formatCurrencyValue(paymentExtensionDelta);
   }
 }
 
@@ -681,12 +676,6 @@ function setLoanOfficerDisabled(isDisabled) {
       element.disabled = isDisabled;
     }
   });
-  if (selectors.loanCoverageVscToggle) {
-    selectors.loanCoverageVscToggle.disabled = isDisabled;
-  }
-  if (selectors.loanCoverageGapToggle) {
-    selectors.loanCoverageGapToggle.disabled = isDisabled;
-  }
   if (selectors.mobCoverageTypeSelect) {
     selectors.mobCoverageTypeSelect.disabled = true;
   }
@@ -4914,14 +4903,6 @@ selectors.loanVscTermExtensionInput?.addEventListener('input', () => {
 
 selectors.loanGapTermExtensionInput?.addEventListener('input', () => {
   handleTermExtensionChange();
-  updateLoanIllustration();
-});
-
-selectors.loanCoverageVscToggle?.addEventListener('change', () => {
-  updateLoanIllustration();
-});
-
-selectors.loanCoverageGapToggle?.addEventListener('change', () => {
   updateLoanIllustration();
 });
 

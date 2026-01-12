@@ -400,17 +400,10 @@
           <h3 class="loan-officer-card__title">Coverage Selection</h3>
           <div class="loan-officer-fields">
             <div class="field-group">
-              <span class="field-label">Coverage selection</span>
-              <div class="field-options">
-                <label class="field-option">
-                  <input type="checkbox" id="loan-coverage-vsc" checked />
-                  VSC
-                </label>
-                <label class="field-option">
-                  <input type="checkbox" id="loan-coverage-gap" />
-                  GAP
-                </label>
-              </div>
+              <span class="field-label">Coverage combinations</span>
+              <p class="field-help">
+                Every available bundle is shown below so members can see the monthly payment impact of each option.
+              </p>
             </div>
             <div class="field-group">
               <span class="field-label">MOB coverage</span>
@@ -470,63 +463,122 @@
               </div>
             </div>
           </div>
-          <div class="payment-options">
-            <div class="payment-option">
-              <div class="payment-option__header">
-                <p class="payment-option__eyebrow">Standard term</p>
-                <p class="payment-option__term" id="loan-standard-term">—</p>
+          <div class="coverage-combo-section">
+            <div class="coverage-combo-header">
+              <p class="coverage-combo-header__eyebrow">Standard term</p>
+              <p class="coverage-combo-header__term" id="loan-standard-term">—</p>
+            </div>
+            <div class="coverage-combo-grid" id="loan-coverage-combo-grid">
+              <div class="coverage-combo-card" data-coverage-combo="base">
+                <div class="coverage-combo-card__header">
+                  <p class="coverage-combo-card__eyebrow">Base loan</p>
+                  <h4 class="coverage-combo-card__title">No coverage add-ons</h4>
+                </div>
+                <div class="coverage-combo-card__body">
+                  <div class="payment-row">
+                    <span>Monthly payment</span>
+                    <strong data-coverage-field="payment">—</strong>
+                  </div>
+                  <div class="payment-row payment-row--highlight">
+                    <span>Added per month</span>
+                    <strong data-coverage-field="delta">—</strong>
+                  </div>
+                  <div class="payment-row">
+                    <span>Total financed</span>
+                    <strong data-coverage-field="total">—</strong>
+                  </div>
+                </div>
               </div>
-              <div class="payment-summary">
-                <div class="payment-row">
-                  <span>Base monthly payment</span>
-                  <strong id="loan-base-payment">—</strong>
+              <div class="coverage-combo-card" data-coverage-combo="vsc">
+                <div class="coverage-combo-card__header">
+                  <p class="coverage-combo-card__eyebrow">VSC bundle</p>
+                  <h4 class="coverage-combo-card__title">Vehicle service contract</h4>
                 </div>
-                <div class="payment-row">
-                  <span>Selected coverage cost</span>
-                  <strong id="loan-warranty-retail">—</strong>
+                <div class="coverage-combo-card__body">
+                  <div class="payment-row">
+                    <span>Monthly payment</span>
+                    <strong data-coverage-field="payment">—</strong>
+                  </div>
+                  <div class="payment-row payment-row--highlight">
+                    <span>Added per month</span>
+                    <strong data-coverage-field="delta">—</strong>
+                  </div>
+                  <div class="payment-row">
+                    <span>Total financed</span>
+                    <strong data-coverage-field="total">—</strong>
+                  </div>
+                  <div class="payment-row payment-row--muted coverage-combo-card__extension" data-coverage-field="extension-row" hidden>
+                    <span data-coverage-field="extension-term">Extended term payment</span>
+                    <strong data-coverage-field="extension-payment">—</strong>
+                  </div>
                 </div>
-                <div class="payment-row">
-                  <span>Total amount financed</span>
-                  <strong id="loan-total-amount">—</strong>
+              </div>
+              <div class="coverage-combo-card" data-coverage-combo="gap">
+                <div class="coverage-combo-card__header">
+                  <p class="coverage-combo-card__eyebrow">GAP bundle</p>
+                  <h4 class="coverage-combo-card__title">Guaranteed asset protection</h4>
                 </div>
-                <div class="payment-row">
-                  <span>Payment with coverage</span>
-                  <strong id="loan-payment-with-warranty">—</strong>
+                <div class="coverage-combo-card__body">
+                  <div class="payment-row">
+                    <span>Monthly payment</span>
+                    <strong data-coverage-field="payment">—</strong>
+                  </div>
+                  <div class="payment-row payment-row--highlight">
+                    <span>Added per month</span>
+                    <strong data-coverage-field="delta">—</strong>
+                  </div>
+                  <div class="payment-row">
+                    <span>Total financed</span>
+                    <strong data-coverage-field="total">—</strong>
+                  </div>
+                  <div class="payment-row payment-row--muted coverage-combo-card__extension" data-coverage-field="extension-row" hidden>
+                    <span data-coverage-field="extension-term">Extended term payment</span>
+                    <strong data-coverage-field="extension-payment">—</strong>
+                  </div>
                 </div>
-                <div class="payment-row payment-row--highlight">
-                  <span>Added per month</span>
-                  <strong id="loan-payment-delta">—</strong>
+              </div>
+              <div class="coverage-combo-card coverage-combo-card--featured" data-coverage-combo="vsc-gap">
+                <div class="coverage-combo-card__header">
+                  <p class="coverage-combo-card__eyebrow">VSC + GAP</p>
+                  <h4 class="coverage-combo-card__title">Full protection bundle</h4>
                 </div>
-                <div class="payment-row">
-                  <span>MOB premium (month 1)</span>
-                  <strong id="loan-mob-premium-start">—</strong>
-                </div>
-                <div class="payment-row">
-                  <span>MOB premium (avg)</span>
-                  <strong id="loan-mob-premium-average">—</strong>
-                </div>
-                <div class="payment-row payment-row--highlight">
-                  <span>Month 1 payment with MOB</span>
-                  <strong id="loan-payment-with-mob">—</strong>
+                <div class="coverage-combo-card__body">
+                  <div class="payment-row">
+                    <span>Monthly payment</span>
+                    <strong data-coverage-field="payment">—</strong>
+                  </div>
+                  <div class="payment-row payment-row--highlight">
+                    <span>Added per month</span>
+                    <strong data-coverage-field="delta">—</strong>
+                  </div>
+                  <div class="payment-row">
+                    <span>Total financed</span>
+                    <strong data-coverage-field="total">—</strong>
+                  </div>
+                  <div class="payment-row payment-row--muted coverage-combo-card__extension" data-coverage-field="extension-row" hidden>
+                    <span data-coverage-field="extension-term">Extended term payment</span>
+                    <strong data-coverage-field="extension-payment">—</strong>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div class="payment-option payment-option--alt" id="loan-extension-option" hidden>
-              <div class="payment-option__header">
-                <p class="payment-option__eyebrow">Term extension option</p>
-                <p class="payment-option__term" id="loan-extension-term">—</p>
-              </div>
-              <div class="payment-summary">
-                <div class="payment-row">
-                  <span>Payment with coverage</span>
-                  <strong id="loan-extension-payment">—</strong>
-                </div>
-                <div class="payment-row payment-row--highlight">
-                  <span>Added per month</span>
-                  <strong id="loan-extension-delta">—</strong>
-                </div>
-              </div>
+          </div>
+          <div class="mob-premium-card">
+            <div class="payment-row">
+              <span>Base monthly payment</span>
+              <strong id="loan-base-payment">—</strong>
+            </div>
+            <div class="payment-row">
+              <span>MOB premium (month 1)</span>
+              <strong id="loan-mob-premium-start">—</strong>
+            </div>
+            <div class="payment-row">
+              <span>MOB premium (avg)</span>
+              <strong id="loan-mob-premium-average">—</strong>
+            </div>
+            <div class="payment-row payment-row--highlight">
+              <span>Month 1 payment with MOB</span>
+              <strong id="loan-payment-with-mob">—</strong>
             </div>
           </div>
         </div>
