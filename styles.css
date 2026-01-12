@@ -934,8 +934,14 @@ input[type='month']:focus-visible {
 }
 
 .loan-officer-card--summary {
-  background: linear-gradient(140deg, rgba(20, 6, 10, 0.95), rgba(60, 16, 26, 0.9));
+  position: relative;
+  background:
+    radial-gradient(circle at top left, rgba(122, 30, 44, 0.55), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(10, 2, 6, 0.9), transparent 52%),
+    linear-gradient(155deg, rgba(12, 4, 8, 0.98), rgba(68, 18, 30, 0.92));
   color: #fff;
+  border: 1px solid rgba(122, 30, 44, 0.55);
+  box-shadow: 0 18px 28px rgba(0, 0, 0, 0.35);
 }
 
 .loan-officer-card--summary .field-label,
@@ -1008,37 +1014,84 @@ input[type='month']:focus-visible {
   color: var(--text-secondary);
 }
 
-.payment-summary {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.payment-options {
+.coverage-combo-section {
   display: grid;
   gap: 1rem;
+}
+
+.coverage-combo-header {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.coverage-combo-header__eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.coverage-combo-header__term {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.coverage-combo-grid {
+  display: grid;
+  gap: 0.85rem;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
-.payment-option {
+.coverage-combo-card {
   display: grid;
   gap: 0.75rem;
-  padding: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(0, 0, 0, 0.15);
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(122, 30, 44, 0.18);
 }
 
-.payment-option__eyebrow {
+.coverage-combo-card--featured {
+  border-color: rgba(214, 141, 155, 0.6);
+  background: rgba(122, 30, 44, 0.25);
+}
+
+.coverage-combo-card__header {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.coverage-combo-card__eyebrow {
   margin: 0;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.65);
 }
 
-.payment-option__term {
-  margin: 0.25rem 0 0;
-  font-size: 1rem;
+.coverage-combo-card__title {
+  margin: 0;
+  font-size: 0.95rem;
   font-weight: 600;
+}
+
+.coverage-combo-card__body {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.coverage-combo-card__extension {
+  font-size: 0.88rem;
+}
+
+.mob-premium-card {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .payment-row {
@@ -1058,6 +1111,10 @@ input[type='month']:focus-visible {
   border-radius: 0;
   background: rgba(122, 30, 44, 0.18);
   color: var(--text-primary);
+}
+
+.payment-row--muted {
+  color: rgba(255, 255, 255, 0.68);
 }
 
 .term-extension-fields {
