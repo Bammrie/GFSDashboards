@@ -1,3 +1,4 @@
+2028-09-15: Preserved the year end review PDF logo proportions so the header branding stays true to the original dimensions.
 2028-09-16: Repositioned Menu Pricing so MOB coverage sits on its own top row with the remaining pricing cards aligned together for faster review.
 2028-09-15: Refined the year end review PDF layout with cleaner print-friendly styling for client review meetings.
 2028-09-15: Reorganized the Menu Presentation payment quoter layout so coverage options stay on their own row with a clearer summary block.
