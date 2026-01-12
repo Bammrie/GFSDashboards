@@ -2864,6 +2864,15 @@ function getReviewPdfData(creditUnionId) {
   };
 }
 
+const pdfTheme = {
+  primary: [90, 10, 22],
+  text: [20, 20, 20],
+  muted: [95, 95, 95],
+  border: [210, 210, 210],
+  headerFill: [246, 246, 246],
+  stripeFill: [252, 252, 252]
+};
+
 function ensurePdfSpace(doc, currentY, requiredHeight, margin, pageHeight) {
   if (currentY + requiredHeight <= pageHeight - margin) {
     return currentY;
@@ -2872,12 +2881,19 @@ function ensurePdfSpace(doc, currentY, requiredHeight, margin, pageHeight) {
   return margin;
 }
 
-function addPdfSectionTitle(doc, title, x, y) {
+function addPdfSectionTitle(doc, title, x, y, width) {
+  const bandHeight = 20;
+  doc.setFillColor(...pdfTheme.headerFill);
+  doc.rect(x, y - 14, width, bandHeight, 'F');
+  doc.setDrawColor(...pdfTheme.border);
+  doc.line(x, y + 6, x + width, y + 6);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(13);
-  doc.text(title, x, y);
+  doc.setFontSize(12);
+  doc.setTextColor(...pdfTheme.primary);
+  doc.text(title, x + 6, y);
   doc.setFont('helvetica', 'normal');
-  return y + 16;
+  doc.setTextColor(...pdfTheme.text);
+  return y + 18;
 }
 
 function addPdfKeyValueRows(doc, rows, x, y, maxWidth, margin, pageHeight) {
@@ -2885,16 +2901,25 @@ function addPdfKeyValueRows(doc, rows, x, y, maxWidth, margin, pageHeight) {
   const valueWidth = maxWidth - labelWidth;
   const lineHeight = 14;
 
-  rows.forEach(({ label, value }) => {
+  rows.forEach(({ label, value }, index) => {
     const safeValue = formatReviewField(value);
     const labelLines = doc.splitTextToSize(label, labelWidth - 6);
     const valueLines = doc.splitTextToSize(safeValue, valueWidth - 6);
     const rowHeight = Math.max(labelLines.length, valueLines.length) * lineHeight + 4;
     y = ensurePdfSpace(doc, y, rowHeight, margin, pageHeight);
 
+    if (index % 2 === 0) {
+      doc.setFillColor(...pdfTheme.stripeFill);
+      doc.rect(x, y - lineHeight + 2, maxWidth, rowHeight, 'F');
+    }
+    doc.setDrawColor(...pdfTheme.border);
+    doc.line(x, y + rowHeight - lineHeight + 2, x + maxWidth, y + rowHeight - lineHeight + 2);
+
     doc.setFont('helvetica', 'bold');
-    doc.text(labelLines, x, y);
+    doc.setTextColor(...pdfTheme.muted);
+    doc.text(labelLines, x + 4, y);
     doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...pdfTheme.text);
     doc.text(valueLines, x + labelWidth, y);
     y += rowHeight;
   });
@@ -2903,32 +2928,67 @@ function addPdfKeyValueRows(doc, rows, x, y, maxWidth, margin, pageHeight) {
 }
 
 function addPdfTable(doc, { title, headers, rows }, x, y, maxWidth, margin, pageHeight) {
-  y = addPdfSectionTitle(doc, title, x, y);
+  y = addPdfSectionTitle(doc, title, x, y, maxWidth);
   const columnWidth = maxWidth / headers.length;
   const lineHeight = 14;
 
   const headerHeight = lineHeight + 6;
   y = ensurePdfSpace(doc, y, headerHeight, margin, pageHeight);
+  doc.setFillColor(...pdfTheme.headerFill);
+  doc.rect(x, y - 12, maxWidth, headerHeight, 'F');
+  doc.setDrawColor(...pdfTheme.border);
+  doc.rect(x, y - 12, maxWidth, headerHeight);
   doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...pdfTheme.text);
   headers.forEach((header, index) => {
-    doc.text(header, x + columnWidth * index + 2, y);
+    doc.text(header, x + columnWidth * index + 4, y);
   });
   y += headerHeight;
   doc.setFont('helvetica', 'normal');
 
-  rows.forEach((row) => {
+  rows.forEach((row, rowIndex) => {
     const cellLines = row.map((cell) => doc.splitTextToSize(formatReviewField(cell), columnWidth - 6));
     const maxLines = Math.max(...cellLines.map((lines) => lines.length));
     const rowHeight = Math.max(1, maxLines) * lineHeight + 4;
     y = ensurePdfSpace(doc, y, rowHeight, margin, pageHeight);
 
+    if (rowIndex % 2 === 0) {
+      doc.setFillColor(...pdfTheme.stripeFill);
+      doc.rect(x, y - lineHeight + 2, maxWidth, rowHeight, 'F');
+    }
+    doc.setDrawColor(...pdfTheme.border);
+    doc.rect(x, y - lineHeight + 2, maxWidth, rowHeight);
+
     cellLines.forEach((lines, index) => {
-      doc.text(lines, x + columnWidth * index + 2, y);
+      doc.text(lines, x + columnWidth * index + 4, y);
     });
     y += rowHeight;
   });
 
   return y + 6;
+}
+
+function addPdfHeader(doc, { title, subtitle, meta }, margin, pageWidth, logoDataUrl) {
+  if (logoDataUrl) {
+    doc.addImage(logoDataUrl, 'PNG', margin, margin - 6, 140, 40);
+  }
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.setTextColor(...pdfTheme.primary);
+  doc.text(title, margin + 170, margin + 16);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...pdfTheme.muted);
+  doc.text(subtitle, margin + 170, margin + 32);
+  if (meta) {
+    doc.text(meta, margin + 170, margin + 48);
+  }
+
+  doc.setDrawColor(...pdfTheme.border);
+  doc.line(margin, margin + 60, pageWidth - margin, margin + 60);
+  doc.setTextColor(...pdfTheme.text);
+  return margin + 78;
 }
 
 async function loadReviewLogoDataUrl() {
@@ -2973,24 +3033,27 @@ async function downloadYearEndReviewPdf() {
   const margin = 48;
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  let y = margin;
 
   const logoDataUrl = await loadReviewLogoDataUrl();
-  if (logoDataUrl) {
-    doc.addImage(logoDataUrl, 'PNG', margin, y, 140, 40);
-  }
+  const preparedFor = creditUnion.name || 'Credit union';
+  const reviewedBy = formatReviewField(reviewData.reviewedBy);
+  const yearLabel = reviewData.year || new Date().getFullYear();
+  const metaLine = `Review year: ${yearLabel} • Reviewed by: ${reviewedBy || '—'}`;
+  let y = addPdfHeader(
+    doc,
+    {
+      title: 'Year End Review',
+      subtitle: preparedFor,
+      meta: metaLine
+    },
+    margin,
+    pageWidth,
+    logoDataUrl
+  );
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(20);
-  doc.text('Year End Review', margin + 160, y + 24);
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
-  doc.text(creditUnion.name || 'Credit union', margin + 160, y + 42);
-  y += 70;
-
-  y = addPdfSectionTitle(doc, 'Review summary', margin, y);
+  y = addPdfSectionTitle(doc, 'Review summary', margin, y, pageWidth - margin * 2);
   const summaryRows = [
-    { label: 'Review year', value: reviewData.year },
+    { label: 'Review year', value: yearLabel },
     { label: 'Reviewed by', value: reviewData.reviewedBy },
     { label: 'Training frequency', value: reviewData.trainingFrequency },
     { label: 'Last updated', value: reviewData.updatedAt ? formatLogTimestamp(reviewData.updatedAt) : '—' }
@@ -3097,7 +3160,7 @@ async function downloadYearEndReviewPdf() {
     pageHeight
   );
 
-  y = addPdfSectionTitle(doc, 'Core systems', margin, y);
+  y = addPdfSectionTitle(doc, 'Core systems', margin, y, pageWidth - margin * 2);
   y = addPdfKeyValueRows(
     doc,
     [
@@ -3111,8 +3174,22 @@ async function downloadYearEndReviewPdf() {
     pageHeight
   );
 
+  const totalPages = doc.getNumberOfPages();
+  for (let page = 1; page <= totalPages; page += 1) {
+    doc.setPage(page);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...pdfTheme.muted);
+    doc.text(
+      `Page ${page} of ${totalPages}`,
+      pageWidth - margin,
+      pageHeight - margin / 2,
+      { align: 'right' }
+    );
+  }
+
   const safeName = (creditUnion.name || 'Credit union').replace(/[^\w\s-]+/g, '').trim() || 'credit-union';
-  const fileName = `${safeName.replace(/\s+/g, ' ')}-${reviewData.year || 'review'}-year-end-review.pdf`;
+  const fileName = `${safeName.replace(/\s+/g, ' ')}-${yearLabel || 'review'}-year-end-review.pdf`;
   doc.save(fileName);
   setFeedback(selectors.accountReviewFeedback, 'Year end review PDF downloaded.', 'success');
 }
