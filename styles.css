@@ -932,6 +932,12 @@ input[type='month']:focus-visible {
   grid-column: 1 / -1;
 }
 
+.loan-officer-card--vin {
+  grid-column: 1 / -1;
+  width: min(320px, 100%);
+  justify-self: start;
+}
+
 .loan-officer-card {
   background: var(--surface-card);
   border: 1px solid var(--border);
