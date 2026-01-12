@@ -232,63 +232,115 @@ const selectors = {
   loanGapTermExtensionInput: document.getElementById('loan-gap-term-extension')
 };
 
-function getStoredAccountNotes() {
-  if (typeof localStorage === 'undefined') return {};
+async function loadAccountNotes() {
   try {
-    const raw = localStorage.getItem('accountNotes');
-    const parsed = raw ? JSON.parse(raw) : {};
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch (_error) {
-    return {};
+    const response = await fetch('/api/account-notes');
+    if (!response.ok) throw new Error(`Notes request failed (${response.status})`);
+    const payload = await response.json();
+    const data = payload?.data;
+    appState.accountNotes = data && typeof data === 'object' ? data : {};
+  } catch (error) {
+    console.error('Unable to load account notes', error);
+    appState.accountNotes = {};
   }
 }
 
-function persistAccountNotes(notes) {
-  if (typeof localStorage === 'undefined') return;
+async function persistAccountNotes(creditUnionId, note) {
   try {
-    localStorage.setItem('accountNotes', JSON.stringify(notes));
+    const response = await fetch('/api/account-notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ creditUnionId, note })
+    });
+    if (!response.ok) throw new Error(`Notes save failed (${response.status})`);
+    const payload = await response.json();
+    const notes = Array.isArray(payload?.notes) ? payload.notes : null;
+    if (notes) {
+      appState.accountNotes = {
+        ...appState.accountNotes,
+        [creditUnionId]: notes
+      };
+    }
+    return notes;
   } catch (error) {
     console.error('Unable to persist account notes', error);
+    return null;
   }
 }
 
-function getStoredAccountReviewData() {
-  if (typeof localStorage === 'undefined') return {};
+async function loadAccountReviewData() {
   try {
-    const raw = localStorage.getItem('accountReviewData');
-    const parsed = raw ? JSON.parse(raw) : {};
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch (_error) {
-    return {};
+    const response = await fetch('/api/account-review');
+    if (!response.ok) throw new Error(`Review request failed (${response.status})`);
+    const payload = await response.json();
+    const data = payload?.data;
+    appState.accountReviewData = data && typeof data === 'object' ? data : {};
+  } catch (error) {
+    console.error('Unable to load account review data', error);
+    appState.accountReviewData = {};
   }
 }
 
-function persistAccountReviewData(reviewData) {
-  if (typeof localStorage === 'undefined') return;
+async function persistAccountReviewData(creditUnionId, payload) {
   try {
-    localStorage.setItem('accountReviewData', JSON.stringify(reviewData));
+    const response = await fetch('/api/account-review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ creditUnionId, payload })
+    });
+    if (!response.ok) throw new Error(`Review save failed (${response.status})`);
+    const data = await response.json();
+    const reviewData = data?.data && typeof data.data === 'object' ? data.data : null;
+    if (reviewData) {
+      appState.accountReviewData = {
+        ...appState.accountReviewData,
+        [creditUnionId]: reviewData
+      };
+    }
+    return reviewData;
   } catch (error) {
     console.error('Unable to persist account review data', error);
+    return null;
   }
 }
 
-function getStoredAccountChangeLog() {
-  if (typeof localStorage === 'undefined') return {};
+async function loadAccountChangeLog() {
   try {
-    const raw = localStorage.getItem('accountChangeLog');
-    const parsed = raw ? JSON.parse(raw) : {};
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch (_error) {
-    return {};
+    const response = await fetch('/api/account-change-log');
+    if (!response.ok) throw new Error(`Change log request failed (${response.status})`);
+    const payload = await response.json();
+    const data = payload?.data;
+    appState.accountChangeLog = data && typeof data === 'object' ? data : {};
+  } catch (error) {
+    console.error('Unable to load account change log', error);
+    appState.accountChangeLog = {};
   }
 }
 
-function persistAccountChangeLog(logData) {
-  if (typeof localStorage === 'undefined') return;
+async function persistAccountChangeLog(creditUnionId, entry) {
   try {
-    localStorage.setItem('accountChangeLog', JSON.stringify(logData));
+    const payloadEntry = {
+      ...entry,
+      entryId: entry.entryId || entry.id
+    };
+    const response = await fetch('/api/account-change-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ creditUnionId, entry: payloadEntry })
+    });
+    if (!response.ok) throw new Error(`Change log save failed (${response.status})`);
+    const payload = await response.json();
+    const entries = Array.isArray(payload?.entries) ? payload.entries : null;
+    if (entries) {
+      appState.accountChangeLog = {
+        ...appState.accountChangeLog,
+        [creditUnionId]: entries
+      };
+    }
+    return entries;
   } catch (error) {
     console.error('Unable to persist account change log', error);
+    return null;
   }
 }
 
@@ -1009,9 +1061,9 @@ const appState = {
   missingUpdates: [],
   missingFilters: { month: null, revenueType: 'all' },
   callReports: [],
-  accountNotes: getStoredAccountNotes(),
-  accountReviewData: getStoredAccountReviewData(),
-  accountChangeLog: getStoredAccountChangeLog(),
+  accountNotes: {},
+  accountReviewData: {},
+  accountChangeLog: {},
   accountWarrantyConfigs: getStoredWarrantyConfigs()
 };
 
@@ -2506,7 +2558,11 @@ function addAccountChangeLog({ creditUnionId, action, details, actor }) {
     ...appState.accountChangeLog,
     [creditUnionId]: [entry, ...existing].slice(0, 200)
   };
-  persistAccountChangeLog(appState.accountChangeLog);
+  void persistAccountChangeLog(creditUnionId, entry).then((entries) => {
+    if (entries) {
+      renderAccountChangeLog();
+    }
+  });
   renderAccountChangeLog();
 }
 
@@ -5034,7 +5090,7 @@ selectors.loanVinInput?.addEventListener('input', (event) => {
   }
 });
 
-selectors.accountNotesForm?.addEventListener('submit', (event) => {
+selectors.accountNotesForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const creditUnionId = appState.accountSelectionId;
   if (!creditUnionId) {
@@ -5056,7 +5112,11 @@ selectors.accountNotesForm?.addEventListener('submit', (event) => {
     ...appState.accountNotes,
     [creditUnionId]: [noteEntry, ...existingNotes]
   };
-  persistAccountNotes(appState.accountNotes);
+  const savedNotes = await persistAccountNotes(creditUnionId, { author, text });
+  if (!savedNotes) {
+    setFeedback(selectors.accountNotesFeedback, 'Unable to save the note right now.', 'error');
+    return;
+  }
 
   selectors.accountNotesForm.reset();
   setFeedback(selectors.accountNotesFeedback, 'Note saved.', 'success');
@@ -5069,7 +5129,7 @@ selectors.accountNotesForm?.addEventListener('submit', (event) => {
   });
 });
 
-selectors.accountReviewForm?.addEventListener('submit', (event) => {
+selectors.accountReviewForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const creditUnionId = appState.accountSelectionId;
   if (!creditUnionId) {
@@ -5099,14 +5159,21 @@ selectors.accountReviewForm?.addEventListener('submit', (event) => {
     updatedAt
   };
 
+  const savedReview = await persistAccountReviewData(creditUnionId, updatedReview);
+  if (!savedReview) {
+    if (selectors.accountReviewFeedback) {
+      setFeedback(selectors.accountReviewFeedback, 'Unable to save the review. Please try again.', 'error');
+    }
+    return;
+  }
+  const latestReview = savedReview.updatedAt ? savedReview : updatedReview;
   appState.accountReviewData = {
     ...appState.accountReviewData,
-    [creditUnionId]: updatedReview
+    [creditUnionId]: latestReview
   };
-  persistAccountReviewData(appState.accountReviewData);
 
   if (selectors.accountReviewUpdated) {
-    selectors.accountReviewUpdated.textContent = formatLogTimestamp(updatedAt);
+    selectors.accountReviewUpdated.textContent = formatLogTimestamp(latestReview.updatedAt || updatedAt);
   }
   if (selectors.accountReviewFeedback) {
     setFeedback(selectors.accountReviewFeedback, 'Year end review saved.', 'success');
@@ -5355,7 +5422,13 @@ async function bootstrap() {
   appState.detailEnd = getDetailEndFromQuery();
   appState.accountSelectionId = getAccountSelectionFromQuery();
   try {
-    await Promise.all([loadCreditUnions(), loadIncomeStreams()]);
+    await Promise.all([
+      loadCreditUnions(),
+      loadIncomeStreams(),
+      loadAccountReviewData(),
+      loadAccountNotes(),
+      loadAccountChangeLog()
+    ]);
   } catch (error) {
     console.error(error);
   }
@@ -5440,6 +5513,17 @@ async function bootstrap() {
       console.error(error);
     }
   }
+
+  if (selectors.accountReviewForm) {
+    renderAccountReview();
+  }
+  if (selectors.accountNotesList) {
+    renderAccountNotes();
+  }
+  if (selectors.accountChangeLog) {
+    renderAccountChangeLog();
+  }
+  renderTrainingDashboard();
 
   if (selectors.callReportList && appState.accountSelectionId) {
     try {

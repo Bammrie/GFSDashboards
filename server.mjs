@@ -148,6 +148,43 @@ const CreditUnion = mongoose.model('CreditUnion', creditUnionSchema);
 const IncomeStream = mongoose.model('IncomeStream', incomeStreamSchema);
 const RevenueEntry = mongoose.model('RevenueEntry', revenueEntrySchema);
 const ReportingRequirement = mongoose.model('ReportingRequirement', reportingRequirementSchema);
+const accountReviewSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, unique: true },
+    data: { type: mongoose.Schema.Types.Mixed, default: {} }
+  },
+  { timestamps: true }
+);
+
+const accountNotesSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, unique: true },
+    notes: [
+      {
+        author: { type: String, trim: true, default: '' },
+        text: { type: String, trim: true, required: true },
+        createdAt: { type: Date, default: Date.now }
+      }
+    ]
+  },
+  { timestamps: true }
+);
+
+const accountChangeLogSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, unique: true },
+    entries: [
+      {
+        entryId: { type: String, required: true },
+        action: { type: String, trim: true, required: true },
+        details: { type: String, default: '' },
+        actor: { type: String, default: '' },
+        timestamp: { type: Date, default: Date.now }
+      }
+    ]
+  },
+  { timestamps: true }
+);
 const callReportSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
@@ -193,6 +230,9 @@ callReportSchema.index({ creditUnion: 1, periodYear: 1, periodMonth: 1 });
 callReportSchema.index({ creditUnion: 1, extractedAt: -1 });
 
 const CallReport = mongoose.model('CallReport', callReportSchema);
+const AccountReview = mongoose.model('AccountReview', accountReviewSchema);
+const AccountNotes = mongoose.model('AccountNotes', accountNotesSchema);
+const AccountChangeLog = mongoose.model('AccountChangeLog', accountChangeLogSchema);
 
 const databaseReady = await initializeDatabase();
 
@@ -276,6 +316,150 @@ app.patch('/api/credit-unions/:id/classification', async (req, res, next) => {
     }
 
     res.json({ id: updated._id.toString(), classification: updated.classification || 'account' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/account-review', async (req, res, next) => {
+  try {
+    const reviews = await AccountReview.find().lean();
+    const data = reviews.reduce((memo, review) => {
+      memo[review.creditUnion.toString()] = review.data || {};
+      return memo;
+    }, {});
+    res.json({ data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/account-review', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid credit union ID is required.' });
+      return;
+    }
+    const payload = req.body?.payload;
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      res.status(400).json({ error: 'Review payload must be an object.' });
+      return;
+    }
+
+    const creditUnionExists = await CreditUnion.exists({ _id: creditUnionId });
+    if (!creditUnionExists) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const updated = await AccountReview.findOneAndUpdate(
+      { creditUnion: creditUnionId },
+      { data: payload },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    ).lean();
+
+    res.json({ data: updated?.data || {} });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/account-notes', async (req, res, next) => {
+  try {
+    const notes = await AccountNotes.find().lean();
+    const data = notes.reduce((memo, entry) => {
+      memo[entry.creditUnion.toString()] = Array.isArray(entry.notes) ? entry.notes : [];
+      return memo;
+    }, {});
+    res.json({ data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/account-notes', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid credit union ID is required.' });
+      return;
+    }
+    const note = req.body?.note;
+    const text = typeof note?.text === 'string' ? note.text.trim() : '';
+    const author = typeof note?.author === 'string' ? note.author.trim() : '';
+    if (!text) {
+      res.status(400).json({ error: 'Note text is required.' });
+      return;
+    }
+
+    const creditUnionExists = await CreditUnion.exists({ _id: creditUnionId });
+    if (!creditUnionExists) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const noteEntry = { author, text, createdAt: new Date() };
+    const updated = await AccountNotes.findOneAndUpdate(
+      { creditUnion: creditUnionId },
+      { $push: { notes: { $each: [noteEntry], $position: 0, $slice: 100 } } },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    ).lean();
+
+    res.json({ notes: Array.isArray(updated?.notes) ? updated.notes : [] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/account-change-log', async (req, res, next) => {
+  try {
+    const logs = await AccountChangeLog.find().lean();
+    const data = logs.reduce((memo, log) => {
+      memo[log.creditUnion.toString()] = Array.isArray(log.entries) ? log.entries : [];
+      return memo;
+    }, {});
+    res.json({ data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/account-change-log', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid credit union ID is required.' });
+      return;
+    }
+    const entry = req.body?.entry;
+    const action = typeof entry?.action === 'string' ? entry.action.trim() : '';
+    if (!action) {
+      res.status(400).json({ error: 'Change log action is required.' });
+      return;
+    }
+
+    const creditUnionExists = await CreditUnion.exists({ _id: creditUnionId });
+    if (!creditUnionExists) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const logEntry = {
+      entryId: entry?.entryId || `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+      action,
+      details: typeof entry?.details === 'string' ? entry.details : '',
+      actor: typeof entry?.actor === 'string' ? entry.actor : '',
+      timestamp: entry?.timestamp ? new Date(entry.timestamp) : new Date()
+    };
+
+    const updated = await AccountChangeLog.findOneAndUpdate(
+      { creditUnion: creditUnionId },
+      { $push: { entries: { $each: [logEntry], $position: 0, $slice: 200 } } },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    ).lean();
+
+    res.json({ entries: Array.isArray(updated?.entries) ? updated.entries : [] });
   } catch (error) {
     next(error);
   }
