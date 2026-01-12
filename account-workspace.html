@@ -744,71 +744,8 @@
       </header>
 
       <div class="dialog-body">
-        <div class="loan-officer-grid">
-          <div class="loan-officer-card">
-            <h3 class="loan-officer-card__title">Warranty pricing inputs (VSC)</h3>
-            <div class="loan-officer-fields">
-              <div class="field-group">
-                <label for="loan-warranty-cost">Warranty cost (API)</label>
-                <input type="number" id="loan-warranty-cost" inputmode="decimal" min="0" placeholder="1,850" />
-                <p class="field-help">Used as the base cost returned from the VIN + mileage pricing API.</p>
-              </div>
-              <div class="field-group">
-                <label for="loan-credit-union-markup">Credit union markup</label>
-                <input type="number" id="loan-credit-union-markup" inputmode="decimal" min="0" placeholder="250" />
-              </div>
-              <div class="field-group">
-                <label for="loan-gfs-markup">GFS markup</label>
-                <input type="number" id="loan-gfs-markup" inputmode="decimal" min="0" placeholder="400" />
-              </div>
-              <button type="button" id="loan-warranty-fetch-btn" class="secondary-button">Fetch warranty cost</button>
-              <p id="loan-warranty-feedback" class="field-help" role="status" aria-live="polite"></p>
-            </div>
-          </div>
-
-          <div class="loan-officer-card">
-            <h3 class="loan-officer-card__title">GAP pricing inputs</h3>
-            <div class="loan-officer-fields">
-              <div class="field-group">
-                <label for="loan-gap-cost">GAP fixed cost</label>
-                <input type="number" id="loan-gap-cost" inputmode="decimal" min="0" placeholder="795" />
-                <p class="field-help">Stored per credit union as the baseline GAP price.</p>
-              </div>
-              <div class="field-group">
-                <label for="loan-gap-credit-union-markup">Credit union markup</label>
-                <input type="number" id="loan-gap-credit-union-markup" inputmode="decimal" min="0" placeholder="200" />
-              </div>
-              <div class="field-group">
-                <label for="loan-gap-gfs-markup">GFS markup</label>
-                <input type="number" id="loan-gap-gfs-markup" inputmode="decimal" min="0" placeholder="150" />
-              </div>
-            </div>
-          </div>
-
-          <div class="loan-officer-card">
-            <h3 class="loan-officer-card__title">Term extensions</h3>
-            <div class="loan-officer-fields">
-              <label class="field-option" for="loan-term-extension-toggle">
-                <input type="checkbox" id="loan-term-extension-toggle" />
-                Term extensions?
-              </label>
-              <p class="field-help">
-                Allow members to extend their loan term when they add protection products.
-              </p>
-              <div id="loan-term-extension-fields" class="term-extension-fields" hidden>
-                <div class="field-group">
-                  <label for="loan-vsc-term-extension">VSC term extension (months)</label>
-                  <input type="number" id="loan-vsc-term-extension" inputmode="numeric" min="0" placeholder="3" />
-                </div>
-                <div class="field-group">
-                  <label for="loan-gap-term-extension">GAP term extension (months)</label>
-                  <input type="number" id="loan-gap-term-extension" inputmode="numeric" min="0" placeholder="2" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="loan-officer-card">
+        <div class="loan-officer-grid loan-officer-grid--menu">
+          <div class="loan-officer-card loan-officer-card--mob">
             <h3 class="loan-officer-card__title">MOB coverage setup</h3>
             <div class="loan-officer-fields">
               <div class="field-group">
@@ -871,6 +808,69 @@
                 </div>
               </div>
               <p class="field-help">Rates are applied monthly to the remaining balance for MOB coverage.</p>
+            </div>
+          </div>
+
+          <div class="loan-officer-card">
+            <h3 class="loan-officer-card__title">Warranty pricing inputs (VSC)</h3>
+            <div class="loan-officer-fields">
+              <div class="field-group">
+                <label for="loan-warranty-cost">Warranty cost (API)</label>
+                <input type="number" id="loan-warranty-cost" inputmode="decimal" min="0" placeholder="1,850" />
+                <p class="field-help">Used as the base cost returned from the VIN + mileage pricing API.</p>
+              </div>
+              <div class="field-group">
+                <label for="loan-credit-union-markup">Credit union markup</label>
+                <input type="number" id="loan-credit-union-markup" inputmode="decimal" min="0" placeholder="250" />
+              </div>
+              <div class="field-group">
+                <label for="loan-gfs-markup">GFS markup</label>
+                <input type="number" id="loan-gfs-markup" inputmode="decimal" min="0" placeholder="400" />
+              </div>
+              <button type="button" id="loan-warranty-fetch-btn" class="secondary-button">Fetch warranty cost</button>
+              <p id="loan-warranty-feedback" class="field-help" role="status" aria-live="polite"></p>
+            </div>
+          </div>
+
+          <div class="loan-officer-card">
+            <h3 class="loan-officer-card__title">GAP pricing inputs</h3>
+            <div class="loan-officer-fields">
+              <div class="field-group">
+                <label for="loan-gap-cost">GAP fixed cost</label>
+                <input type="number" id="loan-gap-cost" inputmode="decimal" min="0" placeholder="795" />
+                <p class="field-help">Stored per credit union as the baseline GAP price.</p>
+              </div>
+              <div class="field-group">
+                <label for="loan-gap-credit-union-markup">Credit union markup</label>
+                <input type="number" id="loan-gap-credit-union-markup" inputmode="decimal" min="0" placeholder="200" />
+              </div>
+              <div class="field-group">
+                <label for="loan-gap-gfs-markup">GFS markup</label>
+                <input type="number" id="loan-gap-gfs-markup" inputmode="decimal" min="0" placeholder="150" />
+              </div>
+            </div>
+          </div>
+
+          <div class="loan-officer-card">
+            <h3 class="loan-officer-card__title">Term extensions</h3>
+            <div class="loan-officer-fields">
+              <label class="field-option" for="loan-term-extension-toggle">
+                <input type="checkbox" id="loan-term-extension-toggle" />
+                Term extensions?
+              </label>
+              <p class="field-help">
+                Allow members to extend their loan term when they add protection products.
+              </p>
+              <div id="loan-term-extension-fields" class="term-extension-fields" hidden>
+                <div class="field-group">
+                  <label for="loan-vsc-term-extension">VSC term extension (months)</label>
+                  <input type="number" id="loan-vsc-term-extension" inputmode="numeric" min="0" placeholder="3" />
+                </div>
+                <div class="field-group">
+                  <label for="loan-gap-term-extension">GAP term extension (months)</label>
+                  <input type="number" id="loan-gap-term-extension" inputmode="numeric" min="0" placeholder="2" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
