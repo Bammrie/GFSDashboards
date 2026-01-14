@@ -161,6 +161,8 @@ const selectors = {
   callReportMetrics: document.getElementById('call-report-metrics'),
   callReportAssetChart: document.getElementById('call-report-asset-chart'),
   callReportCoverage: document.getElementById('call-report-coverage'),
+  protectionOptionsDialog: document.getElementById('protection-options-dialog'),
+  closeProtectionOptionsDialogBtn: document.getElementById('close-protection-options-dialog'),
   accountNotesForm: document.getElementById('account-notes-form'),
   accountNotesAuthor: document.getElementById('account-note-author'),
   accountNotesText: document.getElementById('account-note-text'),
@@ -188,6 +190,7 @@ const selectors = {
   loanMilesInput: document.getElementById('loan-miles'),
   loanVinInput: document.getElementById('loan-vin'),
   loanVinDecodeBtn: document.getElementById('loan-vin-decode-btn'),
+  loanProtectionOptionsBtn: document.getElementById('loan-protection-options-btn'),
   loanWarrantyCostInput: document.getElementById('loan-warranty-cost'),
   loanCreditUnionMarkupInput: document.getElementById('loan-credit-union-markup'),
   loanGfsMarkupInput: document.getElementById('loan-gfs-markup'),
@@ -688,6 +691,28 @@ function updateLoanIllustration() {
   if (selectors.loanPaymentWithMob) {
     selectors.loanPaymentWithMob.textContent = formatCurrencyValue(paymentWithMob);
   }
+
+  updateProtectionOptionsAvailability();
+}
+
+function updateProtectionOptionsAvailability() {
+  if (!selectors.loanProtectionOptionsBtn) return;
+  const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
+  const termMonths = parseNumericInput(selectors.loanTermInput?.value);
+  const apr = parseNumericInput(selectors.loanAprInput?.value);
+  const miles = parseNumericInput(selectors.loanMilesInput?.value);
+  const vin = selectors.loanVinInput?.value?.trim() ?? '';
+  const hasCreditUnion = Boolean(appState.accountSelectionId);
+  const isReady =
+    hasCreditUnion &&
+    Number.isFinite(loanAmount) &&
+    loanAmount > 0 &&
+    Number.isFinite(termMonths) &&
+    termMonths > 0 &&
+    Number.isFinite(apr) &&
+    Number.isFinite(miles) &&
+    vin.length === 17;
+  selectors.loanProtectionOptionsBtn.disabled = !isReady;
 }
 
 function setLoanOfficerDisabled(isDisabled) {
@@ -698,6 +723,7 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.loanMilesInput,
     selectors.loanVinInput,
     selectors.loanVinDecodeBtn,
+    selectors.loanProtectionOptionsBtn,
     selectors.loanWarrantyCostInput,
     selectors.loanCreditUnionMarkupInput,
     selectors.loanGfsMarkupInput,
@@ -752,6 +778,7 @@ function renderLoanOfficerCalculator() {
   const creditUnionName = getCreditUnionNameById(creditUnionId) || 'Selected credit union';
   selectors.loanOfficerSummary.textContent = `Showing a loan illustration for ${creditUnionName}.`;
   setLoanOfficerDisabled(false);
+  updateProtectionOptionsAvailability();
 
   const config = getWarrantyConfigForCreditUnion(creditUnionId);
   if (selectors.loanCreditUnionMarkupInput) {
@@ -4979,6 +5006,7 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   selectors.loanTermInput,
   selectors.loanAprInput,
   selectors.loanMilesInput,
+  selectors.loanVinInput,
   selectors.loanWarrantyCostInput,
   selectors.loanGapCostInput,
   selectors.loanGapCreditUnionMarkupInput,
@@ -5088,6 +5116,14 @@ selectors.loanVinInput?.addEventListener('input', (event) => {
   if (!event.currentTarget.value) {
     renderVinResults(null);
   }
+});
+
+selectors.loanProtectionOptionsBtn?.addEventListener('click', () => {
+  showDialog(selectors.protectionOptionsDialog);
+});
+
+selectors.closeProtectionOptionsDialogBtn?.addEventListener('click', () => {
+  closeDialog(selectors.protectionOptionsDialog);
 });
 
 selectors.accountNotesForm?.addEventListener('submit', async (event) => {

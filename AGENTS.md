@@ -214,3 +214,5 @@ Document or extend new features so they reuse these formulas without re-defining
 2028-09-11: Grouped the top navigation into Main vs. Income & Reporting sections, moved the Income Streams screen to income-streams.html, and set the dashboard root to load Accounts by default.
 2028-09-17: Added shared API persistence for account reviews, notes, and change logs so workspace activity syncs across users.
 2028-09-18: Condensed the Menu Presentation VIN decoder into a smaller, standalone row to tighten the layout.
+
+2028-09-19: Moved Menu Presentation coverage options into a Protection Options dialog so only loan details and VIN decode remain visible until required fields are completed.
