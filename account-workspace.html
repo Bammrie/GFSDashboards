@@ -777,19 +777,24 @@
               <div class="field-group">
                 <label for="mob-account-coverage-type">Coverage type</label>
                 <select id="mob-account-coverage-type">
+                  <option value="">Select coverage type</option>
                   <option value="credit-insurance">Credit insurance</option>
                   <option value="debt-protection">Debt protection</option>
                 </select>
                 <p class="field-help">Choose the primary MOB program for this credit union.</p>
               </div>
-              <label class="field-option" for="mob-blended-toggle" id="mob-blended-toggle-row">
-                <input type="checkbox" id="mob-blended-toggle" />
-                Blended rates?
-              </label>
-              <p class="field-help" id="mob-blended-help">
-                Blended rates use a single price for all loans regardless of borrower type.
-              </p>
-              <div id="mob-credit-rate-fields">
+              <div class="field-group">
+                <label for="mob-rate-structure">Rate structure</label>
+                <select id="mob-rate-structure">
+                  <option value="">Select rate structure</option>
+                  <option value="single-joint">Single/Joint rates</option>
+                  <option value="blended">Blended rates</option>
+                </select>
+                <p class="field-help">
+                  Choose single/joint or blended rates before entering MOB pricing.
+                </p>
+              </div>
+              <div id="mob-credit-rate-fields" hidden>
                 <div id="mob-blended-rate-fields" class="loan-officer-fields">
                   <div class="field-group">
                     <label for="mob-blended-life-rate">Blended life rate (per $1,000)</label>
@@ -820,17 +825,45 @@
                 </div>
               </div>
               <div id="mob-debt-rate-fields" class="loan-officer-fields" hidden>
-                <div class="field-group">
-                  <label for="mob-package-a-rate">Package A rate (per $1,000)</label>
-                  <input type="number" id="mob-package-a-rate" inputmode="decimal" min="0" step="0.01" />
+                <div id="mob-debt-blended-rate-fields" class="loan-officer-fields">
+                  <div class="field-group">
+                    <label for="mob-package-a-rate">Package A rate (per $1,000)</label>
+                    <input type="number" id="mob-package-a-rate" inputmode="decimal" min="0" step="0.01" />
+                  </div>
+                  <div class="field-group">
+                    <label for="mob-package-b-rate">Package B rate (per $1,000)</label>
+                    <input type="number" id="mob-package-b-rate" inputmode="decimal" min="0" step="0.01" />
+                  </div>
+                  <div class="field-group">
+                    <label for="mob-package-c-rate">Package C rate (per $1,000)</label>
+                    <input type="number" id="mob-package-c-rate" inputmode="decimal" min="0" step="0.01" />
+                  </div>
                 </div>
-                <div class="field-group">
-                  <label for="mob-package-b-rate">Package B rate (per $1,000)</label>
-                  <input type="number" id="mob-package-b-rate" inputmode="decimal" min="0" step="0.01" />
-                </div>
-                <div class="field-group">
-                  <label for="mob-package-c-rate">Package C rate (per $1,000)</label>
-                  <input type="number" id="mob-package-c-rate" inputmode="decimal" min="0" step="0.01" />
+                <div id="mob-debt-unblended-rate-fields" class="loan-officer-fields" hidden>
+                  <div class="field-group">
+                    <label for="mob-package-a-single-rate">Package A single rate (per $1,000)</label>
+                    <input type="number" id="mob-package-a-single-rate" inputmode="decimal" min="0" step="0.01" />
+                  </div>
+                  <div class="field-group">
+                    <label for="mob-package-a-joint-rate">Package A joint rate (per $1,000)</label>
+                    <input type="number" id="mob-package-a-joint-rate" inputmode="decimal" min="0" step="0.01" />
+                  </div>
+                  <div class="field-group">
+                    <label for="mob-package-b-single-rate">Package B single rate (per $1,000)</label>
+                    <input type="number" id="mob-package-b-single-rate" inputmode="decimal" min="0" step="0.01" />
+                  </div>
+                  <div class="field-group">
+                    <label for="mob-package-b-joint-rate">Package B joint rate (per $1,000)</label>
+                    <input type="number" id="mob-package-b-joint-rate" inputmode="decimal" min="0" step="0.01" />
+                  </div>
+                  <div class="field-group">
+                    <label for="mob-package-c-single-rate">Package C single rate (per $1,000)</label>
+                    <input type="number" id="mob-package-c-single-rate" inputmode="decimal" min="0" step="0.01" />
+                  </div>
+                  <div class="field-group">
+                    <label for="mob-package-c-joint-rate">Package C joint rate (per $1,000)</label>
+                    <input type="number" id="mob-package-c-joint-rate" inputmode="decimal" min="0" step="0.01" />
+                  </div>
                 </div>
               </div>
               <p class="field-help">Rates are applied monthly to the remaining balance for MOB coverage.</p>

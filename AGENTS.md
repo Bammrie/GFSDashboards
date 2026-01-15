@@ -1,3 +1,4 @@
+2026-01-15: Hid Menu Pricing MOB rate inputs until coverage type and rate structure are selected, adding single/joint debt protection rate fields for complete pricing setup.
 2028-09-15: Preserved the year end review PDF logo proportions so the header branding stays true to the original dimensions.
 2028-09-16: Repositioned Menu Pricing so MOB coverage sits on its own top row with the remaining pricing cards aligned together for faster review.
 2028-09-15: Refined the year end review PDF layout with cleaner print-friendly styling for client review meetings.
