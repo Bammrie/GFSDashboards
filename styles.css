@@ -921,11 +921,16 @@ input[type='month']:focus-visible {
 .loan-officer-grid {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: minmax(320px, 2fr) minmax(240px, 1fr);
+  align-items: start;
 }
 
 .loan-officer-grid--menu {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.loan-officer-grid--personal {
+  margin-top: 1rem;
 }
 
 .loan-officer-card--mob {
@@ -933,9 +938,7 @@ input[type='month']:focus-visible {
 }
 
 .loan-officer-card--vin {
-  grid-column: 1 / -1;
-  width: min(320px, 100%);
-  justify-self: start;
+  align-self: start;
 }
 
 .loan-officer-card {
@@ -978,6 +981,22 @@ input[type='month']:focus-visible {
   gap: 0.75rem;
 }
 
+.loan-officer-card--personal {
+  grid-column: 1 / -1;
+}
+
+.loan-officer-results {
+  display: grid;
+  gap: 0.6rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 900px) {
+  .loan-officer-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .loan-officer-actions {
   display: grid;
   gap: 0.6rem;

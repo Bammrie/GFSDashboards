@@ -405,6 +405,99 @@
         </div>
 
       </div>
+
+      <div class="loan-officer-grid loan-officer-grid--personal">
+        <div class="loan-officer-card loan-officer-card--personal">
+          <h3 class="loan-officer-card__title">Personal loan calculator</h3>
+          <p class="field-help">
+            Estimate personal loan payments with credit insurance or debt protection premiums.
+          </p>
+          <div class="loan-officer-fields">
+            <div class="field-group">
+              <label for="personal-loan-amount">Loan amount</label>
+              <input type="number" id="personal-loan-amount" inputmode="decimal" min="0" placeholder="12,000" />
+            </div>
+            <div class="field-group">
+              <label for="personal-loan-term">Term (months)</label>
+              <input type="number" id="personal-loan-term" inputmode="numeric" min="1" placeholder="48" />
+            </div>
+            <div class="field-group">
+              <label for="personal-loan-apr">APR (%)</label>
+              <input type="number" id="personal-loan-apr" inputmode="decimal" step="0.01" min="0" placeholder="9.5" />
+            </div>
+          </div>
+          <div class="loan-officer-fields">
+            <div class="field-group">
+              <label for="personal-mob-coverage-type">Coverage type</label>
+              <select id="personal-mob-coverage-type">
+                <option value="credit-insurance">Credit insurance</option>
+                <option value="debt-protection">Debt protection</option>
+              </select>
+              <p class="field-help">Matches the credit union MOB rate setup.</p>
+            </div>
+            <div id="personal-mob-credit-controls">
+              <div class="field-options">
+                <label class="field-option">
+                  <input type="checkbox" id="personal-mob-credit-life" checked />
+                  Credit life
+                </label>
+                <label class="field-option">
+                  <input type="checkbox" id="personal-mob-credit-disability" />
+                  Credit disability
+                </label>
+              </div>
+              <div class="field-group">
+                <label for="personal-mob-credit-tier">Borrower type</label>
+                <select id="personal-mob-credit-tier">
+                  <option value="single">Single</option>
+                  <option value="joint">Joint</option>
+                  <option value="blended">Blended</option>
+                </select>
+                <p class="field-help" id="personal-mob-credit-tier-help">
+                  Rate tier follows the credit union setup.
+                </p>
+              </div>
+            </div>
+            <div id="personal-mob-debt-controls" hidden>
+              <div class="field-group">
+                <span class="field-label">Debt protection package</span>
+                <div class="field-options">
+                  <label class="field-option">
+                    <input type="radio" name="personal-mob-debt-package" value="package-a" checked />
+                    Package A
+                  </label>
+                  <label class="field-option">
+                    <input type="radio" name="personal-mob-debt-package" value="package-b" />
+                    Package B
+                  </label>
+                  <label class="field-option">
+                    <input type="radio" name="personal-mob-debt-package" value="package-c" />
+                    Package C
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="loan-officer-results">
+            <div class="payment-row">
+              <span>Base payment</span>
+              <strong id="personal-base-payment">—</strong>
+            </div>
+            <div class="payment-row">
+              <span>First month MOB premium</span>
+              <strong id="personal-mob-premium-start">—</strong>
+            </div>
+            <div class="payment-row">
+              <span>Average MOB premium</span>
+              <strong id="personal-mob-premium-average">—</strong>
+            </div>
+            <div class="payment-row payment-row--highlight">
+              <span>Payment with MOB coverage</span>
+              <strong id="personal-payment-with-mob">—</strong>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 

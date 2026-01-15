@@ -200,6 +200,20 @@ const selectors = {
   loanWarrantyFetchBtn: document.getElementById('loan-warranty-fetch-btn'),
   loanWarrantyFeedback: document.getElementById('loan-warranty-feedback'),
   loanVinResults: document.getElementById('loan-vin-results'),
+  personalLoanAmountInput: document.getElementById('personal-loan-amount'),
+  personalLoanTermInput: document.getElementById('personal-loan-term'),
+  personalLoanAprInput: document.getElementById('personal-loan-apr'),
+  personalMobCoverageTypeSelect: document.getElementById('personal-mob-coverage-type'),
+  personalMobCreditControls: document.getElementById('personal-mob-credit-controls'),
+  personalMobDebtControls: document.getElementById('personal-mob-debt-controls'),
+  personalMobCreditLifeToggle: document.getElementById('personal-mob-credit-life'),
+  personalMobCreditDisabilityToggle: document.getElementById('personal-mob-credit-disability'),
+  personalMobCreditTierSelect: document.getElementById('personal-mob-credit-tier'),
+  personalMobCreditTierHelp: document.getElementById('personal-mob-credit-tier-help'),
+  personalBasePayment: document.getElementById('personal-base-payment'),
+  personalMobPremiumStart: document.getElementById('personal-mob-premium-start'),
+  personalMobPremiumAverage: document.getElementById('personal-mob-premium-average'),
+  personalPaymentWithMob: document.getElementById('personal-payment-with-mob'),
   loanStandardTerm: document.getElementById('loan-standard-term'),
   loanBasePayment: document.getElementById('loan-base-payment'),
   loanMobPremiumStart: document.getElementById('loan-mob-premium-start'),
@@ -444,6 +458,60 @@ function calculateMobPremiums({ loanAmount, termMonths, apr, ratePerThousand }) 
   return { firstPremium, averagePremium };
 }
 
+function resolveMobRatePerThousand({
+  mobCoverageType,
+  mobBlendedRates,
+  mobCreditLifeSelected,
+  mobCreditDisabilitySelected,
+  mobCreditTier,
+  mobBlendedLifeRate,
+  mobBlendedDisabilityRate,
+  mobSingleLifeRate,
+  mobJointLifeRate,
+  mobSingleDisabilityRate,
+  mobJointDisabilityRate,
+  mobPackageARate,
+  mobPackageBRate,
+  mobPackageCRate,
+  mobDebtPackage
+}) {
+  if (mobCoverageType === 'debt-protection') {
+    if (mobDebtPackage === 'package-a') {
+      return mobPackageARate;
+    }
+    if (mobDebtPackage === 'package-b') {
+      return mobPackageBRate;
+    }
+    if (mobDebtPackage === 'package-c') {
+      return mobPackageCRate;
+    }
+    return null;
+  }
+
+  const rateTier = mobBlendedRates ? 'blended' : mobCreditTier;
+  const selectedRates = [];
+  if (mobCreditLifeSelected) {
+    if (rateTier === 'blended') {
+      selectedRates.push(mobBlendedLifeRate);
+    } else if (rateTier === 'joint') {
+      selectedRates.push(mobJointLifeRate);
+    } else {
+      selectedRates.push(mobSingleLifeRate);
+    }
+  }
+  if (mobCreditDisabilitySelected) {
+    if (rateTier === 'blended') {
+      selectedRates.push(mobBlendedDisabilityRate);
+    } else if (rateTier === 'joint') {
+      selectedRates.push(mobJointDisabilityRate);
+    } else {
+      selectedRates.push(mobSingleDisabilityRate);
+    }
+  }
+  const validRates = selectedRates.filter(Number.isFinite);
+  return validRates.length ? validRates.reduce((sum, value) => sum + value, 0) : null;
+}
+
 function setLoanWarrantyFeedback(message, state = 'info') {
   if (!selectors.loanWarrantyFeedback) return;
   selectors.loanWarrantyFeedback.textContent = message;
@@ -621,58 +689,25 @@ function updateLoanIllustration() {
     });
   });
 
-  let mobRatePerThousand = null;
-  if (mobRateStructure) {
-    if (mobCoverageType === 'debt-protection') {
-      const selectedPackage =
-        document.querySelector('input[name="mob-debt-package"]:checked')?.value || 'none';
-      if (selectedPackage === 'package-a') {
-        mobRatePerThousand =
-          mobRateStructure === 'single-joint'
-            ? mobCreditTier === 'joint'
-              ? mobPackageAJointRate
-              : mobPackageASingleRate
-            : mobPackageARate;
-      } else if (selectedPackage === 'package-b') {
-        mobRatePerThousand =
-          mobRateStructure === 'single-joint'
-            ? mobCreditTier === 'joint'
-              ? mobPackageBJointRate
-              : mobPackageBSingleRate
-            : mobPackageBRate;
-      } else if (selectedPackage === 'package-c') {
-        mobRatePerThousand =
-          mobRateStructure === 'single-joint'
-            ? mobCreditTier === 'joint'
-              ? mobPackageCJointRate
-              : mobPackageCSingleRate
-            : mobPackageCRate;
-      }
-    } else if (mobCoverageType === 'credit-insurance') {
-      const rateTier = mobRateStructure === 'blended' ? 'blended' : mobCreditTier;
-      const selectedRates = [];
-      if (mobCreditLifeSelected) {
-        if (rateTier === 'blended') {
-          selectedRates.push(mobBlendedLifeRate);
-        } else if (rateTier === 'joint') {
-          selectedRates.push(mobJointLifeRate);
-        } else {
-          selectedRates.push(mobSingleLifeRate);
-        }
-      }
-      if (mobCreditDisabilitySelected) {
-        if (rateTier === 'blended') {
-          selectedRates.push(mobBlendedDisabilityRate);
-        } else if (rateTier === 'joint') {
-          selectedRates.push(mobJointDisabilityRate);
-        } else {
-          selectedRates.push(mobSingleDisabilityRate);
-        }
-      }
-      const validRates = selectedRates.filter(Number.isFinite);
-      mobRatePerThousand = validRates.length ? validRates.reduce((sum, value) => sum + value, 0) : null;
-    }
-  }
+  const selectedPackage =
+    document.querySelector('input[name="mob-debt-package"]:checked')?.value || 'none';
+  const mobRatePerThousand = resolveMobRatePerThousand({
+    mobCoverageType,
+    mobBlendedRates,
+    mobCreditLifeSelected,
+    mobCreditDisabilitySelected,
+    mobCreditTier,
+    mobBlendedLifeRate,
+    mobBlendedDisabilityRate,
+    mobSingleLifeRate,
+    mobJointLifeRate,
+    mobSingleDisabilityRate,
+    mobJointDisabilityRate,
+    mobPackageARate,
+    mobPackageBRate,
+    mobPackageCRate,
+    mobDebtPackage: selectedPackage
+  });
 
   const { firstPremium: mobPremiumStart, averagePremium: mobPremiumAverage } = calculateMobPremiums({
     loanAmount,
@@ -731,6 +766,79 @@ function updateLoanIllustration() {
   updateProtectionOptionsAvailability();
 }
 
+function updatePersonalLoanIllustration() {
+  if (!selectors.personalBasePayment) return;
+
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    selectors.personalBasePayment.textContent = '—';
+    if (selectors.personalMobPremiumStart) {
+      selectors.personalMobPremiumStart.textContent = '—';
+    }
+    if (selectors.personalMobPremiumAverage) {
+      selectors.personalMobPremiumAverage.textContent = '—';
+    }
+    if (selectors.personalPaymentWithMob) {
+      selectors.personalPaymentWithMob.textContent = '—';
+    }
+    return;
+  }
+
+  const loanAmount = parseNumericInput(selectors.personalLoanAmountInput?.value);
+  const termMonths = parseNumericInput(selectors.personalLoanTermInput?.value);
+  const apr = parseNumericInput(selectors.personalLoanAprInput?.value);
+  const config = getWarrantyConfigForCreditUnion(creditUnionId);
+  const mobCoverageType =
+    selectors.personalMobCoverageTypeSelect?.value || config.mobCoverageType || 'credit-insurance';
+  const mobBlendedRates = Boolean(config.mobBlendedRates);
+  const mobCreditLifeSelected = selectors.personalMobCreditLifeToggle?.checked ?? false;
+  const mobCreditDisabilitySelected = selectors.personalMobCreditDisabilityToggle?.checked ?? false;
+  const mobCreditTier = selectors.personalMobCreditTierSelect?.value || 'single';
+  const selectedPackage =
+    document.querySelector('input[name="personal-mob-debt-package"]:checked')?.value || 'none';
+
+  const mobRatePerThousand = resolveMobRatePerThousand({
+    mobCoverageType,
+    mobBlendedRates,
+    mobCreditLifeSelected,
+    mobCreditDisabilitySelected,
+    mobCreditTier,
+    mobBlendedLifeRate: config.mobBlendedLifeRate,
+    mobBlendedDisabilityRate: config.mobBlendedDisabilityRate,
+    mobSingleLifeRate: config.mobSingleLifeRate,
+    mobJointLifeRate: config.mobJointLifeRate,
+    mobSingleDisabilityRate: config.mobSingleDisabilityRate,
+    mobJointDisabilityRate: config.mobJointDisabilityRate,
+    mobPackageARate: config.mobPackageARate,
+    mobPackageBRate: config.mobPackageBRate,
+    mobPackageCRate: config.mobPackageCRate,
+    mobDebtPackage: selectedPackage
+  });
+
+  const basePayment = calculateMonthlyPayment(loanAmount, apr, termMonths);
+  const { firstPremium: mobPremiumStart, averagePremium: mobPremiumAverage } = calculateMobPremiums({
+    loanAmount,
+    termMonths,
+    apr,
+    ratePerThousand: mobRatePerThousand
+  });
+  const paymentWithMob =
+    Number.isFinite(basePayment) && Number.isFinite(mobPremiumStart)
+      ? basePayment + mobPremiumStart
+      : null;
+
+  selectors.personalBasePayment.textContent = formatCurrencyValue(basePayment);
+  if (selectors.personalMobPremiumStart) {
+    selectors.personalMobPremiumStart.textContent = formatCurrencyValue(mobPremiumStart);
+  }
+  if (selectors.personalMobPremiumAverage) {
+    selectors.personalMobPremiumAverage.textContent = formatCurrencyValue(mobPremiumAverage);
+  }
+  if (selectors.personalPaymentWithMob) {
+    selectors.personalPaymentWithMob.textContent = formatCurrencyValue(paymentWithMob);
+  }
+}
+
 function updateProtectionOptionsAvailability() {
   if (!selectors.loanProtectionOptionsBtn) return;
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
@@ -767,6 +875,13 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.loanGapCreditUnionMarkupInput,
     selectors.loanGapGfsMarkupInput,
     selectors.loanWarrantyFetchBtn,
+    selectors.personalLoanAmountInput,
+    selectors.personalLoanTermInput,
+    selectors.personalLoanAprInput,
+    selectors.personalMobCoverageTypeSelect,
+    selectors.personalMobCreditLifeToggle,
+    selectors.personalMobCreditDisabilityToggle,
+    selectors.personalMobCreditTierSelect,
     selectors.mobCreditLifeToggle,
     selectors.mobCreditDisabilityToggle,
     selectors.mobCreditTierSelect,
@@ -802,6 +917,9 @@ function setLoanOfficerDisabled(isDisabled) {
   document.querySelectorAll('input[name="mob-debt-package"]').forEach((input) => {
     input.disabled = isDisabled;
   });
+  document.querySelectorAll('input[name="personal-mob-debt-package"]').forEach((input) => {
+    input.disabled = isDisabled;
+  });
 }
 
 function renderLoanOfficerCalculator() {
@@ -812,6 +930,7 @@ function renderLoanOfficerCalculator() {
     setLoanOfficerDisabled(true);
     setTermExtensionFieldVisibility(false);
     updateLoanIllustration();
+    updatePersonalLoanIllustration();
     renderVinResults(null);
     setLoanWarrantyFeedback('');
     return;
@@ -932,8 +1051,16 @@ function renderLoanOfficerCalculator() {
     mobCoverageType: config.mobCoverageType || '',
     mobRateStructure: resolvedRateStructure
   });
+  if (selectors.personalMobCoverageTypeSelect) {
+    selectors.personalMobCoverageTypeSelect.value = config.mobCoverageType || 'credit-insurance';
+  }
+  updatePersonalCoverageControls({
+    mobCoverageType: selectors.personalMobCoverageTypeSelect?.value || 'credit-insurance',
+    mobBlendedRates: Boolean(config.mobBlendedRates)
+  });
 
   updateLoanIllustration();
+  updatePersonalLoanIllustration();
 }
 
 function handleWarrantyMarkupChange() {
@@ -1005,6 +1132,36 @@ function updateMobCoverageControls({ mobCoverageType, mobRateStructure }) {
       selectors.mobCreditTierSelect.disabled = false;
       if (selectors.mobCreditTierHelp) {
         selectors.mobCreditTierHelp.textContent = 'Rate tier follows the credit union setup.';
+      }
+    }
+  }
+}
+
+function updatePersonalCoverageControls({ mobCoverageType, mobBlendedRates }) {
+  const isCreditInsurance = mobCoverageType !== 'debt-protection';
+  if (selectors.personalMobCoverageTypeSelect) {
+    selectors.personalMobCoverageTypeSelect.value = mobCoverageType;
+  }
+  if (selectors.personalMobCreditControls) {
+    selectors.personalMobCreditControls.hidden = !isCreditInsurance;
+  }
+  if (selectors.personalMobDebtControls) {
+    selectors.personalMobDebtControls.hidden = isCreditInsurance;
+  }
+  if (selectors.personalMobCreditTierSelect) {
+    if (mobBlendedRates) {
+      selectors.personalMobCreditTierSelect.value = 'blended';
+      selectors.personalMobCreditTierSelect.disabled = true;
+      if (selectors.personalMobCreditTierHelp) {
+        selectors.personalMobCreditTierHelp.textContent = 'Blended rates apply to all borrower types.';
+      }
+    } else {
+      if (selectors.personalMobCreditTierSelect.value === 'blended') {
+        selectors.personalMobCreditTierSelect.value = 'single';
+      }
+      selectors.personalMobCreditTierSelect.disabled = false;
+      if (selectors.personalMobCreditTierHelp) {
+        selectors.personalMobCreditTierHelp.textContent = 'Rate tier follows the credit union setup.';
       }
     }
   }
@@ -5110,6 +5267,16 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
 });
 
 [
+  selectors.personalLoanAmountInput,
+  selectors.personalLoanTermInput,
+  selectors.personalLoanAprInput
+].forEach((element) => {
+  element?.addEventListener('input', () => {
+    updatePersonalLoanIllustration();
+  });
+});
+
+[
   selectors.mobBlendedLifeRateInput,
   selectors.mobBlendedDisabilityRateInput,
   selectors.mobSingleLifeRateInput,
@@ -5197,6 +5364,31 @@ selectors.mobCreditTierSelect?.addEventListener('change', () => {
 document.querySelectorAll('input[name="mob-debt-package"]').forEach((input) => {
   input.addEventListener('change', () => {
     updateLoanIllustration();
+  });
+});
+
+selectors.personalMobCoverageTypeSelect?.addEventListener('change', () => {
+  const mobCoverageType = selectors.personalMobCoverageTypeSelect?.value || 'credit-insurance';
+  const mobBlendedRates = selectors.mobBlendedToggle?.checked ?? false;
+  updatePersonalCoverageControls({ mobCoverageType, mobBlendedRates });
+  updatePersonalLoanIllustration();
+});
+
+selectors.personalMobCreditLifeToggle?.addEventListener('change', () => {
+  updatePersonalLoanIllustration();
+});
+
+selectors.personalMobCreditDisabilityToggle?.addEventListener('change', () => {
+  updatePersonalLoanIllustration();
+});
+
+selectors.personalMobCreditTierSelect?.addEventListener('change', () => {
+  updatePersonalLoanIllustration();
+});
+
+document.querySelectorAll('input[name="personal-mob-debt-package"]').forEach((input) => {
+  input.addEventListener('change', () => {
+    updatePersonalLoanIllustration();
   });
 });
 
