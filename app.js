@@ -227,13 +227,13 @@ const selectors = {
   mobCreditTierSelect: document.getElementById('mob-credit-tier'),
   mobCreditTierHelp: document.getElementById('mob-credit-tier-help'),
   mobAccountCoverageTypeSelect: document.getElementById('mob-account-coverage-type'),
-  mobBlendedToggle: document.getElementById('mob-blended-toggle'),
-  mobBlendedToggleRow: document.getElementById('mob-blended-toggle-row'),
-  mobBlendedHelp: document.getElementById('mob-blended-help'),
+  mobRateStructureSelect: document.getElementById('mob-rate-structure'),
   mobCreditRateFields: document.getElementById('mob-credit-rate-fields'),
   mobBlendedRateFields: document.getElementById('mob-blended-rate-fields'),
   mobUnblendedRateFields: document.getElementById('mob-unblended-rate-fields'),
   mobDebtRateFields: document.getElementById('mob-debt-rate-fields'),
+  mobDebtBlendedRateFields: document.getElementById('mob-debt-blended-rate-fields'),
+  mobDebtUnblendedRateFields: document.getElementById('mob-debt-unblended-rate-fields'),
   mobBlendedLifeRateInput: document.getElementById('mob-blended-life-rate'),
   mobBlendedDisabilityRateInput: document.getElementById('mob-blended-disability-rate'),
   mobSingleLifeRateInput: document.getElementById('mob-single-life-rate'),
@@ -243,6 +243,12 @@ const selectors = {
   mobPackageARateInput: document.getElementById('mob-package-a-rate'),
   mobPackageBRateInput: document.getElementById('mob-package-b-rate'),
   mobPackageCRateInput: document.getElementById('mob-package-c-rate'),
+  mobPackageASingleRateInput: document.getElementById('mob-package-a-single-rate'),
+  mobPackageAJointRateInput: document.getElementById('mob-package-a-joint-rate'),
+  mobPackageBSingleRateInput: document.getElementById('mob-package-b-single-rate'),
+  mobPackageBJointRateInput: document.getElementById('mob-package-b-joint-rate'),
+  mobPackageCSingleRateInput: document.getElementById('mob-package-c-single-rate'),
+  mobPackageCJointRateInput: document.getElementById('mob-package-c-joint-rate'),
   loanTermExtensionToggle: document.getElementById('loan-term-extension-toggle'),
   loanTermExtensionFields: document.getElementById('loan-term-extension-fields'),
   loanVscTermExtensionInput: document.getElementById('loan-vsc-term-extension'),
@@ -525,7 +531,8 @@ function getWarrantyConfigForCreditUnion(creditUnionId) {
       termExtensionsEnabled: false,
       vscTermExtension: null,
       gapTermExtension: null,
-      mobCoverageType: 'credit-insurance',
+      mobCoverageType: '',
+      mobRateStructure: '',
       mobBlendedRates: false,
       mobBlendedLifeRate: null,
       mobBlendedDisabilityRate: null,
@@ -535,7 +542,13 @@ function getWarrantyConfigForCreditUnion(creditUnionId) {
       mobJointDisabilityRate: null,
       mobPackageARate: null,
       mobPackageBRate: null,
-      mobPackageCRate: null
+      mobPackageCRate: null,
+      mobPackageASingleRate: null,
+      mobPackageAJointRate: null,
+      mobPackageBSingleRate: null,
+      mobPackageBJointRate: null,
+      mobPackageCSingleRate: null,
+      mobPackageCJointRate: null
     };
 }
 
@@ -603,8 +616,8 @@ function updateLoanIllustration() {
   const termExtensionsEnabled = selectors.loanTermExtensionToggle?.checked ?? false;
   const vscTermExtension = parseNumericInput(selectors.loanVscTermExtensionInput?.value);
   const gapTermExtension = parseNumericInput(selectors.loanGapTermExtensionInput?.value);
-  const mobCoverageType = selectors.mobAccountCoverageTypeSelect?.value || 'credit-insurance';
-  const mobBlendedRates = selectors.mobBlendedToggle?.checked ?? false;
+  const mobCoverageType = selectors.mobAccountCoverageTypeSelect?.value || '';
+  const mobRateStructure = selectors.mobRateStructureSelect?.value || '';
   const mobCreditLifeSelected = selectors.mobCreditLifeToggle?.checked ?? false;
   const mobCreditDisabilitySelected = selectors.mobCreditDisabilityToggle?.checked ?? false;
   const mobCreditTier = selectors.mobCreditTierSelect?.value || 'single';
@@ -617,6 +630,12 @@ function updateLoanIllustration() {
   const mobPackageARate = parseNumericInput(selectors.mobPackageARateInput?.value);
   const mobPackageBRate = parseNumericInput(selectors.mobPackageBRateInput?.value);
   const mobPackageCRate = parseNumericInput(selectors.mobPackageCRateInput?.value);
+  const mobPackageASingleRate = parseNumericInput(selectors.mobPackageASingleRateInput?.value);
+  const mobPackageAJointRate = parseNumericInput(selectors.mobPackageAJointRateInput?.value);
+  const mobPackageBSingleRate = parseNumericInput(selectors.mobPackageBSingleRateInput?.value);
+  const mobPackageBJointRate = parseNumericInput(selectors.mobPackageBJointRateInput?.value);
+  const mobPackageCSingleRate = parseNumericInput(selectors.mobPackageCSingleRateInput?.value);
+  const mobPackageCJointRate = parseNumericInput(selectors.mobPackageCJointRateInput?.value);
 
   const basePayment = calculateMonthlyPayment(loanAmount, apr, termMonths);
   if (selectors.loanStandardTerm) {
@@ -867,7 +886,7 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.mobCreditDisabilityToggle,
     selectors.mobCreditTierSelect,
     selectors.mobAccountCoverageTypeSelect,
-    selectors.mobBlendedToggle,
+    selectors.mobRateStructureSelect,
     selectors.mobBlendedLifeRateInput,
     selectors.mobBlendedDisabilityRateInput,
     selectors.mobSingleLifeRateInput,
@@ -877,6 +896,12 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.mobPackageARateInput,
     selectors.mobPackageBRateInput,
     selectors.mobPackageCRateInput,
+    selectors.mobPackageASingleRateInput,
+    selectors.mobPackageAJointRateInput,
+    selectors.mobPackageBSingleRateInput,
+    selectors.mobPackageBJointRateInput,
+    selectors.mobPackageCSingleRateInput,
+    selectors.mobPackageCJointRateInput,
     selectors.loanTermExtensionToggle,
     selectors.loanVscTermExtensionInput,
     selectors.loanGapTermExtensionInput
@@ -936,10 +961,15 @@ function renderLoanOfficerCalculator() {
       Number.isFinite(config.gapGfsMarkup) ? config.gapGfsMarkup : '';
   }
   if (selectors.mobAccountCoverageTypeSelect) {
-    selectors.mobAccountCoverageTypeSelect.value = config.mobCoverageType || 'credit-insurance';
+    selectors.mobAccountCoverageTypeSelect.value = config.mobCoverageType || '';
   }
-  if (selectors.mobBlendedToggle) {
-    selectors.mobBlendedToggle.checked = Boolean(config.mobBlendedRates);
+  const resolvedRateStructure =
+    config.mobRateStructure ||
+    (config.mobCoverageType
+      ? (config.mobBlendedRates ? 'blended' : 'single-joint')
+      : '');
+  if (selectors.mobRateStructureSelect) {
+    selectors.mobRateStructureSelect.value = resolvedRateStructure;
   }
   if (selectors.mobBlendedLifeRateInput) {
     selectors.mobBlendedLifeRateInput.value =
@@ -977,6 +1007,30 @@ function renderLoanOfficerCalculator() {
     selectors.mobPackageCRateInput.value =
       Number.isFinite(config.mobPackageCRate) ? config.mobPackageCRate : '';
   }
+  if (selectors.mobPackageASingleRateInput) {
+    selectors.mobPackageASingleRateInput.value =
+      Number.isFinite(config.mobPackageASingleRate) ? config.mobPackageASingleRate : '';
+  }
+  if (selectors.mobPackageAJointRateInput) {
+    selectors.mobPackageAJointRateInput.value =
+      Number.isFinite(config.mobPackageAJointRate) ? config.mobPackageAJointRate : '';
+  }
+  if (selectors.mobPackageBSingleRateInput) {
+    selectors.mobPackageBSingleRateInput.value =
+      Number.isFinite(config.mobPackageBSingleRate) ? config.mobPackageBSingleRate : '';
+  }
+  if (selectors.mobPackageBJointRateInput) {
+    selectors.mobPackageBJointRateInput.value =
+      Number.isFinite(config.mobPackageBJointRate) ? config.mobPackageBJointRate : '';
+  }
+  if (selectors.mobPackageCSingleRateInput) {
+    selectors.mobPackageCSingleRateInput.value =
+      Number.isFinite(config.mobPackageCSingleRate) ? config.mobPackageCSingleRate : '';
+  }
+  if (selectors.mobPackageCJointRateInput) {
+    selectors.mobPackageCJointRateInput.value =
+      Number.isFinite(config.mobPackageCJointRate) ? config.mobPackageCJointRate : '';
+  }
   if (selectors.loanTermExtensionToggle) {
     selectors.loanTermExtensionToggle.checked = Boolean(config.termExtensionsEnabled);
   }
@@ -990,12 +1044,12 @@ function renderLoanOfficerCalculator() {
   }
   setTermExtensionFieldVisibility(Boolean(config.termExtensionsEnabled));
   updateMobPricingVisibility({
-    mobCoverageType: config.mobCoverageType || 'credit-insurance',
-    mobBlendedRates: Boolean(config.mobBlendedRates)
+    mobCoverageType: config.mobCoverageType || '',
+    mobRateStructure: resolvedRateStructure
   });
   updateMobCoverageControls({
-    mobCoverageType: config.mobCoverageType || 'credit-insurance',
-    mobBlendedRates: Boolean(config.mobBlendedRates)
+    mobCoverageType: config.mobCoverageType || '',
+    mobRateStructure: resolvedRateStructure
   });
   if (selectors.personalMobCoverageTypeSelect) {
     selectors.personalMobCoverageTypeSelect.value = config.mobCoverageType || 'credit-insurance';
@@ -1026,30 +1080,35 @@ function handleGapPricingChange() {
   saveWarrantyConfig(creditUnionId, { gapCost, gapCreditUnionMarkup, gapGfsMarkup });
 }
 
-function updateMobPricingVisibility({ mobCoverageType, mobBlendedRates }) {
-  const isCreditInsurance = mobCoverageType !== 'debt-protection';
+function updateMobPricingVisibility({ mobCoverageType, mobRateStructure }) {
+  const isCreditInsurance = mobCoverageType === 'credit-insurance';
+  const isDebtProtection = mobCoverageType === 'debt-protection';
+  const hasRateStructure = Boolean(mobRateStructure);
+  const isBlended = mobRateStructure === 'blended';
   if (selectors.mobCreditRateFields) {
-    selectors.mobCreditRateFields.hidden = !isCreditInsurance;
+    selectors.mobCreditRateFields.hidden = !(isCreditInsurance && hasRateStructure);
   }
   if (selectors.mobDebtRateFields) {
-    selectors.mobDebtRateFields.hidden = isCreditInsurance;
-  }
-  if (selectors.mobBlendedToggleRow) {
-    selectors.mobBlendedToggleRow.hidden = !isCreditInsurance;
-  }
-  if (selectors.mobBlendedHelp) {
-    selectors.mobBlendedHelp.hidden = !isCreditInsurance;
+    selectors.mobDebtRateFields.hidden = !(isDebtProtection && hasRateStructure);
   }
   if (selectors.mobBlendedRateFields) {
-    selectors.mobBlendedRateFields.hidden = !isCreditInsurance || !mobBlendedRates;
+    selectors.mobBlendedRateFields.hidden = !(isCreditInsurance && hasRateStructure && isBlended);
   }
   if (selectors.mobUnblendedRateFields) {
-    selectors.mobUnblendedRateFields.hidden = !isCreditInsurance || mobBlendedRates;
+    selectors.mobUnblendedRateFields.hidden = !(isCreditInsurance && hasRateStructure && !isBlended);
+  }
+  if (selectors.mobDebtBlendedRateFields) {
+    selectors.mobDebtBlendedRateFields.hidden = !(isDebtProtection && hasRateStructure && isBlended);
+  }
+  if (selectors.mobDebtUnblendedRateFields) {
+    selectors.mobDebtUnblendedRateFields.hidden = !(isDebtProtection && hasRateStructure && !isBlended);
   }
 }
 
-function updateMobCoverageControls({ mobCoverageType, mobBlendedRates }) {
-  const isCreditInsurance = mobCoverageType !== 'debt-protection';
+function updateMobCoverageControls({ mobCoverageType, mobRateStructure }) {
+  const isCreditInsurance = mobCoverageType === 'credit-insurance';
+  const isDebtProtection = mobCoverageType === 'debt-protection';
+  const mobBlendedRates = mobRateStructure === 'blended';
   if (selectors.mobCoverageTypeSelect) {
     selectors.mobCoverageTypeSelect.value = mobCoverageType;
   }
@@ -1057,7 +1116,7 @@ function updateMobCoverageControls({ mobCoverageType, mobBlendedRates }) {
     selectors.mobCreditControls.hidden = !isCreditInsurance;
   }
   if (selectors.mobDebtControls) {
-    selectors.mobDebtControls.hidden = isCreditInsurance;
+    selectors.mobDebtControls.hidden = !isDebtProtection;
   }
   if (selectors.mobCreditTierSelect) {
     if (mobBlendedRates) {
@@ -1111,8 +1170,9 @@ function updatePersonalCoverageControls({ mobCoverageType, mobBlendedRates }) {
 function handleMobConfigChange() {
   const creditUnionId = appState.accountSelectionId;
   if (!creditUnionId) return;
-  const mobCoverageType = selectors.mobAccountCoverageTypeSelect?.value || 'credit-insurance';
-  const mobBlendedRates = selectors.mobBlendedToggle?.checked ?? false;
+  const mobCoverageType = selectors.mobAccountCoverageTypeSelect?.value || '';
+  const mobRateStructure = selectors.mobRateStructureSelect?.value || '';
+  const mobBlendedRates = mobRateStructure === 'blended';
   const mobBlendedLifeRate = parseNumericInput(selectors.mobBlendedLifeRateInput?.value);
   const mobBlendedDisabilityRate = parseNumericInput(selectors.mobBlendedDisabilityRateInput?.value);
   const mobSingleLifeRate = parseNumericInput(selectors.mobSingleLifeRateInput?.value);
@@ -1122,8 +1182,15 @@ function handleMobConfigChange() {
   const mobPackageARate = parseNumericInput(selectors.mobPackageARateInput?.value);
   const mobPackageBRate = parseNumericInput(selectors.mobPackageBRateInput?.value);
   const mobPackageCRate = parseNumericInput(selectors.mobPackageCRateInput?.value);
+  const mobPackageASingleRate = parseNumericInput(selectors.mobPackageASingleRateInput?.value);
+  const mobPackageAJointRate = parseNumericInput(selectors.mobPackageAJointRateInput?.value);
+  const mobPackageBSingleRate = parseNumericInput(selectors.mobPackageBSingleRateInput?.value);
+  const mobPackageBJointRate = parseNumericInput(selectors.mobPackageBJointRateInput?.value);
+  const mobPackageCSingleRate = parseNumericInput(selectors.mobPackageCSingleRateInput?.value);
+  const mobPackageCJointRate = parseNumericInput(selectors.mobPackageCJointRateInput?.value);
   saveWarrantyConfig(creditUnionId, {
     mobCoverageType,
+    mobRateStructure,
     mobBlendedRates,
     mobBlendedLifeRate,
     mobBlendedDisabilityRate,
@@ -1133,15 +1200,16 @@ function handleMobConfigChange() {
     mobJointDisabilityRate,
     mobPackageARate,
     mobPackageBRate,
-    mobPackageCRate
+    mobPackageCRate,
+    mobPackageASingleRate,
+    mobPackageAJointRate,
+    mobPackageBSingleRate,
+    mobPackageBJointRate,
+    mobPackageCSingleRate,
+    mobPackageCJointRate
   });
-  updateMobPricingVisibility({ mobCoverageType, mobBlendedRates });
-  updateMobCoverageControls({ mobCoverageType, mobBlendedRates });
-  updatePersonalCoverageControls({
-    mobCoverageType: selectors.personalMobCoverageTypeSelect?.value || mobCoverageType,
-    mobBlendedRates
-  });
-  updatePersonalLoanIllustration();
+  updateMobPricingVisibility({ mobCoverageType, mobRateStructure });
+  updateMobCoverageControls({ mobCoverageType, mobRateStructure });
 }
 
 function setTermExtensionFieldVisibility(isEnabled) {
@@ -5217,7 +5285,13 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   selectors.mobJointDisabilityRateInput,
   selectors.mobPackageARateInput,
   selectors.mobPackageBRateInput,
-  selectors.mobPackageCRateInput
+  selectors.mobPackageCRateInput,
+  selectors.mobPackageASingleRateInput,
+  selectors.mobPackageAJointRateInput,
+  selectors.mobPackageBSingleRateInput,
+  selectors.mobPackageBJointRateInput,
+  selectors.mobPackageCSingleRateInput,
+  selectors.mobPackageCJointRateInput
 ].forEach((element) => {
   element?.addEventListener('input', () => {
     handleMobConfigChange();
@@ -5255,7 +5329,7 @@ selectors.mobAccountCoverageTypeSelect?.addEventListener('change', () => {
   updateLoanIllustration();
 });
 
-selectors.mobBlendedToggle?.addEventListener('change', () => {
+selectors.mobRateStructureSelect?.addEventListener('change', () => {
   handleMobConfigChange();
   updateLoanIllustration();
 });
