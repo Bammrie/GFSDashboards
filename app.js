@@ -963,11 +963,7 @@ function renderLoanOfficerCalculator() {
   if (selectors.mobAccountCoverageTypeSelect) {
     selectors.mobAccountCoverageTypeSelect.value = config.mobCoverageType || '';
   }
-  const resolvedRateStructure =
-    config.mobRateStructure ||
-    (config.mobCoverageType
-      ? (config.mobBlendedRates ? 'blended' : 'single-joint')
-      : '');
+  const resolvedRateStructure = config.mobRateStructure || '';
   if (selectors.mobRateStructureSelect) {
     selectors.mobRateStructureSelect.value = resolvedRateStructure;
   }

@@ -218,3 +218,4 @@ Document or extend new features so they reuse these formulas without re-defining
 2028-09-18: Condensed the Menu Presentation VIN decoder into a smaller, standalone row to tighten the layout.
 
 2028-09-19: Moved Menu Presentation coverage options into a Protection Options dialog so only loan details and VIN decode remain visible until required fields are completed.
+2025-03-19: Updated Menu Pricing MOB rate visibility so rate inputs stay hidden until coverage type and rate structure are explicitly selected.
