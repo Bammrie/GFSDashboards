@@ -192,6 +192,32 @@ const accountWarrantyConfigSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+const loanSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, index: true },
+    loanDate: { type: Date, required: true },
+    loanAmount: { type: Number, required: true },
+    loanOfficer: { type: String, trim: true, required: true },
+    termMonths: { type: Number, default: null },
+    apr: { type: Number, default: null },
+    mileage: { type: Number, default: null },
+    vin: { type: String, trim: true, default: '' },
+    coverageSelected: { type: Boolean, required: true },
+    coverageType: { type: String, enum: ['credit-insurance', 'debt-protection', null], default: null },
+    coverageDetails: {
+      creditLife: { type: Boolean, default: false },
+      creditDisability: { type: Boolean, default: false },
+      creditTier: { type: String, default: null },
+      debtPackage: { type: String, default: null }
+    },
+    products: {
+      vscSelected: { type: Boolean, default: false },
+      gapSelected: { type: Boolean, default: false }
+    }
+  },
+  { timestamps: true }
+);
+loanSchema.index({ creditUnion: 1, loanDate: -1 });
 const callReportSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
@@ -241,6 +267,7 @@ const AccountReview = mongoose.model('AccountReview', accountReviewSchema);
 const AccountNotes = mongoose.model('AccountNotes', accountNotesSchema);
 const AccountChangeLog = mongoose.model('AccountChangeLog', accountChangeLogSchema);
 const AccountWarrantyConfig = mongoose.model('AccountWarrantyConfig', accountWarrantyConfigSchema);
+const Loan = mongoose.model('Loan', loanSchema);
 
 const databaseReady = await initializeDatabase();
 
@@ -512,6 +539,243 @@ app.post('/api/account-change-log', async (req, res, next) => {
     ).lean();
 
     res.json({ entries: Array.isArray(updated?.entries) ? updated.entries : [] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+function parseLoanNumber(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function parseLoanBoolean(value) {
+  if (typeof value === 'boolean') return value;
+  if (value === 'true') return true;
+  if (value === 'false') return false;
+  return null;
+}
+
+function parseLoanString(value) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : null;
+}
+
+function serializeLoan(loan) {
+  return {
+    id: loan._id.toString(),
+    creditUnionId: loan.creditUnion.toString(),
+    loanDate: loan.loanDate ? loan.loanDate.toISOString() : null,
+    loanAmount: Number(loan.loanAmount ?? 0),
+    loanOfficer: loan.loanOfficer,
+    termMonths: loan.termMonths ?? null,
+    apr: loan.apr ?? null,
+    mileage: loan.mileage ?? null,
+    vin: loan.vin ?? '',
+    coverageSelected: loan.coverageSelected,
+    coverageType: loan.coverageType ?? null,
+    coverageDetails: loan.coverageDetails ?? {},
+    products: loan.products ?? {},
+    createdAt: loan.createdAt ? loan.createdAt.toISOString() : null,
+    updatedAt: loan.updatedAt ? loan.updatedAt.toISOString() : null
+  };
+}
+
+app.get('/api/loans', async (req, res, next) => {
+  try {
+    const creditUnionId = req.query?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'A valid credit union is required.' });
+      return;
+    }
+
+    const loans = await Loan.find({ creditUnion: creditUnionId })
+      .sort({ loanDate: -1, createdAt: -1 })
+      .lean();
+    res.json({ loans: loans.map(serializeLoan) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/loans', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'A valid credit union is required.' });
+      return;
+    }
+
+    const loanDateRaw = req.body?.loanDate;
+    const loanDate = loanDateRaw ? new Date(loanDateRaw) : null;
+    if (!loanDate || Number.isNaN(loanDate.getTime())) {
+      res.status(400).json({ error: 'Loan date is required.' });
+      return;
+    }
+
+    const loanAmount = parseLoanNumber(req.body?.loanAmount);
+    if (!Number.isFinite(loanAmount)) {
+      res.status(400).json({ error: 'Loan amount is required.' });
+      return;
+    }
+
+    const loanOfficer = parseLoanString(req.body?.loanOfficer);
+    if (!loanOfficer) {
+      res.status(400).json({ error: 'Loan officer is required.' });
+      return;
+    }
+
+    const coverageSelected = parseLoanBoolean(req.body?.coverageSelected);
+    if (coverageSelected === null) {
+      res.status(400).json({ error: 'Coverage selection (yes/no) is required.' });
+      return;
+    }
+
+    const coverageType = ['credit-insurance', 'debt-protection'].includes(req.body?.coverageType)
+      ? req.body.coverageType
+      : null;
+    const coverageDetails = req.body?.coverageDetails && typeof req.body.coverageDetails === 'object'
+      ? {
+          creditLife: parseLoanBoolean(req.body.coverageDetails?.creditLife) ?? false,
+          creditDisability: parseLoanBoolean(req.body.coverageDetails?.creditDisability) ?? false,
+          creditTier: parseLoanString(req.body.coverageDetails?.creditTier),
+          debtPackage: parseLoanString(req.body.coverageDetails?.debtPackage)
+        }
+      : {};
+    const products = req.body?.products && typeof req.body.products === 'object'
+      ? {
+          vscSelected: parseLoanBoolean(req.body.products?.vscSelected) ?? false,
+          gapSelected: parseLoanBoolean(req.body.products?.gapSelected) ?? false
+        }
+      : {};
+
+    const created = await Loan.create({
+      creditUnion: creditUnionId,
+      loanDate,
+      loanAmount,
+      loanOfficer,
+      termMonths: parseLoanNumber(req.body?.termMonths),
+      apr: parseLoanNumber(req.body?.apr),
+      mileage: parseLoanNumber(req.body?.mileage),
+      vin: parseLoanString(req.body?.vin) || '',
+      coverageSelected,
+      coverageType,
+      coverageDetails,
+      products
+    });
+
+    res.status(201).json({ loan: serializeLoan(created) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch('/api/loans/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ error: 'Invalid loan selection.' });
+      return;
+    }
+
+    const updates = {};
+    if ('loanDate' in req.body) {
+      const loanDate = req.body?.loanDate ? new Date(req.body.loanDate) : null;
+      if (!loanDate || Number.isNaN(loanDate.getTime())) {
+        res.status(400).json({ error: 'Loan date is required.' });
+        return;
+      }
+      updates.loanDate = loanDate;
+    }
+    if ('loanAmount' in req.body) {
+      const loanAmount = parseLoanNumber(req.body?.loanAmount);
+      if (!Number.isFinite(loanAmount)) {
+        res.status(400).json({ error: 'Loan amount is required.' });
+        return;
+      }
+      updates.loanAmount = loanAmount;
+    }
+    if ('loanOfficer' in req.body) {
+      const loanOfficer = parseLoanString(req.body?.loanOfficer);
+      if (!loanOfficer) {
+        res.status(400).json({ error: 'Loan officer is required.' });
+        return;
+      }
+      updates.loanOfficer = loanOfficer;
+    }
+    if ('termMonths' in req.body) {
+      updates.termMonths = parseLoanNumber(req.body?.termMonths);
+    }
+    if ('apr' in req.body) {
+      updates.apr = parseLoanNumber(req.body?.apr);
+    }
+    if ('mileage' in req.body) {
+      updates.mileage = parseLoanNumber(req.body?.mileage);
+    }
+    if ('vin' in req.body) {
+      updates.vin = parseLoanString(req.body?.vin) || '';
+    }
+    if ('coverageSelected' in req.body) {
+      const coverageSelected = parseLoanBoolean(req.body?.coverageSelected);
+      if (coverageSelected === null) {
+        res.status(400).json({ error: 'Coverage selection (yes/no) is required.' });
+        return;
+      }
+      updates.coverageSelected = coverageSelected;
+    }
+    if ('coverageType' in req.body) {
+      updates.coverageType = ['credit-insurance', 'debt-protection'].includes(req.body?.coverageType)
+        ? req.body.coverageType
+        : null;
+    }
+    if ('coverageDetails' in req.body) {
+      updates.coverageDetails = req.body?.coverageDetails && typeof req.body.coverageDetails === 'object'
+        ? {
+            creditLife: parseLoanBoolean(req.body.coverageDetails?.creditLife) ?? false,
+            creditDisability: parseLoanBoolean(req.body.coverageDetails?.creditDisability) ?? false,
+            creditTier: parseLoanString(req.body.coverageDetails?.creditTier),
+            debtPackage: parseLoanString(req.body.coverageDetails?.debtPackage)
+          }
+        : {};
+    }
+    if ('products' in req.body) {
+      updates.products = req.body?.products && typeof req.body.products === 'object'
+        ? {
+            vscSelected: parseLoanBoolean(req.body.products?.vscSelected) ?? false,
+            gapSelected: parseLoanBoolean(req.body.products?.gapSelected) ?? false
+          }
+        : {};
+    }
+
+    const updated = await Loan.findByIdAndUpdate(id, updates, { new: true }).lean();
+    if (!updated) {
+      res.status(404).json({ error: 'Loan not found.' });
+      return;
+    }
+
+    res.json({ loan: serializeLoan(updated) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/api/loans/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ error: 'Invalid loan selection.' });
+      return;
+    }
+
+    const removed = await Loan.findByIdAndDelete(id).lean();
+    if (!removed) {
+      res.status(404).json({ error: 'Loan not found.' });
+      return;
+    }
+
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }

@@ -200,6 +200,18 @@ const selectors = {
   loanWarrantyFetchBtn: document.getElementById('loan-warranty-fetch-btn'),
   loanWarrantyFeedback: document.getElementById('loan-warranty-feedback'),
   loanVinResults: document.getElementById('loan-vin-results'),
+  loanLogSummary: document.getElementById('loan-log-summary'),
+  loanLogForm: document.getElementById('loan-log-form'),
+  loanLogDateInput: document.getElementById('loan-log-date'),
+  loanLogOfficerInput: document.getElementById('loan-log-officer'),
+  loanLogCoverageSelect: document.getElementById('loan-log-coverage-selected'),
+  loanLogVscToggle: document.getElementById('loan-log-vsc-selected'),
+  loanLogGapToggle: document.getElementById('loan-log-gap-selected'),
+  loanLogFeedback: document.getElementById('loan-log-feedback'),
+  loanLogSaveBtn: document.getElementById('loan-log-save-btn'),
+  loanLogCancelBtn: document.getElementById('loan-log-cancel-btn'),
+  loanLogEmpty: document.getElementById('loan-log-empty'),
+  loanLogList: document.getElementById('loan-log-list'),
   personalLoanAmountInput: document.getElementById('personal-loan-amount'),
   personalLoanTermInput: document.getElementById('personal-loan-term'),
   personalLoanAprInput: document.getElementById('personal-loan-apr'),
@@ -364,6 +376,65 @@ async function persistAccountChangeLog(creditUnionId, entry) {
   } catch (error) {
     console.error('Unable to persist account change log', error);
     return null;
+  }
+}
+
+async function loadLoanEntries(creditUnionId) {
+  if (!creditUnionId) {
+    appState.loanEntries = {};
+    return;
+  }
+  try {
+    const response = await fetch(`/api/loans?creditUnionId=${creditUnionId}`);
+    if (!response.ok) throw new Error(`Loan log request failed (${response.status})`);
+    const payload = await response.json();
+    const loans = Array.isArray(payload?.loans) ? payload.loans : [];
+    appState.loanEntries = {
+      ...appState.loanEntries,
+      [creditUnionId]: loans
+    };
+  } catch (error) {
+    console.error('Unable to load loan log', error);
+    appState.loanEntries = {
+      ...appState.loanEntries,
+      [creditUnionId]: []
+    };
+  }
+}
+
+async function createLoanEntry(payload) {
+  const response = await fetch('/api/loans', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data?.error || `Loan save failed (${response.status})`);
+  }
+  const data = await response.json();
+  return data?.loan;
+}
+
+async function updateLoanEntry(id, payload) {
+  const response = await fetch(`/api/loans/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data?.error || `Loan update failed (${response.status})`);
+  }
+  const data = await response.json();
+  return data?.loan;
+}
+
+async function deleteLoanEntry(id) {
+  const response = await fetch(`/api/loans/${id}`, { method: 'DELETE' });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data?.error || `Loan delete failed (${response.status})`);
   }
 }
 
@@ -1073,6 +1144,312 @@ function renderLoanOfficerCalculator() {
   updatePersonalLoanIllustration();
 }
 
+function formatLoanDate(value) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('en-US');
+}
+
+function formatLoanCoverageSummary(loan) {
+  if (!loan) return '—';
+  if (loan.coverageSelected === false) {
+    return 'No coverage selected';
+  }
+
+  const details = [];
+  const coverageTypeLabel =
+    loan.coverageType === 'debt-protection'
+      ? 'Debt protection'
+      : loan.coverageType === 'credit-insurance'
+        ? 'Credit insurance'
+        : null;
+  if (coverageTypeLabel) {
+    details.push(coverageTypeLabel);
+  }
+  if (loan.coverageDetails?.creditLife) {
+    details.push('Credit life');
+  }
+  if (loan.coverageDetails?.creditDisability) {
+    details.push('Credit disability');
+  }
+  if (loan.coverageDetails?.creditTier) {
+    const tierLabel = loan.coverageDetails.creditTier
+      .replace('-', ' ')
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+    details.push(`${tierLabel} tier`);
+  }
+  if (loan.coverageDetails?.debtPackage && loan.coverageDetails.debtPackage !== 'none') {
+    const packageLabel = loan.coverageDetails.debtPackage.replace('-', ' ').toUpperCase();
+    details.push(packageLabel);
+  }
+
+  if (!details.length) {
+    return 'Coverage selected';
+  }
+  return `Yes — ${details.join(' • ')}`;
+}
+
+function formatLoanProducts(loan) {
+  if (!loan?.products) return '—';
+  const selections = [];
+  if (loan.products.vscSelected) selections.push('VSC');
+  if (loan.products.gapSelected) selections.push('GAP');
+  return selections.length ? selections.join(' • ') : 'None';
+}
+
+function setLoanLogDefaults() {
+  if (selectors.loanLogDateInput && !selectors.loanLogDateInput.value) {
+    const today = new Date();
+    selectors.loanLogDateInput.value = today.toISOString().slice(0, 10);
+  }
+}
+
+function setLoanLogDisabled(isDisabled) {
+  [
+    selectors.loanLogDateInput,
+    selectors.loanLogOfficerInput,
+    selectors.loanLogCoverageSelect,
+    selectors.loanLogVscToggle,
+    selectors.loanLogGapToggle,
+    selectors.loanLogSaveBtn,
+    selectors.loanLogCancelBtn
+  ].forEach((element) => {
+    if (element) {
+      element.disabled = isDisabled;
+    }
+  });
+}
+
+function resetLoanLogForm() {
+  selectors.loanLogForm?.reset();
+  appState.loanEditingId = null;
+  if (selectors.loanLogSaveBtn) {
+    selectors.loanLogSaveBtn.textContent = 'Save loan';
+  }
+  if (selectors.loanLogCancelBtn) {
+    selectors.loanLogCancelBtn.hidden = true;
+  }
+  setLoanLogDefaults();
+  setFeedback(selectors.loanLogFeedback, '', 'info');
+}
+
+function populateLoanLogForm(loan) {
+  if (!loan) return;
+  appState.loanEditingId = loan.id;
+  if (selectors.loanLogDateInput) {
+    selectors.loanLogDateInput.value = loan.loanDate ? loan.loanDate.slice(0, 10) : '';
+  }
+  if (selectors.loanLogOfficerInput) {
+    selectors.loanLogOfficerInput.value = loan.loanOfficer || '';
+  }
+  if (selectors.loanLogCoverageSelect) {
+    selectors.loanLogCoverageSelect.value = loan.coverageSelected ? 'yes' : 'no';
+  }
+  if (selectors.loanLogVscToggle) {
+    selectors.loanLogVscToggle.checked = Boolean(loan.products?.vscSelected);
+  }
+  if (selectors.loanLogGapToggle) {
+    selectors.loanLogGapToggle.checked = Boolean(loan.products?.gapSelected);
+  }
+  if (selectors.loanAmountInput) {
+    selectors.loanAmountInput.value = Number.isFinite(loan.loanAmount) ? loan.loanAmount : '';
+  }
+  if (selectors.loanTermInput) {
+    selectors.loanTermInput.value = Number.isFinite(loan.termMonths) ? loan.termMonths : '';
+  }
+  if (selectors.loanAprInput) {
+    selectors.loanAprInput.value = Number.isFinite(loan.apr) ? loan.apr : '';
+  }
+  if (selectors.loanMilesInput) {
+    selectors.loanMilesInput.value = Number.isFinite(loan.mileage) ? loan.mileage : '';
+  }
+  if (selectors.loanVinInput) {
+    selectors.loanVinInput.value = loan.vin || '';
+  }
+  if (selectors.mobCoverageTypeSelect && loan.coverageType) {
+    selectors.mobCoverageTypeSelect.value = loan.coverageType;
+  }
+  if (selectors.mobCreditLifeToggle) {
+    selectors.mobCreditLifeToggle.checked = Boolean(loan.coverageDetails?.creditLife);
+  }
+  if (selectors.mobCreditDisabilityToggle) {
+    selectors.mobCreditDisabilityToggle.checked = Boolean(loan.coverageDetails?.creditDisability);
+  }
+  if (selectors.mobCreditTierSelect && loan.coverageDetails?.creditTier) {
+    selectors.mobCreditTierSelect.value = loan.coverageDetails.creditTier;
+  }
+  if (loan.coverageDetails?.debtPackage) {
+    const selected = document.querySelector(
+      `input[name="mob-debt-package"][value="${loan.coverageDetails.debtPackage}"]`
+    );
+    if (selected) {
+      selected.checked = true;
+    }
+  }
+  if (selectors.loanLogSaveBtn) {
+    selectors.loanLogSaveBtn.textContent = 'Update loan';
+  }
+  if (selectors.loanLogCancelBtn) {
+    selectors.loanLogCancelBtn.hidden = false;
+  }
+  updateLoanIllustration();
+  updateProtectionOptionsAvailability();
+}
+
+function buildLoanPayload() {
+  const creditUnionId = appState.accountSelectionId;
+  const loanDate = selectors.loanLogDateInput?.value || '';
+  const loanOfficer = selectors.loanLogOfficerInput?.value?.trim() || '';
+  const coverageSelectedValue = selectors.loanLogCoverageSelect?.value || '';
+  const coverageSelected =
+    coverageSelectedValue === 'yes' ? true : coverageSelectedValue === 'no' ? false : null;
+  const selectedPackage =
+    document.querySelector('input[name="mob-debt-package"]:checked')?.value || 'none';
+
+  return {
+    creditUnionId,
+    loanDate,
+    loanOfficer,
+    loanAmount: parseNumericInput(selectors.loanAmountInput?.value),
+    termMonths: parseNumericInput(selectors.loanTermInput?.value),
+    apr: parseNumericInput(selectors.loanAprInput?.value),
+    mileage: parseNumericInput(selectors.loanMilesInput?.value),
+    vin: selectors.loanVinInput?.value?.trim() || '',
+    coverageSelected,
+    coverageType: selectors.mobCoverageTypeSelect?.value || null,
+    coverageDetails: {
+      creditLife: selectors.mobCreditLifeToggle?.checked ?? false,
+      creditDisability: selectors.mobCreditDisabilityToggle?.checked ?? false,
+      creditTier: selectors.mobCreditTierSelect?.value || null,
+      debtPackage: selectedPackage || null
+    },
+    products: {
+      vscSelected: selectors.loanLogVscToggle?.checked ?? false,
+      gapSelected: selectors.loanLogGapToggle?.checked ?? false
+    }
+  };
+}
+
+function renderLoanLog() {
+  if (!selectors.loanLogList) return;
+  const creditUnionId = appState.accountSelectionId;
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || 'this credit union';
+  const summary = selectors.loanLogSummary;
+  const emptyState = selectors.loanLogEmpty;
+
+  selectors.loanLogList.replaceChildren();
+
+  if (!creditUnionId) {
+    if (summary) {
+      summary.textContent = 'Select a credit union to log funded loans and coverage selections.';
+    }
+    if (emptyState) {
+      emptyState.hidden = true;
+    }
+    setLoanLogDisabled(true);
+    resetLoanLogForm();
+    return;
+  }
+
+  setLoanLogDisabled(false);
+  setLoanLogDefaults();
+
+  const loans = Array.isArray(appState.loanEntries[creditUnionId])
+    ? appState.loanEntries[creditUnionId]
+    : [];
+
+  if (appState.loanEditingId && !loans.some((loan) => loan.id === appState.loanEditingId)) {
+    resetLoanLogForm();
+  }
+
+  if (summary) {
+    summary.textContent = `${loans.length} loan${loans.length === 1 ? '' : 's'} logged for ${creditUnionName}.`;
+  }
+
+  if (!loans.length) {
+    if (emptyState) {
+      emptyState.hidden = false;
+    }
+    return;
+  }
+
+  if (emptyState) {
+    emptyState.hidden = true;
+  }
+
+  const fragment = document.createDocumentFragment();
+  loans.forEach((loan) => {
+    const row = document.createElement('tr');
+
+    const dateCell = document.createElement('td');
+    dateCell.textContent = formatLoanDate(loan.loanDate);
+
+    const officerCell = document.createElement('td');
+    officerCell.textContent = loan.loanOfficer || '—';
+
+    const amountCell = document.createElement('td');
+    amountCell.className = 'numeric';
+    amountCell.textContent = Number.isFinite(loan.loanAmount) ? formatCurrencyValue(loan.loanAmount) : '—';
+
+    const termCell = document.createElement('td');
+    termCell.className = 'numeric';
+    termCell.textContent = Number.isFinite(loan.termMonths) ? `${loan.termMonths} mo` : '—';
+
+    const aprCell = document.createElement('td');
+    aprCell.className = 'numeric';
+    aprCell.textContent = Number.isFinite(loan.apr) ? `${decimalFormatter.format(loan.apr)}%` : '—';
+
+    const mileageCell = document.createElement('td');
+    mileageCell.className = 'numeric';
+    mileageCell.textContent = Number.isFinite(loan.mileage) ? integerFormatter.format(loan.mileage) : '—';
+
+    const vinCell = document.createElement('td');
+    vinCell.textContent = loan.vin || '—';
+
+    const coverageCell = document.createElement('td');
+    coverageCell.textContent = formatLoanCoverageSummary(loan);
+
+    const productsCell = document.createElement('td');
+    productsCell.textContent = formatLoanProducts(loan);
+
+    const actionsCell = document.createElement('td');
+    actionsCell.className = 'numeric';
+
+    const editButton = document.createElement('button');
+    editButton.type = 'button';
+    editButton.className = 'table-action-button';
+    editButton.dataset.action = 'edit-loan';
+    editButton.dataset.loanId = loan.id;
+    editButton.textContent = 'Edit';
+
+    const deleteButton = document.createElement('button');
+    deleteButton.type = 'button';
+    deleteButton.className = 'table-action-button table-action-button--danger';
+    deleteButton.dataset.action = 'delete-loan';
+    deleteButton.dataset.loanId = loan.id;
+    deleteButton.textContent = 'Delete';
+
+    actionsCell.append(editButton, deleteButton);
+
+    row.append(
+      dateCell,
+      officerCell,
+      amountCell,
+      termCell,
+      aprCell,
+      mileageCell,
+      vinCell,
+      coverageCell,
+      productsCell,
+      actionsCell
+    );
+    fragment.append(row);
+  });
+
+  selectors.loanLogList.append(fragment);
+}
+
 function handleWarrantyMarkupChange() {
   const creditUnionId = appState.accountSelectionId;
   if (!creditUnionId) return;
@@ -1378,7 +1755,9 @@ const appState = {
   accountNotes: {},
   accountReviewData: {},
   accountChangeLog: {},
-  accountWarrantyConfigs: {}
+  accountWarrantyConfigs: {},
+  loanEntries: {},
+  loanEditingId: null
 };
 
 function showDialog(dialog) {
@@ -2247,6 +2626,7 @@ function renderAccountWorkspace() {
     renderAccountReview();
     renderAccountChangeLog();
     renderLoanOfficerCalculator();
+    renderLoanLog();
     return;
   }
 
@@ -2294,6 +2674,7 @@ function renderAccountWorkspace() {
   renderAccountReview();
   renderAccountChangeLog();
   renderLoanOfficerCalculator();
+  renderLoanLog();
 }
 
 function setCallReportFeedback(message, state = 'info') {
@@ -5282,7 +5663,11 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   appState.accountSelectionId = event.currentTarget.value || null;
   renderAccountWorkspace();
   try {
-    await loadCallReports(appState.accountSelectionId);
+    await Promise.all([
+      loadCallReports(appState.accountSelectionId),
+      appState.accountSelectionId ? loadLoanEntries(appState.accountSelectionId) : Promise.resolve()
+    ]);
+    renderLoanLog();
   } catch (error) {
     setCallReportFeedback(error.message, 'error');
   }
@@ -5694,6 +6079,117 @@ selectors.callReportList?.addEventListener('click', async (event) => {
   }
 });
 
+selectors.loanLogForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    setFeedback(selectors.loanLogFeedback, 'Select a credit union before saving a loan.', 'error');
+    return;
+  }
+
+  const payload = buildLoanPayload();
+  if (!payload.loanDate) {
+    setFeedback(selectors.loanLogFeedback, 'Loan date is required.', 'error');
+    return;
+  }
+  if (!payload.loanOfficer) {
+    setFeedback(selectors.loanLogFeedback, 'Loan officer is required.', 'error');
+    return;
+  }
+  if (!Number.isFinite(payload.loanAmount)) {
+    setFeedback(selectors.loanLogFeedback, 'Loan amount is required.', 'error');
+    return;
+  }
+  if (payload.coverageSelected === null) {
+    setFeedback(selectors.loanLogFeedback, 'Select yes or no for coverage.', 'error');
+    return;
+  }
+
+  if (selectors.loanLogSaveBtn) {
+    selectors.loanLogSaveBtn.disabled = true;
+  }
+  setFeedback(selectors.loanLogFeedback, 'Saving loan...', 'info');
+
+  try {
+    if (appState.loanEditingId) {
+      await updateLoanEntry(appState.loanEditingId, payload);
+      addAccountChangeLog({
+        creditUnionId,
+        action: 'Updated loan entry',
+        details: `Updated loan for ${payload.loanOfficer}.`,
+        actor: 'Workspace user'
+      });
+      setFeedback(selectors.loanLogFeedback, 'Loan updated.', 'success');
+    } else {
+      await createLoanEntry(payload);
+      addAccountChangeLog({
+        creditUnionId,
+        action: 'Logged new loan',
+        details: `Logged loan for ${payload.loanOfficer}.`,
+        actor: 'Workspace user'
+      });
+      setFeedback(selectors.loanLogFeedback, 'Loan saved.', 'success');
+    }
+    await loadLoanEntries(creditUnionId);
+    renderLoanLog();
+    resetLoanLogForm();
+  } catch (error) {
+    setFeedback(selectors.loanLogFeedback, error.message, 'error');
+  } finally {
+    if (selectors.loanLogSaveBtn) {
+      selectors.loanLogSaveBtn.disabled = false;
+    }
+  }
+});
+
+selectors.loanLogCancelBtn?.addEventListener('click', () => {
+  resetLoanLogForm();
+});
+
+selectors.loanLogList?.addEventListener('click', async (event) => {
+  const button = event.target.closest('button[data-action]');
+  if (!button || !selectors.loanLogList.contains(button)) return;
+
+  const loanId = button.dataset.loanId;
+  if (!loanId) return;
+
+  const creditUnionId = appState.accountSelectionId;
+  const loans = creditUnionId ? appState.loanEntries[creditUnionId] || [] : [];
+  const loan = loans.find((item) => item.id === loanId);
+
+  if (button.dataset.action === 'edit-loan') {
+    populateLoanLogForm(loan);
+    return;
+  }
+
+  if (button.dataset.action === 'delete-loan') {
+    const confirmed = window.confirm('Delete this loan entry? This cannot be undone.');
+    if (!confirmed) return;
+
+    button.disabled = true;
+    button.textContent = 'Deleting...';
+    setFeedback(selectors.loanLogFeedback, 'Deleting loan...', 'info');
+
+    try {
+      await deleteLoanEntry(loanId);
+      addAccountChangeLog({
+        creditUnionId,
+        action: 'Deleted loan entry',
+        details: loan?.loanOfficer ? `Deleted loan for ${loan.loanOfficer}.` : 'Deleted a loan entry.',
+        actor: 'Workspace user'
+      });
+      await loadLoanEntries(creditUnionId);
+      renderLoanLog();
+      setFeedback(selectors.loanLogFeedback, 'Loan deleted.', 'success');
+    } catch (error) {
+      setFeedback(selectors.loanLogFeedback, error.message, 'error');
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Delete';
+    }
+  }
+});
+
 selectors.missingFilterForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
@@ -5896,6 +6392,14 @@ async function bootstrap() {
     } catch (error) {
       console.error(error);
       setCallReportFeedback(error.message, 'error');
+    }
+  }
+  if (selectors.loanLogList && appState.accountSelectionId) {
+    try {
+      await loadLoanEntries(appState.accountSelectionId);
+      renderLoanLog();
+    } catch (error) {
+      console.error(error);
     }
   }
 
