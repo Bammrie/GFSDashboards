@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Quotes | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Quotes</h1>
+        <p class="site-subtitle">Open an active account to build a quote and issue coverage.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <div class="header-group" aria-label="Main">
+          <span class="header-group__label">Main</span>
+          <div class="header-group__links">
+            <a href="quotes.html" class="header-link" aria-current="page">Quotes</a>
+            <a href="accounts.html" class="header-link">Accounts</a>
+            <a href="training.html" class="header-link">Training</a>
+          </div>
+        </div>
+        <div class="header-group" aria-label="Income and reporting">
+          <span class="header-group__label">Income &amp; reporting</span>
+          <div class="header-group__links">
+            <a href="income-streams.html" class="header-link">Income Streams</a>
+            <a href="reporting.html" class="header-link">Reporting</a>
+            <a href="monthly.html" class="header-link">Monthly Totals</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-labelledby="quotes-directory-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="quotes-directory-heading" class="panel__title">Active accounts</h2>
+          <p class="panel__description">
+            Select a credit union to open their quoting workspace. Prospects stay in Accounts until activation.
+          </p>
+        </div>
+      </header>
+
+      <p id="quotes-directory-summary" class="panel__description"></p>
+
+      <div class="account-directory" aria-live="polite">
+        <div id="quotes-directory-empty" class="empty-state">
+          <p>No active accounts yet. Move a prospect to Accounts to begin quoting.</p>
+        </div>
+
+        <div class="table-scroll" id="quotes-directory-table" hidden>
+          <table class="data-table account-directory__table" aria-describedby="quotes-directory-heading">
+            <thead>
+              <tr>
+                <th scope="col">Credit union</th>
+                <th scope="col">Last reported month</th>
+                <th scope="col" class="numeric">Assets (latest)</th>
+                <th scope="col" class="numeric">Consumer lending (latest)</th>
+              </tr>
+            </thead>
+            <tbody id="quotes-directory-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

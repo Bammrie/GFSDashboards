@@ -1,3 +1,4 @@
+2029-01-06: Added Quotes navigation plus dedicated quotes list/workspace with a sales register flow so quoting is separated from Accounts while Menu Pricing stays in Accounts.
 2025-03-20: Added MongoDB loan log model and /api/loans CRUD endpoints plus account workspace loan log form so loan entries and coverage selections sync across users.
 2029-01-05: Synced MOB blended rate visibility to hide single/joint inputs and persisted menu pricing configs in MongoDB so updates sync across users.
 2026-01-15: Hid Menu Pricing MOB rate inputs until coverage type and rate structure are selected, adding single/joint debt protection rate fields for complete pricing setup.

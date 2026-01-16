@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Quote Workspace | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Quote workspace</h1>
+        <p class="site-subtitle">Build member-facing quotes and issue coverage without leaving the sales register.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <div class="header-group" aria-label="Main">
+          <span class="header-group__label">Main</span>
+          <div class="header-group__links">
+            <a href="quotes.html" class="header-link" aria-current="page">Quotes</a>
+            <a href="accounts.html" class="header-link">Accounts</a>
+            <a href="training.html" class="header-link">Training</a>
+          </div>
+        </div>
+        <div class="header-group" aria-label="Income and reporting">
+          <span class="header-group__label">Income &amp; reporting</span>
+          <div class="header-group__links">
+            <a href="income-streams.html" class="header-link">Income Streams</a>
+            <a href="reporting.html" class="header-link">Reporting</a>
+            <a href="monthly.html" class="header-link">Monthly Totals</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout layout--account">
+    <p class="back-link"><a href="quotes.html">&larr; Back to Quotes directory</a></p>
+
+    <section class="panel panel--full" aria-labelledby="quote-select-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="quote-select-heading" class="panel__title">Select an account</h2>
+          <p class="panel__description">
+            Choose an active credit union to start a quote. Issued coverage entries sync across users.
+          </p>
+        </div>
+      </header>
+      <div class="account-select-header">
+        <div class="field-group account-select-field">
+          <label for="account-credit-union-select" class="sr-only">Credit union / entity</label>
+          <div class="field-with-action">
+            <select id="account-credit-union-select" name="creditUnionId" data-filter="accounts-only" required>
+              <option value="" disabled selected>Select a credit union</option>
+            </select>
+          </div>
+        </div>
+        <p id="quote-workspace-summary" class="panel__note">Select a credit union to start a quote.</p>
+      </div>
+    </section>
+
+    <section class="panel panel--full" aria-labelledby="loan-officer-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="loan-officer-heading" class="panel__title">Menu Presentation</h2>
+          <p class="panel__description">
+            Build a member-facing payment illustration by combining the auto loan terms with warranty coverage selections.
+          </p>
+        </div>
+      </header>
+
+      <p id="loan-officer-summary" class="panel__note">Select a credit union to start an illustration.</p>
+
+      <div class="loan-officer-grid">
+        <div class="loan-officer-card">
+          <h3 class="loan-officer-card__title">Loan details</h3>
+          <div class="loan-officer-fields">
+            <div class="field-group">
+              <label for="loan-amount">Loan amount</label>
+              <input type="number" id="loan-amount" inputmode="decimal" min="0" placeholder="25,000" />
+            </div>
+            <div class="field-group">
+              <label for="loan-term">Term (months)</label>
+              <input type="number" id="loan-term" inputmode="numeric" min="1" placeholder="72" />
+            </div>
+            <div class="field-group">
+              <label for="loan-apr">APR (%)</label>
+              <input type="number" id="loan-apr" inputmode="decimal" step="0.01" min="0" placeholder="6.99" />
+            </div>
+            <div class="field-group">
+              <label for="loan-miles">Miles on vehicle</label>
+              <input type="number" id="loan-miles" inputmode="numeric" min="0" placeholder="42,000" />
+            </div>
+            <div class="field-group">
+              <label for="loan-vin">VIN</label>
+              <input type="text" id="loan-vin" placeholder="1FTFW1E50JFC12345" />
+            </div>
+            <button type="button" id="loan-vin-decode-btn" class="secondary-button">Decode VIN</button>
+          </div>
+          <div class="loan-officer-actions">
+            <button type="button" id="loan-protection-options-btn" class="primary-button" disabled>
+              Protection Options
+            </button>
+            <p class="field-help">
+              Complete loan amount, term, APR, miles, and VIN to unlock the menu presentation.
+            </p>
+          </div>
+        </div>
+
+        <div class="loan-officer-card loan-officer-card--vin">
+          <h3 class="loan-officer-card__title">VIN decode</h3>
+          <div id="loan-vin-results" class="vin-results">
+            <p class="vin-results__empty">Enter a VIN to decode vehicle details.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="loan-officer-grid loan-officer-grid--personal">
+        <div class="loan-officer-card loan-officer-card--personal">
+          <h3 class="loan-officer-card__title">Personal loan calculator</h3>
+          <p class="field-help">
+            Estimate personal loan payments with credit insurance or debt protection premiums.
+          </p>
+          <div class="loan-officer-fields">
+            <div class="field-group">
+              <label for="personal-loan-amount">Loan amount</label>
+              <input type="number" id="personal-loan-amount" inputmode="decimal" min="0" placeholder="12,000" />
+            </div>
+            <div class="field-group">
+              <label for="personal-loan-term">Term (months)</label>
+              <input type="number" id="personal-loan-term" inputmode="numeric" min="1" placeholder="48" />
+            </div>
+            <div class="field-group">
+              <label for="personal-loan-apr">APR (%)</label>
+              <input type="number" id="personal-loan-apr" inputmode="decimal" step="0.01" min="0" placeholder="9.5" />
+            </div>
+          </div>
+          <div class="loan-officer-fields">
+            <div class="field-group">
+              <label for="personal-mob-coverage-type">Coverage type</label>
+              <select id="personal-mob-coverage-type">
+                <option value="credit-insurance">Credit insurance</option>
+                <option value="debt-protection">Debt protection</option>
+              </select>
+              <p class="field-help">Matches the credit union MOB rate setup.</p>
+            </div>
+            <div id="personal-mob-credit-controls">
+              <div class="field-options">
+                <label class="field-option">
+                  <input type="checkbox" id="personal-mob-credit-life" checked />
+                  Credit life
+                </label>
+                <label class="field-option">
+                  <input type="checkbox" id="personal-mob-credit-disability" />
+                  Credit disability
+                </label>
+              </div>
+              <div class="field-group">
+                <label for="personal-mob-credit-tier">Borrower type</label>
+                <select id="personal-mob-credit-tier">
+                  <option value="single">Single</option>
+                  <option value="joint">Joint</option>
+                  <option value="blended">Blended</option>
+                </select>
+                <p class="field-help" id="personal-mob-credit-tier-help">
+                  Rate tier follows the credit union setup.
+                </p>
+              </div>
+            </div>
+            <div id="personal-mob-debt-controls" hidden>
+              <div class="field-group">
+                <span class="field-label">Debt protection package</span>
+                <div class="field-options">
+                  <label class="field-option">
+                    <input type="radio" name="personal-mob-debt-package" value="package-a" checked />
+                    Package A
+                  </label>
+                  <label class="field-option">
+                    <input type="radio" name="personal-mob-debt-package" value="package-b" />
+                    Package B
+                  </label>
+                  <label class="field-option">
+                    <input type="radio" name="personal-mob-debt-package" value="package-c" />
+                    Package C
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="loan-officer-results">
+            <div class="payment-row">
+              <span>Base payment</span>
+              <strong id="personal-base-payment">—</strong>
+            </div>
+            <div class="payment-row">
+              <span>First month MOB premium</span>
+              <strong id="personal-mob-premium-start">—</strong>
+            </div>
+            <div class="payment-row">
+              <span>Average MOB premium</span>
+              <strong id="personal-mob-premium-average">—</strong>
+            </div>
+            <div class="payment-row payment-row--highlight">
+              <span>Payment with MOB coverage</span>
+              <strong id="personal-payment-with-mob">—</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="table-card loan-log-card" aria-live="polite">
+        <header class="table-header">
+          <h3 class="table-title">Sales register</h3>
+          <p id="loan-log-summary" class="table-description">
+            Issue coverage for funded loans. Loan amount, term, APR, mileage, and VIN are pulled from the loan details
+            above while coverage combinations follow the Protection Options selections.
+          </p>
+        </header>
+        <form id="loan-log-form" class="loan-log-form">
+          <div class="loan-log-fields">
+            <div class="field-group">
+              <label for="loan-log-date">Loan date</label>
+              <input type="date" id="loan-log-date" required />
+            </div>
+            <div class="field-group">
+              <label for="loan-log-officer">Loan officer</label>
+              <input type="text" id="loan-log-officer" placeholder="Officer name" required />
+            </div>
+            <div class="field-group">
+              <label for="loan-log-coverage-selected">Coverage selected</label>
+              <select id="loan-log-coverage-selected" required>
+                <option value="" selected>Select</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Products selected</span>
+              <div class="field-options">
+                <label class="field-option">
+                  <input type="checkbox" id="loan-log-vsc-selected" />
+                  VSC
+                </label>
+                <label class="field-option">
+                  <input type="checkbox" id="loan-log-gap-selected" />
+                  GAP
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="loan-log-actions">
+            <p class="feedback" id="loan-log-feedback" role="status" aria-live="polite"></p>
+            <button type="submit" class="primary-button" id="loan-log-save-btn">Issue coverage</button>
+            <button type="button" class="secondary-button" id="loan-log-cancel-btn" hidden>Cancel edit</button>
+          </div>
+        </form>
+
+        <div id="loan-log-empty" class="empty-state" hidden>
+          <p>No coverage issued yet. Use Issue Coverage to create the first register entry.</p>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Loan date</th>
+                <th scope="col">Loan officer</th>
+                <th scope="col" class="numeric">Amount</th>
+                <th scope="col" class="numeric">Term</th>
+                <th scope="col" class="numeric">APR</th>
+                <th scope="col" class="numeric">Mileage</th>
+                <th scope="col">VIN</th>
+                <th scope="col">Coverage</th>
+                <th scope="col">Products</th>
+                <th scope="col" class="numeric">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="loan-log-list"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="protection-options-dialog" aria-labelledby="protection-options-dialog-title">
+    <div class="dialog-form dialog-form--wide dialog-form--menu">
+      <header class="dialog-header">
+        <div>
+          <h2 id="protection-options-dialog-title">Protection Options</h2>
+          <p class="dialog-subtitle">Review coverage combinations and monthly payment scenarios.</p>
+        </div>
+        <button type="button" class="icon-button" id="close-protection-options-dialog" aria-label="Close dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+      </header>
+      <div class="dialog-body">
+        <div class="loan-officer-dialog-grid">
+          <div class="loan-officer-card loan-officer-card--summary">
+            <h3 class="loan-officer-card__title">Coverage Selection</h3>
+            <div class="loan-officer-fields">
+              <div class="field-group">
+                <span class="field-label">Coverage combinations</span>
+                <p class="field-help">
+                  Every available bundle is shown below so members can see the monthly payment impact of each option.
+                </p>
+              </div>
+              <div class="field-group">
+                <span class="field-label">MOB coverage</span>
+                <p class="field-help">
+                  Monthly premiums are calculated per $1,000 of remaining balance and decline over time.
+                </p>
+                <div class="loan-officer-fields">
+                  <div class="field-group">
+                    <label for="mob-coverage-type">Coverage type</label>
+                    <select id="mob-coverage-type" disabled>
+                      <option value="credit-insurance">Credit insurance</option>
+                      <option value="debt-protection">Debt protection</option>
+                    </select>
+                    <p class="field-help">Set the default program in Menu Pricing.</p>
+                  </div>
+                  <div id="mob-credit-controls">
+                    <div class="field-options">
+                      <label class="field-option">
+                        <input type="checkbox" id="mob-credit-life" checked />
+                        Credit life
+                      </label>
+                      <label class="field-option">
+                        <input type="checkbox" id="mob-credit-disability" />
+                        Credit disability
+                      </label>
+                    </div>
+                    <div class="field-group">
+                      <label for="mob-credit-tier">Borrower type</label>
+                      <select id="mob-credit-tier">
+                        <option value="single">Single</option>
+                        <option value="joint">Joint</option>
+                        <option value="blended">Blended</option>
+                      </select>
+                      <p class="field-help" id="mob-credit-tier-help">Rate tier follows the credit union setup.</p>
+                    </div>
+                  </div>
+                  <div id="mob-debt-controls" hidden>
+                    <div class="field-options">
+                      <label class="field-option">
+                        <input type="radio" name="mob-debt-package" value="package-a" checked />
+                        Package A
+                      </label>
+                      <label class="field-option">
+                        <input type="radio" name="mob-debt-package" value="package-b" />
+                        Package B
+                      </label>
+                      <label class="field-option">
+                        <input type="radio" name="mob-debt-package" value="package-c" />
+                        Package C
+                      </label>
+                      <label class="field-option">
+                        <input type="radio" name="mob-debt-package" value="none" />
+                        None
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="loan-officer-quote">
+              <div class="loan-officer-quote__options">
+                <div class="coverage-combo-section">
+                  <div class="coverage-combo-header">
+                    <p class="coverage-combo-header__eyebrow">Standard term</p>
+                    <p class="coverage-combo-header__term" id="loan-standard-term">—</p>
+                  </div>
+                  <div class="coverage-combo-grid" id="loan-coverage-combo-grid">
+                    <div class="coverage-combo-card" data-coverage-combo="base">
+                      <div class="coverage-combo-card__header">
+                        <p class="coverage-combo-card__eyebrow">Base loan</p>
+                        <h4 class="coverage-combo-card__title">No coverage add-ons</h4>
+                      </div>
+                      <div class="coverage-combo-card__body">
+                        <div class="payment-row">
+                          <span>Monthly payment</span>
+                          <strong data-coverage-field="payment">—</strong>
+                        </div>
+                        <div class="payment-row payment-row--highlight">
+                          <span>Added per month</span>
+                          <strong data-coverage-field="delta">—</strong>
+                        </div>
+                        <div class="payment-row">
+                          <span>Total financed</span>
+                          <strong data-coverage-field="total">—</strong>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="coverage-combo-card" data-coverage-combo="vsc">
+                      <div class="coverage-combo-card__header">
+                        <p class="coverage-combo-card__eyebrow">VSC bundle</p>
+                        <h4 class="coverage-combo-card__title">Vehicle service contract</h4>
+                      </div>
+                      <div class="coverage-combo-card__body">
+                        <div class="payment-row">
+                          <span>Monthly payment</span>
+                          <strong data-coverage-field="payment">—</strong>
+                        </div>
+                        <div class="payment-row payment-row--highlight">
+                          <span>Added per month</span>
+                          <strong data-coverage-field="delta">—</strong>
+                        </div>
+                        <div class="payment-row">
+                          <span>Total financed</span>
+                          <strong data-coverage-field="total">—</strong>
+                        </div>
+                        <div class="payment-row payment-row--muted coverage-combo-card__extension" data-coverage-field="extension-row" hidden>
+                          <span data-coverage-field="extension-term">Extended term payment</span>
+                          <strong data-coverage-field="extension-payment">—</strong>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="coverage-combo-card" data-coverage-combo="gap">
+                      <div class="coverage-combo-card__header">
+                        <p class="coverage-combo-card__eyebrow">GAP bundle</p>
+                        <h4 class="coverage-combo-card__title">Guaranteed asset protection</h4>
+                      </div>
+                      <div class="coverage-combo-card__body">
+                        <div class="payment-row">
+                          <span>Monthly payment</span>
+                          <strong data-coverage-field="payment">—</strong>
+                        </div>
+                        <div class="payment-row payment-row--highlight">
+                          <span>Added per month</span>
+                          <strong data-coverage-field="delta">—</strong>
+                        </div>
+                        <div class="payment-row">
+                          <span>Total financed</span>
+                          <strong data-coverage-field="total">—</strong>
+                        </div>
+                        <div class="payment-row payment-row--muted coverage-combo-card__extension" data-coverage-field="extension-row" hidden>
+                          <span data-coverage-field="extension-term">Extended term payment</span>
+                          <strong data-coverage-field="extension-payment">—</strong>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="coverage-combo-card coverage-combo-card--featured" data-coverage-combo="vsc-gap">
+                      <div class="coverage-combo-card__header">
+                        <p class="coverage-combo-card__eyebrow">VSC + GAP</p>
+                        <h4 class="coverage-combo-card__title">Full protection bundle</h4>
+                      </div>
+                      <div class="coverage-combo-card__body">
+                        <div class="payment-row">
+                          <span>Monthly payment</span>
+                          <strong data-coverage-field="payment">—</strong>
+                        </div>
+                        <div class="payment-row payment-row--highlight">
+                          <span>Added per month</span>
+                          <strong data-coverage-field="delta">—</strong>
+                        </div>
+                        <div class="payment-row">
+                          <span>Total financed</span>
+                          <strong data-coverage-field="total">—</strong>
+                        </div>
+                        <div class="payment-row payment-row--muted coverage-combo-card__extension" data-coverage-field="extension-row" hidden>
+                          <span data-coverage-field="extension-term">Extended term payment</span>
+                          <strong data-coverage-field="extension-payment">—</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="loan-officer-quote__summary">
+                <div class="mob-premium-card">
+                  <p class="mob-premium-card__title">Payment quote summary</p>
+                  <div class="payment-row">
+                    <span>Base monthly payment</span>
+                    <strong id="loan-base-payment">—</strong>
+                  </div>
+                  <div class="payment-row">
+                    <span>MOB premium (month 1)</span>
+                    <strong id="loan-mob-premium-start">—</strong>
+                  </div>
+                  <div class="payment-row">
+                    <span>MOB premium (avg)</span>
+                    <strong id="loan-mob-premium-average">—</strong>
+                  </div>
+                  <div class="payment-row payment-row--highlight">
+                    <span>Month 1 payment with MOB</span>
+                    <strong id="loan-payment-with-mob">—</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="loan-officer-card loan-officer-card--history">
+            <h3 class="loan-officer-card__title">Quote snapshots</h3>
+            <p class="field-help">Save and reopen menu presentation scenarios for this credit union.</p>
+            <div class="loan-illustration-actions">
+              <button type="button" id="loan-illustration-save-btn" class="secondary-button">Save snapshot</button>
+              <p class="feedback" id="loan-illustration-save-status" role="status" aria-live="polite"></p>
+            </div>
+            <div id="loan-illustration-empty" class="empty-state" hidden>
+              <p>No snapshots saved yet. Capture a quote to share with the team.</p>
+            </div>
+            <ul id="loan-illustration-list" class="loan-illustration-list" aria-live="polite"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
