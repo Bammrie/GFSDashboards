@@ -367,21 +367,35 @@ async function persistAccountChangeLog(creditUnionId, entry) {
   }
 }
 
-function getStoredWarrantyConfigs() {
-  if (typeof localStorage === 'undefined') return {};
+async function loadAccountWarrantyConfigs() {
   try {
-    const raw = localStorage.getItem('accountWarrantyConfigs');
-    const parsed = raw ? JSON.parse(raw) : {};
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch (_error) {
-    return {};
+    const response = await fetch('/api/account-warranty-configs');
+    if (!response.ok) throw new Error(`Warranty config request failed (${response.status})`);
+    const payload = await response.json();
+    const data = payload?.data;
+    appState.accountWarrantyConfigs = data && typeof data === 'object' ? data : {};
+  } catch (error) {
+    console.error('Unable to load warranty configs', error);
+    appState.accountWarrantyConfigs = {};
   }
 }
 
-function persistWarrantyConfigs(configs) {
-  if (typeof localStorage === 'undefined') return;
+async function persistWarrantyConfigs(creditUnionId, config) {
   try {
-    localStorage.setItem('accountWarrantyConfigs', JSON.stringify(configs));
+    const response = await fetch('/api/account-warranty-configs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ creditUnionId, config })
+    });
+    if (!response.ok) throw new Error(`Warranty config save failed (${response.status})`);
+    const payload = await response.json();
+    const saved = payload?.config && typeof payload.config === 'object' ? payload.config : null;
+    if (saved) {
+      appState.accountWarrantyConfigs = {
+        ...appState.accountWarrantyConfigs,
+        [creditUnionId]: saved
+      };
+    }
   } catch (error) {
     console.error('Unable to persist warranty configs', error);
   }
@@ -560,7 +574,7 @@ function saveWarrantyConfig(creditUnionId, updates) {
     ...appState.accountWarrantyConfigs,
     [creditUnionId]: next
   };
-  persistWarrantyConfigs(appState.accountWarrantyConfigs);
+  void persistWarrantyConfigs(creditUnionId, next);
 }
 
 function renderVinResults(result, message) {
@@ -1081,24 +1095,54 @@ function updateMobPricingVisibility({ mobCoverageType, mobRateStructure }) {
   const isDebtProtection = mobCoverageType === 'debt-protection';
   const hasRateStructure = Boolean(mobRateStructure);
   const isBlended = mobRateStructure === 'blended';
+  const setGroupVisibility = (container, inputs, isVisible) => {
+    if (container) {
+      container.hidden = !isVisible;
+    }
+    inputs.forEach((input) => {
+      if (input) {
+        input.disabled = !isVisible;
+      }
+    });
+  };
   if (selectors.mobCreditRateFields) {
     selectors.mobCreditRateFields.hidden = !(isCreditInsurance && hasRateStructure);
   }
   if (selectors.mobDebtRateFields) {
     selectors.mobDebtRateFields.hidden = !(isDebtProtection && hasRateStructure);
   }
-  if (selectors.mobBlendedRateFields) {
-    selectors.mobBlendedRateFields.hidden = !(isCreditInsurance && hasRateStructure && isBlended);
-  }
-  if (selectors.mobUnblendedRateFields) {
-    selectors.mobUnblendedRateFields.hidden = !(isCreditInsurance && hasRateStructure && !isBlended);
-  }
-  if (selectors.mobDebtBlendedRateFields) {
-    selectors.mobDebtBlendedRateFields.hidden = !(isDebtProtection && hasRateStructure && isBlended);
-  }
-  if (selectors.mobDebtUnblendedRateFields) {
-    selectors.mobDebtUnblendedRateFields.hidden = !(isDebtProtection && hasRateStructure && !isBlended);
-  }
+  setGroupVisibility(
+    selectors.mobBlendedRateFields,
+    [selectors.mobBlendedLifeRateInput, selectors.mobBlendedDisabilityRateInput],
+    isCreditInsurance && hasRateStructure && isBlended
+  );
+  setGroupVisibility(
+    selectors.mobUnblendedRateFields,
+    [
+      selectors.mobSingleLifeRateInput,
+      selectors.mobJointLifeRateInput,
+      selectors.mobSingleDisabilityRateInput,
+      selectors.mobJointDisabilityRateInput
+    ],
+    isCreditInsurance && hasRateStructure && !isBlended
+  );
+  setGroupVisibility(
+    selectors.mobDebtBlendedRateFields,
+    [selectors.mobPackageARateInput, selectors.mobPackageBRateInput, selectors.mobPackageCRateInput],
+    isDebtProtection && hasRateStructure && isBlended
+  );
+  setGroupVisibility(
+    selectors.mobDebtUnblendedRateFields,
+    [
+      selectors.mobPackageASingleRateInput,
+      selectors.mobPackageAJointRateInput,
+      selectors.mobPackageBSingleRateInput,
+      selectors.mobPackageBJointRateInput,
+      selectors.mobPackageCSingleRateInput,
+      selectors.mobPackageCJointRateInput
+    ],
+    isDebtProtection && hasRateStructure && !isBlended
+  );
 }
 
 function updateMobCoverageControls({ mobCoverageType, mobRateStructure }) {
@@ -1334,7 +1378,7 @@ const appState = {
   accountNotes: {},
   accountReviewData: {},
   accountChangeLog: {},
-  accountWarrantyConfigs: getStoredWarrantyConfigs()
+  accountWarrantyConfigs: {}
 };
 
 function showDialog(dialog) {
@@ -5747,7 +5791,8 @@ async function bootstrap() {
       loadIncomeStreams(),
       loadAccountReviewData(),
       loadAccountNotes(),
-      loadAccountChangeLog()
+      loadAccountChangeLog(),
+      loadAccountWarrantyConfigs()
     ]);
   } catch (error) {
     console.error(error);
