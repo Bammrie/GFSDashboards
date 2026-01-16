@@ -185,6 +185,13 @@ const accountChangeLogSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+const accountWarrantyConfigSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, unique: true },
+    config: { type: mongoose.Schema.Types.Mixed, default: {} }
+  },
+  { timestamps: true }
+);
 const callReportSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
@@ -233,6 +240,7 @@ const CallReport = mongoose.model('CallReport', callReportSchema);
 const AccountReview = mongoose.model('AccountReview', accountReviewSchema);
 const AccountNotes = mongoose.model('AccountNotes', accountNotesSchema);
 const AccountChangeLog = mongoose.model('AccountChangeLog', accountChangeLogSchema);
+const AccountWarrantyConfig = mongoose.model('AccountWarrantyConfig', accountWarrantyConfigSchema);
 
 const databaseReady = await initializeDatabase();
 
@@ -360,6 +368,50 @@ app.post('/api/account-review', async (req, res, next) => {
     ).lean();
 
     res.json({ data: updated?.data || {} });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/account-warranty-configs', async (req, res, next) => {
+  try {
+    const configs = await AccountWarrantyConfig.find().lean();
+    const data = configs.reduce((memo, entry) => {
+      memo[entry.creditUnion.toString()] = entry.config || {};
+      return memo;
+    }, {});
+    res.json({ data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/account-warranty-configs', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid credit union ID is required.' });
+      return;
+    }
+    const config = req.body?.config;
+    if (!config || typeof config !== 'object' || Array.isArray(config)) {
+      res.status(400).json({ error: 'Warranty config payload must be an object.' });
+      return;
+    }
+
+    const creditUnionExists = await CreditUnion.exists({ _id: creditUnionId });
+    if (!creditUnionExists) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const updated = await AccountWarrantyConfig.findOneAndUpdate(
+      { creditUnion: creditUnionId },
+      { config },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    ).lean();
+
+    res.json({ config: updated?.config || {} });
   } catch (error) {
     next(error);
   }
