@@ -992,6 +992,35 @@ input[type='month']:focus-visible {
   border-top: 1px solid var(--border);
 }
 
+.loan-log-card {
+  margin-top: 1.5rem;
+}
+
+.loan-log-form {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.loan-log-fields {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  align-items: end;
+}
+
+.loan-log-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.loan-log-actions .feedback {
+  margin: 0;
+  flex: 1 1 240px;
+}
+
 @media (max-width: 900px) {
   .loan-officer-grid {
     grid-template-columns: 1fr;

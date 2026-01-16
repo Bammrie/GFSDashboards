@@ -498,6 +498,77 @@
           </div>
         </div>
       </div>
+
+      <section class="table-card loan-log-card" aria-live="polite">
+        <header class="table-header">
+          <h3 class="table-title">Loan log</h3>
+          <p id="loan-log-summary" class="table-description">
+            Log funded loans for the selected credit union. Loan amount, term, APR, mileage, and VIN are pulled from the
+            loan details above while coverage combinations follow the Protection Options selections.
+          </p>
+        </header>
+        <form id="loan-log-form" class="loan-log-form">
+          <div class="loan-log-fields">
+            <div class="field-group">
+              <label for="loan-log-date">Loan date</label>
+              <input type="date" id="loan-log-date" required />
+            </div>
+            <div class="field-group">
+              <label for="loan-log-officer">Loan officer</label>
+              <input type="text" id="loan-log-officer" placeholder="Officer name" required />
+            </div>
+            <div class="field-group">
+              <label for="loan-log-coverage-selected">Coverage selected</label>
+              <select id="loan-log-coverage-selected" required>
+                <option value="" selected>Select</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <span class="field-label">Products selected</span>
+              <div class="field-options">
+                <label class="field-option">
+                  <input type="checkbox" id="loan-log-vsc-selected" />
+                  VSC
+                </label>
+                <label class="field-option">
+                  <input type="checkbox" id="loan-log-gap-selected" />
+                  GAP
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="loan-log-actions">
+            <p class="feedback" id="loan-log-feedback" role="status" aria-live="polite"></p>
+            <button type="submit" class="primary-button" id="loan-log-save-btn">Save loan</button>
+            <button type="button" class="secondary-button" id="loan-log-cancel-btn" hidden>Cancel edit</button>
+          </div>
+        </form>
+
+        <div id="loan-log-empty" class="empty-state" hidden>
+          <p>No loans logged yet. Save a loan to build a shared coverage record.</p>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Loan date</th>
+                <th scope="col">Loan officer</th>
+                <th scope="col" class="numeric">Amount</th>
+                <th scope="col" class="numeric">Term</th>
+                <th scope="col" class="numeric">APR</th>
+                <th scope="col" class="numeric">Mileage</th>
+                <th scope="col">VIN</th>
+                <th scope="col">Coverage</th>
+                <th scope="col">Products</th>
+                <th scope="col" class="numeric">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="loan-log-list"></tbody>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
 
