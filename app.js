@@ -79,6 +79,10 @@ const selectors = {
   accountDirectoryEmpty: document.getElementById('account-directory-empty'),
   accountDirectoryTabs: document.getElementById('account-directory-tabs'),
   accountDirectoryTable: document.getElementById('account-directory-table'),
+  quotesDirectoryBody: document.getElementById('quotes-directory-body'),
+  quotesDirectorySummary: document.getElementById('quotes-directory-summary'),
+  quotesDirectoryEmpty: document.getElementById('quotes-directory-empty'),
+  quotesDirectoryTable: document.getElementById('quotes-directory-table'),
   openCallReportBtn: document.getElementById('open-call-report-btn'),
   callReportDialog: document.getElementById('call-report-dialog'),
   closeCallReportDialogBtn: document.getElementById('close-call-report-dialog'),
@@ -163,6 +167,7 @@ const selectors = {
   callReportCoverage: document.getElementById('call-report-coverage'),
   protectionOptionsDialog: document.getElementById('protection-options-dialog'),
   closeProtectionOptionsDialogBtn: document.getElementById('close-protection-options-dialog'),
+  quoteWorkspaceSummary: document.getElementById('quote-workspace-summary'),
   accountNotesForm: document.getElementById('account-notes-form'),
   accountNotesAuthor: document.getElementById('account-note-author'),
   accountNotesText: document.getElementById('account-note-text'),
@@ -1480,7 +1485,7 @@ function resetLoanLogForm() {
   selectors.loanLogForm?.reset();
   appState.loanEditingId = null;
   if (selectors.loanLogSaveBtn) {
-    selectors.loanLogSaveBtn.textContent = 'Save loan';
+    selectors.loanLogSaveBtn.textContent = 'Issue coverage';
   }
   if (selectors.loanLogCancelBtn) {
     selectors.loanLogCancelBtn.hidden = true;
@@ -1543,7 +1548,7 @@ function populateLoanLogForm(loan) {
     }
   }
   if (selectors.loanLogSaveBtn) {
-    selectors.loanLogSaveBtn.textContent = 'Update loan';
+    selectors.loanLogSaveBtn.textContent = 'Update coverage';
   }
   if (selectors.loanLogCancelBtn) {
     selectors.loanLogCancelBtn.hidden = false;
@@ -1597,7 +1602,7 @@ function renderLoanLog() {
 
   if (!creditUnionId) {
     if (summary) {
-      summary.textContent = 'Select a credit union to log funded loans and coverage selections.';
+      summary.textContent = 'Select a credit union to issue coverage and update the sales register.';
     }
     if (emptyState) {
       emptyState.hidden = true;
@@ -1619,7 +1624,7 @@ function renderLoanLog() {
   }
 
   if (summary) {
-    summary.textContent = `${loans.length} loan${loans.length === 1 ? '' : 's'} logged for ${creditUnionName}.`;
+    summary.textContent = `${loans.length} coverage entr${loans.length === 1 ? 'y' : 'ies'} issued for ${creditUnionName}.`;
   }
 
   if (!loans.length) {
@@ -2606,7 +2611,14 @@ function renderCreditUnionOptions() {
     const placeholder = createOption('', 'Select a credit union', true, true);
     accountSelect.replaceChildren(placeholder);
 
-    const sortedCreditUnions = appState.creditUnions.slice().sort((a, b) => a.name.localeCompare(b.name));
+    const accountFilter = accountSelect.dataset.filter;
+    const filteredCreditUnions =
+      accountFilter === 'accounts-only'
+        ? appState.creditUnions.filter(
+            (creditUnion) => normalizeClassification(creditUnion.classification) === 'account'
+          )
+        : appState.creditUnions;
+    const sortedCreditUnions = filteredCreditUnions.slice().sort((a, b) => a.name.localeCompare(b.name));
     sortedCreditUnions.forEach((creditUnion) => {
       accountSelect.append(createOption(creditUnion.id, creditUnion.name));
     });
@@ -2626,6 +2638,8 @@ function renderCreditUnionOptions() {
 
   renderAccountWorkspace();
   renderAccountDirectory();
+  renderQuotesDirectory();
+  renderQuotesWorkspace();
 }
 
 function renderIncomeStreamList() {
@@ -3100,6 +3114,86 @@ function renderAccountDirectory() {
   }
 }
 
+function renderQuotesDirectory() {
+  const body = selectors.quotesDirectoryBody;
+  if (!body) return;
+
+  const summary = selectors.quotesDirectorySummary;
+  const emptyState = selectors.quotesDirectoryEmpty;
+  const tableContainer = selectors.quotesDirectoryTable;
+
+  const activeAccounts = appState.creditUnions
+    .filter((creditUnion) => normalizeClassification(creditUnion.classification) === 'account')
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  body.replaceChildren();
+
+  if (!activeAccounts.length) {
+    if (emptyState) {
+      emptyState.hidden = false;
+    }
+    if (tableContainer) {
+      tableContainer.hidden = true;
+    }
+    if (summary) {
+      summary.textContent = appState.creditUnions.length
+        ? '0 active accounts ready for quotes.'
+        : 'Add your first credit union in Accounts to begin quoting.';
+    }
+    return;
+  }
+
+  if (emptyState) {
+    emptyState.hidden = true;
+  }
+  if (tableContainer) {
+    tableContainer.hidden = false;
+  }
+
+  const fragment = document.createDocumentFragment();
+
+  activeAccounts.forEach((creditUnion) => {
+    const latestReport = getLatestCallReportForCreditUnion(creditUnion.id);
+    const consumerLoanTotal = latestReport ? getConsumerLoanTotal(latestReport) : null;
+    const assetLabel = formatLatestMonetaryLabel(latestReport, latestReport?.assetSize);
+    const consumerLabel = formatLatestMonetaryLabel(latestReport, consumerLoanTotal);
+    const periodInfo = getLatestReportPeriod(latestReport);
+
+    const row = document.createElement('tr');
+
+    const nameCell = document.createElement('td');
+    const nameLink = document.createElement('a');
+    nameLink.href = `quotes-workspace.html?creditUnionId=${encodeURIComponent(creditUnion.id)}`;
+    nameLink.className = 'table-link';
+    nameLink.textContent = creditUnion.name;
+    nameLink.title = 'Open quote workspace';
+    nameCell.append(nameLink);
+
+    const periodCell = document.createElement('td');
+    periodCell.className = 'period-cell';
+    periodCell.textContent = periodInfo.label;
+    periodCell.dataset.tone = periodInfo.tone;
+
+    const assetCell = document.createElement('td');
+    assetCell.className = 'numeric numeric--monospace';
+    assetCell.textContent = assetLabel;
+
+    const consumerCell = document.createElement('td');
+    consumerCell.className = 'numeric numeric--monospace';
+    consumerCell.textContent = consumerLabel;
+
+    row.append(nameCell, periodCell, assetCell, consumerCell);
+    fragment.append(row);
+  });
+
+  body.append(fragment);
+
+  if (summary) {
+    const accountLabel = `${activeAccounts.length} active account${activeAccounts.length === 1 ? '' : 's'}`;
+    summary.textContent = `${accountLabel} ready for quoting.`;
+  }
+}
+
 function renderAccountWorkspace() {
   const list = selectors.accountStatusList;
   if (!list) return;
@@ -3178,6 +3272,36 @@ function renderAccountWorkspace() {
   renderAccountNotes();
   renderAccountReview();
   renderAccountChangeLog();
+  renderLoanOfficerCalculator();
+  renderLoanIllustrationHistory();
+  renderLoanLog();
+}
+
+function renderQuotesWorkspace() {
+  const summary = selectors.quoteWorkspaceSummary;
+  const hasQuoteUI = summary || selectors.loanOfficerSummary || selectors.loanLogSummary || selectors.loanIllustrationList;
+  if (!hasQuoteUI) return;
+
+  const creditUnionId = appState.accountSelectionId;
+  const hasCreditUnions = appState.creditUnions.length > 0;
+
+  if (!creditUnionId) {
+    if (summary) {
+      summary.textContent = hasCreditUnions
+        ? 'Select a credit union to start a quote.'
+        : 'Add a credit union in Accounts to begin quoting.';
+    }
+    renderLoanOfficerCalculator();
+    renderLoanIllustrationHistory();
+    renderLoanLog();
+    return;
+  }
+
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || 'Selected credit union';
+  if (summary) {
+    summary.textContent = `Showing quotes for ${creditUnionName}.`;
+  }
+
   renderLoanOfficerCalculator();
   renderLoanIllustrationHistory();
   renderLoanLog();
@@ -4960,7 +5084,7 @@ async function loadProspectStreams() {
 }
 
 async function loadLatestCallReports() {
-  if (!selectors.accountDirectoryBody) return;
+  if (!selectors.accountDirectoryBody && !selectors.quotesDirectoryBody) return;
 
   try {
     const data = await request('/api/call-reports/latest');
@@ -4971,6 +5095,7 @@ async function loadLatestCallReports() {
   }
 
   renderAccountDirectory();
+  renderQuotesDirectory();
 }
 
 async function loadCallReports(creditUnionId) {
@@ -6170,6 +6295,7 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   appState.loanIllustrationEditingId = null;
   setLoanIllustrationSaveStatus('', 'info');
   renderAccountWorkspace();
+  renderQuotesWorkspace();
   try {
     await Promise.all([
       loadCallReports(appState.accountSelectionId),
@@ -6680,7 +6806,7 @@ selectors.loanLogForm?.addEventListener('submit', async (event) => {
         details: `Updated loan for ${payload.loanOfficer}.`,
         actor: 'Workspace user'
       });
-      setFeedback(selectors.loanLogFeedback, 'Loan updated.', 'success');
+      setFeedback(selectors.loanLogFeedback, 'Coverage updated.', 'success');
     } else {
       await createLoanEntry(payload);
       addAccountChangeLog({
@@ -6689,7 +6815,7 @@ selectors.loanLogForm?.addEventListener('submit', async (event) => {
         details: `Logged loan for ${payload.loanOfficer}.`,
         actor: 'Workspace user'
       });
-      setFeedback(selectors.loanLogFeedback, 'Loan saved.', 'success');
+      setFeedback(selectors.loanLogFeedback, 'Coverage issued.', 'success');
     }
     await loadLoanEntries(creditUnionId);
     renderLoanLog();
@@ -6741,7 +6867,7 @@ selectors.loanLogList?.addEventListener('click', async (event) => {
       });
       await loadLoanEntries(creditUnionId);
       renderLoanLog();
-      setFeedback(selectors.loanLogFeedback, 'Loan deleted.', 'success');
+      setFeedback(selectors.loanLogFeedback, 'Coverage deleted.', 'success');
     } catch (error) {
       setFeedback(selectors.loanLogFeedback, error.message, 'error');
     } finally {
@@ -6928,7 +7054,7 @@ async function bootstrap() {
     }
   }
 
-  if (selectors.accountDirectoryBody) {
+  if (selectors.accountDirectoryBody || selectors.quotesDirectoryBody) {
     try {
       await loadLatestCallReports();
     } catch (error) {
