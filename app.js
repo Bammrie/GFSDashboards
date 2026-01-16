@@ -212,6 +212,10 @@ const selectors = {
   loanLogCancelBtn: document.getElementById('loan-log-cancel-btn'),
   loanLogEmpty: document.getElementById('loan-log-empty'),
   loanLogList: document.getElementById('loan-log-list'),
+  loanIllustrationSaveBtn: document.getElementById('loan-illustration-save-btn'),
+  loanIllustrationSaveStatus: document.getElementById('loan-illustration-save-status'),
+  loanIllustrationList: document.getElementById('loan-illustration-list'),
+  loanIllustrationEmpty: document.getElementById('loan-illustration-empty'),
   personalLoanAmountInput: document.getElementById('personal-loan-amount'),
   personalLoanTermInput: document.getElementById('personal-loan-term'),
   personalLoanAprInput: document.getElementById('personal-loan-apr'),
@@ -438,6 +442,57 @@ async function deleteLoanEntry(id) {
   }
 }
 
+async function loadLoanIllustrations(creditUnionId) {
+  if (!creditUnionId) {
+    appState.loanIllustrations = {};
+    return;
+  }
+  try {
+    const response = await fetch(`/api/loan-illustrations?creditUnionId=${creditUnionId}`);
+    if (!response.ok) throw new Error(`Loan illustration request failed (${response.status})`);
+    const payload = await response.json();
+    const illustrations = Array.isArray(payload?.illustrations) ? payload.illustrations : [];
+    appState.loanIllustrations = {
+      ...appState.loanIllustrations,
+      [creditUnionId]: illustrations
+    };
+  } catch (error) {
+    console.error('Unable to load loan illustrations', error);
+    appState.loanIllustrations = {
+      ...appState.loanIllustrations,
+      [creditUnionId]: []
+    };
+  }
+}
+
+async function createLoanIllustration(creditUnionId, illustration) {
+  const response = await fetch('/api/loan-illustrations', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ creditUnionId, illustration })
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data?.error || `Loan illustration save failed (${response.status})`);
+  }
+  const data = await response.json();
+  return data?.illustration;
+}
+
+async function updateLoanIllustrationRecord(id, illustration) {
+  const response = await fetch(`/api/loan-illustrations/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ illustration })
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data?.error || `Loan illustration update failed (${response.status})`);
+  }
+  const data = await response.json();
+  return data?.illustration;
+}
+
 async function loadAccountWarrantyConfigs() {
   try {
     const response = await fetch('/api/account-warranty-configs');
@@ -482,6 +537,36 @@ function parseNumericInput(value) {
 
 function formatCurrencyValue(value) {
   return Number.isFinite(value) ? currencyFormatter.format(value) : '—';
+}
+
+function formatLoanIllustrationLabel({ loanAmount, termMonths, apr }) {
+  const parts = [];
+  if (Number.isFinite(loanAmount)) {
+    parts.push(currencyFormatterNoCents.format(loanAmount));
+  }
+  if (Number.isFinite(termMonths)) {
+    parts.push(`${termMonths} mo`);
+  }
+  if (Number.isFinite(apr)) {
+    parts.push(`${apr.toFixed(2)}% APR`);
+  }
+  return parts.length ? parts.join(' • ') : 'Quote snapshot';
+}
+
+function formatLoanIllustrationCoverageSummary(selections = {}) {
+  const mobCoverageType = selections.mobCoverageType;
+  if (mobCoverageType === 'debt-protection') {
+    const packageLabel = selections.mobDebtPackage
+      ? selections.mobDebtPackage.replace('package-', 'Package ').toUpperCase()
+      : 'No package';
+    return `Debt protection ${packageLabel}`;
+  }
+  const coverages = [];
+  if (selections.mobCreditLifeSelected) coverages.push('Life');
+  if (selections.mobCreditDisabilitySelected) coverages.push('Disability');
+  const coverageLabel = coverages.length ? coverages.join(' + ') : 'No coverage';
+  const tierLabel = selections.mobCreditTier ? selections.mobCreditTier : 'single';
+  return `Credit insurance ${coverageLabel} (${tierLabel})`;
 }
 
 function calculateMonthlyPayment(amount, apr, termMonths) {
@@ -597,6 +682,110 @@ function resolveMobRatePerThousand({
   return validRates.length ? validRates.reduce((sum, value) => sum + value, 0) : null;
 }
 
+function buildLoanIllustrationSnapshot({
+  loanAmount,
+  termMonths,
+  apr,
+  miles,
+  vin,
+  warrantyCost,
+  creditUnionMarkup,
+  gfsMarkup,
+  gapCost,
+  gapCreditUnionMarkup,
+  gapGfsMarkup,
+  termExtensionsEnabled,
+  vscTermExtension,
+  gapTermExtension,
+  mobCoverageType,
+  mobRateStructure,
+  mobBlendedRates,
+  mobCreditLifeSelected,
+  mobCreditDisabilitySelected,
+  mobCreditTier,
+  mobDebtPackage,
+  mobRatePerThousand,
+  mobBlendedLifeRate,
+  mobBlendedDisabilityRate,
+  mobSingleLifeRate,
+  mobJointLifeRate,
+  mobSingleDisabilityRate,
+  mobJointDisabilityRate,
+  mobPackageARate,
+  mobPackageBRate,
+  mobPackageCRate,
+  mobPackageASingleRate,
+  mobPackageAJointRate,
+  mobPackageBSingleRate,
+  mobPackageBJointRate,
+  mobPackageCSingleRate,
+  mobPackageCJointRate,
+  vscRetail,
+  gapRetail,
+  basePayment,
+  mobPremiumStart,
+  mobPremiumAverage,
+  paymentWithMob,
+  coverageCombos
+}) {
+  const label = formatLoanIllustrationLabel({ loanAmount, termMonths, apr });
+  return {
+    label,
+    inputs: {
+      loanAmount,
+      termMonths,
+      apr,
+      miles,
+      vin,
+      warrantyCost,
+      creditUnionMarkup,
+      gfsMarkup,
+      gapCost,
+      gapCreditUnionMarkup,
+      gapGfsMarkup,
+      termExtensionsEnabled,
+      vscTermExtension,
+      gapTermExtension
+    },
+    selections: {
+      mobCoverageType,
+      mobRateStructure,
+      mobBlendedRates,
+      mobCreditLifeSelected,
+      mobCreditDisabilitySelected,
+      mobCreditTier,
+      mobDebtPackage
+    },
+    mobRates: {
+      mobBlendedLifeRate,
+      mobBlendedDisabilityRate,
+      mobSingleLifeRate,
+      mobJointLifeRate,
+      mobSingleDisabilityRate,
+      mobJointDisabilityRate,
+      mobPackageARate,
+      mobPackageBRate,
+      mobPackageCRate,
+      mobPackageASingleRate,
+      mobPackageAJointRate,
+      mobPackageBSingleRate,
+      mobPackageBJointRate,
+      mobPackageCSingleRate,
+      mobPackageCJointRate
+    },
+    outputs: {
+      vscRetail,
+      gapRetail,
+      basePayment,
+      mobRatePerThousand,
+      mobPremiumStart,
+      mobPremiumAverage,
+      paymentWithMob,
+      coverageCombos
+    }
+  };
+}
+
 function setLoanWarrantyFeedback(message, state = 'info') {
   if (!selectors.loanWarrantyFeedback) return;
   selectors.loanWarrantyFeedback.textContent = message;
@@ -703,6 +892,7 @@ function updateLoanIllustration() {
   const gapTermExtension = parseNumericInput(selectors.loanGapTermExtensionInput?.value);
   const mobCoverageType = selectors.mobAccountCoverageTypeSelect?.value || '';
   const mobRateStructure = selectors.mobRateStructureSelect?.value || '';
+  const mobBlendedRates = mobRateStructure === 'blended';
   const mobCreditLifeSelected = selectors.mobCreditLifeToggle?.checked ?? false;
   const mobCreditDisabilitySelected = selectors.mobCreditDisabilityToggle?.checked ?? false;
   const mobCreditTier = selectors.mobCreditTierSelect?.value || 'single';
@@ -805,6 +995,19 @@ function updateLoanIllustration() {
     Number.isFinite(basePaymentForMob) && Number.isFinite(mobPremiumStart)
       ? basePaymentForMob + mobPremiumStart
       : null;
+  const coverageComboOutputs = coverageCombos.map((combo) => {
+    const comboResult = comboResults.get(combo.id) || {};
+    return {
+      id: combo.id,
+      includeVsc: combo.includeVsc,
+      includeGap: combo.includeGap,
+      payment: Number.isFinite(comboResult.payment) ? comboResult.payment : null,
+      delta: Number.isFinite(comboResult.delta) ? comboResult.delta : null,
+      totalAmount: Number.isFinite(comboResult.totalAmount) ? comboResult.totalAmount : null,
+      extendedTermMonths: Number.isFinite(comboResult.extendedTermMonths) ? comboResult.extendedTermMonths : null,
+      extensionPayment: Number.isFinite(comboResult.extensionPayment) ? comboResult.extensionPayment : null
+    };
+  });
 
   selectors.loanBasePayment.textContent = formatCurrencyValue(basePayment);
   document.querySelectorAll('[data-coverage-combo]').forEach((card) => {
@@ -847,6 +1050,54 @@ function updateLoanIllustration() {
   if (selectors.loanPaymentWithMob) {
     selectors.loanPaymentWithMob.textContent = formatCurrencyValue(paymentWithMob);
   }
+
+  appState.loanIllustrationDraft = buildLoanIllustrationSnapshot({
+    loanAmount,
+    termMonths,
+    apr,
+    miles: parseNumericInput(selectors.loanMilesInput?.value),
+    vin: selectors.loanVinInput?.value?.trim() || '',
+    warrantyCost,
+    creditUnionMarkup,
+    gfsMarkup,
+    gapCost,
+    gapCreditUnionMarkup,
+    gapGfsMarkup,
+    termExtensionsEnabled,
+    vscTermExtension,
+    gapTermExtension,
+    mobCoverageType,
+    mobRateStructure,
+    mobBlendedRates,
+    mobCreditLifeSelected,
+    mobCreditDisabilitySelected,
+    mobCreditTier,
+    mobDebtPackage: selectedPackage,
+    mobRatePerThousand,
+    mobBlendedLifeRate,
+    mobBlendedDisabilityRate,
+    mobSingleLifeRate,
+    mobJointLifeRate,
+    mobSingleDisabilityRate,
+    mobJointDisabilityRate,
+    mobPackageARate,
+    mobPackageBRate,
+    mobPackageCRate,
+    mobPackageASingleRate,
+    mobPackageAJointRate,
+    mobPackageBSingleRate,
+    mobPackageBJointRate,
+    mobPackageCSingleRate,
+    mobPackageCJointRate,
+    vscRetail,
+    gapRetail,
+    basePayment,
+    mobPremiumStart,
+    mobPremiumAverage,
+    paymentWithMob,
+    coverageCombos: coverageComboOutputs
+  });
+  updateLoanIllustrationSaveState();
 
   updateProtectionOptionsAvailability();
 }
@@ -1014,6 +1265,10 @@ function renderLoanOfficerCalculator() {
     selectors.loanOfficerSummary.textContent = 'Select a credit union to start an illustration.';
     setLoanOfficerDisabled(true);
     setTermExtensionFieldVisibility(false);
+    appState.loanIllustrationEditingId = null;
+    appState.loanIllustrationDraft = null;
+    updateLoanIllustrationSaveState();
+    setLoanIllustrationSaveStatus('', 'info');
     updateLoanIllustration();
     updatePersonalLoanIllustration();
     renderVinResults(null);
@@ -1450,6 +1705,252 @@ function renderLoanLog() {
   selectors.loanLogList.append(fragment);
 }
 
+function updateLoanIllustrationSaveState() {
+  if (!selectors.loanIllustrationSaveBtn) return;
+  const creditUnionId = appState.accountSelectionId;
+  selectors.loanIllustrationSaveBtn.disabled = !creditUnionId;
+  selectors.loanIllustrationSaveBtn.textContent = appState.loanIllustrationEditingId ? 'Update snapshot' : 'Save snapshot';
+}
+
+function setLoanIllustrationSaveStatus(message, state = 'info') {
+  if (!selectors.loanIllustrationSaveStatus) return;
+  selectors.loanIllustrationSaveStatus.textContent = message;
+  selectors.loanIllustrationSaveStatus.dataset.state = state;
+}
+
+function renderLoanIllustrationHistory() {
+  const list = selectors.loanIllustrationList;
+  if (!list) return;
+  const emptyState = selectors.loanIllustrationEmpty;
+  const creditUnionId = appState.accountSelectionId;
+  const illustrations = creditUnionId ? appState.loanIllustrations[creditUnionId] || [] : [];
+
+  list.replaceChildren();
+
+  if (!creditUnionId) {
+    if (emptyState) {
+      emptyState.hidden = true;
+    }
+    updateLoanIllustrationSaveState();
+    return;
+  }
+
+  updateLoanIllustrationSaveState();
+
+  if (!illustrations.length) {
+    if (emptyState) {
+      emptyState.hidden = false;
+    }
+    return;
+  }
+
+  if (emptyState) {
+    emptyState.hidden = true;
+  }
+
+  const fragment = document.createDocumentFragment();
+  illustrations.forEach((illustration) => {
+    const item = document.createElement('li');
+    item.className = 'loan-illustration-item';
+    if (illustration.id === appState.loanIllustrationEditingId) {
+      item.classList.add('loan-illustration-item--active');
+    }
+
+    const details = document.createElement('div');
+    details.className = 'loan-illustration-item__details';
+
+    const title = document.createElement('p');
+    title.className = 'loan-illustration-item__title';
+    title.textContent = illustration.label || 'Quote snapshot';
+
+    const meta = document.createElement('p');
+    meta.className = 'loan-illustration-item__meta';
+    const coverageSummary = formatLoanIllustrationCoverageSummary(illustration.selections);
+    const updatedAt = illustration.updatedAt ? new Date(illustration.updatedAt) : null;
+    const updatedLabel = updatedAt ? updatedAt.toLocaleString('en-US') : 'Unknown time';
+    meta.textContent = `${coverageSummary} • Saved ${updatedLabel}`;
+
+    details.append(title, meta);
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'secondary-button';
+    button.dataset.action = 'open-illustration';
+    button.dataset.illustrationId = illustration.id;
+    button.textContent = 'Open';
+
+    item.append(details, button);
+    fragment.append(item);
+  });
+
+  list.append(fragment);
+}
+
+function applyLoanIllustrationSnapshot(illustration) {
+  if (!illustration) return;
+  const inputs = illustration.inputs || {};
+  const selections = illustration.selections || {};
+  const mobRates = illustration.mobRates || {};
+
+  if (selectors.loanAmountInput) {
+    selectors.loanAmountInput.value = Number.isFinite(inputs.loanAmount) ? inputs.loanAmount : '';
+  }
+  if (selectors.loanTermInput) {
+    selectors.loanTermInput.value = Number.isFinite(inputs.termMonths) ? inputs.termMonths : '';
+  }
+  if (selectors.loanAprInput) {
+    selectors.loanAprInput.value = Number.isFinite(inputs.apr) ? inputs.apr : '';
+  }
+  if (selectors.loanMilesInput) {
+    selectors.loanMilesInput.value = Number.isFinite(inputs.miles) ? inputs.miles : '';
+  }
+  if (selectors.loanVinInput) {
+    selectors.loanVinInput.value = inputs.vin || '';
+  }
+  if (selectors.loanWarrantyCostInput) {
+    selectors.loanWarrantyCostInput.value = Number.isFinite(inputs.warrantyCost) ? inputs.warrantyCost : '';
+  }
+  if (selectors.loanCreditUnionMarkupInput) {
+    selectors.loanCreditUnionMarkupInput.value = Number.isFinite(inputs.creditUnionMarkup) ? inputs.creditUnionMarkup : '';
+  }
+  if (selectors.loanGfsMarkupInput) {
+    selectors.loanGfsMarkupInput.value = Number.isFinite(inputs.gfsMarkup) ? inputs.gfsMarkup : '';
+  }
+  if (selectors.loanGapCostInput) {
+    selectors.loanGapCostInput.value = Number.isFinite(inputs.gapCost) ? inputs.gapCost : '';
+  }
+  if (selectors.loanGapCreditUnionMarkupInput) {
+    selectors.loanGapCreditUnionMarkupInput.value = Number.isFinite(inputs.gapCreditUnionMarkup)
+      ? inputs.gapCreditUnionMarkup
+      : '';
+  }
+  if (selectors.loanGapGfsMarkupInput) {
+    selectors.loanGapGfsMarkupInput.value = Number.isFinite(inputs.gapGfsMarkup) ? inputs.gapGfsMarkup : '';
+  }
+  if (selectors.loanTermExtensionToggle) {
+    selectors.loanTermExtensionToggle.checked = Boolean(inputs.termExtensionsEnabled);
+  }
+  if (selectors.loanVscTermExtensionInput) {
+    selectors.loanVscTermExtensionInput.value = Number.isFinite(inputs.vscTermExtension) ? inputs.vscTermExtension : '';
+  }
+  if (selectors.loanGapTermExtensionInput) {
+    selectors.loanGapTermExtensionInput.value = Number.isFinite(inputs.gapTermExtension) ? inputs.gapTermExtension : '';
+  }
+  if (selectors.mobAccountCoverageTypeSelect) {
+    selectors.mobAccountCoverageTypeSelect.value = selections.mobCoverageType || '';
+  }
+  if (selectors.mobRateStructureSelect) {
+    selectors.mobRateStructureSelect.value = selections.mobRateStructure || '';
+  }
+  if (selectors.mobBlendedLifeRateInput) {
+    selectors.mobBlendedLifeRateInput.value = Number.isFinite(mobRates.mobBlendedLifeRate)
+      ? mobRates.mobBlendedLifeRate
+      : '';
+  }
+  if (selectors.mobBlendedDisabilityRateInput) {
+    selectors.mobBlendedDisabilityRateInput.value = Number.isFinite(mobRates.mobBlendedDisabilityRate)
+      ? mobRates.mobBlendedDisabilityRate
+      : '';
+  }
+  if (selectors.mobSingleLifeRateInput) {
+    selectors.mobSingleLifeRateInput.value = Number.isFinite(mobRates.mobSingleLifeRate)
+      ? mobRates.mobSingleLifeRate
+      : '';
+  }
+  if (selectors.mobJointLifeRateInput) {
+    selectors.mobJointLifeRateInput.value = Number.isFinite(mobRates.mobJointLifeRate)
+      ? mobRates.mobJointLifeRate
+      : '';
+  }
+  if (selectors.mobSingleDisabilityRateInput) {
+    selectors.mobSingleDisabilityRateInput.value = Number.isFinite(mobRates.mobSingleDisabilityRate)
+      ? mobRates.mobSingleDisabilityRate
+      : '';
+  }
+  if (selectors.mobJointDisabilityRateInput) {
+    selectors.mobJointDisabilityRateInput.value = Number.isFinite(mobRates.mobJointDisabilityRate)
+      ? mobRates.mobJointDisabilityRate
+      : '';
+  }
+  if (selectors.mobPackageARateInput) {
+    selectors.mobPackageARateInput.value = Number.isFinite(mobRates.mobPackageARate) ? mobRates.mobPackageARate : '';
+  }
+  if (selectors.mobPackageBRateInput) {
+    selectors.mobPackageBRateInput.value = Number.isFinite(mobRates.mobPackageBRate) ? mobRates.mobPackageBRate : '';
+  }
+  if (selectors.mobPackageCRateInput) {
+    selectors.mobPackageCRateInput.value = Number.isFinite(mobRates.mobPackageCRate) ? mobRates.mobPackageCRate : '';
+  }
+  if (selectors.mobPackageASingleRateInput) {
+    selectors.mobPackageASingleRateInput.value = Number.isFinite(mobRates.mobPackageASingleRate)
+      ? mobRates.mobPackageASingleRate
+      : '';
+  }
+  if (selectors.mobPackageAJointRateInput) {
+    selectors.mobPackageAJointRateInput.value = Number.isFinite(mobRates.mobPackageAJointRate)
+      ? mobRates.mobPackageAJointRate
+      : '';
+  }
+  if (selectors.mobPackageBSingleRateInput) {
+    selectors.mobPackageBSingleRateInput.value = Number.isFinite(mobRates.mobPackageBSingleRate)
+      ? mobRates.mobPackageBSingleRate
+      : '';
+  }
+  if (selectors.mobPackageBJointRateInput) {
+    selectors.mobPackageBJointRateInput.value = Number.isFinite(mobRates.mobPackageBJointRate)
+      ? mobRates.mobPackageBJointRate
+      : '';
+  }
+  if (selectors.mobPackageCSingleRateInput) {
+    selectors.mobPackageCSingleRateInput.value = Number.isFinite(mobRates.mobPackageCSingleRate)
+      ? mobRates.mobPackageCSingleRate
+      : '';
+  }
+  if (selectors.mobPackageCJointRateInput) {
+    selectors.mobPackageCJointRateInput.value = Number.isFinite(mobRates.mobPackageCJointRate)
+      ? mobRates.mobPackageCJointRate
+      : '';
+  }
+
+  if (selectors.mobCreditLifeToggle) {
+    selectors.mobCreditLifeToggle.checked = Boolean(selections.mobCreditLifeSelected);
+  }
+  if (selectors.mobCreditDisabilityToggle) {
+    selectors.mobCreditDisabilityToggle.checked = Boolean(selections.mobCreditDisabilitySelected);
+  }
+  if (selectors.mobCreditTierSelect) {
+    selectors.mobCreditTierSelect.value = selections.mobCreditTier || 'single';
+  }
+  if (selections.mobDebtPackage) {
+    const packageInput = document.querySelector(`input[name="mob-debt-package"][value="${selections.mobDebtPackage}"]`);
+    if (packageInput) {
+      packageInput.checked = true;
+    }
+  } else {
+    const packageInput = document.querySelector('input[name="mob-debt-package"][value="none"]');
+    if (packageInput) {
+      packageInput.checked = true;
+    }
+  }
+
+  handleMobConfigChange();
+  handleTermExtensionChange();
+  updateLoanIllustration();
+  updateProtectionOptionsAvailability();
+}
+
+function upsertLoanIllustration(creditUnionId, illustration) {
+  if (!creditUnionId || !illustration) return;
+  const current = Array.isArray(appState.loanIllustrations?.[creditUnionId])
+    ? appState.loanIllustrations[creditUnionId]
+    : [];
+  const without = current.filter((item) => item.id !== illustration.id);
+  appState.loanIllustrations = {
+    ...appState.loanIllustrations,
+    [creditUnionId]: [illustration, ...without]
+  };
+}
+
 function handleWarrantyMarkupChange() {
   const creditUnionId = appState.accountSelectionId;
   if (!creditUnionId) return;
@@ -1757,7 +2258,10 @@ const appState = {
   accountChangeLog: {},
   accountWarrantyConfigs: {},
   loanEntries: {},
-  loanEditingId: null
+  loanEditingId: null,
+  loanIllustrations: {},
+  loanIllustrationEditingId: null,
+  loanIllustrationDraft: null
 };
 
 function showDialog(dialog) {
@@ -2626,6 +3130,7 @@ function renderAccountWorkspace() {
     renderAccountReview();
     renderAccountChangeLog();
     renderLoanOfficerCalculator();
+    renderLoanIllustrationHistory();
     renderLoanLog();
     return;
   }
@@ -2674,6 +3179,7 @@ function renderAccountWorkspace() {
   renderAccountReview();
   renderAccountChangeLog();
   renderLoanOfficerCalculator();
+  renderLoanIllustrationHistory();
   renderLoanLog();
 }
 
@@ -5661,13 +6167,17 @@ selectors.editRevenueForm?.addEventListener('submit', async (event) => {
 
 selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => {
   appState.accountSelectionId = event.currentTarget.value || null;
+  appState.loanIllustrationEditingId = null;
+  setLoanIllustrationSaveStatus('', 'info');
   renderAccountWorkspace();
   try {
     await Promise.all([
       loadCallReports(appState.accountSelectionId),
-      appState.accountSelectionId ? loadLoanEntries(appState.accountSelectionId) : Promise.resolve()
+      appState.accountSelectionId ? loadLoanEntries(appState.accountSelectionId) : Promise.resolve(),
+      appState.accountSelectionId ? loadLoanIllustrations(appState.accountSelectionId) : Promise.resolve()
     ]);
     renderLoanLog();
+    renderLoanIllustrationHistory();
   } catch (error) {
     setCallReportFeedback(error.message, 'error');
   }
@@ -5837,6 +6347,57 @@ selectors.loanProtectionOptionsBtn?.addEventListener('click', () => {
 
 selectors.closeProtectionOptionsDialogBtn?.addEventListener('click', () => {
   closeDialog(selectors.protectionOptionsDialog);
+});
+
+selectors.loanIllustrationSaveBtn?.addEventListener('click', async () => {
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    setLoanIllustrationSaveStatus('Select a credit union before saving a snapshot.', 'error');
+    return;
+  }
+  if (!appState.loanIllustrationDraft) {
+    setLoanIllustrationSaveStatus('Enter loan details to capture a snapshot.', 'error');
+    return;
+  }
+
+  setLoanIllustrationSaveStatus('Saving snapshot…', 'info');
+  try {
+    let saved = null;
+    if (appState.loanIllustrationEditingId) {
+      saved = await updateLoanIllustrationRecord(appState.loanIllustrationEditingId, appState.loanIllustrationDraft);
+    } else {
+      saved = await createLoanIllustration(creditUnionId, appState.loanIllustrationDraft);
+      appState.loanIllustrationEditingId = saved?.id || null;
+    }
+    if (saved) {
+      upsertLoanIllustration(creditUnionId, saved);
+      renderLoanIllustrationHistory();
+      setLoanIllustrationSaveStatus('Snapshot saved.', 'success');
+    } else {
+      setLoanIllustrationSaveStatus('Unable to save snapshot.', 'error');
+    }
+  } catch (error) {
+    setLoanIllustrationSaveStatus(error.message, 'error');
+  }
+});
+
+selectors.loanIllustrationList?.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-action="open-illustration"]');
+  if (!button || !selectors.loanIllustrationList.contains(button)) {
+    return;
+  }
+  const creditUnionId = appState.accountSelectionId;
+  const illustrationId = button.dataset.illustrationId;
+  if (!creditUnionId || !illustrationId) return;
+  const illustrations = Array.isArray(appState.loanIllustrations?.[creditUnionId])
+    ? appState.loanIllustrations[creditUnionId]
+    : [];
+  const illustration = illustrations.find((item) => item.id === illustrationId);
+  if (!illustration) return;
+  appState.loanIllustrationEditingId = illustration.id;
+  applyLoanIllustrationSnapshot(illustration);
+  renderLoanIllustrationHistory();
+  setLoanIllustrationSaveStatus('Snapshot loaded.', 'success');
 });
 
 selectors.accountNotesForm?.addEventListener('submit', async (event) => {
@@ -6396,8 +6957,12 @@ async function bootstrap() {
   }
   if (selectors.loanLogList && appState.accountSelectionId) {
     try {
-      await loadLoanEntries(appState.accountSelectionId);
+      await Promise.all([
+        loadLoanEntries(appState.accountSelectionId),
+        loadLoanIllustrations(appState.accountSelectionId)
+      ]);
       renderLoanLog();
+      renderLoanIllustrationHistory();
     } catch (error) {
       console.error(error);
     }

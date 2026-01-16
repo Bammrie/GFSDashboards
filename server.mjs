@@ -218,6 +218,18 @@ const loanSchema = new mongoose.Schema(
   { timestamps: true }
 );
 loanSchema.index({ creditUnion: 1, loanDate: -1 });
+const loanIllustrationSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, index: true },
+    label: { type: String, default: '' },
+    inputs: { type: mongoose.Schema.Types.Mixed, default: {} },
+    selections: { type: mongoose.Schema.Types.Mixed, default: {} },
+    mobRates: { type: mongoose.Schema.Types.Mixed, default: {} },
+    outputs: { type: mongoose.Schema.Types.Mixed, default: {} }
+  },
+  { timestamps: true }
+);
+loanIllustrationSchema.index({ creditUnion: 1, updatedAt: -1 });
 const callReportSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
@@ -268,6 +280,7 @@ const AccountNotes = mongoose.model('AccountNotes', accountNotesSchema);
 const AccountChangeLog = mongoose.model('AccountChangeLog', accountChangeLogSchema);
 const AccountWarrantyConfig = mongoose.model('AccountWarrantyConfig', accountWarrantyConfigSchema);
 const Loan = mongoose.model('Loan', loanSchema);
+const LoanIllustration = mongoose.model('LoanIllustration', loanIllustrationSchema);
 
 const databaseReady = await initializeDatabase();
 
@@ -583,6 +596,27 @@ function serializeLoan(loan) {
   };
 }
 
+function parseIllustrationSection(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return {};
+  }
+  return value;
+}
+
+function serializeLoanIllustration(illustration) {
+  return {
+    id: illustration._id.toString(),
+    creditUnionId: illustration.creditUnion.toString(),
+    label: illustration.label || '',
+    inputs: illustration.inputs || {},
+    selections: illustration.selections || {},
+    mobRates: illustration.mobRates || {},
+    outputs: illustration.outputs || {},
+    createdAt: illustration.createdAt ? illustration.createdAt.toISOString() : null,
+    updatedAt: illustration.updatedAt ? illustration.updatedAt.toISOString() : null
+  };
+}
+
 app.get('/api/loans', async (req, res, next) => {
   try {
     const creditUnionId = req.query?.creditUnionId;
@@ -776,6 +810,107 @@ app.delete('/api/loans/:id', async (req, res, next) => {
     }
 
     res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/loan-illustrations', async (req, res, next) => {
+  try {
+    const creditUnionId = req.query?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'A valid credit union is required.' });
+      return;
+    }
+
+    const illustrations = await LoanIllustration.find({ creditUnion: creditUnionId })
+      .sort({ updatedAt: -1, createdAt: -1 })
+      .lean();
+    res.json({ illustrations: illustrations.map(serializeLoanIllustration) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/loan-illustrations', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'A valid credit union is required.' });
+      return;
+    }
+
+    const illustration = req.body?.illustration;
+    if (!illustration || typeof illustration !== 'object' || Array.isArray(illustration)) {
+      res.status(400).json({ error: 'Illustration payload must be an object.' });
+      return;
+    }
+
+    const creditUnionExists = await CreditUnion.exists({ _id: creditUnionId });
+    if (!creditUnionExists) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const label = typeof illustration?.label === 'string' ? illustration.label.trim() : '';
+    const inputs = parseIllustrationSection(illustration?.inputs);
+    const selections = parseIllustrationSection(illustration?.selections);
+    const mobRates = parseIllustrationSection(illustration?.mobRates);
+    const outputs = parseIllustrationSection(illustration?.outputs);
+
+    const created = await LoanIllustration.create({
+      creditUnion: creditUnionId,
+      label,
+      inputs,
+      selections,
+      mobRates,
+      outputs
+    });
+
+    res.status(201).json({ illustration: serializeLoanIllustration(created) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch('/api/loan-illustrations/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ error: 'Invalid illustration selection.' });
+      return;
+    }
+
+    const illustration = req.body?.illustration;
+    if (!illustration || typeof illustration !== 'object' || Array.isArray(illustration)) {
+      res.status(400).json({ error: 'Illustration payload must be an object.' });
+      return;
+    }
+
+    const updates = {};
+    if ('label' in illustration) {
+      updates.label = typeof illustration.label === 'string' ? illustration.label.trim() : '';
+    }
+    if ('inputs' in illustration) {
+      updates.inputs = parseIllustrationSection(illustration.inputs);
+    }
+    if ('selections' in illustration) {
+      updates.selections = parseIllustrationSection(illustration.selections);
+    }
+    if ('mobRates' in illustration) {
+      updates.mobRates = parseIllustrationSection(illustration.mobRates);
+    }
+    if ('outputs' in illustration) {
+      updates.outputs = parseIllustrationSection(illustration.outputs);
+    }
+
+    const updated = await LoanIllustration.findByIdAndUpdate(id, updates, { new: true }).lean();
+    if (!updated) {
+      res.status(404).json({ error: 'Loan illustration not found.' });
+      return;
+    }
+
+    res.json({ illustration: serializeLoanIllustration(updated) });
   } catch (error) {
     next(error);
   }
