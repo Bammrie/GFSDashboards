@@ -106,6 +106,32 @@
               Complete loan amount, term, APR, miles, and VIN to unlock the menu presentation.
             </p>
           </div>
+          <div class="loan-officer-request">
+            <p class="field-label">Coverage request (Baycel Federal Credit Union)</p>
+            <div class="loan-officer-fields">
+              <div class="field-group">
+                <label for="coverage-request-member-name">Member name</label>
+                <input type="text" id="coverage-request-member-name" placeholder="Jordan Smith" />
+              </div>
+              <div class="field-group">
+                <label for="coverage-request-phone">Member phone</label>
+                <input type="tel" id="coverage-request-phone" placeholder="+1 (555) 123-4567" />
+              </div>
+              <div class="field-group">
+                <label for="coverage-request-email">Member email (optional)</label>
+                <input type="email" id="coverage-request-email" placeholder="member@email.com" />
+              </div>
+            </div>
+            <div class="loan-officer-actions">
+              <p class="feedback" id="coverage-request-feedback" role="status" aria-live="polite"></p>
+              <button type="button" id="coverage-request-btn" class="primary-button" disabled>
+                Request Coverage
+              </button>
+            </div>
+            <p class="field-help">
+              Sends the coverage options from this quote to the member via the Zapier + Podium webhook.
+            </p>
+          </div>
         </div>
 
         <div class="loan-officer-card loan-officer-card--vin">
