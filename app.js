@@ -646,7 +646,9 @@ function updateCoverageRequestAvailability() {
   if (!selectors.coverageRequestBtn) return;
   const creditUnionId = appState.accountSelectionId;
   const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
-  const isBaycel = creditUnionName === COVERAGE_REQUEST_CREDIT_UNION;
+  const isBaycel =
+    normalizeNameForComparison(creditUnionName) ===
+    normalizeNameForComparison(COVERAGE_REQUEST_CREDIT_UNION);
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
@@ -662,7 +664,7 @@ function updateCoverageRequestAvailability() {
     selectors.coverageRequestBtn.disabled = true;
     setFeedback(
       selectors.coverageRequestFeedback,
-      'Coverage requests are enabled for Baycel Federal Credit Union only.',
+      'Coverage requests are only available when Baycel Federal Credit Union is selected.',
       'info'
     );
     return;
@@ -6603,10 +6605,13 @@ selectors.loanProtectionOptionsBtn?.addEventListener('click', () => {
 selectors.coverageRequestBtn?.addEventListener('click', async () => {
   const creditUnionId = appState.accountSelectionId;
   const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
-  if (!creditUnionId || creditUnionName !== COVERAGE_REQUEST_CREDIT_UNION) {
+  const isBaycel =
+    normalizeNameForComparison(creditUnionName) ===
+    normalizeNameForComparison(COVERAGE_REQUEST_CREDIT_UNION);
+  if (!creditUnionId || !isBaycel) {
     setFeedback(
       selectors.coverageRequestFeedback,
-      `Coverage requests are available for ${COVERAGE_REQUEST_CREDIT_UNION} only.`,
+      `Coverage requests are blocked because ${creditUnionName || 'a different credit union'} is selected. Switch to ${COVERAGE_REQUEST_CREDIT_UNION} to continue.`,
       'error'
     );
     return;
