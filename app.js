@@ -606,15 +606,39 @@ function buildCoverageRequestPayload() {
   const email = selectors.coverageRequestEmail?.value.trim() || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
   const loanAmountLabel = Number.isFinite(loanAmount) ? currencyFormatterNoCents.format(loanAmount) : '';
+  const loanAmountValue = Number.isFinite(loanAmount) ? loanAmount : null;
   const coverageOptions = buildCoverageRequestOptions(appState.loanIllustrationDraft?.coverageCombos);
+  const coverageOptionsText = coverageOptions.length ? coverageOptions.join(' | ') : '';
+  const phraseParts = [];
+  if (memberName) {
+    phraseParts.push(`Member: ${memberName}`);
+  }
+  if (phoneNumber) {
+    phraseParts.push(`Phone: ${phoneNumber}`);
+  }
+  if (email) {
+    phraseParts.push(`Email: ${email}`);
+  }
+  if (loanAmountLabel) {
+    phraseParts.push(`Loan amount: ${loanAmountLabel}`);
+  }
+  if (coverageOptionsText) {
+    phraseParts.push(`Coverage options: ${coverageOptionsText}`);
+  }
+  const phrase = phraseParts.join(' | ');
 
   return {
     phone_number: phoneNumber,
+    member_phone: phoneNumber,
     email,
+    member_email: email,
     loan_amount: loanAmountLabel,
+    loan_amount_value: loanAmountValue,
     coverage_options: coverageOptions,
+    coverage_options_text: coverageOptionsText,
     credit_union_name: creditUnionName,
-    member_name: memberName
+    member_name: memberName,
+    phrase
   };
 }
 
