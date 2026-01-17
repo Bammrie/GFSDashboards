@@ -36,6 +36,14 @@ const currencyFormatterNoCents = new Intl.NumberFormat('en-US', {
 const integerFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 const decimalFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const CLASSIFICATIONS = ['account', 'prospect'];
+const COVERAGE_REQUEST_WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/4330880/ugp09bj/';
+const COVERAGE_REQUEST_CREDIT_UNION = 'Baycel Federal Credit Union';
+const COVERAGE_OPTION_LABELS = {
+  base: 'Base loan',
+  vsc: 'Vehicle service contract',
+  gap: 'Guaranteed asset protection',
+  'vsc-gap': 'Full protection bundle'
+};
 
 function normalizeClassification(value) {
   return CLASSIFICATIONS.includes(value) ? value : 'account';
@@ -196,6 +204,11 @@ const selectors = {
   loanVinInput: document.getElementById('loan-vin'),
   loanVinDecodeBtn: document.getElementById('loan-vin-decode-btn'),
   loanProtectionOptionsBtn: document.getElementById('loan-protection-options-btn'),
+  coverageRequestMemberName: document.getElementById('coverage-request-member-name'),
+  coverageRequestPhone: document.getElementById('coverage-request-phone'),
+  coverageRequestEmail: document.getElementById('coverage-request-email'),
+  coverageRequestBtn: document.getElementById('coverage-request-btn'),
+  coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
   loanWarrantyCostInput: document.getElementById('loan-warranty-cost'),
   loanCreditUnionMarkupInput: document.getElementById('loan-credit-union-markup'),
   loanGfsMarkupInput: document.getElementById('loan-gfs-markup'),
@@ -572,6 +585,81 @@ function formatLoanIllustrationCoverageSummary(selections = {}) {
   const coverageLabel = coverages.length ? coverages.join(' + ') : 'No coverage';
   const tierLabel = selections.mobCreditTier ? selections.mobCreditTier : 'single';
   return `Credit insurance ${coverageLabel} (${tierLabel})`;
+}
+
+function buildCoverageRequestOptions(coverageCombos = []) {
+  if (!Array.isArray(coverageCombos)) return [];
+  return coverageCombos.map((combo) => {
+    const label = COVERAGE_OPTION_LABELS[combo.id] || combo.id || 'Coverage option';
+    const paymentLabel = Number.isFinite(combo.payment)
+      ? `${formatCurrencyValue(combo.payment)}/month`
+      : 'payment TBD';
+    return `${label} - ${paymentLabel}`;
+  });
+}
+
+function buildCoverageRequestPayload() {
+  const creditUnionId = appState.accountSelectionId;
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
+  const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
+  const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
+  const email = selectors.coverageRequestEmail?.value.trim() || '';
+  const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
+  const loanAmountLabel = Number.isFinite(loanAmount) ? currencyFormatterNoCents.format(loanAmount) : '';
+  const coverageOptions = buildCoverageRequestOptions(appState.loanIllustrationDraft?.coverageCombos);
+
+  return {
+    phone_number: phoneNumber,
+    email,
+    loan_amount: loanAmountLabel,
+    coverage_options: coverageOptions,
+    credit_union_name: creditUnionName,
+    member_name: memberName
+  };
+}
+
+function updateCoverageRequestAvailability() {
+  if (!selectors.coverageRequestBtn) return;
+  const creditUnionId = appState.accountSelectionId;
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
+  const isBaycel = creditUnionName === COVERAGE_REQUEST_CREDIT_UNION;
+  const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
+  const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
+  const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
+  const coverageOptions = buildCoverageRequestOptions(appState.loanIllustrationDraft?.coverageCombos);
+
+  if (!creditUnionId) {
+    selectors.coverageRequestBtn.disabled = true;
+    setFeedback(selectors.coverageRequestFeedback, 'Select Baycel Federal Credit Union to request coverage.', 'info');
+    return;
+  }
+
+  if (!isBaycel) {
+    selectors.coverageRequestBtn.disabled = true;
+    setFeedback(
+      selectors.coverageRequestFeedback,
+      'Coverage requests are enabled for Baycel Federal Credit Union only.',
+      'info'
+    );
+    return;
+  }
+
+  const isReady =
+    Boolean(memberName) &&
+    Boolean(phoneNumber) &&
+    Number.isFinite(loanAmount) &&
+    loanAmount > 0 &&
+    coverageOptions.length > 0;
+  selectors.coverageRequestBtn.disabled = !isReady;
+  if (!isReady) {
+    setFeedback(
+      selectors.coverageRequestFeedback,
+      'Enter member name, phone, and loan amount to send a coverage request.',
+      'info'
+    );
+  } else {
+    setFeedback(selectors.coverageRequestFeedback, '', 'info');
+  }
 }
 
 function calculateMonthlyPayment(amount, apr, termMonths) {
@@ -1105,6 +1193,7 @@ function updateLoanIllustration() {
   updateLoanIllustrationSaveState();
 
   updateProtectionOptionsAvailability();
+  updateCoverageRequestAvailability();
 }
 
 function updatePersonalLoanIllustration() {
@@ -1209,6 +1298,10 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.loanVinInput,
     selectors.loanVinDecodeBtn,
     selectors.loanProtectionOptionsBtn,
+    selectors.coverageRequestMemberName,
+    selectors.coverageRequestPhone,
+    selectors.coverageRequestEmail,
+    selectors.coverageRequestBtn,
     selectors.loanWarrantyCostInput,
     selectors.loanCreditUnionMarkupInput,
     selectors.loanGfsMarkupInput,
@@ -1278,6 +1371,7 @@ function renderLoanOfficerCalculator() {
     updatePersonalLoanIllustration();
     renderVinResults(null);
     setLoanWarrantyFeedback('');
+    updateCoverageRequestAvailability();
     return;
   }
 
@@ -1285,6 +1379,7 @@ function renderLoanOfficerCalculator() {
   selectors.loanOfficerSummary.textContent = `Showing a loan illustration for ${creditUnionName}.`;
   setLoanOfficerDisabled(false);
   updateProtectionOptionsAvailability();
+  updateCoverageRequestAvailability();
 
   const config = getWarrantyConfigForCreditUnion(creditUnionId);
   if (selectors.loanCreditUnionMarkupInput) {
@@ -6328,6 +6423,16 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
 });
 
 [
+  selectors.coverageRequestMemberName,
+  selectors.coverageRequestPhone,
+  selectors.coverageRequestEmail
+].forEach((element) => {
+  element?.addEventListener('input', () => {
+    updateCoverageRequestAvailability();
+  });
+});
+
+[
   selectors.personalLoanAmountInput,
   selectors.personalLoanTermInput,
   selectors.personalLoanAprInput
@@ -6469,6 +6574,73 @@ selectors.loanVinInput?.addEventListener('input', (event) => {
 
 selectors.loanProtectionOptionsBtn?.addEventListener('click', () => {
   showDialog(selectors.protectionOptionsDialog);
+});
+
+selectors.coverageRequestBtn?.addEventListener('click', async () => {
+  const creditUnionId = appState.accountSelectionId;
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
+  if (!creditUnionId || creditUnionName !== COVERAGE_REQUEST_CREDIT_UNION) {
+    setFeedback(
+      selectors.coverageRequestFeedback,
+      `Coverage requests are available for ${COVERAGE_REQUEST_CREDIT_UNION} only.`,
+      'error'
+    );
+    return;
+  }
+
+  const payload = buildCoverageRequestPayload();
+  const missingFields = [];
+  if (!payload.member_name) missingFields.push('member name');
+  if (!payload.phone_number) missingFields.push('phone number');
+  if (!payload.loan_amount) missingFields.push('loan amount');
+  if (!Array.isArray(payload.coverage_options) || payload.coverage_options.length === 0) {
+    missingFields.push('coverage options');
+  }
+
+  if (missingFields.length) {
+    setFeedback(
+      selectors.coverageRequestFeedback,
+      `Add ${missingFields.join(', ')} to send a coverage request.`,
+      'error'
+    );
+    return;
+  }
+
+  const button = selectors.coverageRequestBtn;
+  const previousLabel = button?.textContent;
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Sending...';
+  }
+  setFeedback(selectors.coverageRequestFeedback, 'Sending coverage request...', 'info');
+
+  try {
+    const response = await fetch(COVERAGE_REQUEST_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      throw new Error(`Zapier webhook failed (${response.status}).`);
+    }
+    setFeedback(
+      selectors.coverageRequestFeedback,
+      'Coverage request sent. The member will receive a Podium text shortly.',
+      'success'
+    );
+  } catch (error) {
+    setFeedback(
+      selectors.coverageRequestFeedback,
+      error?.message || 'Unable to send coverage request.',
+      'error'
+    );
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = previousLabel || 'Request Coverage';
+    }
+    updateCoverageRequestAvailability();
+  }
 });
 
 selectors.closeProtectionOptionsDialogBtn?.addEventListener('click', () => {
