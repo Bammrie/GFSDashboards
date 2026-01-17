@@ -36,7 +36,7 @@ const currencyFormatterNoCents = new Intl.NumberFormat('en-US', {
 const integerFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 const decimalFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const CLASSIFICATIONS = ['account', 'prospect'];
-const COVERAGE_REQUEST_WEBHOOK_URL = 'https://hooks.zapier.com/hooks/catch/4330880/ugp09bj/';
+const COVERAGE_REQUEST_ENDPOINT = '/api/coverage-request';
 const COVERAGE_REQUEST_CREDIT_UNION = 'Baycel Federal Credit Union';
 const COVERAGE_OPTION_LABELS = {
   base: 'Base loan',
@@ -6644,13 +6644,14 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
   setFeedback(selectors.coverageRequestFeedback, 'Sending coverage request...', 'info');
 
   try {
-    const response = await fetch(COVERAGE_REQUEST_WEBHOOK_URL, {
+    const response = await fetch(COVERAGE_REQUEST_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    const responseBody = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new Error(`Zapier webhook failed (${response.status}).`);
+      throw new Error(responseBody?.error || `Coverage request failed (${response.status}).`);
     }
     setFeedback(
       selectors.coverageRequestFeedback,
