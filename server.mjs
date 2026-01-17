@@ -24,6 +24,8 @@ const upload = multer({
 
 const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || 'adminpass';
 const DASHBOARD_USERNAME = process.env.DASHBOARD_USERNAME || null;
+const COVERAGE_REQUEST_WEBHOOK_URL =
+  process.env.COVERAGE_REQUEST_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/4330880/ugp09bj/';
 
 app.use((req, res, next) => {
   const unauthorized = () => {
@@ -79,6 +81,35 @@ app.use(express.static(publicDir));
 const REVENUE_TYPES = ['Frontend', 'Backend', 'Commission'];
 const REPORTING_START_YEAR = 2023;
 const REPORTING_START_MONTH = 1;
+
+app.post('/api/coverage-request', async (req, res) => {
+  const payload = req.body;
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    res.status(400).json({ error: 'Coverage request payload must be an object.' });
+    return;
+  }
+
+  try {
+    const response = await fetch(COVERAGE_REQUEST_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const details = await response.text().catch(() => '');
+      res.status(502).json({
+        error: `Zapier webhook failed (${response.status}).`,
+        details: details || null
+      });
+      return;
+    }
+
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(502).json({ error: 'Unable to send coverage request.' });
+  }
+});
 
 const creditUnionSchema = new mongoose.Schema(
   {
