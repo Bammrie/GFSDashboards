@@ -1,3 +1,4 @@
+2029-01-09: Added a coverage request API endpoint that forwards Zapier webhook payloads and updated the UI to post locally for Podium coverage requests.
 2029-01-08: Expanded the Baycel coverage request webhook payload with member contact, loan amount, coverage options, and a summary phrase for Zapier/Podium workflows.
 2029-01-07: Added a Baycel Federal Credit Union coverage request form in Quotes that posts a Zapier webhook payload with member contact details and coverage options for Podium texting tests.
 2029-01-06: Added Quotes navigation plus dedicated quotes list/workspace with a sales register flow so quoting is separated from Accounts while Menu Pricing stays in Accounts.
