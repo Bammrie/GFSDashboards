@@ -587,15 +587,26 @@ function formatLoanIllustrationCoverageSummary(selections = {}) {
   return `Credit insurance ${coverageLabel} (${tierLabel})`;
 }
 
-function buildCoverageRequestOptions(coverageCombos = []) {
+function buildCoverageRequestOptionDetails(coverageCombos = []) {
   if (!Array.isArray(coverageCombos)) return [];
   return coverageCombos.map((combo) => {
     const label = COVERAGE_OPTION_LABELS[combo.id] || combo.id || 'Coverage option';
+    const payment = Number.isFinite(combo.payment) ? combo.payment : null;
     const paymentLabel = Number.isFinite(combo.payment)
       ? `${formatCurrencyValue(combo.payment)}/month`
       : 'payment TBD';
-    return `${label} - ${paymentLabel}`;
+    return {
+      id: combo.id || null,
+      label,
+      payment,
+      payment_label: paymentLabel
+    };
   });
+}
+
+function buildCoverageRequestOptions(coverageCombos = []) {
+  const detailedOptions = buildCoverageRequestOptionDetails(coverageCombos);
+  return detailedOptions.map((option) => `${option.label} - ${option.payment_label}`);
 }
 
 function buildCoverageRequestPayload() {
@@ -607,8 +618,12 @@ function buildCoverageRequestPayload() {
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
   const loanAmountLabel = Number.isFinite(loanAmount) ? currencyFormatterNoCents.format(loanAmount) : '';
   const loanAmountValue = Number.isFinite(loanAmount) ? loanAmount : null;
-  const coverageOptions = buildCoverageRequestOptions(appState.loanIllustrationDraft?.coverageCombos);
+  const coverageDetails = buildCoverageRequestOptionDetails(appState.loanIllustrationDraft?.coverageCombos);
+  const coverageOptions = coverageDetails.map((option) => `${option.label} - ${option.payment_label}`);
   const coverageOptionsText = coverageOptions.length ? coverageOptions.join(' | ') : '';
+  const coverageSummary = appState.loanIllustrationDraft?.selections
+    ? formatLoanIllustrationCoverageSummary(appState.loanIllustrationDraft.selections)
+    : '';
   const phraseParts = [];
   if (memberName) {
     phraseParts.push(`Member: ${memberName}`);
@@ -625,20 +640,31 @@ function buildCoverageRequestPayload() {
   if (coverageOptionsText) {
     phraseParts.push(`Coverage options: ${coverageOptionsText}`);
   }
-  const phrase = phraseParts.join(' | ');
+  if (coverageSummary) {
+    phraseParts.push(`Summary: ${coverageSummary}`);
+  }
+  if (creditUnionName) {
+    phraseParts.push(`Credit union: ${creditUnionName}`);
+  }
+  const phrase = phraseParts.join(' | ') || 'Coverage request';
 
   return {
     phone_number: phoneNumber,
     member_phone: phoneNumber,
     email,
     member_email: email,
-    loan_amount: loanAmountLabel,
+    loan_amount: loanAmountValue,
     loan_amount_value: loanAmountValue,
+    loan_amount_display: loanAmountLabel,
+    coverage_summary: coverageSummary,
     coverage_options: coverageOptions,
+    coverage_options_detail: coverageDetails,
     coverage_options_text: coverageOptionsText,
     credit_union_name: creditUnionName,
     member_name: memberName,
-    phrase
+    phrase,
+    requested_at: new Date().toISOString(),
+    request_source: 'quotes'
   };
 }
 
