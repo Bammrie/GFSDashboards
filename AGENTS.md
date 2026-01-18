@@ -1,3 +1,4 @@
+2029-01-10: Expanded coverage request webhook payload metadata (coverage summary, detailed options, timestamp) and added a phrase fallback for Zapier diagnostics.
 2029-01-09: Normalized Baycel coverage request gating to use case-insensitive name checks and clarified blocked messaging in the UI.
 2029-01-09: Added a coverage request API endpoint that forwards Zapier webhook payloads and updated the UI to post locally for Podium coverage requests.
 2029-01-08: Expanded the Baycel coverage request webhook payload with member contact, loan amount, coverage options, and a summary phrase for Zapier/Podium workflows.
