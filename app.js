@@ -203,13 +203,15 @@ const selectors = {
   loanVinInput: document.getElementById('loan-vin'),
   loanVinDecodeBtn: document.getElementById('loan-vin-decode-btn'),
   loanProtectionOptionsBtn: document.getElementById('loan-protection-options-btn'),
-  coverageRequestLoanId: document.getElementById('coverage-request-loan-id'),
   coverageRequestMemberName: document.getElementById('coverage-request-member-name'),
   coverageRequestPhone: document.getElementById('coverage-request-phone'),
   coverageRequestEmail: document.getElementById('coverage-request-email'),
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
   coverageRequestPayload: document.getElementById('coverage-request-payload'),
+  coverageRequestSummary: document.getElementById('coverage-request-summary'),
+  coverageRequestEmpty: document.getElementById('coverage-request-empty'),
+  coverageRequestList: document.getElementById('coverage-request-list'),
   loanWarrantyCostInput: document.getElementById('loan-warranty-cost'),
   loanCreditUnionMarkupInput: document.getElementById('loan-credit-union-markup'),
   loanGfsMarkupInput: document.getElementById('loan-gfs-markup'),
@@ -486,6 +488,57 @@ async function loadLoanIllustrations(creditUnionId) {
   }
 }
 
+async function loadCoverageRequests(creditUnionId) {
+  if (!creditUnionId) {
+    appState.coverageRequests = {};
+    return;
+  }
+  try {
+    const response = await fetch(`/api/coverage-requests?creditUnionId=${creditUnionId}`);
+    if (!response.ok) throw new Error(`Coverage request log failed (${response.status})`);
+    const payload = await response.json();
+    const requests = Array.isArray(payload?.requests) ? payload.requests : [];
+    appState.coverageRequests = {
+      ...appState.coverageRequests,
+      [creditUnionId]: requests
+    };
+  } catch (error) {
+    console.error('Unable to load coverage requests', error);
+    appState.coverageRequests = {
+      ...appState.coverageRequests,
+      [creditUnionId]: []
+    };
+  }
+}
+
+async function createCoverageRequestRecord(payload) {
+  const response = await fetch('/api/coverage-requests', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data?.error || `Coverage request log failed (${response.status})`);
+  }
+  const data = await response.json();
+  return data?.request;
+}
+
+async function updateCoverageRequestRecord(id, payload) {
+  const response = await fetch(`/api/coverage-requests/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data?.error || `Coverage request update failed (${response.status})`);
+  }
+  const data = await response.json();
+  return data?.request;
+}
+
 async function createLoanIllustration(creditUnionId, illustration) {
   const response = await fetch('/api/loan-illustrations', {
     method: 'POST',
@@ -625,10 +678,19 @@ function buildCoverageRequestOptions(coverageCombos = []) {
   });
 }
 
+function getCoverageRequestDraftId() {
+  if (!appState.accountSelectionId) return null;
+  if (!appState.coverageRequestDraftId) {
+    const randomSeed = Math.floor(Math.random() * 900) + 100;
+    appState.coverageRequestDraftId = `REQ-${Date.now()}-${randomSeed}`;
+  }
+  return appState.coverageRequestDraftId;
+}
+
 function buildCoverageRequestPayload() {
   const creditUnionId = appState.accountSelectionId;
   const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
-  const loanId = parseNumericInput(selectors.coverageRequestLoanId?.value);
+  const requestId = getCoverageRequestDraftId();
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
   const email = selectors.coverageRequestEmail?.value.trim() || '';
@@ -646,8 +708,8 @@ function buildCoverageRequestPayload() {
     ? formatLoanIllustrationCoverageSummary(appState.loanIllustrationDraft.selections)
     : '';
   const phraseParts = [];
-  if (Number.isFinite(loanId)) {
-    phraseParts.push(`Loan ID: ${loanId}`);
+  if (requestId) {
+    phraseParts.push(`Request ID: ${requestId}`);
   }
   if (memberName) {
     phraseParts.push(`Member: ${memberName}`);
@@ -673,7 +735,8 @@ function buildCoverageRequestPayload() {
   const phrase = phraseParts.join(' | ') || 'Coverage request';
 
   return {
-    loan_id: Number.isFinite(loanId) ? loanId : null,
+    request_id: requestId,
+    loan_id: requestId,
     phone_number: phoneNumber,
     member_phone: phoneNumber,
     email,
@@ -692,6 +755,7 @@ function buildCoverageRequestPayload() {
     credit_union_name: creditUnionName,
     member_name: memberName,
     phrase,
+    request_status: 'awaiting-response',
     requested_at: new Date().toISOString(),
     request_source: 'quotes'
   };
@@ -707,7 +771,6 @@ function updateCoverageRequestAvailability() {
   if (!selectors.coverageRequestBtn) return;
   updateCoverageRequestPayloadPreview();
   const creditUnionId = appState.accountSelectionId;
-  const loanId = parseNumericInput(selectors.coverageRequestLoanId?.value);
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
@@ -728,8 +791,6 @@ function updateCoverageRequestAvailability() {
   }
 
   const isReady =
-    Number.isFinite(loanId) &&
-    loanId > 0 &&
     Boolean(memberName) &&
     Boolean(phoneNumber) &&
     Number.isFinite(loanAmount) &&
@@ -745,12 +806,33 @@ function updateCoverageRequestAvailability() {
   if (!isReady) {
     setFeedback(
       selectors.coverageRequestFeedback,
-      'Enter loan ID, member name, phone, and full loan details to send a coverage request.',
+      'Enter member name, phone, and full loan details to send a coverage request.',
       'info'
     );
   } else {
     setFeedback(selectors.coverageRequestFeedback, '', 'info');
   }
+}
+
+function buildCoverageRequestRecord(payload) {
+  return {
+    creditUnionId: appState.accountSelectionId,
+    requestId: payload.request_id || null,
+    requestedAt: payload.requested_at || new Date().toISOString(),
+    memberName: payload.member_name || '',
+    phoneNumber: payload.phone_number || '',
+    email: payload.email || '',
+    loanAmount: payload.loan_amount_value ?? payload.loan_amount ?? null,
+    termMonths: payload.term_months ?? null,
+    apr: payload.apr ?? null,
+    mileage: payload.mileage ?? null,
+    vin: payload.vin || '',
+    coverageSummary: payload.coverage_summary || '',
+    coverageOptions: Array.isArray(payload.coverage_options) ? payload.coverage_options : [],
+    coverageOptionsDetail: Array.isArray(payload.coverage_options_detail) ? payload.coverage_options_detail : [],
+    requestPayload: payload,
+    status: 'awaiting-response'
+  };
 }
 
 function calculateMonthlyPayment(amount, apr, termMonths) {
@@ -1389,7 +1471,6 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.loanVinInput,
     selectors.loanVinDecodeBtn,
     selectors.loanProtectionOptionsBtn,
-    selectors.coverageRequestLoanId,
     selectors.coverageRequestMemberName,
     selectors.coverageRequestPhone,
     selectors.coverageRequestEmail,
@@ -1925,6 +2006,124 @@ function renderLoanLog() {
   });
 
   selectors.loanLogList.append(fragment);
+}
+
+function formatCoverageRequestStatus(status) {
+  return status === 'response-received' ? 'Response received' : 'Awaiting response';
+}
+
+function formatCoverageRequestDate(value) {
+  if (!value) return '—';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return date.toLocaleString('en-US');
+}
+
+function renderCoverageRequests() {
+  if (!selectors.coverageRequestList) return;
+  const creditUnionId = appState.accountSelectionId;
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || 'this credit union';
+  const summary = selectors.coverageRequestSummary;
+  const emptyState = selectors.coverageRequestEmpty;
+
+  selectors.coverageRequestList.replaceChildren();
+
+  if (!creditUnionId) {
+    if (summary) {
+      summary.textContent = 'Select a credit union to track coverage requests.';
+    }
+    if (emptyState) {
+      emptyState.hidden = true;
+    }
+    return;
+  }
+
+  const requests = Array.isArray(appState.coverageRequests?.[creditUnionId])
+    ? appState.coverageRequests[creditUnionId]
+    : [];
+
+  if (summary) {
+    summary.textContent = `${requests.length} coverage request${requests.length === 1 ? '' : 's'} logged for ${creditUnionName}.`;
+  }
+
+  if (!requests.length) {
+    if (emptyState) {
+      emptyState.hidden = false;
+    }
+    return;
+  }
+
+  if (emptyState) {
+    emptyState.hidden = true;
+  }
+
+  const fragment = document.createDocumentFragment();
+  requests.forEach((request) => {
+    const row = document.createElement('tr');
+
+    const idCell = document.createElement('td');
+    idCell.textContent = request.requestId || '—';
+
+    const dateCell = document.createElement('td');
+    dateCell.textContent = formatCoverageRequestDate(request.requestedAt);
+
+    const memberCell = document.createElement('td');
+    memberCell.textContent = request.memberName || '—';
+
+    const phoneCell = document.createElement('td');
+    phoneCell.textContent = request.phoneNumber || '—';
+
+    const amountCell = document.createElement('td');
+    amountCell.className = 'numeric';
+    amountCell.textContent = Number.isFinite(request.loanAmount)
+      ? formatCurrencyValue(request.loanAmount)
+      : '—';
+
+    const termCell = document.createElement('td');
+    termCell.className = 'numeric';
+    termCell.textContent = Number.isFinite(request.termMonths) ? `${request.termMonths} mo` : '—';
+
+    const vinCell = document.createElement('td');
+    vinCell.textContent = request.vin || '—';
+
+    const coverageCell = document.createElement('td');
+    coverageCell.textContent = request.coverageSummary || '—';
+
+    const statusCell = document.createElement('td');
+    const statusSelect = document.createElement('select');
+    statusSelect.dataset.action = 'update-request-status';
+    statusSelect.dataset.requestId = request.id;
+    statusSelect.className = 'table-input';
+
+    const awaitingOption = document.createElement('option');
+    awaitingOption.value = 'awaiting-response';
+    awaitingOption.textContent = 'Awaiting response';
+
+    const receivedOption = document.createElement('option');
+    receivedOption.value = 'response-received';
+    receivedOption.textContent = 'Response received';
+
+    statusSelect.append(awaitingOption, receivedOption);
+    statusSelect.value = request.status || 'awaiting-response';
+    statusSelect.title = `Status: ${formatCoverageRequestStatus(request.status)}`;
+
+    statusCell.append(statusSelect);
+
+    row.append(
+      idCell,
+      dateCell,
+      memberCell,
+      phoneCell,
+      amountCell,
+      termCell,
+      vinCell,
+      coverageCell,
+      statusCell
+    );
+    fragment.append(row);
+  });
+
+  selectors.coverageRequestList.append(fragment);
 }
 
 function updateLoanIllustrationSaveState() {
@@ -2483,7 +2682,9 @@ const appState = {
   loanEditingId: null,
   loanIllustrations: {},
   loanIllustrationEditingId: null,
-  loanIllustrationDraft: null
+  loanIllustrationDraft: null,
+  coverageRequests: {},
+  coverageRequestDraftId: null
 };
 
 function showDialog(dialog) {
@@ -3511,6 +3712,7 @@ function renderQuotesWorkspace() {
     renderLoanOfficerCalculator();
     renderLoanIllustrationHistory();
     renderLoanLog();
+    renderCoverageRequests();
     return;
   }
 
@@ -3522,6 +3724,7 @@ function renderQuotesWorkspace() {
   renderLoanOfficerCalculator();
   renderLoanIllustrationHistory();
   renderLoanLog();
+  renderCoverageRequests();
 }
 
 function setCallReportFeedback(message, state = 'info') {
@@ -6510,6 +6713,7 @@ selectors.editRevenueForm?.addEventListener('submit', async (event) => {
 selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => {
   appState.accountSelectionId = event.currentTarget.value || null;
   appState.loanIllustrationEditingId = null;
+  appState.coverageRequestDraftId = null;
   setLoanIllustrationSaveStatus('', 'info');
   renderAccountWorkspace();
   renderQuotesWorkspace();
@@ -6517,10 +6721,12 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
     await Promise.all([
       loadCallReports(appState.accountSelectionId),
       appState.accountSelectionId ? loadLoanEntries(appState.accountSelectionId) : Promise.resolve(),
-      appState.accountSelectionId ? loadLoanIllustrations(appState.accountSelectionId) : Promise.resolve()
+      appState.accountSelectionId ? loadLoanIllustrations(appState.accountSelectionId) : Promise.resolve(),
+      appState.accountSelectionId ? loadCoverageRequests(appState.accountSelectionId) : Promise.resolve()
     ]);
     renderLoanLog();
     renderLoanIllustrationHistory();
+    renderCoverageRequests();
   } catch (error) {
     setCallReportFeedback(error.message, 'error');
   }
@@ -6546,7 +6752,6 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
 });
 
 [
-  selectors.coverageRequestLoanId,
   selectors.coverageRequestMemberName,
   selectors.coverageRequestPhone,
   selectors.coverageRequestEmail
@@ -6710,7 +6915,6 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
   const payload = buildCoverageRequestPayload();
   updateCoverageRequestPayloadPreview();
   const missingFields = [];
-  if (!Number.isFinite(payload.loan_id) || payload.loan_id <= 0) missingFields.push('loan ID');
   if (!payload.member_name) missingFields.push('member name');
   if (!payload.phone_number) missingFields.push('phone number');
   if (!payload.loan_amount) missingFields.push('loan amount');
@@ -6749,11 +6953,26 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
     if (!response.ok) {
       throw new Error(responseBody?.error || `Coverage request failed (${response.status}).`);
     }
-    setFeedback(
-      selectors.coverageRequestFeedback,
-      'Coverage request sent. The member will receive a Podium text shortly.',
-      'success'
-    );
+    let feedbackMessage = 'Coverage request sent. The member will receive a Podium text shortly.';
+    try {
+      const record = await createCoverageRequestRecord(buildCoverageRequestRecord(payload));
+      if (record) {
+        const existing = Array.isArray(appState.coverageRequests?.[creditUnionId])
+          ? appState.coverageRequests[creditUnionId]
+          : [];
+        appState.coverageRequests = {
+          ...appState.coverageRequests,
+          [creditUnionId]: [record, ...existing]
+        };
+        renderCoverageRequests();
+        feedbackMessage = 'Coverage request sent and logged. Awaiting member response.';
+      }
+    } catch (recordError) {
+      feedbackMessage =
+        'Coverage request sent, but the tracking log could not be updated. Please retry later.';
+    }
+    appState.coverageRequestDraftId = null;
+    setFeedback(selectors.coverageRequestFeedback, feedbackMessage, 'success');
   } catch (error) {
     setFeedback(
       selectors.coverageRequestFeedback,
@@ -6766,6 +6985,46 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
       button.textContent = previousLabel || 'Send Request';
     }
     updateCoverageRequestAvailability();
+  }
+});
+
+selectors.coverageRequestList?.addEventListener('change', async (event) => {
+  const select = event.target.closest('[data-action="update-request-status"]');
+  if (!select || !selectors.coverageRequestList.contains(select)) {
+    return;
+  }
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) return;
+
+  const requestId = select.dataset.requestId;
+  const requests = Array.isArray(appState.coverageRequests?.[creditUnionId])
+    ? appState.coverageRequests[creditUnionId]
+    : [];
+  const existingRequest = requests.find((request) => request.id === requestId);
+  const previousStatus = existingRequest?.status || 'awaiting-response';
+  const newStatus = select.value;
+
+  if (!requestId || !existingRequest || newStatus === previousStatus) {
+    select.value = previousStatus;
+    return;
+  }
+
+  select.disabled = true;
+  try {
+    const updated = await updateCoverageRequestRecord(requestId, { status: newStatus });
+    if (updated) {
+      appState.coverageRequests = {
+        ...appState.coverageRequests,
+        [creditUnionId]: requests.map((request) => (request.id === requestId ? updated : request))
+      };
+      renderCoverageRequests();
+      setFeedback(selectors.coverageRequestFeedback, 'Coverage request status updated.', 'success');
+    }
+  } catch (error) {
+    select.value = previousStatus;
+    setFeedback(selectors.coverageRequestFeedback, error.message, 'error');
+  } finally {
+    select.disabled = false;
   }
 });
 
@@ -7396,10 +7655,12 @@ async function bootstrap() {
     try {
       await Promise.all([
         loadLoanEntries(appState.accountSelectionId),
-        loadLoanIllustrations(appState.accountSelectionId)
+        loadLoanIllustrations(appState.accountSelectionId),
+        loadCoverageRequests(appState.accountSelectionId)
       ]);
       renderLoanLog();
       renderLoanIllustrationHistory();
+      renderCoverageRequests();
     } catch (error) {
       console.error(error);
     }

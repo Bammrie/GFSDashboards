@@ -263,6 +263,33 @@ const loanIllustrationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 loanIllustrationSchema.index({ creditUnion: 1, updatedAt: -1 });
+const coverageRequestSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, index: true },
+    requestId: { type: String, required: true, trim: true },
+    requestedAt: { type: Date, default: Date.now },
+    status: {
+      type: String,
+      enum: ['awaiting-response', 'response-received'],
+      default: 'awaiting-response'
+    },
+    responseReceivedAt: { type: Date, default: null },
+    memberName: { type: String, trim: true, default: '' },
+    phoneNumber: { type: String, trim: true, default: '' },
+    email: { type: String, trim: true, default: '' },
+    loanAmount: { type: Number, default: null },
+    termMonths: { type: Number, default: null },
+    apr: { type: Number, default: null },
+    mileage: { type: Number, default: null },
+    vin: { type: String, trim: true, default: '' },
+    coverageSummary: { type: String, trim: true, default: '' },
+    coverageOptions: { type: [String], default: [] },
+    coverageOptionsDetail: { type: mongoose.Schema.Types.Mixed, default: [] },
+    requestPayload: { type: mongoose.Schema.Types.Mixed, default: {} }
+  },
+  { timestamps: true }
+);
+coverageRequestSchema.index({ creditUnion: 1, requestedAt: -1 });
 const callReportSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
@@ -314,6 +341,7 @@ const AccountChangeLog = mongoose.model('AccountChangeLog', accountChangeLogSche
 const AccountWarrantyConfig = mongoose.model('AccountWarrantyConfig', accountWarrantyConfigSchema);
 const Loan = mongoose.model('Loan', loanSchema);
 const LoanIllustration = mongoose.model('LoanIllustration', loanIllustrationSchema);
+const CoverageRequest = mongoose.model('CoverageRequest', coverageRequestSchema);
 
 const databaseReady = await initializeDatabase();
 
@@ -651,6 +679,114 @@ function serializeLoanIllustration(illustration) {
     updatedAt: illustration.updatedAt ? illustration.updatedAt.toISOString() : null
   };
 }
+
+function serializeCoverageRequest(request) {
+  return {
+    id: request._id.toString(),
+    creditUnionId: request.creditUnion.toString(),
+    requestId: request.requestId,
+    requestedAt: request.requestedAt ? request.requestedAt.toISOString() : null,
+    status: request.status,
+    responseReceivedAt: request.responseReceivedAt ? request.responseReceivedAt.toISOString() : null,
+    memberName: request.memberName || '',
+    phoneNumber: request.phoneNumber || '',
+    email: request.email || '',
+    loanAmount: Number.isFinite(request.loanAmount) ? request.loanAmount : null,
+    termMonths: Number.isFinite(request.termMonths) ? request.termMonths : null,
+    apr: Number.isFinite(request.apr) ? request.apr : null,
+    mileage: Number.isFinite(request.mileage) ? request.mileage : null,
+    vin: request.vin || '',
+    coverageSummary: request.coverageSummary || '',
+    coverageOptions: Array.isArray(request.coverageOptions) ? request.coverageOptions : [],
+    coverageOptionsDetail: request.coverageOptionsDetail || [],
+    requestPayload: request.requestPayload || {}
+  };
+}
+
+app.get('/api/coverage-requests', async (req, res, next) => {
+  try {
+    const creditUnionId = req.query?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid creditUnionId is required.' });
+      return;
+    }
+    const requests = await CoverageRequest.find({ creditUnion: creditUnionId })
+      .sort({ requestedAt: -1, createdAt: -1 })
+      .lean();
+    res.json({ requests: requests.map(serializeCoverageRequest) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/coverage-requests', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid creditUnionId is required.' });
+      return;
+    }
+    const requestId = parseLoanString(req.body?.requestId);
+    if (!requestId) {
+      res.status(400).json({ error: 'Request ID is required.' });
+      return;
+    }
+    const requestedAtRaw = req.body?.requestedAt;
+    const requestedAt = requestedAtRaw ? new Date(requestedAtRaw) : new Date();
+    const status =
+      req.body?.status === 'response-received' ? 'response-received' : 'awaiting-response';
+    const responseReceivedAt = status === 'response-received' ? new Date() : null;
+
+    const record = await CoverageRequest.create({
+      creditUnion: creditUnionId,
+      requestId,
+      requestedAt: Number.isNaN(requestedAt.getTime()) ? new Date() : requestedAt,
+      status,
+      responseReceivedAt,
+      memberName: parseLoanString(req.body?.memberName) || '',
+      phoneNumber: parseLoanString(req.body?.phoneNumber) || '',
+      email: parseLoanString(req.body?.email) || '',
+      loanAmount: parseLoanNumber(req.body?.loanAmount),
+      termMonths: parseLoanNumber(req.body?.termMonths),
+      apr: parseLoanNumber(req.body?.apr),
+      mileage: parseLoanNumber(req.body?.mileage),
+      vin: parseLoanString(req.body?.vin) || '',
+      coverageSummary: parseLoanString(req.body?.coverageSummary) || '',
+      coverageOptions: Array.isArray(req.body?.coverageOptions) ? req.body.coverageOptions : [],
+      coverageOptionsDetail: req.body?.coverageOptionsDetail ?? [],
+      requestPayload: req.body?.requestPayload ?? {}
+    });
+
+    res.json({ request: serializeCoverageRequest(record) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch('/api/coverage-requests/:id', async (req, res, next) => {
+  try {
+    const id = req.params?.id;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(404).json({ error: 'Coverage request not found.' });
+      return;
+    }
+    const status =
+      req.body?.status === 'response-received' ? 'response-received' : 'awaiting-response';
+    const responseReceivedAt = status === 'response-received' ? new Date() : null;
+    const request = await CoverageRequest.findByIdAndUpdate(
+      id,
+      { status, responseReceivedAt },
+      { new: true }
+    );
+    if (!request) {
+      res.status(404).json({ error: 'Coverage request not found.' });
+      return;
+    }
+    res.json({ request: serializeCoverageRequest(request) });
+  } catch (error) {
+    next(error);
+  }
+});
 
 app.get('/api/loans', async (req, res, next) => {
   try {
