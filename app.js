@@ -37,7 +37,6 @@ const integerFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits:
 const decimalFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const CLASSIFICATIONS = ['account', 'prospect'];
 const COVERAGE_REQUEST_ENDPOINT = '/api/coverage-request';
-const COVERAGE_REQUEST_CREDIT_UNION = 'Baycel Federal Credit Union';
 const COVERAGE_OPTION_LABELS = {
   base: 'Base loan',
   vsc: 'Vehicle service contract',
@@ -700,10 +699,6 @@ function buildCoverageRequestPayload() {
 function updateCoverageRequestAvailability() {
   if (!selectors.coverageRequestBtn) return;
   const creditUnionId = appState.accountSelectionId;
-  const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
-  const isBaycel =
-    normalizeNameForComparison(creditUnionName) ===
-    normalizeNameForComparison(COVERAGE_REQUEST_CREDIT_UNION);
   const loanId = parseNumericInput(selectors.coverageRequestLoanId?.value);
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
@@ -716,15 +711,9 @@ function updateCoverageRequestAvailability() {
 
   if (!creditUnionId) {
     selectors.coverageRequestBtn.disabled = true;
-    setFeedback(selectors.coverageRequestFeedback, 'Select Baycel Federal Credit Union to request coverage.', 'info');
-    return;
-  }
-
-  if (!isBaycel) {
-    selectors.coverageRequestBtn.disabled = true;
     setFeedback(
       selectors.coverageRequestFeedback,
-      'Coverage requests are only available when Baycel Federal Credit Union is selected.',
+      'Select a credit union to request coverage.',
       'info'
     );
     return;
@@ -6705,16 +6694,8 @@ selectors.loanProtectionOptionsBtn?.addEventListener('click', () => {
 
 selectors.coverageRequestBtn?.addEventListener('click', async () => {
   const creditUnionId = appState.accountSelectionId;
-  const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
-  const isBaycel =
-    normalizeNameForComparison(creditUnionName) ===
-    normalizeNameForComparison(COVERAGE_REQUEST_CREDIT_UNION);
-  if (!creditUnionId || !isBaycel) {
-    setFeedback(
-      selectors.coverageRequestFeedback,
-      `Coverage requests are blocked because ${creditUnionName || 'a different credit union'} is selected. Switch to ${COVERAGE_REQUEST_CREDIT_UNION} to continue.`,
-      'error'
-    );
+  if (!creditUnionId) {
+    setFeedback(selectors.coverageRequestFeedback, 'Select a credit union to send a coverage request.', 'error');
     return;
   }
 
