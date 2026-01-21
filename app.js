@@ -204,6 +204,7 @@ const selectors = {
   loanVinInput: document.getElementById('loan-vin'),
   loanVinDecodeBtn: document.getElementById('loan-vin-decode-btn'),
   loanProtectionOptionsBtn: document.getElementById('loan-protection-options-btn'),
+  coverageRequestLoanId: document.getElementById('coverage-request-loan-id'),
   coverageRequestMemberName: document.getElementById('coverage-request-member-name'),
   coverageRequestPhone: document.getElementById('coverage-request-phone'),
   coverageRequestEmail: document.getElementById('coverage-request-email'),
@@ -220,8 +221,10 @@ const selectors = {
   loanVinResults: document.getElementById('loan-vin-results'),
   loanLogSummary: document.getElementById('loan-log-summary'),
   loanLogForm: document.getElementById('loan-log-form'),
+  loanLogIdInput: document.getElementById('loan-log-id'),
   loanLogDateInput: document.getElementById('loan-log-date'),
   loanLogOfficerInput: document.getElementById('loan-log-officer'),
+  loanLogResponseCodeSelect: document.getElementById('loan-log-response-code'),
   loanLogCoverageSelect: document.getElementById('loan-log-coverage-selected'),
   loanLogVscToggle: document.getElementById('loan-log-vsc-selected'),
   loanLogGapToggle: document.getElementById('loan-log-gap-selected'),
@@ -595,36 +598,57 @@ function buildCoverageRequestOptionDetails(coverageCombos = []) {
     const paymentLabel = Number.isFinite(combo.payment)
       ? `${formatCurrencyValue(combo.payment)}/month`
       : 'payment TBD';
+    const extensionTermMonths = Number.isFinite(combo.extendedTermMonths) ? combo.extendedTermMonths : null;
+    const extensionPayment = Number.isFinite(combo.extensionPayment) ? combo.extensionPayment : null;
+    const extensionPaymentLabel = Number.isFinite(combo.extensionPayment)
+      ? `${formatCurrencyValue(combo.extensionPayment)}/month`
+      : null;
     return {
       id: combo.id || null,
       label,
       payment,
-      payment_label: paymentLabel
+      payment_label: paymentLabel,
+      extension_term_months: extensionTermMonths,
+      extension_payment: extensionPayment,
+      extension_payment_label: extensionPaymentLabel
     };
   });
 }
 
 function buildCoverageRequestOptions(coverageCombos = []) {
   const detailedOptions = buildCoverageRequestOptionDetails(coverageCombos);
-  return detailedOptions.map((option) => `${option.label} - ${option.payment_label}`);
+  return detailedOptions.map((option) => {
+    if (Number.isFinite(option.extension_payment) && Number.isFinite(option.extension_term_months)) {
+      return `${option.label} - ${option.payment_label} (Extended ${option.extension_term_months} mo: ${option.extension_payment_label})`;
+    }
+    return `${option.label} - ${option.payment_label}`;
+  });
 }
 
 function buildCoverageRequestPayload() {
   const creditUnionId = appState.accountSelectionId;
   const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
+  const loanId = parseNumericInput(selectors.coverageRequestLoanId?.value);
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
   const email = selectors.coverageRequestEmail?.value.trim() || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
   const loanAmountLabel = Number.isFinite(loanAmount) ? currencyFormatterNoCents.format(loanAmount) : '';
   const loanAmountValue = Number.isFinite(loanAmount) ? loanAmount : null;
+  const termMonths = parseNumericInput(selectors.loanTermInput?.value);
+  const apr = parseNumericInput(selectors.loanAprInput?.value);
+  const mileage = parseNumericInput(selectors.loanMilesInput?.value);
+  const vin = selectors.loanVinInput?.value?.trim() || '';
   const coverageDetails = buildCoverageRequestOptionDetails(appState.loanIllustrationDraft?.coverageCombos);
-  const coverageOptions = coverageDetails.map((option) => `${option.label} - ${option.payment_label}`);
+  const coverageOptions = buildCoverageRequestOptions(appState.loanIllustrationDraft?.coverageCombos);
   const coverageOptionsText = coverageOptions.length ? coverageOptions.join(' | ') : '';
   const coverageSummary = appState.loanIllustrationDraft?.selections
     ? formatLoanIllustrationCoverageSummary(appState.loanIllustrationDraft.selections)
     : '';
   const phraseParts = [];
+  if (Number.isFinite(loanId)) {
+    phraseParts.push(`Loan ID: ${loanId}`);
+  }
   if (memberName) {
     phraseParts.push(`Member: ${memberName}`);
   }
@@ -649,6 +673,7 @@ function buildCoverageRequestPayload() {
   const phrase = phraseParts.join(' | ') || 'Coverage request';
 
   return {
+    loan_id: Number.isFinite(loanId) ? loanId : null,
     phone_number: phoneNumber,
     member_phone: phoneNumber,
     email,
@@ -656,6 +681,10 @@ function buildCoverageRequestPayload() {
     loan_amount: loanAmountValue,
     loan_amount_value: loanAmountValue,
     loan_amount_display: loanAmountLabel,
+    term_months: Number.isFinite(termMonths) ? termMonths : null,
+    apr: Number.isFinite(apr) ? apr : null,
+    mileage: Number.isFinite(mileage) ? mileage : null,
+    vin,
     coverage_summary: coverageSummary,
     coverage_options: coverageOptions,
     coverage_options_detail: coverageDetails,
@@ -675,9 +704,14 @@ function updateCoverageRequestAvailability() {
   const isBaycel =
     normalizeNameForComparison(creditUnionName) ===
     normalizeNameForComparison(COVERAGE_REQUEST_CREDIT_UNION);
+  const loanId = parseNumericInput(selectors.coverageRequestLoanId?.value);
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
+  const termMonths = parseNumericInput(selectors.loanTermInput?.value);
+  const apr = parseNumericInput(selectors.loanAprInput?.value);
+  const miles = parseNumericInput(selectors.loanMilesInput?.value);
+  const vin = selectors.loanVinInput?.value?.trim() ?? '';
   const coverageOptions = buildCoverageRequestOptions(appState.loanIllustrationDraft?.coverageCombos);
 
   if (!creditUnionId) {
@@ -697,16 +731,24 @@ function updateCoverageRequestAvailability() {
   }
 
   const isReady =
+    Number.isFinite(loanId) &&
+    loanId > 0 &&
     Boolean(memberName) &&
     Boolean(phoneNumber) &&
     Number.isFinite(loanAmount) &&
     loanAmount > 0 &&
+    Number.isFinite(termMonths) &&
+    termMonths > 0 &&
+    Number.isFinite(apr) &&
+    Number.isFinite(miles) &&
+    miles >= 0 &&
+    vin.length === 17 &&
     coverageOptions.length > 0;
   selectors.coverageRequestBtn.disabled = !isReady;
   if (!isReady) {
     setFeedback(
       selectors.coverageRequestFeedback,
-      'Enter member name, phone, and loan amount to send a coverage request.',
+      'Enter loan ID, member name, phone, and full loan details to send a coverage request.',
       'info'
     );
   } else {
@@ -1350,6 +1392,7 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.loanVinInput,
     selectors.loanVinDecodeBtn,
     selectors.loanProtectionOptionsBtn,
+    selectors.coverageRequestLoanId,
     selectors.coverageRequestMemberName,
     selectors.coverageRequestPhone,
     selectors.coverageRequestEmail,
@@ -1605,6 +1648,12 @@ function formatLoanProducts(loan) {
   return selections.length ? selections.join(' • ') : 'None';
 }
 
+function formatMemberResponseCode(code) {
+  if (!Number.isFinite(code)) return '—';
+  if (code === 0) return '0 - No coverage';
+  return `Option ${integerFormatter.format(code)}`;
+}
+
 function setLoanLogDefaults() {
   if (selectors.loanLogDateInput && !selectors.loanLogDateInput.value) {
     const today = new Date();
@@ -1614,8 +1663,10 @@ function setLoanLogDefaults() {
 
 function setLoanLogDisabled(isDisabled) {
   [
+    selectors.loanLogIdInput,
     selectors.loanLogDateInput,
     selectors.loanLogOfficerInput,
+    selectors.loanLogResponseCodeSelect,
     selectors.loanLogCoverageSelect,
     selectors.loanLogVscToggle,
     selectors.loanLogGapToggle,
@@ -1647,8 +1698,15 @@ function populateLoanLogForm(loan) {
   if (selectors.loanLogDateInput) {
     selectors.loanLogDateInput.value = loan.loanDate ? loan.loanDate.slice(0, 10) : '';
   }
+  if (selectors.loanLogIdInput) {
+    selectors.loanLogIdInput.value = Number.isFinite(loan.loanId) ? loan.loanId : '';
+  }
   if (selectors.loanLogOfficerInput) {
     selectors.loanLogOfficerInput.value = loan.loanOfficer || '';
+  }
+  if (selectors.loanLogResponseCodeSelect) {
+    selectors.loanLogResponseCodeSelect.value =
+      Number.isFinite(loan.memberResponseCode) ? String(loan.memberResponseCode) : '';
   }
   if (selectors.loanLogCoverageSelect) {
     selectors.loanLogCoverageSelect.value = loan.coverageSelected ? 'yes' : 'no';
@@ -1702,20 +1760,25 @@ function populateLoanLogForm(loan) {
   }
   updateLoanIllustration();
   updateProtectionOptionsAvailability();
+  updateCoverageRequestAvailability();
 }
 
 function buildLoanPayload() {
   const creditUnionId = appState.accountSelectionId;
   const loanDate = selectors.loanLogDateInput?.value || '';
+  const loanId = parseNumericInput(selectors.loanLogIdInput?.value);
   const loanOfficer = selectors.loanLogOfficerInput?.value?.trim() || '';
   const coverageSelectedValue = selectors.loanLogCoverageSelect?.value || '';
   const coverageSelected =
     coverageSelectedValue === 'yes' ? true : coverageSelectedValue === 'no' ? false : null;
   const selectedPackage =
     document.querySelector('input[name="mob-debt-package"]:checked')?.value || 'none';
+  const memberResponseCodeValue = selectors.loanLogResponseCodeSelect?.value ?? '';
+  const memberResponseCode = memberResponseCodeValue === '' ? null : Number(memberResponseCodeValue);
 
   return {
     creditUnionId,
+    loanId: Number.isFinite(loanId) ? loanId : null,
     loanDate,
     loanOfficer,
     loanAmount: parseNumericInput(selectors.loanAmountInput?.value),
@@ -1723,6 +1786,7 @@ function buildLoanPayload() {
     apr: parseNumericInput(selectors.loanAprInput?.value),
     mileage: parseNumericInput(selectors.loanMilesInput?.value),
     vin: selectors.loanVinInput?.value?.trim() || '',
+    memberResponseCode,
     coverageSelected,
     coverageType: selectors.mobCoverageTypeSelect?.value || null,
     coverageDetails: {
@@ -1789,11 +1853,18 @@ function renderLoanLog() {
   loans.forEach((loan) => {
     const row = document.createElement('tr');
 
+    const loanIdCell = document.createElement('td');
+    loanIdCell.className = 'numeric';
+    loanIdCell.textContent = Number.isFinite(loan.loanId) ? integerFormatter.format(loan.loanId) : '—';
+
     const dateCell = document.createElement('td');
     dateCell.textContent = formatLoanDate(loan.loanDate);
 
     const officerCell = document.createElement('td');
     officerCell.textContent = loan.loanOfficer || '—';
+
+    const responseCell = document.createElement('td');
+    responseCell.textContent = formatMemberResponseCode(loan.memberResponseCode);
 
     const amountCell = document.createElement('td');
     amountCell.className = 'numeric';
@@ -1840,8 +1911,10 @@ function renderLoanLog() {
     actionsCell.append(editButton, deleteButton);
 
     row.append(
+      loanIdCell,
       dateCell,
       officerCell,
+      responseCell,
       amountCell,
       termCell,
       aprCell,
@@ -6471,10 +6544,12 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
 ].forEach((element) => {
   element?.addEventListener('input', () => {
     updateLoanIllustration();
+    updateCoverageRequestAvailability();
   });
 });
 
 [
+  selectors.coverageRequestLoanId,
   selectors.coverageRequestMemberName,
   selectors.coverageRequestPhone,
   selectors.coverageRequestEmail
@@ -6645,9 +6720,14 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
 
   const payload = buildCoverageRequestPayload();
   const missingFields = [];
+  if (!Number.isFinite(payload.loan_id) || payload.loan_id <= 0) missingFields.push('loan ID');
   if (!payload.member_name) missingFields.push('member name');
   if (!payload.phone_number) missingFields.push('phone number');
   if (!payload.loan_amount) missingFields.push('loan amount');
+  if (!payload.term_months) missingFields.push('term');
+  if (!Number.isFinite(payload.apr) && payload.apr !== 0) missingFields.push('APR');
+  if (!Number.isFinite(payload.mileage) && payload.mileage !== 0) missingFields.push('mileage');
+  if (!payload.vin || payload.vin.length !== 17) missingFields.push('VIN');
   if (!Array.isArray(payload.coverage_options) || payload.coverage_options.length === 0) {
     missingFields.push('coverage options');
   }
@@ -6693,7 +6773,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
   } finally {
     if (button) {
       button.disabled = false;
-      button.textContent = previousLabel || 'Request Coverage';
+      button.textContent = previousLabel || 'Send Request';
     }
     updateCoverageRequestAvailability();
   }
@@ -7013,6 +7093,19 @@ selectors.loanLogForm?.addEventListener('submit', async (event) => {
   }
   if (!Number.isFinite(payload.loanAmount)) {
     setFeedback(selectors.loanLogFeedback, 'Loan amount is required.', 'error');
+    return;
+  }
+  if (payload.loanId !== null && (!Number.isInteger(payload.loanId) || payload.loanId <= 0)) {
+    setFeedback(selectors.loanLogFeedback, 'Loan ID must be a positive whole number.', 'error');
+    return;
+  }
+  if (
+    payload.memberResponseCode !== null &&
+    (!Number.isInteger(payload.memberResponseCode) ||
+      payload.memberResponseCode < 0 ||
+      payload.memberResponseCode > 6)
+  ) {
+    setFeedback(selectors.loanLogFeedback, 'Member response must be between 0 and 6.', 'error');
     return;
   }
   if (payload.coverageSelected === null) {

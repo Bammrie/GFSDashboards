@@ -98,17 +98,17 @@
             </div>
             <button type="button" id="loan-vin-decode-btn" class="secondary-button">Decode VIN</button>
           </div>
-          <div class="loan-officer-actions">
-            <button type="button" id="loan-protection-options-btn" class="primary-button" disabled>
-              Protection Options
-            </button>
+          <div class="loan-officer-request loan-officer-request--primary">
+            <p class="field-label">Send coverage request (Baycel Federal Credit Union)</p>
             <p class="field-help">
-              Complete loan amount, term, APR, miles, and VIN to unlock the menu presentation.
+              Capture the loan ID and member contact details, then send the menu options to Zapier. Member replies
+              with 0-6 to confirm coverage, and you can override it in the sales register if needed.
             </p>
-          </div>
-          <div class="loan-officer-request">
-            <p class="field-label">Coverage request (Baycel Federal Credit Union)</p>
             <div class="loan-officer-fields">
+              <div class="field-group">
+                <label for="coverage-request-loan-id">Loan ID</label>
+                <input type="number" id="coverage-request-loan-id" min="1" placeholder="10234" />
+              </div>
               <div class="field-group">
                 <label for="coverage-request-member-name">Member name</label>
                 <input type="text" id="coverage-request-member-name" placeholder="Jordan Smith" />
@@ -125,11 +125,16 @@
             <div class="loan-officer-actions">
               <p class="feedback" id="coverage-request-feedback" role="status" aria-live="polite"></p>
               <button type="button" id="coverage-request-btn" class="primary-button" disabled>
-                Request Coverage
+                Send Request
               </button>
             </div>
+          </div>
+          <div class="loan-officer-actions">
+            <button type="button" id="loan-protection-options-btn" class="secondary-button" disabled>
+              Protection Options
+            </button>
             <p class="field-help">
-              Sends the coverage options from this quote to the member via the Zapier + Podium webhook.
+              Review the coverage combinations and payment impacts before sending the request.
             </p>
           </div>
         </div>
@@ -240,11 +245,16 @@
           <h3 class="table-title">Sales register</h3>
           <p id="loan-log-summary" class="table-description">
             Issue coverage for funded loans. Loan amount, term, APR, mileage, and VIN are pulled from the loan details
-            above while coverage combinations follow the Protection Options selections.
+            above while coverage combinations follow the Protection Options selections. Use the member response code
+            to override Zapier replies when needed.
           </p>
         </header>
         <form id="loan-log-form" class="loan-log-form">
           <div class="loan-log-fields">
+            <div class="field-group">
+              <label for="loan-log-id">Loan ID</label>
+              <input type="number" id="loan-log-id" min="1" placeholder="10234" />
+            </div>
             <div class="field-group">
               <label for="loan-log-date">Loan date</label>
               <input type="date" id="loan-log-date" required />
@@ -252,6 +262,19 @@
             <div class="field-group">
               <label for="loan-log-officer">Loan officer</label>
               <input type="text" id="loan-log-officer" placeholder="Officer name" required />
+            </div>
+            <div class="field-group">
+              <label for="loan-log-response-code">Member response</label>
+              <select id="loan-log-response-code">
+                <option value="" selected>Not received</option>
+                <option value="0">0 - No coverage</option>
+                <option value="1">1 - Option 1</option>
+                <option value="2">2 - Option 2</option>
+                <option value="3">3 - Option 3</option>
+                <option value="4">4 - Option 4</option>
+                <option value="5">5 - Option 5</option>
+                <option value="6">6 - Option 6</option>
+              </select>
             </div>
             <div class="field-group">
               <label for="loan-log-coverage-selected">Coverage selected</label>
@@ -289,8 +312,10 @@
           <table class="data-table">
             <thead>
               <tr>
+                <th scope="col" class="numeric">Loan ID</th>
                 <th scope="col">Loan date</th>
                 <th scope="col">Loan officer</th>
+                <th scope="col">Member response</th>
                 <th scope="col" class="numeric">Amount</th>
                 <th scope="col" class="numeric">Term</th>
                 <th scope="col" class="numeric">APR</th>

@@ -1084,6 +1084,18 @@ input[type='month']:focus-visible {
   width: fit-content;
 }
 
+.loan-officer-request {
+  border: 1px solid rgba(122, 30, 44, 0.45);
+  background: var(--surface-highlight);
+  padding: 0.85rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.loan-officer-request .primary-button {
+  width: 100%;
+}
+
 .field-label {
   display: block;
   font-size: 0.85rem;

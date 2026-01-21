@@ -227,12 +227,14 @@ const loanSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, index: true },
     loanDate: { type: Date, required: true },
+    loanId: { type: Number, default: null },
     loanAmount: { type: Number, required: true },
     loanOfficer: { type: String, trim: true, required: true },
     termMonths: { type: Number, default: null },
     apr: { type: Number, default: null },
     mileage: { type: Number, default: null },
     vin: { type: String, trim: true, default: '' },
+    memberResponseCode: { type: Number, default: null },
     coverageSelected: { type: Boolean, required: true },
     coverageType: { type: String, enum: ['credit-insurance', 'debt-protection', null], default: null },
     coverageDetails: {
@@ -612,12 +614,14 @@ function serializeLoan(loan) {
     id: loan._id.toString(),
     creditUnionId: loan.creditUnion.toString(),
     loanDate: loan.loanDate ? loan.loanDate.toISOString() : null,
+    loanId: loan.loanId ?? null,
     loanAmount: Number(loan.loanAmount ?? 0),
     loanOfficer: loan.loanOfficer,
     termMonths: loan.termMonths ?? null,
     apr: loan.apr ?? null,
     mileage: loan.mileage ?? null,
     vin: loan.vin ?? '',
+    memberResponseCode: loan.memberResponseCode ?? null,
     coverageSelected: loan.coverageSelected,
     coverageType: loan.coverageType ?? null,
     coverageDetails: loan.coverageDetails ?? {},
@@ -692,6 +696,21 @@ app.post('/api/loans', async (req, res, next) => {
       return;
     }
 
+    const loanId = parseLoanNumber(req.body?.loanId);
+    if (loanId !== null && (!Number.isInteger(loanId) || loanId <= 0)) {
+      res.status(400).json({ error: 'Loan ID must be a positive whole number.' });
+      return;
+    }
+
+    const memberResponseCode = parseLoanNumber(req.body?.memberResponseCode);
+    if (
+      memberResponseCode !== null &&
+      (!Number.isInteger(memberResponseCode) || memberResponseCode < 0 || memberResponseCode > 6)
+    ) {
+      res.status(400).json({ error: 'Member response code must be between 0 and 6.' });
+      return;
+    }
+
     const coverageSelected = parseLoanBoolean(req.body?.coverageSelected);
     if (coverageSelected === null) {
       res.status(400).json({ error: 'Coverage selection (yes/no) is required.' });
@@ -719,12 +738,14 @@ app.post('/api/loans', async (req, res, next) => {
     const created = await Loan.create({
       creditUnion: creditUnionId,
       loanDate,
+      loanId,
       loanAmount,
       loanOfficer,
       termMonths: parseLoanNumber(req.body?.termMonths),
       apr: parseLoanNumber(req.body?.apr),
       mileage: parseLoanNumber(req.body?.mileage),
       vin: parseLoanString(req.body?.vin) || '',
+      memberResponseCode,
       coverageSelected,
       coverageType,
       coverageDetails,
@@ -770,6 +791,14 @@ app.patch('/api/loans/:id', async (req, res, next) => {
       }
       updates.loanOfficer = loanOfficer;
     }
+    if ('loanId' in req.body) {
+      const loanId = parseLoanNumber(req.body?.loanId);
+      if (loanId !== null && (!Number.isInteger(loanId) || loanId <= 0)) {
+        res.status(400).json({ error: 'Loan ID must be a positive whole number.' });
+        return;
+      }
+      updates.loanId = loanId;
+    }
     if ('termMonths' in req.body) {
       updates.termMonths = parseLoanNumber(req.body?.termMonths);
     }
@@ -781,6 +810,17 @@ app.patch('/api/loans/:id', async (req, res, next) => {
     }
     if ('vin' in req.body) {
       updates.vin = parseLoanString(req.body?.vin) || '';
+    }
+    if ('memberResponseCode' in req.body) {
+      const memberResponseCode = parseLoanNumber(req.body?.memberResponseCode);
+      if (
+        memberResponseCode !== null &&
+        (!Number.isInteger(memberResponseCode) || memberResponseCode < 0 || memberResponseCode > 6)
+      ) {
+        res.status(400).json({ error: 'Member response code must be between 0 and 6.' });
+        return;
+      }
+      updates.memberResponseCode = memberResponseCode;
     }
     if ('coverageSelected' in req.body) {
       const coverageSelected = parseLoanBoolean(req.body?.coverageSelected);
