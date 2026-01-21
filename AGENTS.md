@@ -1,3 +1,4 @@
+2029-01-13: Added a coverage request payload preview in the quote workspace so Zapier JSON updates are visible as inputs change.
 2029-01-12: Removed Baycel-only gating from coverage request availability and submit flow so any selected credit union can request coverage.
 2029-01-11: Prioritized the coverage request flow in the quote workspace, added loan ID + member response tracking in the sales register, and expanded the Zapier request payload with loan details and term extension options.
 2029-01-10: Expanded coverage request webhook payload metadata (coverage summary, detailed options, timestamp) and added a phrase fallback for Zapier diagnostics.
