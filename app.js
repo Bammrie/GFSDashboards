@@ -209,6 +209,7 @@ const selectors = {
   coverageRequestEmail: document.getElementById('coverage-request-email'),
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
+  coverageRequestPayload: document.getElementById('coverage-request-payload'),
   loanWarrantyCostInput: document.getElementById('loan-warranty-cost'),
   loanCreditUnionMarkupInput: document.getElementById('loan-credit-union-markup'),
   loanGfsMarkupInput: document.getElementById('loan-gfs-markup'),
@@ -696,8 +697,15 @@ function buildCoverageRequestPayload() {
   };
 }
 
+function updateCoverageRequestPayloadPreview() {
+  if (!selectors.coverageRequestPayload) return;
+  const payload = buildCoverageRequestPayload();
+  selectors.coverageRequestPayload.textContent = JSON.stringify(payload, null, 2);
+}
+
 function updateCoverageRequestAvailability() {
   if (!selectors.coverageRequestBtn) return;
+  updateCoverageRequestPayloadPreview();
   const creditUnionId = appState.accountSelectionId;
   const loanId = parseNumericInput(selectors.coverageRequestLoanId?.value);
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
@@ -6700,6 +6708,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
   }
 
   const payload = buildCoverageRequestPayload();
+  updateCoverageRequestPayloadPreview();
   const missingFields = [];
   if (!Number.isFinite(payload.loan_id) || payload.loan_id <= 0) missingFields.push('loan ID');
   if (!payload.member_name) missingFields.push('member name');
