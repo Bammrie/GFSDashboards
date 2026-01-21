@@ -188,13 +188,6 @@ const selectors = {
   accountReviewDownload: document.getElementById('account-review-download'),
   accountChangeLog: document.getElementById('account-change-log'),
   accountChangeLogEmpty: document.getElementById('account-change-log-empty'),
-  trainingAccountsTotal: document.getElementById('training-total-accounts'),
-  trainingMonthlyTotal: document.getElementById('training-monthly-total'),
-  trainingAnnualTotal: document.getElementById('training-annual-total'),
-  trainingMonthGrid: document.getElementById('training-month-grid'),
-  trainingCommitmentBody: document.getElementById('training-commitment-body'),
-  trainingEmptyState: document.getElementById('training-empty-state'),
-  trainingTableCard: document.getElementById('training-table-card'),
   loanOfficerSummary: document.getElementById('loan-officer-summary'),
   loanAmountInput: document.getElementById('loan-amount'),
   loanTermInput: document.getElementById('loan-term'),
@@ -4250,7 +4243,6 @@ function renderAccountReview() {
   const reviewData = {
     year: stored.year ?? new Date().getFullYear(),
     reviewedBy: stored.reviewedBy ?? '',
-    trainingFrequency: stored.trainingFrequency ?? '',
     program: stored.program ?? {},
     integration: stored.integration ?? {},
     coreProcessor: stored.coreProcessor ?? '',
@@ -4308,144 +4300,6 @@ function formatReviewField(value) {
     return trimmed;
   }
   return String(value);
-}
-
-const TRAINING_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const TRAINING_FREQUENCY_META = {
-  weekly: { annual: 48, months: TRAINING_MONTHS.map((_label, index) => index), sessionsPerMonth: 4 },
-  monthly: { annual: 12, months: TRAINING_MONTHS.map((_label, index) => index), sessionsPerMonth: 1 },
-  'bi-monthly': { annual: 6, months: [0, 2, 4, 6, 8, 10], sessionsPerMonth: 1 },
-  quarterly: { annual: 4, months: [0, 3, 6, 9], sessionsPerMonth: 1 },
-  yearly: { annual: 1, months: [0], sessionsPerMonth: 1 }
-};
-
-function getTrainingMeta(frequency) {
-  if (!frequency) return null;
-  return TRAINING_FREQUENCY_META[frequency] || null;
-}
-
-function renderTrainingDashboard() {
-  if (
-    !selectors.trainingAccountsTotal &&
-    !selectors.trainingMonthlyTotal &&
-    !selectors.trainingAnnualTotal &&
-    !selectors.trainingMonthGrid &&
-    !selectors.trainingCommitmentBody
-  ) {
-    return;
-  }
-
-  const trainingRows = appState.creditUnions
-    .filter((creditUnion) => creditUnion.classification === 'account')
-    .map((creditUnion) => {
-      const reviewData = appState.accountReviewData[creditUnion.id] || {};
-      const frequency = reviewData.trainingFrequency || '';
-      const meta = getTrainingMeta(frequency);
-      if (!meta) return null;
-      const annual = meta.annual;
-      return {
-        id: creditUnion.id,
-        name: creditUnion.name,
-        frequency,
-        frequencyLabel: formatReviewField(frequency),
-        annual,
-        monthlyAverage: annual / 12,
-        updatedAt: reviewData.updatedAt
-      };
-    })
-    .filter(Boolean)
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  const totalAccounts = trainingRows.length;
-  const totalAnnual = trainingRows.reduce((sum, row) => sum + row.annual, 0);
-  const totalMonthly = totalAnnual / 12;
-
-  if (selectors.trainingAccountsTotal) {
-    selectors.trainingAccountsTotal.textContent = integerFormatter.format(totalAccounts);
-  }
-  if (selectors.trainingMonthlyTotal) {
-    selectors.trainingMonthlyTotal.textContent = totalMonthly
-      ? decimalFormatter.format(totalMonthly)
-      : '0';
-  }
-  if (selectors.trainingAnnualTotal) {
-    selectors.trainingAnnualTotal.textContent = totalAnnual
-      ? integerFormatter.format(totalAnnual)
-      : '0';
-  }
-
-  if (selectors.trainingMonthGrid) {
-    selectors.trainingMonthGrid.innerHTML = '';
-    const monthlyTotals = TRAINING_MONTHS.map(() => 0);
-    trainingRows.forEach((row) => {
-      const meta = getTrainingMeta(row.frequency);
-      if (!meta) return;
-      meta.months.forEach((monthIndex) => {
-        monthlyTotals[monthIndex] += meta.sessionsPerMonth;
-      });
-    });
-
-    const fragment = document.createDocumentFragment();
-    monthlyTotals.forEach((total, index) => {
-      const card = document.createElement('article');
-      card.className = 'training-month-card';
-      card.setAttribute('role', 'listitem');
-
-      const label = document.createElement('p');
-      label.className = 'training-month-label';
-      label.textContent = TRAINING_MONTHS[index];
-
-      const value = document.createElement('p');
-      value.className = 'training-month-value';
-      value.textContent = integerFormatter.format(total);
-
-      const meta = document.createElement('p');
-      meta.className = 'training-month-meta';
-      meta.textContent = 'sessions';
-
-      card.append(label, value, meta);
-      fragment.append(card);
-    });
-
-    selectors.trainingMonthGrid.append(fragment);
-  }
-
-  if (selectors.trainingCommitmentBody) {
-    selectors.trainingCommitmentBody.innerHTML = '';
-    const fragment = document.createDocumentFragment();
-    trainingRows.forEach((row) => {
-      const tableRow = document.createElement('tr');
-
-      const nameCell = document.createElement('td');
-      nameCell.textContent = row.name;
-
-      const frequencyCell = document.createElement('td');
-      frequencyCell.textContent = row.frequencyLabel;
-
-      const monthlyCell = document.createElement('td');
-      monthlyCell.className = 'numeric';
-      monthlyCell.textContent = decimalFormatter.format(row.monthlyAverage);
-
-      const annualCell = document.createElement('td');
-      annualCell.className = 'numeric';
-      annualCell.textContent = integerFormatter.format(row.annual);
-
-      const updatedCell = document.createElement('td');
-      updatedCell.textContent = row.updatedAt ? formatLogTimestamp(row.updatedAt) : '—';
-
-      tableRow.append(nameCell, frequencyCell, monthlyCell, annualCell, updatedCell);
-      fragment.append(tableRow);
-    });
-    selectors.trainingCommitmentBody.append(fragment);
-  }
-
-  const hasRows = trainingRows.length > 0;
-  if (selectors.trainingEmptyState) {
-    selectors.trainingEmptyState.hidden = hasRows;
-  }
-  if (selectors.trainingTableCard) {
-    selectors.trainingTableCard.hidden = !hasRows;
-  }
 }
 
 function getReviewPdfData(creditUnionId) {
@@ -4672,7 +4526,6 @@ async function downloadYearEndReviewPdf() {
   const summaryRows = [
     { label: 'Review year', value: yearLabel },
     { label: 'Reviewed by', value: reviewData.reviewedBy },
-    { label: 'Training frequency', value: reviewData.trainingFrequency },
     { label: 'Last updated', value: reviewData.updatedAt ? formatLogTimestamp(reviewData.updatedAt) : '—' }
   ];
   y = addPdfKeyValueRows(doc, summaryRows, margin, y, pageWidth - margin * 2, margin, pageHeight);
@@ -5237,7 +5090,6 @@ async function loadCreditUnions() {
   renderCreditUnionOptions();
   renderProspectAccountList();
   renderAccountDirectory();
-  renderTrainingDashboard();
 }
 
 async function loadIncomeStreams() {
@@ -6913,8 +6765,6 @@ selectors.accountReviewForm?.addEventListener('submit', async (event) => {
     setFeedback(selectors.accountReviewFeedback, 'Year end review saved.', 'success');
   }
 
-  renderTrainingDashboard();
-
   addAccountChangeLog({
     creditUnionId,
     action: 'Updated year end review',
@@ -7382,7 +7232,6 @@ async function bootstrap() {
   if (selectors.accountChangeLog) {
     renderAccountChangeLog();
   }
-  renderTrainingDashboard();
 
   if (selectors.callReportList && appState.accountSelectionId) {
     try {
