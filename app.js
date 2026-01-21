@@ -6584,6 +6584,9 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
   }
 
   const button = selectors.coverageRequestBtn;
+  const webhookUrl = [window.COVERAGE_REQUEST_WEBHOOK_URL, button?.dataset?.webhookUrl]
+    .find((url) => typeof url === 'string' && url.trim().length > 0)
+    ?.trim();
   const previousLabel = button?.textContent;
   if (button) {
     button.disabled = true;
@@ -6591,7 +6594,20 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
   }
   setFeedback(selectors.coverageRequestFeedback, 'Sending coverage request...', 'info');
 
+  const sendViaWebhook = async () => {
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const responseBody = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(responseBody?.error || `Coverage request webhook failed (${response.status}).`);
+    }
+  };
+
   try {
+    let sentVia = 'backend';
     const response = await fetch(COVERAGE_REQUEST_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -6599,14 +6615,52 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
     });
     const responseBody = await response.json().catch(() => ({}));
     if (!response.ok) {
-      throw new Error(responseBody?.error || `Coverage request failed (${response.status}).`);
+      if (response.status === 404) {
+        if (webhookUrl) {
+          await sendViaWebhook();
+          sentVia = 'webhook';
+        } else {
+          throw new Error('Coverage request failed (404). Configure a webhook URL to send directly.');
+        }
+      } else {
+        throw new Error(responseBody?.error || `Coverage request failed (${response.status}).`);
+      }
     }
     setFeedback(
       selectors.coverageRequestFeedback,
-      'Coverage request sent. The member will receive a Podium text shortly.',
+      sentVia === 'webhook'
+        ? 'Coverage request sent via direct webhook. The member will receive a Podium text shortly.'
+        : 'Coverage request sent via backend. The member will receive a Podium text shortly.',
       'success'
     );
   } catch (error) {
+    const isNetworkError = error instanceof TypeError || error?.name === 'TypeError';
+    if (isNetworkError && webhookUrl) {
+      try {
+        await sendViaWebhook();
+        setFeedback(
+          selectors.coverageRequestFeedback,
+          'Coverage request sent via direct webhook. The member will receive a Podium text shortly.',
+          'success'
+        );
+        return;
+      } catch (webhookError) {
+        setFeedback(
+          selectors.coverageRequestFeedback,
+          webhookError?.message || 'Unable to send coverage request.',
+          'error'
+        );
+        return;
+      }
+    }
+    if (isNetworkError && !webhookUrl) {
+      setFeedback(
+        selectors.coverageRequestFeedback,
+        'Coverage request failed. Configure a webhook URL to send directly.',
+        'error'
+      );
+      return;
+    }
     setFeedback(
       selectors.coverageRequestFeedback,
       error?.message || 'Unable to send coverage request.',

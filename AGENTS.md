@@ -1,3 +1,4 @@
+2029-01-14: Added a configurable coverage request webhook fallback so quotes can send requests directly when the backend endpoint is unavailable, and clarified UI feedback for backend vs. webhook sends.
 2029-01-14: Removed the Training page, its navigation entry, and training-frequency summary content now that the view is no longer used.
 2029-01-13: Added a coverage request payload preview in the quote workspace so Zapier JSON updates are visible as inputs change.
 2029-01-12: Removed Baycel-only gating from coverage request availability and submit flow so any selected credit union can request coverage.
