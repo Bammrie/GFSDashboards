@@ -203,15 +203,14 @@ const selectors = {
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
   coverageRequestPayload: document.getElementById('coverage-request-payload'),
-  loanWarrantyCostInput: document.getElementById('loan-warranty-cost'),
   loanCreditUnionMarkupInput: document.getElementById('loan-credit-union-markup'),
   loanGfsMarkupInput: document.getElementById('loan-gfs-markup'),
   loanGapCostInput: document.getElementById('loan-gap-cost'),
   loanGapCreditUnionMarkupInput: document.getElementById('loan-gap-credit-union-markup'),
   loanGapGfsMarkupInput: document.getElementById('loan-gap-gfs-markup'),
-  loanWarrantyFetchBtn: document.getElementById('loan-warranty-fetch-btn'),
-  loanWarrantyFeedback: document.getElementById('loan-warranty-feedback'),
   loanVinResults: document.getElementById('loan-vin-results'),
+  menuPricingSaveBtn: document.getElementById('menu-pricing-save-btn'),
+  menuPricingSaveFeedback: document.getElementById('menu-pricing-save-feedback'),
   loanLogSummary: document.getElementById('loan-log-summary'),
   loanLogForm: document.getElementById('loan-log-form'),
   loanLogIdInput: document.getElementById('loan-log-id'),
@@ -536,8 +535,10 @@ async function persistWarrantyConfigs(creditUnionId, config) {
         [creditUnionId]: saved
       };
     }
+    return saved;
   } catch (error) {
     console.error('Unable to persist warranty configs', error);
+    return null;
   }
 }
 
@@ -756,14 +757,6 @@ function calculateMonthlyPayment(amount, apr, termMonths) {
   return amount * ((rate * factor) / (factor - 1));
 }
 
-function estimateWarrantyCost({ miles, termMonths }) {
-  const normalizedMiles = Number.isFinite(miles) ? miles : 0;
-  const normalizedTerm = Number.isFinite(termMonths) ? termMonths : 0;
-  const mileageFactor = Math.max(0, normalizedMiles - 12000) / 1000 * 8;
-  const termFactor = normalizedTerm ? (normalizedTerm / 12) * 35 : 0;
-  return Math.max(650, 1200 + mileageFactor + termFactor);
-}
-
 function calculateMobPremiums({ loanAmount, termMonths, apr, ratePerThousand }) {
   if (!Number.isFinite(loanAmount) || !Number.isFinite(termMonths) || termMonths <= 0) {
     return { firstPremium: null, averagePremium: null };
@@ -865,7 +858,6 @@ function buildLoanIllustrationSnapshot({
   apr,
   miles,
   vin,
-  warrantyCost,
   creditUnionMarkup,
   gfsMarkup,
   gapCost,
@@ -914,7 +906,6 @@ function buildLoanIllustrationSnapshot({
       apr,
       miles,
       vin,
-      warrantyCost,
       creditUnionMarkup,
       gfsMarkup,
       gapCost,
@@ -963,12 +954,6 @@ function buildLoanIllustrationSnapshot({
   };
 }
 
-function setLoanWarrantyFeedback(message, state = 'info') {
-  if (!selectors.loanWarrantyFeedback) return;
-  selectors.loanWarrantyFeedback.textContent = message;
-  selectors.loanWarrantyFeedback.dataset.state = state;
-}
-
 function getWarrantyConfigForCreditUnion(creditUnionId) {
   const stored = appState.accountWarrantyConfigs?.[creditUnionId];
   return stored && typeof stored === 'object'
@@ -1012,6 +997,65 @@ function saveWarrantyConfig(creditUnionId, updates) {
     [creditUnionId]: next
   };
   void persistWarrantyConfigs(creditUnionId, next);
+}
+
+function setMenuPricingSaveFeedback(message, state = 'info') {
+  if (!selectors.menuPricingSaveFeedback) return;
+  selectors.menuPricingSaveFeedback.textContent = message;
+  selectors.menuPricingSaveFeedback.dataset.state = state;
+}
+
+function collectMenuPricingConfig(creditUnionId) {
+  const current = getWarrantyConfigForCreditUnion(creditUnionId);
+  const mobCoverageType = selectors.mobAccountCoverageTypeSelect?.value || '';
+  const mobRateStructure = selectors.mobRateStructureSelect?.value || '';
+  const mobBlendedRates = mobRateStructure === 'blended';
+  const resolveRateInput = (input) => parseNumericInput(input?.value);
+  return {
+    ...current,
+    creditUnionMarkup: parseNumericInput(selectors.loanCreditUnionMarkupInput?.value),
+    gfsMarkup: parseNumericInput(selectors.loanGfsMarkupInput?.value),
+    gapCost: parseNumericInput(selectors.loanGapCostInput?.value),
+    gapCreditUnionMarkup: parseNumericInput(selectors.loanGapCreditUnionMarkupInput?.value),
+    gapGfsMarkup: parseNumericInput(selectors.loanGapGfsMarkupInput?.value),
+    termExtensionsEnabled: selectors.loanTermExtensionToggle?.checked ?? false,
+    vscTermExtension: parseNumericInput(selectors.loanVscTermExtensionInput?.value),
+    gapTermExtension: parseNumericInput(selectors.loanGapTermExtensionInput?.value),
+    mobCoverageType,
+    mobRateStructure,
+    mobBlendedRates,
+    mobBlendedLifeRate: resolveRateInput(selectors.mobBlendedLifeRateInput),
+    mobBlendedDisabilityRate: resolveRateInput(selectors.mobBlendedDisabilityRateInput),
+    mobSingleLifeRate: resolveRateInput(selectors.mobSingleLifeRateInput),
+    mobJointLifeRate: resolveRateInput(selectors.mobJointLifeRateInput),
+    mobSingleDisabilityRate: resolveRateInput(selectors.mobSingleDisabilityRateInput),
+    mobJointDisabilityRate: resolveRateInput(selectors.mobJointDisabilityRateInput),
+    mobPackageARate: resolveRateInput(selectors.mobPackageARateInput),
+    mobPackageBRate: resolveRateInput(selectors.mobPackageBRateInput),
+    mobPackageCRate: resolveRateInput(selectors.mobPackageCRateInput),
+    mobPackageASingleRate: resolveRateInput(selectors.mobPackageASingleRateInput),
+    mobPackageAJointRate: resolveRateInput(selectors.mobPackageAJointRateInput),
+    mobPackageBSingleRate: resolveRateInput(selectors.mobPackageBSingleRateInput),
+    mobPackageBJointRate: resolveRateInput(selectors.mobPackageBJointRateInput),
+    mobPackageCSingleRate: resolveRateInput(selectors.mobPackageCSingleRateInput),
+    mobPackageCJointRate: resolveRateInput(selectors.mobPackageCJointRateInput)
+  };
+}
+
+async function saveMenuPricingConfig() {
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    setMenuPricingSaveFeedback('Select a credit union before saving menu pricing.', 'error');
+    return;
+  }
+  setMenuPricingSaveFeedback('Saving menu pricing...', 'info');
+  const config = collectMenuPricingConfig(creditUnionId);
+  const saved = await persistWarrantyConfigs(creditUnionId, config);
+  if (saved) {
+    setMenuPricingSaveFeedback('Menu pricing saved.', 'success');
+  } else {
+    setMenuPricingSaveFeedback('Unable to save menu pricing right now.', 'error');
+  }
 }
 
 function renderVinResults(result, message) {
@@ -1058,7 +1102,6 @@ function updateLoanIllustration() {
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
   const termMonths = parseNumericInput(selectors.loanTermInput?.value);
   const apr = parseNumericInput(selectors.loanAprInput?.value);
-  const warrantyCost = parseNumericInput(selectors.loanWarrantyCostInput?.value);
   const creditUnionMarkup = parseNumericInput(selectors.loanCreditUnionMarkupInput?.value);
   const gfsMarkup = parseNumericInput(selectors.loanGfsMarkupInput?.value);
   const gapCost = parseNumericInput(selectors.loanGapCostInput?.value);
@@ -1151,9 +1194,9 @@ function updateLoanIllustration() {
   if (selectors.loanStandardTerm) {
     selectors.loanStandardTerm.textContent = Number.isFinite(termMonths) ? `${termMonths}-month term` : '—';
   }
-  const hasWarrantyInputs = [warrantyCost, creditUnionMarkup, gfsMarkup].some(Number.isFinite);
+  const hasWarrantyInputs = [creditUnionMarkup, gfsMarkup].some(Number.isFinite);
   const vscRetail = hasWarrantyInputs
-    ? (warrantyCost || 0) + (creditUnionMarkup || 0) + (gfsMarkup || 0)
+    ? (creditUnionMarkup || 0) + (gfsMarkup || 0)
     : null;
   const hasGapInputs = [gapCost, gapCreditUnionMarkup, gapGfsMarkup].some(Number.isFinite);
   const gapRetail = hasGapInputs
@@ -1292,7 +1335,6 @@ function updateLoanIllustration() {
     apr,
     miles: parseNumericInput(selectors.loanMilesInput?.value),
     vin: selectors.loanVinInput?.value?.trim() || '',
-    warrantyCost,
     creditUnionMarkup,
     gfsMarkup,
     gapCost,
@@ -1445,13 +1487,11 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.coverageRequestPhone,
     selectors.coverageRequestEmail,
     selectors.coverageRequestBtn,
-    selectors.loanWarrantyCostInput,
     selectors.loanCreditUnionMarkupInput,
     selectors.loanGfsMarkupInput,
     selectors.loanGapCostInput,
     selectors.loanGapCreditUnionMarkupInput,
     selectors.loanGapGfsMarkupInput,
-    selectors.loanWarrantyFetchBtn,
     selectors.personalLoanAmountInput,
     selectors.personalLoanTermInput,
     selectors.personalLoanAprInput,
@@ -1513,7 +1553,6 @@ function renderLoanOfficerCalculator() {
     updateLoanIllustration();
     updatePersonalLoanIllustration();
     renderVinResults(null);
-    setLoanWarrantyFeedback('');
     updateCoverageRequestAvailability();
     return;
   }
@@ -2076,7 +2115,6 @@ function applyLoanIllustrationSnapshot(illustration) {
   };
   const resolvedMobCoverageType = selections.mobCoverageType || config.mobCoverageType || '';
   const resolvedMobRateStructure = selections.mobRateStructure || config.mobRateStructure || '';
-  const resolvedWarrantyCost = resolveNumber(inputs.warrantyCost, null);
   const resolvedCreditUnionMarkup = resolveNumber(inputs.creditUnionMarkup, config.creditUnionMarkup);
   const resolvedGfsMarkup = resolveNumber(inputs.gfsMarkup, config.gfsMarkup);
   const resolvedGapCost = resolveNumber(inputs.gapCost, config.gapCost);
@@ -2117,9 +2155,6 @@ function applyLoanIllustrationSnapshot(illustration) {
   }
   if (selectors.loanVinInput) {
     selectors.loanVinInput.value = inputs.vin || '';
-  }
-  if (selectors.loanWarrantyCostInput) {
-    selectors.loanWarrantyCostInput.value = Number.isFinite(resolvedWarrantyCost) ? resolvedWarrantyCost : '';
   }
   if (selectors.loanCreditUnionMarkupInput) {
     selectors.loanCreditUnionMarkupInput.value = Number.isFinite(resolvedCreditUnionMarkup) ? resolvedCreditUnionMarkup : '';
@@ -2488,26 +2523,6 @@ function handleTermExtensionChange() {
   const gapTermExtension = parseNumericInput(selectors.loanGapTermExtensionInput?.value);
   saveWarrantyConfig(creditUnionId, { termExtensionsEnabled, vscTermExtension, gapTermExtension });
   setTermExtensionFieldVisibility(termExtensionsEnabled);
-}
-
-async function fetchWarrantyCost() {
-  if (!selectors.loanWarrantyCostInput) return;
-  const creditUnionId = appState.accountSelectionId;
-  if (!creditUnionId) {
-    setLoanWarrantyFeedback('Select a credit union before fetching warranty cost.', 'error');
-    return;
-  }
-
-  const miles = parseNumericInput(selectors.loanMilesInput?.value);
-  const termMonths = parseNumericInput(selectors.loanTermInput?.value);
-  const vin = selectors.loanVinInput?.value?.trim();
-
-  setLoanWarrantyFeedback('Fetching warranty cost…', 'info');
-
-  const estimatedCost = estimateWarrantyCost({ miles, termMonths, vin });
-  selectors.loanWarrantyCostInput.value = Math.round(estimatedCost);
-  setLoanWarrantyFeedback('Warranty pricing API pending. Using estimated cost for now.', 'info');
-  updateLoanIllustration();
 }
 
 async function decodeVin(vin) {
@@ -6338,6 +6353,7 @@ selectors.closeCallReportDialogBtn?.addEventListener('click', () => {
 });
 
 selectors.openMenuPricingBtn?.addEventListener('click', () => {
+  setMenuPricingSaveFeedback('', 'info');
   showDialog(selectors.menuPricingDialog);
 });
 
@@ -6513,7 +6529,6 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   selectors.loanAprInput,
   selectors.loanMilesInput,
   selectors.loanVinInput,
-  selectors.loanWarrantyCostInput,
   selectors.loanGapCostInput,
   selectors.loanGapCreditUnionMarkupInput,
   selectors.loanGapGfsMarkupInput,
@@ -6663,10 +6678,6 @@ document.querySelectorAll('input[name="personal-mob-debt-package"]').forEach((in
   });
 });
 
-selectors.loanWarrantyFetchBtn?.addEventListener('click', () => {
-  fetchWarrantyCost();
-});
-
 selectors.loanVinDecodeBtn?.addEventListener('click', () => {
   decodeVin(selectors.loanVinInput?.value);
 });
@@ -6679,6 +6690,10 @@ selectors.loanVinInput?.addEventListener('input', (event) => {
 
 selectors.loanProtectionOptionsBtn?.addEventListener('click', () => {
   showDialog(selectors.protectionOptionsDialog);
+});
+
+selectors.menuPricingSaveBtn?.addEventListener('click', () => {
+  saveMenuPricingConfig();
 });
 
 selectors.coverageRequestBtn?.addEventListener('click', async () => {

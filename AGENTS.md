@@ -1,3 +1,4 @@
+2029-01-18: Removed the Menu Pricing warranty fetch UI so only VSC/GAP markups and MOB rates remain, and added an explicit save action to persist pricing inputs to the database.
 2029-01-16: Synced quote workspace pricing defaults to the persisted menu pricing config when loading quotes.
 2029-01-17: Ensured hidden form sections stay hidden so MOB pricing only shows applicable rate groups.
 2029-01-14: Added a configurable coverage request webhook fallback so quotes can send requests directly when the backend endpoint is unavailable, and clarified UI feedback for backend vs. webhook sends.
