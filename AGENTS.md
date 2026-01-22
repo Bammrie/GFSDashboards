@@ -1,4 +1,5 @@
 2029-01-16: Synced quote workspace pricing defaults to the persisted menu pricing config when loading quotes.
+2029-01-17: Ensured hidden form sections stay hidden so MOB pricing only shows applicable rate groups.
 2029-01-14: Added a configurable coverage request webhook fallback so quotes can send requests directly when the backend endpoint is unavailable, and clarified UI feedback for backend vs. webhook sends.
 2029-01-14: Removed the Training page, its navigation entry, and training-frequency summary content now that the view is no longer used.
 2029-01-15: Ensured quotes reuse persisted Menu Pricing MOB rates by falling back to stored credit union configs when menu pricing inputs are unavailable.
