@@ -1067,27 +1067,85 @@ function updateLoanIllustration() {
   const termExtensionsEnabled = selectors.loanTermExtensionToggle?.checked ?? false;
   const vscTermExtension = parseNumericInput(selectors.loanVscTermExtensionInput?.value);
   const gapTermExtension = parseNumericInput(selectors.loanGapTermExtensionInput?.value);
-  const mobCoverageType = selectors.mobAccountCoverageTypeSelect?.value || '';
-  const mobRateStructure = selectors.mobRateStructureSelect?.value || '';
-  const mobBlendedRates = mobRateStructure === 'blended';
+  const creditUnionId = appState.accountSelectionId;
+  const config = creditUnionId ? getWarrantyConfigForCreditUnion(creditUnionId) : null;
+  const mobCoverageType =
+    selectors.mobAccountCoverageTypeSelect?.value || config?.mobCoverageType || '';
+  const mobRateStructure =
+    selectors.mobRateStructureSelect?.value || config?.mobRateStructure || '';
+  const mobBlendedRates = mobRateStructure
+    ? mobRateStructure === 'blended'
+    : Boolean(config?.mobBlendedRates);
   const mobCreditLifeSelected = selectors.mobCreditLifeToggle?.checked ?? false;
   const mobCreditDisabilitySelected = selectors.mobCreditDisabilityToggle?.checked ?? false;
   const mobCreditTier = selectors.mobCreditTierSelect?.value || 'single';
-  const mobBlendedLifeRate = parseNumericInput(selectors.mobBlendedLifeRateInput?.value);
-  const mobBlendedDisabilityRate = parseNumericInput(selectors.mobBlendedDisabilityRateInput?.value);
-  const mobSingleLifeRate = parseNumericInput(selectors.mobSingleLifeRateInput?.value);
-  const mobJointLifeRate = parseNumericInput(selectors.mobJointLifeRateInput?.value);
-  const mobSingleDisabilityRate = parseNumericInput(selectors.mobSingleDisabilityRateInput?.value);
-  const mobJointDisabilityRate = parseNumericInput(selectors.mobJointDisabilityRateInput?.value);
-  const mobPackageARate = parseNumericInput(selectors.mobPackageARateInput?.value);
-  const mobPackageBRate = parseNumericInput(selectors.mobPackageBRateInput?.value);
-  const mobPackageCRate = parseNumericInput(selectors.mobPackageCRateInput?.value);
-  const mobPackageASingleRate = parseNumericInput(selectors.mobPackageASingleRateInput?.value);
-  const mobPackageAJointRate = parseNumericInput(selectors.mobPackageAJointRateInput?.value);
-  const mobPackageBSingleRate = parseNumericInput(selectors.mobPackageBSingleRateInput?.value);
-  const mobPackageBJointRate = parseNumericInput(selectors.mobPackageBJointRateInput?.value);
-  const mobPackageCSingleRate = parseNumericInput(selectors.mobPackageCSingleRateInput?.value);
-  const mobPackageCJointRate = parseNumericInput(selectors.mobPackageCJointRateInput?.value);
+  const resolveConfigRate = (input, fallback) => {
+    const parsed = parseNumericInput(input?.value);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+    return Number.isFinite(fallback) ? fallback : null;
+  };
+  const mobBlendedLifeRate = resolveConfigRate(
+    selectors.mobBlendedLifeRateInput,
+    config?.mobBlendedLifeRate
+  );
+  const mobBlendedDisabilityRate = resolveConfigRate(
+    selectors.mobBlendedDisabilityRateInput,
+    config?.mobBlendedDisabilityRate
+  );
+  const mobSingleLifeRate = resolveConfigRate(
+    selectors.mobSingleLifeRateInput,
+    config?.mobSingleLifeRate
+  );
+  const mobJointLifeRate = resolveConfigRate(
+    selectors.mobJointLifeRateInput,
+    config?.mobJointLifeRate
+  );
+  const mobSingleDisabilityRate = resolveConfigRate(
+    selectors.mobSingleDisabilityRateInput,
+    config?.mobSingleDisabilityRate
+  );
+  const mobJointDisabilityRate = resolveConfigRate(
+    selectors.mobJointDisabilityRateInput,
+    config?.mobJointDisabilityRate
+  );
+  const mobPackageARate = resolveConfigRate(
+    selectors.mobPackageARateInput,
+    config?.mobPackageARate
+  );
+  const mobPackageBRate = resolveConfigRate(
+    selectors.mobPackageBRateInput,
+    config?.mobPackageBRate
+  );
+  const mobPackageCRate = resolveConfigRate(
+    selectors.mobPackageCRateInput,
+    config?.mobPackageCRate
+  );
+  const mobPackageASingleRate = resolveConfigRate(
+    selectors.mobPackageASingleRateInput,
+    config?.mobPackageASingleRate
+  );
+  const mobPackageAJointRate = resolveConfigRate(
+    selectors.mobPackageAJointRateInput,
+    config?.mobPackageAJointRate
+  );
+  const mobPackageBSingleRate = resolveConfigRate(
+    selectors.mobPackageBSingleRateInput,
+    config?.mobPackageBSingleRate
+  );
+  const mobPackageBJointRate = resolveConfigRate(
+    selectors.mobPackageBJointRateInput,
+    config?.mobPackageBJointRate
+  );
+  const mobPackageCSingleRate = resolveConfigRate(
+    selectors.mobPackageCSingleRateInput,
+    config?.mobPackageCSingleRate
+  );
+  const mobPackageCJointRate = resolveConfigRate(
+    selectors.mobPackageCJointRateInput,
+    config?.mobPackageCJointRate
+  );
 
   const basePayment = calculateMonthlyPayment(loanAmount, apr, termMonths);
   if (selectors.loanStandardTerm) {
