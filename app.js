@@ -2064,6 +2064,44 @@ function applyLoanIllustrationSnapshot(illustration) {
   const inputs = illustration.inputs || {};
   const selections = illustration.selections || {};
   const mobRates = illustration.mobRates || {};
+  const creditUnionId = appState.accountSelectionId;
+  const config = creditUnionId ? getWarrantyConfigForCreditUnion(creditUnionId) : {};
+  const resolveNumber = (value, fallback) => {
+    if (Number.isFinite(value)) return value;
+    return Number.isFinite(fallback) ? fallback : null;
+  };
+  const resolveBoolean = (value, fallback) => {
+    if (typeof value === 'boolean') return value;
+    return Boolean(fallback);
+  };
+  const resolvedMobCoverageType = selections.mobCoverageType || config.mobCoverageType || '';
+  const resolvedMobRateStructure = selections.mobRateStructure || config.mobRateStructure || '';
+  const resolvedWarrantyCost = resolveNumber(inputs.warrantyCost, null);
+  const resolvedCreditUnionMarkup = resolveNumber(inputs.creditUnionMarkup, config.creditUnionMarkup);
+  const resolvedGfsMarkup = resolveNumber(inputs.gfsMarkup, config.gfsMarkup);
+  const resolvedGapCost = resolveNumber(inputs.gapCost, config.gapCost);
+  const resolvedGapCreditUnionMarkup = resolveNumber(inputs.gapCreditUnionMarkup, config.gapCreditUnionMarkup);
+  const resolvedGapGfsMarkup = resolveNumber(inputs.gapGfsMarkup, config.gapGfsMarkup);
+  const resolvedTermExtensionsEnabled = resolveBoolean(inputs.termExtensionsEnabled, config.termExtensionsEnabled);
+  const resolvedVscTermExtension = resolveNumber(inputs.vscTermExtension, config.vscTermExtension);
+  const resolvedGapTermExtension = resolveNumber(inputs.gapTermExtension, config.gapTermExtension);
+  const resolvedMobRates = {
+    mobBlendedLifeRate: resolveNumber(mobRates.mobBlendedLifeRate, config.mobBlendedLifeRate),
+    mobBlendedDisabilityRate: resolveNumber(mobRates.mobBlendedDisabilityRate, config.mobBlendedDisabilityRate),
+    mobSingleLifeRate: resolveNumber(mobRates.mobSingleLifeRate, config.mobSingleLifeRate),
+    mobJointLifeRate: resolveNumber(mobRates.mobJointLifeRate, config.mobJointLifeRate),
+    mobSingleDisabilityRate: resolveNumber(mobRates.mobSingleDisabilityRate, config.mobSingleDisabilityRate),
+    mobJointDisabilityRate: resolveNumber(mobRates.mobJointDisabilityRate, config.mobJointDisabilityRate),
+    mobPackageARate: resolveNumber(mobRates.mobPackageARate, config.mobPackageARate),
+    mobPackageBRate: resolveNumber(mobRates.mobPackageBRate, config.mobPackageBRate),
+    mobPackageCRate: resolveNumber(mobRates.mobPackageCRate, config.mobPackageCRate),
+    mobPackageASingleRate: resolveNumber(mobRates.mobPackageASingleRate, config.mobPackageASingleRate),
+    mobPackageAJointRate: resolveNumber(mobRates.mobPackageAJointRate, config.mobPackageAJointRate),
+    mobPackageBSingleRate: resolveNumber(mobRates.mobPackageBSingleRate, config.mobPackageBSingleRate),
+    mobPackageBJointRate: resolveNumber(mobRates.mobPackageBJointRate, config.mobPackageBJointRate),
+    mobPackageCSingleRate: resolveNumber(mobRates.mobPackageCSingleRate, config.mobPackageCSingleRate),
+    mobPackageCJointRate: resolveNumber(mobRates.mobPackageCJointRate, config.mobPackageCJointRate)
+  };
 
   if (selectors.loanAmountInput) {
     selectors.loanAmountInput.value = Number.isFinite(inputs.loanAmount) ? inputs.loanAmount : '';
@@ -2081,107 +2119,113 @@ function applyLoanIllustrationSnapshot(illustration) {
     selectors.loanVinInput.value = inputs.vin || '';
   }
   if (selectors.loanWarrantyCostInput) {
-    selectors.loanWarrantyCostInput.value = Number.isFinite(inputs.warrantyCost) ? inputs.warrantyCost : '';
+    selectors.loanWarrantyCostInput.value = Number.isFinite(resolvedWarrantyCost) ? resolvedWarrantyCost : '';
   }
   if (selectors.loanCreditUnionMarkupInput) {
-    selectors.loanCreditUnionMarkupInput.value = Number.isFinite(inputs.creditUnionMarkup) ? inputs.creditUnionMarkup : '';
+    selectors.loanCreditUnionMarkupInput.value = Number.isFinite(resolvedCreditUnionMarkup) ? resolvedCreditUnionMarkup : '';
   }
   if (selectors.loanGfsMarkupInput) {
-    selectors.loanGfsMarkupInput.value = Number.isFinite(inputs.gfsMarkup) ? inputs.gfsMarkup : '';
+    selectors.loanGfsMarkupInput.value = Number.isFinite(resolvedGfsMarkup) ? resolvedGfsMarkup : '';
   }
   if (selectors.loanGapCostInput) {
-    selectors.loanGapCostInput.value = Number.isFinite(inputs.gapCost) ? inputs.gapCost : '';
+    selectors.loanGapCostInput.value = Number.isFinite(resolvedGapCost) ? resolvedGapCost : '';
   }
   if (selectors.loanGapCreditUnionMarkupInput) {
-    selectors.loanGapCreditUnionMarkupInput.value = Number.isFinite(inputs.gapCreditUnionMarkup)
-      ? inputs.gapCreditUnionMarkup
+    selectors.loanGapCreditUnionMarkupInput.value = Number.isFinite(resolvedGapCreditUnionMarkup)
+      ? resolvedGapCreditUnionMarkup
       : '';
   }
   if (selectors.loanGapGfsMarkupInput) {
-    selectors.loanGapGfsMarkupInput.value = Number.isFinite(inputs.gapGfsMarkup) ? inputs.gapGfsMarkup : '';
+    selectors.loanGapGfsMarkupInput.value = Number.isFinite(resolvedGapGfsMarkup) ? resolvedGapGfsMarkup : '';
   }
   if (selectors.loanTermExtensionToggle) {
-    selectors.loanTermExtensionToggle.checked = Boolean(inputs.termExtensionsEnabled);
+    selectors.loanTermExtensionToggle.checked = resolvedTermExtensionsEnabled;
   }
   if (selectors.loanVscTermExtensionInput) {
-    selectors.loanVscTermExtensionInput.value = Number.isFinite(inputs.vscTermExtension) ? inputs.vscTermExtension : '';
+    selectors.loanVscTermExtensionInput.value = Number.isFinite(resolvedVscTermExtension) ? resolvedVscTermExtension : '';
   }
   if (selectors.loanGapTermExtensionInput) {
-    selectors.loanGapTermExtensionInput.value = Number.isFinite(inputs.gapTermExtension) ? inputs.gapTermExtension : '';
+    selectors.loanGapTermExtensionInput.value = Number.isFinite(resolvedGapTermExtension) ? resolvedGapTermExtension : '';
   }
   if (selectors.mobAccountCoverageTypeSelect) {
-    selectors.mobAccountCoverageTypeSelect.value = selections.mobCoverageType || '';
+    selectors.mobAccountCoverageTypeSelect.value = resolvedMobCoverageType;
   }
   if (selectors.mobRateStructureSelect) {
-    selectors.mobRateStructureSelect.value = selections.mobRateStructure || '';
+    selectors.mobRateStructureSelect.value = resolvedMobRateStructure;
   }
   if (selectors.mobBlendedLifeRateInput) {
-    selectors.mobBlendedLifeRateInput.value = Number.isFinite(mobRates.mobBlendedLifeRate)
-      ? mobRates.mobBlendedLifeRate
+    selectors.mobBlendedLifeRateInput.value = Number.isFinite(resolvedMobRates.mobBlendedLifeRate)
+      ? resolvedMobRates.mobBlendedLifeRate
       : '';
   }
   if (selectors.mobBlendedDisabilityRateInput) {
-    selectors.mobBlendedDisabilityRateInput.value = Number.isFinite(mobRates.mobBlendedDisabilityRate)
-      ? mobRates.mobBlendedDisabilityRate
+    selectors.mobBlendedDisabilityRateInput.value = Number.isFinite(resolvedMobRates.mobBlendedDisabilityRate)
+      ? resolvedMobRates.mobBlendedDisabilityRate
       : '';
   }
   if (selectors.mobSingleLifeRateInput) {
-    selectors.mobSingleLifeRateInput.value = Number.isFinite(mobRates.mobSingleLifeRate)
-      ? mobRates.mobSingleLifeRate
+    selectors.mobSingleLifeRateInput.value = Number.isFinite(resolvedMobRates.mobSingleLifeRate)
+      ? resolvedMobRates.mobSingleLifeRate
       : '';
   }
   if (selectors.mobJointLifeRateInput) {
-    selectors.mobJointLifeRateInput.value = Number.isFinite(mobRates.mobJointLifeRate)
-      ? mobRates.mobJointLifeRate
+    selectors.mobJointLifeRateInput.value = Number.isFinite(resolvedMobRates.mobJointLifeRate)
+      ? resolvedMobRates.mobJointLifeRate
       : '';
   }
   if (selectors.mobSingleDisabilityRateInput) {
-    selectors.mobSingleDisabilityRateInput.value = Number.isFinite(mobRates.mobSingleDisabilityRate)
-      ? mobRates.mobSingleDisabilityRate
+    selectors.mobSingleDisabilityRateInput.value = Number.isFinite(resolvedMobRates.mobSingleDisabilityRate)
+      ? resolvedMobRates.mobSingleDisabilityRate
       : '';
   }
   if (selectors.mobJointDisabilityRateInput) {
-    selectors.mobJointDisabilityRateInput.value = Number.isFinite(mobRates.mobJointDisabilityRate)
-      ? mobRates.mobJointDisabilityRate
+    selectors.mobJointDisabilityRateInput.value = Number.isFinite(resolvedMobRates.mobJointDisabilityRate)
+      ? resolvedMobRates.mobJointDisabilityRate
       : '';
   }
   if (selectors.mobPackageARateInput) {
-    selectors.mobPackageARateInput.value = Number.isFinite(mobRates.mobPackageARate) ? mobRates.mobPackageARate : '';
+    selectors.mobPackageARateInput.value = Number.isFinite(resolvedMobRates.mobPackageARate)
+      ? resolvedMobRates.mobPackageARate
+      : '';
   }
   if (selectors.mobPackageBRateInput) {
-    selectors.mobPackageBRateInput.value = Number.isFinite(mobRates.mobPackageBRate) ? mobRates.mobPackageBRate : '';
+    selectors.mobPackageBRateInput.value = Number.isFinite(resolvedMobRates.mobPackageBRate)
+      ? resolvedMobRates.mobPackageBRate
+      : '';
   }
   if (selectors.mobPackageCRateInput) {
-    selectors.mobPackageCRateInput.value = Number.isFinite(mobRates.mobPackageCRate) ? mobRates.mobPackageCRate : '';
+    selectors.mobPackageCRateInput.value = Number.isFinite(resolvedMobRates.mobPackageCRate)
+      ? resolvedMobRates.mobPackageCRate
+      : '';
   }
   if (selectors.mobPackageASingleRateInput) {
-    selectors.mobPackageASingleRateInput.value = Number.isFinite(mobRates.mobPackageASingleRate)
-      ? mobRates.mobPackageASingleRate
+    selectors.mobPackageASingleRateInput.value = Number.isFinite(resolvedMobRates.mobPackageASingleRate)
+      ? resolvedMobRates.mobPackageASingleRate
       : '';
   }
   if (selectors.mobPackageAJointRateInput) {
-    selectors.mobPackageAJointRateInput.value = Number.isFinite(mobRates.mobPackageAJointRate)
-      ? mobRates.mobPackageAJointRate
+    selectors.mobPackageAJointRateInput.value = Number.isFinite(resolvedMobRates.mobPackageAJointRate)
+      ? resolvedMobRates.mobPackageAJointRate
       : '';
   }
   if (selectors.mobPackageBSingleRateInput) {
-    selectors.mobPackageBSingleRateInput.value = Number.isFinite(mobRates.mobPackageBSingleRate)
-      ? mobRates.mobPackageBSingleRate
+    selectors.mobPackageBSingleRateInput.value = Number.isFinite(resolvedMobRates.mobPackageBSingleRate)
+      ? resolvedMobRates.mobPackageBSingleRate
       : '';
   }
   if (selectors.mobPackageBJointRateInput) {
-    selectors.mobPackageBJointRateInput.value = Number.isFinite(mobRates.mobPackageBJointRate)
-      ? mobRates.mobPackageBJointRate
+    selectors.mobPackageBJointRateInput.value = Number.isFinite(resolvedMobRates.mobPackageBJointRate)
+      ? resolvedMobRates.mobPackageBJointRate
       : '';
   }
   if (selectors.mobPackageCSingleRateInput) {
-    selectors.mobPackageCSingleRateInput.value = Number.isFinite(mobRates.mobPackageCSingleRate)
-      ? mobRates.mobPackageCSingleRate
+    selectors.mobPackageCSingleRateInput.value = Number.isFinite(resolvedMobRates.mobPackageCSingleRate)
+      ? resolvedMobRates.mobPackageCSingleRate
       : '';
   }
   if (selectors.mobPackageCJointRateInput) {
-    selectors.mobPackageCJointRateInput.value = Number.isFinite(mobRates.mobPackageCJointRate)
-      ? mobRates.mobPackageCJointRate
+    selectors.mobPackageCJointRateInput.value = Number.isFinite(resolvedMobRates.mobPackageCJointRate)
+      ? resolvedMobRates.mobPackageCJointRate
       : '';
   }
 
@@ -2361,24 +2405,51 @@ function updatePersonalCoverageControls({ mobCoverageType, mobBlendedRates }) {
 function handleMobConfigChange() {
   const creditUnionId = appState.accountSelectionId;
   if (!creditUnionId) return;
-  const mobCoverageType = selectors.mobAccountCoverageTypeSelect?.value || '';
-  const mobRateStructure = selectors.mobRateStructureSelect?.value || '';
-  const mobBlendedRates = mobRateStructure === 'blended';
-  const mobBlendedLifeRate = parseNumericInput(selectors.mobBlendedLifeRateInput?.value);
-  const mobBlendedDisabilityRate = parseNumericInput(selectors.mobBlendedDisabilityRateInput?.value);
-  const mobSingleLifeRate = parseNumericInput(selectors.mobSingleLifeRateInput?.value);
-  const mobJointLifeRate = parseNumericInput(selectors.mobJointLifeRateInput?.value);
-  const mobSingleDisabilityRate = parseNumericInput(selectors.mobSingleDisabilityRateInput?.value);
-  const mobJointDisabilityRate = parseNumericInput(selectors.mobJointDisabilityRateInput?.value);
-  const mobPackageARate = parseNumericInput(selectors.mobPackageARateInput?.value);
-  const mobPackageBRate = parseNumericInput(selectors.mobPackageBRateInput?.value);
-  const mobPackageCRate = parseNumericInput(selectors.mobPackageCRateInput?.value);
-  const mobPackageASingleRate = parseNumericInput(selectors.mobPackageASingleRateInput?.value);
-  const mobPackageAJointRate = parseNumericInput(selectors.mobPackageAJointRateInput?.value);
-  const mobPackageBSingleRate = parseNumericInput(selectors.mobPackageBSingleRateInput?.value);
-  const mobPackageBJointRate = parseNumericInput(selectors.mobPackageBJointRateInput?.value);
-  const mobPackageCSingleRate = parseNumericInput(selectors.mobPackageCSingleRateInput?.value);
-  const mobPackageCJointRate = parseNumericInput(selectors.mobPackageCJointRateInput?.value);
+  const config = getWarrantyConfigForCreditUnion(creditUnionId);
+  const resolveRateInput = (input, fallback) => {
+    if (!input) {
+      return Number.isFinite(fallback) ? fallback : null;
+    }
+    const parsed = parseNumericInput(input.value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const mobCoverageType = selectors.mobAccountCoverageTypeSelect
+    ? selectors.mobAccountCoverageTypeSelect.value || ''
+    : config.mobCoverageType || '';
+  const mobRateStructure = selectors.mobRateStructureSelect
+    ? selectors.mobRateStructureSelect.value || ''
+    : config.mobRateStructure || '';
+  const mobBlendedRates = mobRateStructure ? mobRateStructure === 'blended' : Boolean(config.mobBlendedRates);
+  const mobBlendedLifeRate = resolveRateInput(selectors.mobBlendedLifeRateInput, config.mobBlendedLifeRate);
+  const mobBlendedDisabilityRate = resolveRateInput(
+    selectors.mobBlendedDisabilityRateInput,
+    config.mobBlendedDisabilityRate
+  );
+  const mobSingleLifeRate = resolveRateInput(selectors.mobSingleLifeRateInput, config.mobSingleLifeRate);
+  const mobJointLifeRate = resolveRateInput(selectors.mobJointLifeRateInput, config.mobJointLifeRate);
+  const mobSingleDisabilityRate = resolveRateInput(
+    selectors.mobSingleDisabilityRateInput,
+    config.mobSingleDisabilityRate
+  );
+  const mobJointDisabilityRate = resolveRateInput(selectors.mobJointDisabilityRateInput, config.mobJointDisabilityRate);
+  const mobPackageARate = resolveRateInput(selectors.mobPackageARateInput, config.mobPackageARate);
+  const mobPackageBRate = resolveRateInput(selectors.mobPackageBRateInput, config.mobPackageBRate);
+  const mobPackageCRate = resolveRateInput(selectors.mobPackageCRateInput, config.mobPackageCRate);
+  const mobPackageASingleRate = resolveRateInput(
+    selectors.mobPackageASingleRateInput,
+    config.mobPackageASingleRate
+  );
+  const mobPackageAJointRate = resolveRateInput(selectors.mobPackageAJointRateInput, config.mobPackageAJointRate);
+  const mobPackageBSingleRate = resolveRateInput(
+    selectors.mobPackageBSingleRateInput,
+    config.mobPackageBSingleRate
+  );
+  const mobPackageBJointRate = resolveRateInput(selectors.mobPackageBJointRateInput, config.mobPackageBJointRate);
+  const mobPackageCSingleRate = resolveRateInput(
+    selectors.mobPackageCSingleRateInput,
+    config.mobPackageCSingleRate
+  );
+  const mobPackageCJointRate = resolveRateInput(selectors.mobPackageCJointRateInput, config.mobPackageCJointRate);
   saveWarrantyConfig(creditUnionId, {
     mobCoverageType,
     mobRateStructure,
