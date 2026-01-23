@@ -235,7 +235,14 @@ Document or extend new features so they reuse these formulas without re-defining
 2028-09-17: Added shared API persistence for account reviews, notes, and change logs so workspace activity syncs across users.
 2028-09-18: Condensed the Menu Presentation VIN decoder into a smaller, standalone row to tighten the layout.
 
-2028-09-19: Moved Menu Presentation coverage options into a Protection Options dialog so only loan details and VIN decode remain visible until required fields are completed.
-2025-03-19: Updated Menu Pricing MOB rate visibility so rate inputs stay hidden until coverage type and rate structure are explicitly selected.
-2025-03-21: Added loan illustration snapshots with saved Menu Presentation scenarios, plus the MongoDB model, API endpoints, and UI history list to reopen quotes.
-2029-02-01: Preserved coverage request success feedback and clarified the Zapier send confirmation text so loan officers see a visible send status in quotes.
+2028-09-19: Moved Menu Presentation coverage options into a Protection 
+Options dialog so only loan details and VIN decode remain visible until 
+required fields are completed. 2025-03-19: Updated Menu Pricing MOB rate 
+visibility so rate inputs stay hidden until coverage type and rate 
+structure are explicitly selected. 2025-03-21: Added loan illustration 
+snapshots with saved Menu Presentation scenarios, plus the MongoDB 
+model, API endpoints, and UI history list to reopen quotes. 2029-02-01: 
+Preserved coverage request success feedback and clarified the Zapier 
+send confirmation text so loan officers see a visible send status in 
+quotes.
+2029-02-03: Adjusted form control sizing so quote workspace inputs stay within their panels and remain responsive.
