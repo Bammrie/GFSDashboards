@@ -246,3 +246,4 @@ Preserved coverage request success feedback and clarified the Zapier
 send confirmation text so loan officers see a visible send status in 
 quotes.
 2029-02-03: Adjusted form control sizing so quote workspace inputs stay within their panels and remain responsive.
+2029-02-04: Re-rendered account/quote workspaces after warranty configs load so Menu Pricing inputs hydrate from MongoDB instead of resetting on open.

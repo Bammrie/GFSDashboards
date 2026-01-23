@@ -7376,6 +7376,8 @@ async function bootstrap() {
       loadAccountChangeLog(),
       loadAccountWarrantyConfigs()
     ]);
+    renderAccountWorkspace();
+    renderQuotesWorkspace();
   } catch (error) {
     console.error(error);
   }
