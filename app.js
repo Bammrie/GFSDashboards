@@ -697,7 +697,7 @@ function updateCoverageRequestPayloadPreview() {
   selectors.coverageRequestPayload.textContent = JSON.stringify(payload, null, 2);
 }
 
-function updateCoverageRequestAvailability() {
+function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
   if (!selectors.coverageRequestBtn) return;
   updateCoverageRequestPayloadPreview();
   const creditUnionId = appState.accountSelectionId;
@@ -713,11 +713,13 @@ function updateCoverageRequestAvailability() {
 
   if (!creditUnionId) {
     selectors.coverageRequestBtn.disabled = true;
-    setFeedback(
-      selectors.coverageRequestFeedback,
-      'Select a credit union to request coverage.',
-      'info'
-    );
+    if (!preserveFeedback) {
+      setFeedback(
+        selectors.coverageRequestFeedback,
+        'Select a credit union to request coverage.',
+        'info'
+      );
+    }
     return;
   }
 
@@ -736,14 +738,16 @@ function updateCoverageRequestAvailability() {
     vin.length === 17 &&
     coverageOptions.length > 0;
   selectors.coverageRequestBtn.disabled = !isReady;
-  if (!isReady) {
-    setFeedback(
-      selectors.coverageRequestFeedback,
-      'Enter loan ID, member name, phone, and full loan details to send a coverage request.',
-      'info'
-    );
-  } else {
-    setFeedback(selectors.coverageRequestFeedback, '', 'info');
+  if (!preserveFeedback) {
+    if (!isReady) {
+      setFeedback(
+        selectors.coverageRequestFeedback,
+        'Enter loan ID, member name, phone, and full loan details to send a coverage request.',
+        'info'
+      );
+    } else {
+      setFeedback(selectors.coverageRequestFeedback, '', 'info');
+    }
   }
 }
 
@@ -6773,8 +6777,8 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
     setFeedback(
       selectors.coverageRequestFeedback,
       sentVia === 'webhook'
-        ? 'Coverage request sent via direct webhook. The member will receive a Podium text shortly.'
-        : 'Coverage request sent via backend. The member will receive a Podium text shortly.',
+        ? 'Successfully sent coverage request via direct webhook. The member will receive a Podium text shortly.'
+        : 'Successfully sent coverage request via backend. The member will receive a Podium text shortly.',
       'success'
     );
   } catch (error) {
@@ -6784,7 +6788,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
         await sendViaWebhook();
         setFeedback(
           selectors.coverageRequestFeedback,
-          'Coverage request sent via direct webhook. The member will receive a Podium text shortly.',
+          'Successfully sent coverage request via direct webhook. The member will receive a Podium text shortly.',
           'success'
         );
         return;
@@ -6815,7 +6819,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
       button.disabled = false;
       button.textContent = previousLabel || 'Send Request';
     }
-    updateCoverageRequestAvailability();
+    updateCoverageRequestAvailability({ preserveFeedback: true });
   }
 });
 
