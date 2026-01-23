@@ -126,6 +126,7 @@ const selectors = {
   missingBody: document.getElementById('missing-body'),
   missingFeedback: document.getElementById('missing-feedback'),
   missingEmptyState: document.getElementById('missing-empty-state'),
+  toastContainer: document.getElementById('toast-container'),
   incomeStreamTemplate: document.getElementById('income-stream-template'),
   streamName: document.getElementById('income-stream-name'),
   streamDetails: document.getElementById('income-stream-details'),
@@ -2699,6 +2700,39 @@ function setFeedback(element, message, type = 'info') {
   if (!element) return;
   element.textContent = message;
   element.dataset.state = type;
+}
+
+let toastTimeoutId;
+let toastElement;
+
+function showToast(message, type = 'success') {
+  const container = selectors.toastContainer;
+  if (!container) return;
+
+  if (!toastElement) {
+    toastElement = document.createElement('div');
+    toastElement.className = 'toast';
+    toastElement.setAttribute('role', 'status');
+    container.appendChild(toastElement);
+  }
+
+  toastElement.className = 'toast';
+  if (type) {
+    toastElement.classList.add(`toast--${type}`);
+  }
+  toastElement.textContent = message;
+
+  requestAnimationFrame(() => {
+    toastElement.classList.add('show');
+  });
+
+  if (toastTimeoutId) {
+    window.clearTimeout(toastTimeoutId);
+  }
+
+  toastTimeoutId = window.setTimeout(() => {
+    toastElement?.classList.remove('show');
+  }, 5000);
 }
 
 async function request(path, options = {}) {
@@ -6781,6 +6815,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
         : 'Successfully sent coverage request via backend. The member will receive a Podium text shortly.',
       'success'
     );
+    showToast('Request sent successfully!', 'success');
   } catch (error) {
     const isNetworkError = error instanceof TypeError || error?.name === 'TypeError';
     if (isNetworkError && webhookUrl) {
@@ -6791,6 +6826,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
           'Successfully sent coverage request via direct webhook. The member will receive a Podium text shortly.',
           'success'
         );
+        showToast('Request sent successfully!', 'success');
         return;
       } catch (webhookError) {
         setFeedback(
