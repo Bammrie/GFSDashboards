@@ -251,3 +251,5 @@ send confirmation text so loan officers see a visible send status in
 quotes.
 2029-02-03: Adjusted form control sizing so quote workspace inputs stay within their panels and remain responsive.
 2029-02-04: Re-rendered account/quote workspaces after warranty configs load so Menu Pricing inputs hydrate from MongoDB instead of resetting on open.
+
+2029-02-09: Added a static prospects-data fallback for account directory loading so the Accounts list still populates when the credit union API is unavailable.
