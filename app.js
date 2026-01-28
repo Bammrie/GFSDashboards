@@ -37,6 +37,7 @@ const integerFormatter = new Intl.NumberFormat('en-US', { maximumFractionDigits:
 const decimalFormatter = new Intl.NumberFormat('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const CLASSIFICATIONS = ['account', 'prospect'];
 const COVERAGE_REQUEST_ENDPOINT = '/api/coverage-request';
+const COVERAGE_REQUEST_LOG_ENDPOINT = '/api/coverage-requests';
 const COVERAGE_OPTION_LABELS = {
   base: 'Base loan',
   vsc: 'Vehicle service contract',
@@ -203,6 +204,7 @@ const selectors = {
   coverageRequestEmail: document.getElementById('coverage-request-email'),
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
+  coverageRequestReceipt: document.getElementById('coverage-request-receipt'),
   coverageRequestPayload: document.getElementById('coverage-request-payload'),
   coverageRequestWebhookTarget: document.getElementById('coverage-request-webhook-target'),
   loanCreditUnionMarkupInput: document.getElementById('loan-credit-union-markup'),
@@ -721,6 +723,139 @@ function updateCoverageRequestPayloadPreview() {
   selectors.coverageRequestPayload.textContent = JSON.stringify(payload, null, 2);
 }
 
+function formatCoverageRequestReceiptDate(value) {
+  if (!value) return 'Unknown time';
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return 'Unknown time';
+  return parsed.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+}
+
+function renderCoverageRequestReceipt() {
+  if (!selectors.coverageRequestReceipt) return;
+  const container = selectors.coverageRequestReceipt;
+  container.replaceChildren();
+
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    container.textContent = 'Select a credit union to view the most recent send receipt.';
+    return;
+  }
+
+  const receipt = appState.coverageRequestReceipt;
+  if (!receipt || receipt.creditUnionId !== creditUnionId) {
+    container.textContent = 'No coverage request sent yet for this credit union.';
+    return;
+  }
+
+  const label = document.createElement('span');
+  label.textContent = 'Last sent: ';
+  const time = document.createElement('strong');
+  time.textContent = formatCoverageRequestReceiptDate(receipt.sentAt);
+
+  const details = document.createElement('span');
+  const loanLabel = receipt.loanId ? `Loan ${receipt.loanId}` : 'Loan ID unavailable';
+  const memberLabel = receipt.memberName ? receipt.memberName : 'Member name unavailable';
+  details.textContent = ` • ${loanLabel} • ${memberLabel}`;
+
+  container.append(label, time, details);
+}
+
+function mergeCoverageRequestReceipt(receipt) {
+  if (!receipt) return;
+  const incomingTime = new Date(receipt.sentAt || 0).getTime();
+  const existingTime = new Date(appState.coverageRequestReceipt?.sentAt || 0).getTime();
+  if (!appState.coverageRequestReceipt || incomingTime >= existingTime) {
+    appState.coverageRequestReceipt = receipt;
+  }
+  renderCoverageRequestReceipt();
+}
+
+function hashCoverageRequestPayload(payload) {
+  const payloadString = JSON.stringify(payload);
+  if (typeof window !== 'undefined' && window.crypto?.subtle && window.TextEncoder) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(payloadString);
+    return window.crypto.subtle.digest('SHA-256', data).then((digest) => {
+      const bytes = Array.from(new Uint8Array(digest));
+      return bytes.map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    });
+  }
+
+  let hash = 2166136261;
+  for (let i = 0; i < payloadString.length; i += 1) {
+    hash ^= payloadString.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return Promise.resolve(`fnv1a-${Math.abs(hash)}`);
+}
+
+async function persistCoverageRequestReceipt(receipt, payload) {
+  if (!receipt?.creditUnionId) return;
+  try {
+    const payloadHash = await hashCoverageRequestPayload(payload);
+    const response = await fetch(COVERAGE_REQUEST_LOG_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        creditUnionId: receipt.creditUnionId,
+        loanId: receipt.loanId,
+        memberName: receipt.memberName,
+        payloadHash,
+        sentAt: receipt.sentAt
+      })
+    });
+    if (!response.ok) {
+      return;
+    }
+    const responseBody = await response.json().catch(() => ({}));
+    if (responseBody?.sentAt) {
+      mergeCoverageRequestReceipt({
+        creditUnionId: receipt.creditUnionId,
+        loanId: receipt.loanId,
+        memberName: receipt.memberName,
+        sentAt: responseBody.sentAt,
+        payloadHash
+      });
+    }
+  } catch (error) {
+    console.warn('Unable to persist coverage request receipt.', error);
+  }
+}
+
+async function loadCoverageRequestReceipt(creditUnionId) {
+  if (!creditUnionId || appState.coverageRequestReceiptLoadedFor === creditUnionId) {
+    renderCoverageRequestReceipt();
+    return;
+  }
+  appState.coverageRequestReceiptLoadedFor = creditUnionId;
+  renderCoverageRequestReceipt();
+  try {
+    const response = await fetch(
+      `${COVERAGE_REQUEST_LOG_ENDPOINT}/latest?creditUnionId=${encodeURIComponent(creditUnionId)}`
+    );
+    if (!response.ok) {
+      return;
+    }
+    const receipt = await response.json();
+    if (!receipt?.sentAt) return;
+    mergeCoverageRequestReceipt({
+      creditUnionId,
+      loanId: receipt.loanId ?? null,
+      memberName: receipt.memberName ?? '',
+      sentAt: receipt.sentAt,
+      payloadHash: receipt.payloadHash ?? null
+    });
+  } catch (error) {
+    console.warn('Unable to load coverage request receipt.', error);
+  }
+}
+
 function setCoverageRequestWebhookUrl(value) {
   const normalized = typeof value === 'string' ? value.trim() : '';
   appState.coverageRequestWebhookUrl = normalized;
@@ -789,6 +924,25 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
       setFeedback(selectors.coverageRequestFeedback, '', 'info');
     }
   }
+}
+
+async function handleCoverageRequestSuccess({ payload, sentVia }) {
+  const sentLabel =
+    sentVia === 'webhook'
+      ? 'Successfully sent coverage request via direct webhook. The member will receive a Podium text shortly.'
+      : 'Successfully sent coverage request via backend. The member will receive a Podium text shortly.';
+  setFeedback(selectors.coverageRequestFeedback, sentLabel, 'success');
+  showToast('Request sent successfully!', 'success');
+
+  const receipt = {
+    creditUnionId: appState.accountSelectionId,
+    loanId: payload.loan_id,
+    memberName: payload.member_name,
+    sentAt: new Date().toISOString(),
+    sentVia
+  };
+  mergeCoverageRequestReceipt(receipt);
+  await persistCoverageRequestReceipt(receipt, payload);
 }
 
 function calculateMonthlyPayment(amount, apr, termMonths) {
@@ -2665,7 +2819,9 @@ const appState = {
   loanIllustrations: {},
   loanIllustrationEditingId: null,
   loanIllustrationDraft: null,
-  coverageRequestWebhookUrl: ''
+  coverageRequestWebhookUrl: '',
+  coverageRequestReceipt: null,
+  coverageRequestReceiptLoadedFor: null
 };
 
 function showDialog(dialog) {
@@ -3723,6 +3879,7 @@ function renderQuotesWorkspace() {
         ? 'Select a credit union to start a quote.'
         : 'Add a credit union in Accounts to begin quoting.';
     }
+    renderCoverageRequestReceipt();
     renderLoanOfficerCalculator();
     renderLoanIllustrationHistory();
     renderLoanLog();
@@ -3734,6 +3891,7 @@ function renderQuotesWorkspace() {
     summary.textContent = `Showing quotes for ${creditUnionName}.`;
   }
 
+  void loadCoverageRequestReceipt(creditUnionId);
   renderLoanOfficerCalculator();
   renderLoanIllustrationHistory();
   renderLoanLog();
@@ -6848,25 +7006,13 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
         throw new Error(responseBody?.error || `Coverage request failed (${response.status}).`);
       }
     }
-    setFeedback(
-      selectors.coverageRequestFeedback,
-      sentVia === 'webhook'
-        ? 'Successfully sent coverage request via direct webhook. The member will receive a Podium text shortly.'
-        : 'Successfully sent coverage request via backend. The member will receive a Podium text shortly.',
-      'success'
-    );
-    showToast('Request sent successfully!', 'success');
+    await handleCoverageRequestSuccess({ payload, sentVia });
   } catch (error) {
     const isNetworkError = error instanceof TypeError || error?.name === 'TypeError';
     if (isNetworkError && webhookUrl) {
       try {
         await sendViaWebhook();
-        setFeedback(
-          selectors.coverageRequestFeedback,
-          'Successfully sent coverage request via direct webhook. The member will receive a Podium text shortly.',
-          'success'
-        );
-        showToast('Request sent successfully!', 'success');
+        await handleCoverageRequestSuccess({ payload, sentVia: 'webhook' });
         return;
       } catch (webhookError) {
         setFeedback(

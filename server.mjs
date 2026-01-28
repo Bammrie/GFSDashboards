@@ -269,6 +269,19 @@ const loanIllustrationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 loanIllustrationSchema.index({ creditUnion: 1, updatedAt: -1 });
+
+const coverageRequestReceiptSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, index: true },
+    payloadHash: { type: String, required: true, trim: true },
+    loanId: { type: Number, default: null },
+    memberName: { type: String, trim: true, default: '' },
+    sentAt: { type: Date, default: Date.now }
+  },
+  { timestamps: true }
+);
+
+coverageRequestReceiptSchema.index({ creditUnion: 1, sentAt: -1 });
 const callReportSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
@@ -320,6 +333,7 @@ const AccountChangeLog = mongoose.model('AccountChangeLog', accountChangeLogSche
 const AccountWarrantyConfig = mongoose.model('AccountWarrantyConfig', accountWarrantyConfigSchema);
 const Loan = mongoose.model('Loan', loanSchema);
 const LoanIllustration = mongoose.model('LoanIllustration', loanIllustrationSchema);
+const CoverageRequestReceipt = mongoose.model('CoverageRequestReceipt', coverageRequestReceiptSchema);
 
 const databaseReady = await initializeDatabase();
 
@@ -377,6 +391,76 @@ app.post('/api/credit-unions', async (req, res, next) => {
 
     const created = await CreditUnion.create({ name, classification });
     res.status(201).json({ id: created._id.toString(), name: created.name, classification: created.classification });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/coverage-requests', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    const payloadHash = typeof req.body?.payloadHash === 'string' ? req.body.payloadHash.trim() : '';
+    const sentAtInput = req.body?.sentAt ? new Date(req.body.sentAt) : new Date();
+    const loanId = Number.isFinite(Number(req.body?.loanId)) ? Number(req.body.loanId) : null;
+    const memberName = typeof req.body?.memberName === 'string' ? req.body.memberName.trim() : '';
+
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid credit union ID is required.' });
+      return;
+    }
+
+    if (!payloadHash) {
+      res.status(400).json({ error: 'Payload hash is required.' });
+      return;
+    }
+
+    const sentAt = Number.isNaN(sentAtInput.getTime()) ? new Date() : sentAtInput;
+    const created = await CoverageRequestReceipt.create({
+      creditUnion: creditUnionId,
+      payloadHash,
+      loanId,
+      memberName,
+      sentAt
+    });
+
+    res.status(201).json({
+      id: created._id.toString(),
+      creditUnionId,
+      payloadHash: created.payloadHash,
+      loanId: created.loanId ?? null,
+      memberName: created.memberName ?? '',
+      sentAt: created.sentAt?.toISOString() ?? sentAt.toISOString()
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/coverage-requests/latest', async (req, res, next) => {
+  try {
+    const creditUnionId = req.query?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid credit union ID is required.' });
+      return;
+    }
+
+    const receipt = await CoverageRequestReceipt.findOne({ creditUnion: creditUnionId })
+      .sort({ sentAt: -1, createdAt: -1 })
+      .lean();
+
+    if (!receipt) {
+      res.status(404).json({ error: 'No coverage request receipts found.' });
+      return;
+    }
+
+    res.json({
+      id: receipt._id.toString(),
+      creditUnionId,
+      payloadHash: receipt.payloadHash,
+      loanId: receipt.loanId ?? null,
+      memberName: receipt.memberName ?? '',
+      sentAt: receipt.sentAt?.toISOString() ?? null
+    });
   } catch (error) {
     next(error);
   }
