@@ -204,6 +204,7 @@ const selectors = {
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
   coverageRequestPayload: document.getElementById('coverage-request-payload'),
+  coverageRequestWebhookTarget: document.getElementById('coverage-request-webhook-target'),
   loanCreditUnionMarkupInput: document.getElementById('loan-credit-union-markup'),
   loanGfsMarkupInput: document.getElementById('loan-gfs-markup'),
   loanGapCostInput: document.getElementById('loan-gap-cost'),
@@ -520,6 +521,28 @@ async function loadAccountWarrantyConfigs() {
   }
 }
 
+async function loadAppConfig() {
+  let resolved = '';
+  try {
+    const response = await fetch('/api/config');
+    if (response.ok) {
+      const payload = await response.json();
+      resolved = payload?.coverageRequestWebhookUrl || '';
+    }
+  } catch (error) {
+    console.error('Unable to load app config', error);
+  }
+
+  if (!resolved) {
+    resolved = typeof window !== 'undefined' ? window.COVERAGE_REQUEST_WEBHOOK_URL : '';
+  }
+  if (!resolved && selectors.coverageRequestBtn?.dataset?.webhookUrl) {
+    resolved = selectors.coverageRequestBtn.dataset.webhookUrl;
+  }
+
+  setCoverageRequestWebhookUrl(resolved);
+}
+
 async function persistWarrantyConfigs(creditUnionId, config) {
   try {
     const response = await fetch('/api/account-warranty-configs', {
@@ -696,6 +719,22 @@ function updateCoverageRequestPayloadPreview() {
   if (!selectors.coverageRequestPayload) return;
   const payload = buildCoverageRequestPayload();
   selectors.coverageRequestPayload.textContent = JSON.stringify(payload, null, 2);
+}
+
+function setCoverageRequestWebhookUrl(value) {
+  const normalized = typeof value === 'string' ? value.trim() : '';
+  appState.coverageRequestWebhookUrl = normalized;
+  if (typeof window !== 'undefined') {
+    window.COVERAGE_REQUEST_WEBHOOK_URL = normalized;
+  }
+  if (selectors.coverageRequestBtn) {
+    selectors.coverageRequestBtn.dataset.webhookUrl = normalized;
+  }
+  if (selectors.coverageRequestWebhookTarget) {
+    selectors.coverageRequestWebhookTarget.textContent = normalized
+      ? `Sending to: ${normalized}`
+      : 'Sending to: Not configured (backend only).';
+  }
 }
 
 function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
@@ -2625,7 +2664,8 @@ const appState = {
   loanEditingId: null,
   loanIllustrations: {},
   loanIllustrationEditingId: null,
-  loanIllustrationDraft: null
+  loanIllustrationDraft: null,
+  coverageRequestWebhookUrl: ''
 };
 
 function showDialog(dialog) {
@@ -6766,7 +6806,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
   }
 
   const button = selectors.coverageRequestBtn;
-  const webhookUrl = [window.COVERAGE_REQUEST_WEBHOOK_URL, button?.dataset?.webhookUrl]
+  const webhookUrl = [appState.coverageRequestWebhookUrl, window.COVERAGE_REQUEST_WEBHOOK_URL, button?.dataset?.webhookUrl]
     .find((url) => typeof url === 'string' && url.trim().length > 0)
     ?.trim();
   const previousLabel = button?.textContent;
@@ -7374,7 +7414,8 @@ async function bootstrap() {
       loadAccountReviewData(),
       loadAccountNotes(),
       loadAccountChangeLog(),
-      loadAccountWarrantyConfigs()
+      loadAccountWarrantyConfigs(),
+      loadAppConfig()
     ]);
     renderAccountWorkspace();
     renderQuotesWorkspace();
