@@ -82,6 +82,12 @@ const REVENUE_TYPES = ['Frontend', 'Backend', 'Commission'];
 const REPORTING_START_YEAR = 2023;
 const REPORTING_START_MONTH = 1;
 
+app.get('/api/config', (req, res) => {
+  res.json({
+    coverageRequestWebhookUrl: COVERAGE_REQUEST_WEBHOOK_URL || ''
+  });
+});
+
 app.post('/api/coverage-request', async (req, res) => {
   const payload = req.body;
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
