@@ -2824,6 +2824,7 @@ async function decodeVin(vin) {
 
 const appState = {
   creditUnions: [],
+  creditUnionSource: 'api',
   incomeStreams: [],
   prospectStreams: [],
   summary: null,
@@ -3625,6 +3626,7 @@ function renderAccountDirectory() {
     totalInactive += counts.none;
 
     const classification = normalizeClassification(creditUnion.classification);
+    const canUpdateClassification = appState.creditUnionSource === 'api';
 
     const latestReport = getLatestCallReportForCreditUnion(creditUnion.id);
     const consumerLoanTotal = latestReport ? getConsumerLoanTotal(latestReport) : null;
@@ -3656,6 +3658,10 @@ function renderAccountDirectory() {
     toggleButton.dataset.targetClassification = classification === 'prospect' ? 'account' : 'prospect';
     toggleButton.textContent =
       classification === 'prospect' ? 'Move to Accounts' : 'Move to Prospects';
+    if (!canUpdateClassification) {
+      toggleButton.disabled = true;
+      toggleButton.title = 'Connect the database to update classifications.';
+    }
 
     classificationWrapper.append(classificationChip, toggleButton);
     classificationCell.append(classificationWrapper);
@@ -5337,6 +5343,101 @@ function formatDateString(value) {
   });
 }
 
+function normalizeProspectEntries(payload) {
+  if (!payload) return [];
+
+  if (Array.isArray(payload)) return payload;
+
+  const candidates = [
+    payload.creditUnions,
+    payload.accounts,
+    payload.prospects,
+    payload.items,
+    payload.data
+  ];
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) {
+      return candidate;
+    }
+  }
+
+  return [];
+}
+
+function buildFallbackCreditUnionId(entry, index) {
+  const rawId =
+    entry?.id ||
+    entry?.creditUnionId ||
+    entry?.credit_union_id ||
+    entry?.slug ||
+    entry?.name;
+
+  if (typeof rawId === 'string' && rawId.trim()) {
+    return rawId.trim();
+  }
+
+  if (typeof rawId === 'number' && Number.isFinite(rawId)) {
+    return String(rawId);
+  }
+
+  const name = typeof entry?.name === 'string' ? entry.name : null;
+  if (name) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  }
+
+  return `credit-union-${index + 1}`;
+}
+
+function mapFallbackCreditUnions(entries) {
+  return entries.map((entry, index) => {
+    const name =
+      entry?.name ||
+      entry?.creditUnionName ||
+      entry?.credit_union_name ||
+      entry?.label ||
+      `Credit union ${index + 1}`;
+    const classification =
+      entry?.classification ||
+      entry?.status ||
+      (entry?.isProspect ? 'prospect' : 'account');
+
+    return {
+      id: buildFallbackCreditUnionId(entry, index),
+      name,
+      classification: normalizeClassification(classification)
+    };
+  });
+}
+
+async function loadCreditUnionsFromFallback() {
+  const globalPayload =
+    globalThis?.prospectData ||
+    globalThis?.prospectsData ||
+    globalThis?.prospects ||
+    null;
+
+  if (globalPayload) {
+    const entries = normalizeProspectEntries(globalPayload);
+    return mapFallbackCreditUnions(entries);
+  }
+
+  try {
+    const response = await fetch('/prospects-data.json', {
+      headers: { Accept: 'application/json' }
+    });
+    if (response.ok) {
+      const payload = await response.json();
+      const entries = normalizeProspectEntries(payload);
+      return mapFallbackCreditUnions(entries);
+    }
+  } catch (error) {
+    console.warn('Unable to load fallback prospects data.', error);
+  }
+
+  return [];
+}
+
 function getStreamIdFromQuery() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
@@ -5498,13 +5599,24 @@ function renderReportingStatus(data) {
 }
 
 async function loadCreditUnions() {
-  const data = await request('/api/credit-unions');
-  const cleanedCreditUnions = scrubDuplicateCoastlife(data);
-  appState.creditUnions = cleanedCreditUnions.map((item) => ({
-    id: item.id,
-    name: item.name,
-    classification: normalizeClassification(item.classification)
-  }));
+  try {
+    const data = await request('/api/credit-unions');
+    const cleanedCreditUnions = scrubDuplicateCoastlife(data);
+    appState.creditUnions = cleanedCreditUnions.map((item) => ({
+      id: item.id,
+      name: item.name,
+      classification: normalizeClassification(item.classification)
+    }));
+    appState.creditUnionSource = 'api';
+  } catch (error) {
+    const fallbackCreditUnions = await loadCreditUnionsFromFallback();
+    if (fallbackCreditUnions.length) {
+      appState.creditUnions = scrubDuplicateCoastlife(fallbackCreditUnions);
+      appState.creditUnionSource = 'static';
+    } else {
+      throw error;
+    }
+  }
   renderCreditUnionOptions();
   renderProspectAccountList();
   renderAccountDirectory();
