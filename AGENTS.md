@@ -1,3 +1,4 @@
+2029-02-07: Prevented empty Menu Pricing autosaves from overwriting stored MOB rates when toggling blended/unblended coverage setups.
 2029-02-06: Added coverage request send receipts in Quotes (UI + API) so the last sent details display for loan officers.
 2029-02-05: Added a config endpoint plus quote workspace webhook target copy so coverage requests show the active Zapier destination.
 2029-02-02: Added toast notification styling and a success toast in the quote workspace coverage request flow so confirmations stand out.

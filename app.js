@@ -1203,40 +1203,67 @@ function setMenuPricingSaveFeedback(message, state = 'info') {
   selectors.menuPricingSaveFeedback.dataset.state = state;
 }
 
+function resolveNumericInputWithFallback(input, fallback) {
+  if (!input) {
+    return Number.isFinite(fallback) ? fallback : null;
+  }
+  const raw = input.value;
+  if (raw === null || raw === undefined || String(raw).trim() === '') {
+    return Number.isFinite(fallback) ? fallback : null;
+  }
+  const parsed = parseNumericInput(raw);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 function collectMenuPricingConfig(creditUnionId) {
   const current = getWarrantyConfigForCreditUnion(creditUnionId);
   const mobCoverageType = selectors.mobAccountCoverageTypeSelect?.value || '';
   const mobRateStructure = selectors.mobRateStructureSelect?.value || '';
   const mobBlendedRates = mobRateStructure === 'blended';
-  const resolveRateInput = (input) => parseNumericInput(input?.value);
+  const resolveRateInput = (input, fallback) => resolveNumericInputWithFallback(input, fallback);
   return {
     ...current,
-    creditUnionMarkup: parseNumericInput(selectors.loanCreditUnionMarkupInput?.value),
-    gfsMarkup: parseNumericInput(selectors.loanGfsMarkupInput?.value),
-    gapCost: parseNumericInput(selectors.loanGapCostInput?.value),
-    gapCreditUnionMarkup: parseNumericInput(selectors.loanGapCreditUnionMarkupInput?.value),
-    gapGfsMarkup: parseNumericInput(selectors.loanGapGfsMarkupInput?.value),
+    creditUnionMarkup: resolveRateInput(selectors.loanCreditUnionMarkupInput, current.creditUnionMarkup),
+    gfsMarkup: resolveRateInput(selectors.loanGfsMarkupInput, current.gfsMarkup),
+    gapCost: resolveRateInput(selectors.loanGapCostInput, current.gapCost),
+    gapCreditUnionMarkup: resolveRateInput(selectors.loanGapCreditUnionMarkupInput, current.gapCreditUnionMarkup),
+    gapGfsMarkup: resolveRateInput(selectors.loanGapGfsMarkupInput, current.gapGfsMarkup),
     termExtensionsEnabled: selectors.loanTermExtensionToggle?.checked ?? false,
-    vscTermExtension: parseNumericInput(selectors.loanVscTermExtensionInput?.value),
-    gapTermExtension: parseNumericInput(selectors.loanGapTermExtensionInput?.value),
+    vscTermExtension: resolveRateInput(selectors.loanVscTermExtensionInput, current.vscTermExtension),
+    gapTermExtension: resolveRateInput(selectors.loanGapTermExtensionInput, current.gapTermExtension),
     mobCoverageType,
     mobRateStructure,
     mobBlendedRates,
-    mobBlendedLifeRate: resolveRateInput(selectors.mobBlendedLifeRateInput),
-    mobBlendedDisabilityRate: resolveRateInput(selectors.mobBlendedDisabilityRateInput),
-    mobSingleLifeRate: resolveRateInput(selectors.mobSingleLifeRateInput),
-    mobJointLifeRate: resolveRateInput(selectors.mobJointLifeRateInput),
-    mobSingleDisabilityRate: resolveRateInput(selectors.mobSingleDisabilityRateInput),
-    mobJointDisabilityRate: resolveRateInput(selectors.mobJointDisabilityRateInput),
-    mobPackageARate: resolveRateInput(selectors.mobPackageARateInput),
-    mobPackageBRate: resolveRateInput(selectors.mobPackageBRateInput),
-    mobPackageCRate: resolveRateInput(selectors.mobPackageCRateInput),
-    mobPackageASingleRate: resolveRateInput(selectors.mobPackageASingleRateInput),
-    mobPackageAJointRate: resolveRateInput(selectors.mobPackageAJointRateInput),
-    mobPackageBSingleRate: resolveRateInput(selectors.mobPackageBSingleRateInput),
-    mobPackageBJointRate: resolveRateInput(selectors.mobPackageBJointRateInput),
-    mobPackageCSingleRate: resolveRateInput(selectors.mobPackageCSingleRateInput),
-    mobPackageCJointRate: resolveRateInput(selectors.mobPackageCJointRateInput)
+    mobBlendedLifeRate: resolveRateInput(selectors.mobBlendedLifeRateInput, current.mobBlendedLifeRate),
+    mobBlendedDisabilityRate: resolveRateInput(
+      selectors.mobBlendedDisabilityRateInput,
+      current.mobBlendedDisabilityRate
+    ),
+    mobSingleLifeRate: resolveRateInput(selectors.mobSingleLifeRateInput, current.mobSingleLifeRate),
+    mobJointLifeRate: resolveRateInput(selectors.mobJointLifeRateInput, current.mobJointLifeRate),
+    mobSingleDisabilityRate: resolveRateInput(
+      selectors.mobSingleDisabilityRateInput,
+      current.mobSingleDisabilityRate
+    ),
+    mobJointDisabilityRate: resolveRateInput(selectors.mobJointDisabilityRateInput, current.mobJointDisabilityRate),
+    mobPackageARate: resolveRateInput(selectors.mobPackageARateInput, current.mobPackageARate),
+    mobPackageBRate: resolveRateInput(selectors.mobPackageBRateInput, current.mobPackageBRate),
+    mobPackageCRate: resolveRateInput(selectors.mobPackageCRateInput, current.mobPackageCRate),
+    mobPackageASingleRate: resolveRateInput(
+      selectors.mobPackageASingleRateInput,
+      current.mobPackageASingleRate
+    ),
+    mobPackageAJointRate: resolveRateInput(selectors.mobPackageAJointRateInput, current.mobPackageAJointRate),
+    mobPackageBSingleRate: resolveRateInput(
+      selectors.mobPackageBSingleRateInput,
+      current.mobPackageBSingleRate
+    ),
+    mobPackageBJointRate: resolveRateInput(selectors.mobPackageBJointRateInput, current.mobPackageBJointRate),
+    mobPackageCSingleRate: resolveRateInput(
+      selectors.mobPackageCSingleRateInput,
+      current.mobPackageCSingleRate
+    ),
+    mobPackageCJointRate: resolveRateInput(selectors.mobPackageCJointRateInput, current.mobPackageCJointRate)
   };
 }
 
@@ -2504,17 +2531,25 @@ function upsertLoanIllustration(creditUnionId, illustration) {
 function handleWarrantyMarkupChange() {
   const creditUnionId = appState.accountSelectionId;
   if (!creditUnionId) return;
-  const creditUnionMarkup = parseNumericInput(selectors.loanCreditUnionMarkupInput?.value);
-  const gfsMarkup = parseNumericInput(selectors.loanGfsMarkupInput?.value);
+  const config = getWarrantyConfigForCreditUnion(creditUnionId);
+  const creditUnionMarkup = resolveNumericInputWithFallback(
+    selectors.loanCreditUnionMarkupInput,
+    config.creditUnionMarkup
+  );
+  const gfsMarkup = resolveNumericInputWithFallback(selectors.loanGfsMarkupInput, config.gfsMarkup);
   saveWarrantyConfig(creditUnionId, { creditUnionMarkup, gfsMarkup });
 }
 
 function handleGapPricingChange() {
   const creditUnionId = appState.accountSelectionId;
   if (!creditUnionId) return;
-  const gapCost = parseNumericInput(selectors.loanGapCostInput?.value);
-  const gapCreditUnionMarkup = parseNumericInput(selectors.loanGapCreditUnionMarkupInput?.value);
-  const gapGfsMarkup = parseNumericInput(selectors.loanGapGfsMarkupInput?.value);
+  const config = getWarrantyConfigForCreditUnion(creditUnionId);
+  const gapCost = resolveNumericInputWithFallback(selectors.loanGapCostInput, config.gapCost);
+  const gapCreditUnionMarkup = resolveNumericInputWithFallback(
+    selectors.loanGapCreditUnionMarkupInput,
+    config.gapCreditUnionMarkup
+  );
+  const gapGfsMarkup = resolveNumericInputWithFallback(selectors.loanGapGfsMarkupInput, config.gapGfsMarkup);
   saveWarrantyConfig(creditUnionId, { gapCost, gapCreditUnionMarkup, gapGfsMarkup });
 }
 
@@ -2640,11 +2675,7 @@ function handleMobConfigChange() {
   if (!creditUnionId) return;
   const config = getWarrantyConfigForCreditUnion(creditUnionId);
   const resolveRateInput = (input, fallback) => {
-    if (!input) {
-      return Number.isFinite(fallback) ? fallback : null;
-    }
-    const parsed = parseNumericInput(input.value);
-    return Number.isFinite(parsed) ? parsed : null;
+    return resolveNumericInputWithFallback(input, fallback);
   };
   const mobCoverageType = selectors.mobAccountCoverageTypeSelect
     ? selectors.mobAccountCoverageTypeSelect.value || ''
@@ -2716,9 +2747,16 @@ function setTermExtensionFieldVisibility(isEnabled) {
 function handleTermExtensionChange() {
   const creditUnionId = appState.accountSelectionId;
   if (!creditUnionId) return;
+  const config = getWarrantyConfigForCreditUnion(creditUnionId);
   const termExtensionsEnabled = selectors.loanTermExtensionToggle?.checked ?? false;
-  const vscTermExtension = parseNumericInput(selectors.loanVscTermExtensionInput?.value);
-  const gapTermExtension = parseNumericInput(selectors.loanGapTermExtensionInput?.value);
+  const vscTermExtension = resolveNumericInputWithFallback(
+    selectors.loanVscTermExtensionInput,
+    config.vscTermExtension
+  );
+  const gapTermExtension = resolveNumericInputWithFallback(
+    selectors.loanGapTermExtensionInput,
+    config.gapTermExtension
+  );
   saveWarrantyConfig(creditUnionId, { termExtensionsEnabled, vscTermExtension, gapTermExtension });
   setTermExtensionFieldVisibility(termExtensionsEnabled);
 }
