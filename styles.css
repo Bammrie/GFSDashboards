@@ -391,6 +391,39 @@ input[type='month']:focus-visible {
   background: rgba(122, 30, 44, 0.1);
 }
 
+.landing-panel {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.landing-actions {
+  display: grid;
+  gap: 1rem;
+  margin: 1.75rem 0 1rem;
+}
+
+.landing-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+}
+
+.landing-note {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+@media (min-width: 720px) {
+  .landing-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .table-action-button {
   border: none;
   background: transparent;
