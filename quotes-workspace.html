@@ -14,23 +14,6 @@
         <h1 class="site-title">Quote workspace</h1>
         <p class="site-subtitle">Build member-facing quotes and issue coverage without leaving the sales register.</p>
       </div>
-      <nav class="header-actions" aria-label="Primary navigation">
-        <div class="header-group" aria-label="Main">
-          <span class="header-group__label">Main</span>
-          <div class="header-group__links">
-            <a href="quotes.html" class="header-link" aria-current="page">Quotes</a>
-            <a href="accounts.html" class="header-link">Accounts</a>
-          </div>
-        </div>
-        <div class="header-group" aria-label="Income and reporting">
-          <span class="header-group__label">Income &amp; reporting</span>
-          <div class="header-group__links">
-            <a href="income-streams.html" class="header-link">Income Streams</a>
-            <a href="reporting.html" class="header-link">Reporting</a>
-            <a href="monthly.html" class="header-link">Monthly Totals</a>
-          </div>
-        </div>
-      </nav>
     </div>
   </header>
 
@@ -40,9 +23,9 @@
     <section class="panel panel--full" aria-labelledby="quote-select-heading">
       <header class="panel__header panel__header--split">
         <div>
-          <h2 id="quote-select-heading" class="panel__title">Select an account</h2>
+          <h2 id="quote-select-heading" class="panel__title">Select a quote client</h2>
           <p class="panel__description">
-            Choose an active credit union to start a quote. Issued coverage entries sync across users.
+            Choose a credit union to start a quote. Issued coverage entries sync across users.
           </p>
         </div>
         <div class="panel__actions">
@@ -53,7 +36,7 @@
         <div class="field-group account-select-field">
           <label for="account-credit-union-select" class="sr-only">Credit union / entity</label>
           <div class="field-with-action">
-            <select id="account-credit-union-select" name="creditUnionId" data-filter="accounts-only" required>
+            <select id="account-credit-union-select" name="creditUnionId" required>
               <option value="" disabled selected>Select a credit union</option>
             </select>
           </div>
@@ -754,6 +737,9 @@
 
   <div id="toast-container" aria-live="polite"></div>
 
+  <script>
+    window.localStorage.setItem('gfsWorkspace', 'quotes');
+  </script>
   <script type="module" src="app.js"></script>
 </body>
 </html>

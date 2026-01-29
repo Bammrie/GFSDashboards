@@ -28,11 +28,21 @@ const COVERAGE_REQUEST_WEBHOOK_URL =
   process.env.COVERAGE_REQUEST_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/4330880/ugp09bj/';
 
 const PUBLIC_PAGES = new Set(['/', '/index.html', '/quotes.html', '/quotes-workspace.html']);
-const PUBLIC_API_ROUTES = new Set(['/api/config', '/api/coverage-request']);
+const PUBLIC_API_ROUTES = new Set([
+  '/api/config',
+  '/api/coverage-request',
+  '/api/coverage-requests',
+  '/api/coverage-requests/latest',
+  '/api/credit-unions',
+  '/api/account-warranty-configs'
+]);
+const PUBLIC_API_PREFIXES = ['/api/loans', '/api/loan-illustrations'];
 
 const requiresAuth = (req) => {
   if (req.path.startsWith('/api')) {
-    return !PUBLIC_API_ROUTES.has(req.path);
+    const isPublic =
+      PUBLIC_API_ROUTES.has(req.path) || PUBLIC_API_PREFIXES.some((prefix) => req.path.startsWith(prefix));
+    return !isPublic;
   }
 
   if (req.path.endsWith('.html')) {

@@ -90,7 +90,12 @@ function getCurrentPageName() {
 
 function applyWorkspaceGate() {
   const page = getCurrentPageName();
-  const selection = window.localStorage.getItem(WORKSPACE_STORAGE_KEY);
+  let selection = window.localStorage.getItem(WORKSPACE_STORAGE_KEY);
+
+  if (!selection && WORKSPACE_PAGES.quotes.has(page)) {
+    selection = 'quotes';
+    window.localStorage.setItem(WORKSPACE_STORAGE_KEY, selection);
+  }
 
   if (WORKSPACE_PAGES.quotes.has(page) && selection !== 'quotes') {
     window.location.href = 'index.html';
@@ -3802,13 +3807,11 @@ function renderQuotesDirectory() {
   const emptyState = selectors.quotesDirectoryEmpty;
   const tableContainer = selectors.quotesDirectoryTable;
 
-  const activeAccounts = appState.creditUnions
-    .filter((creditUnion) => normalizeClassification(creditUnion.classification) === 'account')
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const quoteClients = appState.creditUnions.slice().sort((a, b) => a.name.localeCompare(b.name));
 
   body.replaceChildren();
 
-  if (!activeAccounts.length) {
+  if (!quoteClients.length) {
     if (emptyState) {
       emptyState.hidden = false;
     }
@@ -3816,9 +3819,7 @@ function renderQuotesDirectory() {
       tableContainer.hidden = true;
     }
     if (summary) {
-      summary.textContent = appState.creditUnions.length
-        ? '0 active accounts ready for quotes.'
-        : 'Add your first credit union in Accounts to begin quoting.';
+      summary.textContent = 'Add your first quote client to begin quoting.';
     }
     return;
   }
@@ -3832,13 +3833,7 @@ function renderQuotesDirectory() {
 
   const fragment = document.createDocumentFragment();
 
-  activeAccounts.forEach((creditUnion) => {
-    const latestReport = getLatestCallReportForCreditUnion(creditUnion.id);
-    const consumerLoanTotal = latestReport ? getConsumerLoanTotal(latestReport) : null;
-    const assetLabel = formatLatestMonetaryLabel(latestReport, latestReport?.assetSize);
-    const consumerLabel = formatLatestMonetaryLabel(latestReport, consumerLoanTotal);
-    const periodInfo = getLatestReportPeriod(latestReport);
-
+  quoteClients.forEach((creditUnion) => {
     const row = document.createElement('tr');
 
     const nameCell = document.createElement('td');
@@ -3849,28 +3844,23 @@ function renderQuotesDirectory() {
     nameLink.title = 'Open quote workspace';
     nameCell.append(nameLink);
 
-    const periodCell = document.createElement('td');
-    periodCell.className = 'period-cell';
-    periodCell.textContent = periodInfo.label;
-    periodCell.dataset.tone = periodInfo.tone;
+    const actionCell = document.createElement('td');
+    actionCell.className = 'numeric';
+    const actionLink = document.createElement('a');
+    actionLink.href = nameLink.href;
+    actionLink.className = 'secondary-button';
+    actionLink.textContent = 'Open workspace';
+    actionCell.append(actionLink);
 
-    const assetCell = document.createElement('td');
-    assetCell.className = 'numeric numeric--monospace';
-    assetCell.textContent = assetLabel;
-
-    const consumerCell = document.createElement('td');
-    consumerCell.className = 'numeric numeric--monospace';
-    consumerCell.textContent = consumerLabel;
-
-    row.append(nameCell, periodCell, assetCell, consumerCell);
+    row.append(nameCell, actionCell);
     fragment.append(row);
   });
 
   body.append(fragment);
 
   if (summary) {
-    const accountLabel = `${activeAccounts.length} active account${activeAccounts.length === 1 ? '' : 's'}`;
-    summary.textContent = `${accountLabel} ready for quoting.`;
+    const clientLabel = `${quoteClients.length} quote client${quoteClients.length === 1 ? '' : 's'}`;
+    summary.textContent = `${clientLabel} ready for quoting.`;
   }
 }
 
@@ -3969,7 +3959,7 @@ function renderQuotesWorkspace() {
     if (summary) {
       summary.textContent = hasCreditUnions
         ? 'Select a credit union to start a quote.'
-        : 'Add a credit union in Accounts to begin quoting.';
+        : 'Add a quote client to begin quoting.';
     }
     renderCoverageRequestReceipt();
     renderLoanOfficerCalculator();
@@ -6946,7 +6936,7 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   renderQuotesWorkspace();
   try {
     await Promise.all([
-      loadCallReports(appState.accountSelectionId),
+      selectors.callReportList ? loadCallReports(appState.accountSelectionId) : Promise.resolve(),
       appState.accountSelectionId ? loadLoanEntries(appState.accountSelectionId) : Promise.resolve(),
       appState.accountSelectionId ? loadLoanIllustrations(appState.accountSelectionId) : Promise.resolve()
     ]);
@@ -7751,16 +7741,23 @@ async function bootstrap() {
   appState.detailStart = getDetailStartFromQuery();
   appState.detailEnd = getDetailEndFromQuery();
   appState.accountSelectionId = getAccountSelectionFromQuery();
+  const hasQuoteSurface = Boolean(
+    selectors.quotesDirectoryBody || selectors.quoteWorkspaceSummary || selectors.loanOfficerSummary || selectors.loanLogForm
+  );
+  const hasAccountSurface = Boolean(
+    selectors.accountStatusList ||
+      selectors.accountDirectoryBody ||
+      selectors.incomeStreamList ||
+      selectors.reportingForm ||
+      selectors.monthlyCompletionBody ||
+      selectors.revenueForm
+  );
   try {
-    await Promise.all([
-      loadCreditUnions(),
-      loadIncomeStreams(),
-      loadAccountReviewData(),
-      loadAccountNotes(),
-      loadAccountChangeLog(),
-      loadAccountWarrantyConfigs(),
-      loadAppConfig()
-    ]);
+    const tasks = [loadCreditUnions(), loadAccountWarrantyConfigs(), loadAppConfig()];
+    if (hasAccountSurface && !hasQuoteSurface) {
+      tasks.push(loadIncomeStreams(), loadAccountReviewData(), loadAccountNotes(), loadAccountChangeLog());
+    }
+    await Promise.all(tasks);
     renderAccountWorkspace();
     renderQuotesWorkspace();
   } catch (error) {
@@ -7840,7 +7837,7 @@ async function bootstrap() {
     }
   }
 
-  if (selectors.accountDirectoryBody || selectors.quotesDirectoryBody) {
+  if (selectors.accountDirectoryBody) {
     try {
       await loadLatestCallReports();
     } catch (error) {
