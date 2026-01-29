@@ -16,6 +16,21 @@ const PRODUCT_REVENUE_TYPES = {
 
 const DEFAULT_REVENUE_TYPES = ['Commission'];
 const REPORTING_START_PERIOD = '2023-01';
+const WORKSPACE_STORAGE_KEY = 'gfsWorkspace';
+const WORKSPACE_PAGES = {
+  quotes: new Set(['quotes.html', 'quotes-workspace.html']),
+  accounts: new Set([
+    'accounts.html',
+    'account-workspace.html',
+    'income-streams.html',
+    'reporting.html',
+    'monthly.html',
+    'monthly-detail.html',
+    'credit-union.html',
+    'stream.html',
+    'revenue.html'
+  ])
+};
 const PRODUCT_REVENUE_PAIRS = PRODUCT_OPTIONS.flatMap((product) => {
   const revenueTypes = PRODUCT_REVENUE_TYPES[product] || DEFAULT_REVENUE_TYPES;
   return revenueTypes.map((revenueType) => ({ product, revenueType }));
@@ -66,6 +81,39 @@ function scrubDuplicateCoastlife(entries) {
 
   return entries.filter((item) => normalizeNameForComparison(item.name) !== 'coastlife');
 }
+
+function getCurrentPageName() {
+  const { pathname } = window.location;
+  const page = pathname.split('/').pop() || 'index.html';
+  return page.split('?')[0];
+}
+
+function applyWorkspaceGate() {
+  const page = getCurrentPageName();
+  const selection = window.localStorage.getItem(WORKSPACE_STORAGE_KEY);
+
+  if (WORKSPACE_PAGES.quotes.has(page) && selection !== 'quotes') {
+    window.location.href = 'index.html';
+    return;
+  }
+
+  if (WORKSPACE_PAGES.accounts.has(page) && selection !== 'accounts') {
+    window.location.href = 'index.html';
+    return;
+  }
+
+  if (selection === 'quotes') {
+    document.querySelectorAll('.header-link[href="accounts.html"]').forEach((link) => link.remove());
+    const incomeGroup = document.querySelector('.header-group[aria-label="Income and reporting"]');
+    if (incomeGroup) {
+      incomeGroup.remove();
+    }
+  } else if (selection === 'accounts') {
+    document.querySelectorAll('.header-link[href="quotes.html"]').forEach((link) => link.remove());
+  }
+}
+
+applyWorkspaceGate();
 
 const selectors = {
   addCreditUnionBtn: document.getElementById('add-credit-union-btn'),
