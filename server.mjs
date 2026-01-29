@@ -27,7 +27,27 @@ const DASHBOARD_USERNAME = process.env.DASHBOARD_USERNAME || null;
 const COVERAGE_REQUEST_WEBHOOK_URL =
   process.env.COVERAGE_REQUEST_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/4330880/ugp09bj/';
 
+const PUBLIC_PAGES = new Set(['/', '/index.html', '/quotes.html', '/quotes-workspace.html']);
+const PUBLIC_API_ROUTES = new Set(['/api/config', '/api/coverage-request']);
+
+const requiresAuth = (req) => {
+  if (req.path.startsWith('/api')) {
+    return !PUBLIC_API_ROUTES.has(req.path);
+  }
+
+  if (req.path.endsWith('.html')) {
+    return !PUBLIC_PAGES.has(req.path);
+  }
+
+  return false;
+};
+
 app.use((req, res, next) => {
+  if (!requiresAuth(req)) {
+    next();
+    return;
+  }
+
   const unauthorized = () => {
     res.setHeader('WWW-Authenticate', 'Basic realm="GFSDashboards"');
     res.status(401).send('Authentication required.');

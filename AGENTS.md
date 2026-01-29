@@ -1,3 +1,4 @@
+2029-02-10: Replaced the index redirect with a two-button gateway separating Account Management (password protected) from Product Quotes, and scoped auth to account/reporting routes.
 2029-02-08: Moved the Menu Pricing dialog and actions from the account workspace into the quote workspace so pricing stays with quoting workflows.
 2029-02-07: Prevented empty Menu Pricing autosaves from overwriting stored MOB rates when toggling blended/unblended coverage setups.
 2029-02-06: Added coverage request send receipts in Quotes (UI + API) so the last sent details display for loan officers.
