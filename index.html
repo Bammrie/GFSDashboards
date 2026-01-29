@@ -15,11 +15,18 @@
         <p class="panel__description">Choose the workspace you want to open.</p>
       </header>
       <div class="landing-actions">
-        <a class="primary-button landing-button" href="accounts.html">Account Managment</a>
-        <a class="secondary-button landing-button" href="quotes.html">Product Quotes</a>
+        <a class="primary-button landing-button" href="accounts.html" data-workspace="accounts">Account Managment</a>
+        <a class="secondary-button landing-button" href="quotes.html" data-workspace="quotes">Product Quotes</a>
       </div>
       <p class="landing-note">Account Management remains protected by the admin password.</p>
     </section>
   </main>
+  <script>
+    document.querySelectorAll('[data-workspace]').forEach((link) => {
+      link.addEventListener('click', () => {
+        window.localStorage.setItem('gfsWorkspace', link.dataset.workspace);
+      });
+    });
+  </script>
 </body>
 </html>
