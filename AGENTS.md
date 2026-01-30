@@ -1,3 +1,4 @@
+2029-02-13: Restored the landing page workspace chooser so the site no longer auto-redirects to Quotes, letting users select Accounts or Quotes on entry.
 2029-02-12: Focused the UI on the quote-only service, added quote client 
 management in the quotes directory, and opened quote APIs for public 
 access.
