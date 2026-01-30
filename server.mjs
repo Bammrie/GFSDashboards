@@ -4,6 +4,7 @@ import multer from 'multer';
 import pdfParse from 'pdf-parse';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs/promises';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -14,6 +15,8 @@ mongoose.set('bufferCommands', false);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const publicDir = __dirname;
+const WARRANTY_CONFIG_STORAGE_PATH =
+  process.env.WARRANTY_CONFIG_STORAGE_PATH || path.join(__dirname, 'data', 'account-warranty-configs.json');
 
 const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -37,6 +40,31 @@ const PUBLIC_API_ROUTES = new Set([
   '/api/account-warranty-configs'
 ]);
 const PUBLIC_API_PREFIXES = ['/api/loans', '/api/loan-illustrations'];
+const DATABASE_OPTIONAL_API_ROUTES = new Set(['/account-warranty-configs']);
+
+async function readWarrantyConfigStorage() {
+  try {
+    const raw = await fs.readFile(WARRANTY_CONFIG_STORAGE_PATH, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed;
+    }
+  } catch (error) {
+    if (error?.code !== 'ENOENT') {
+      console.warn('Unable to read warranty config fallback storage.', error);
+    }
+  }
+  return {};
+}
+
+async function writeWarrantyConfigStorage(data) {
+  try {
+    await fs.mkdir(path.dirname(WARRANTY_CONFIG_STORAGE_PATH), { recursive: true });
+    await fs.writeFile(WARRANTY_CONFIG_STORAGE_PATH, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.warn('Unable to write warranty config fallback storage.', error);
+  }
+}
 
 const requiresAuth = (req) => {
   if (req.path.startsWith('/api')) {
@@ -379,7 +407,7 @@ if (!databaseReady) {
 }
 
 app.use('/api', (req, res, next) => {
-  if (!databaseReady) {
+  if (!databaseReady && !DATABASE_OPTIONAL_API_ROUTES.has(req.path)) {
     res.status(503).json({
       error:
         'Database connection is not configured. Set the MONGODB_URI environment variable to enable income tracking APIs.'
@@ -568,6 +596,11 @@ app.post('/api/account-review', async (req, res, next) => {
 
 app.get('/api/account-warranty-configs', async (req, res, next) => {
   try {
+    if (!databaseReady) {
+      const data = await readWarrantyConfigStorage();
+      res.json({ data });
+      return;
+    }
     const configs = await AccountWarrantyConfig.find().lean();
     const data = configs.reduce((memo, entry) => {
       memo[entry.creditUnion.toString()] = entry.config || {};
@@ -582,13 +615,26 @@ app.get('/api/account-warranty-configs', async (req, res, next) => {
 app.post('/api/account-warranty-configs', async (req, res, next) => {
   try {
     const creditUnionId = req.body?.creditUnionId;
-    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+    if (!creditUnionId || typeof creditUnionId !== 'string') {
       res.status(400).json({ error: 'Valid credit union ID is required.' });
       return;
     }
     const config = req.body?.config;
     if (!config || typeof config !== 'object' || Array.isArray(config)) {
       res.status(400).json({ error: 'Warranty config payload must be an object.' });
+      return;
+    }
+
+    if (!databaseReady) {
+      const data = await readWarrantyConfigStorage();
+      data[creditUnionId] = config;
+      await writeWarrantyConfigStorage(data);
+      res.json({ config });
+      return;
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid credit union ID is required.' });
       return;
     }
 
