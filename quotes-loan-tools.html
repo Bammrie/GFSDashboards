@@ -26,12 +26,13 @@
         <div>
           <h2 id="loan-tools-heading" class="panel__title">Loan tools</h2>
           <p class="panel__description">
-            Use this page for personal loan estimates and sales register entries while the quote workspace stays
-            focused on coverage requests.
+            Use this page for personal loan estimates and loan inputs while the request register handles coverage
+            tracking.
           </p>
         </div>
         <div class="panel__actions">
           <a class="panel-link" href="quotes-workspace.html">Coverage requests</a>
+          <a class="panel-link" href="quotes-requests.html">Requests & Sales Register</a>
           <a class="panel-link" href="quotes.html">Change Account</a>
         </div>
       </header>
@@ -43,7 +44,7 @@
         <div>
           <h2 id="loan-inputs-heading" class="panel__title">Loan inputs</h2>
           <p class="panel__description">
-            Populate the loan details used in the sales register and personal loan calculator.
+            Populate the loan details used in the request register and personal loan calculator.
           </p>
         </div>
       </header>
@@ -181,95 +182,6 @@
       </div>
     </section>
 
-    <section class="table-card loan-log-card" aria-live="polite">
-      <header class="table-header">
-        <h3 class="table-title">Sales register</h3>
-        <p id="loan-log-summary" class="table-description">
-          Issue coverage for funded loans. Loan amount, term, APR, mileage, and VIN are pulled from the loan inputs
-          above while coverage combinations follow the protection options selected in the quote workspace.
-        </p>
-      </header>
-      <form id="loan-log-form" class="loan-log-form">
-        <div class="loan-log-fields">
-          <div class="field-group">
-            <label for="loan-log-id">Loan ID</label>
-            <input type="number" id="loan-log-id" min="1" placeholder="10234" />
-          </div>
-          <div class="field-group">
-            <label for="loan-log-date">Loan date</label>
-            <input type="date" id="loan-log-date" required />
-          </div>
-          <div class="field-group">
-            <label for="loan-log-officer">Loan officer</label>
-            <input type="text" id="loan-log-officer" placeholder="Officer name" required />
-          </div>
-          <div class="field-group">
-            <label for="loan-log-response-code">Member response</label>
-            <select id="loan-log-response-code">
-              <option value="" selected>Not received</option>
-              <option value="0">0 - No coverage</option>
-              <option value="1">1 - Option 1</option>
-              <option value="2">2 - Option 2</option>
-              <option value="3">3 - Option 3</option>
-              <option value="4">4 - Option 4</option>
-              <option value="5">5 - Option 5</option>
-              <option value="6">6 - Option 6</option>
-            </select>
-          </div>
-          <div class="field-group">
-            <label for="loan-log-coverage-selected">Coverage selected</label>
-            <select id="loan-log-coverage-selected" required>
-              <option value="" selected>Select</option>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
-          </div>
-          <div class="field-group">
-            <span class="field-label">Products selected</span>
-            <div class="field-options">
-              <label class="field-option">
-                <input type="checkbox" id="loan-log-vsc-selected" />
-                VSC
-              </label>
-              <label class="field-option">
-                <input type="checkbox" id="loan-log-gap-selected" />
-                GAP
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="loan-log-actions">
-          <p class="feedback" id="loan-log-feedback" role="status" aria-live="polite"></p>
-          <button type="submit" class="primary-button" id="loan-log-save-btn">Issue coverage</button>
-          <button type="button" class="secondary-button" id="loan-log-cancel-btn" hidden>Cancel edit</button>
-        </div>
-      </form>
-
-      <div id="loan-log-empty" class="empty-state" hidden>
-        <p>No coverage issued yet. Use Issue Coverage to create the first register entry.</p>
-      </div>
-      <div class="table-scroll">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th scope="col" class="numeric">Loan ID</th>
-              <th scope="col">Loan date</th>
-              <th scope="col">Loan officer</th>
-              <th scope="col">Member response</th>
-              <th scope="col" class="numeric">Amount</th>
-              <th scope="col" class="numeric">Term</th>
-              <th scope="col" class="numeric">APR</th>
-              <th scope="col" class="numeric">Mileage</th>
-              <th scope="col">VIN</th>
-              <th scope="col">Coverage</th>
-              <th scope="col">Products</th>
-              <th scope="col" class="numeric">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="loan-log-list"></tbody>
-        </table>
-      </div>
-    </section>
   </main>
 
   <script>

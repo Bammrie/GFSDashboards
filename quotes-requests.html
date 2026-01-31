@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Requests & Sales Register | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Requests & sales register</h1>
+        <p class="site-subtitle">
+          Track every coverage request, update response status, and log issued coverage for each quote client.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout layout--account">
+    <p class="back-link"><a href="quotes-workspace.html">&larr; Back to Quote workspace</a></p>
+    <p class="back-link"><a href="quotes.html">&larr; Back to Quotes directory</a></p>
+
+    <section class="panel panel--full" aria-labelledby="request-tracker-heading">
+      <header class="panel__header panel__header--split">
+        <div>
+          <h2 id="request-tracker-heading" class="panel__title">Request tracker</h2>
+          <p class="panel__description">
+            Monitor outstanding requests, capture member responses, and reconcile outcomes with issued coverage.
+          </p>
+        </div>
+        <div class="panel__actions">
+          <a class="panel-link" href="quotes-workspace.html">Coverage requests</a>
+          <a class="panel-link" href="quotes-loan-tools.html">Loan tools</a>
+          <a class="panel-link" href="quotes.html">Change Account</a>
+        </div>
+      </header>
+      <p id="quote-workspace-summary" class="panel__note">Select a credit union to review coverage requests.</p>
+    </section>
+
+    <section class="panel panel--full" aria-labelledby="loan-inputs-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="loan-inputs-heading" class="panel__title">Loan inputs</h2>
+          <p class="panel__description">
+            Capture loan details used for request tracking and the sales register.
+          </p>
+        </div>
+      </header>
+      <p id="loan-officer-summary" class="panel__note">Select a credit union to start an illustration.</p>
+
+      <div class="loan-officer-grid">
+        <div class="loan-officer-card">
+          <h3 class="loan-officer-card__title">Loan details</h3>
+          <div class="loan-officer-fields">
+            <div class="field-group">
+              <label for="loan-amount">Loan amount</label>
+              <input type="number" id="loan-amount" inputmode="decimal" min="0" placeholder="25,000" />
+            </div>
+            <div class="field-group">
+              <label for="loan-term">Term (months)</label>
+              <input type="number" id="loan-term" inputmode="numeric" min="1" placeholder="72" />
+            </div>
+            <div class="field-group">
+              <label for="loan-apr">APR (%)</label>
+              <input type="number" id="loan-apr" inputmode="decimal" step="0.01" min="0" placeholder="6.99" />
+            </div>
+            <div class="field-group">
+              <label for="loan-miles">Miles on vehicle</label>
+              <input type="number" id="loan-miles" inputmode="numeric" min="0" placeholder="42,000" />
+            </div>
+            <div class="field-group">
+              <label for="loan-vin">VIN</label>
+              <input type="text" id="loan-vin" placeholder="1FTFW1E50JFC12345" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="table-card" aria-labelledby="coverage-requests-heading">
+      <header class="table-header">
+        <h3 id="coverage-requests-heading" class="table-title">Outstanding requests</h3>
+        <p id="coverage-request-summary" class="table-description">
+          Review every coverage request and update member responses as they come in.
+        </p>
+      </header>
+      <div id="coverage-request-receipt" class="coverage-request-receipt" aria-live="polite"></div>
+      <div class="table-actions">
+        <p id="coverage-request-feedback" class="feedback" role="status" aria-live="polite"></p>
+      </div>
+      <div id="coverage-request-empty" class="empty-state" hidden>
+        <p>No coverage requests found for this credit union yet.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Status</th>
+              <th scope="col">Sent</th>
+              <th scope="col">Request ID</th>
+              <th scope="col" class="numeric">Loan ID</th>
+              <th scope="col">Member</th>
+              <th scope="col">Member response</th>
+              <th scope="col">Responded</th>
+              <th scope="col" class="numeric">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="coverage-request-list"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="table-card loan-log-card" aria-live="polite">
+      <header class="table-header">
+        <h3 class="table-title">Sales register</h3>
+        <p id="loan-log-summary" class="table-description">
+          Issue coverage for funded loans. Loan amount, term, APR, mileage, and VIN are pulled from the loan inputs
+          above while coverage combinations follow the protection options selected in the quote workspace.
+        </p>
+      </header>
+      <form id="loan-log-form" class="loan-log-form">
+        <div class="loan-log-fields">
+          <div class="field-group">
+            <label for="loan-log-id">Loan ID</label>
+            <input type="number" id="loan-log-id" min="1" placeholder="10234" />
+          </div>
+          <div class="field-group">
+            <label for="loan-log-date">Loan date</label>
+            <input type="date" id="loan-log-date" required />
+          </div>
+          <div class="field-group">
+            <label for="loan-log-officer">Loan officer</label>
+            <input type="text" id="loan-log-officer" placeholder="Officer name" required />
+          </div>
+          <div class="field-group">
+            <label for="loan-log-response-code">Member response</label>
+            <select id="loan-log-response-code">
+              <option value="" selected>Not received</option>
+              <option value="0">0 - No coverage</option>
+              <option value="1">1 - Option 1</option>
+              <option value="2">2 - Option 2</option>
+              <option value="3">3 - Option 3</option>
+              <option value="4">4 - Option 4</option>
+              <option value="5">5 - Option 5</option>
+              <option value="6">6 - Option 6</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="loan-log-coverage-selected">Coverage selected</label>
+            <select id="loan-log-coverage-selected" required>
+              <option value="" selected>Select</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <span class="field-label">Products selected</span>
+            <div class="field-options">
+              <label class="field-option">
+                <input type="checkbox" id="loan-log-vsc-selected" />
+                VSC
+              </label>
+              <label class="field-option">
+                <input type="checkbox" id="loan-log-gap-selected" />
+                GAP
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="loan-log-actions">
+          <p class="feedback" id="loan-log-feedback" role="status" aria-live="polite"></p>
+          <button type="submit" class="primary-button" id="loan-log-save-btn">Issue coverage</button>
+          <button type="button" class="secondary-button" id="loan-log-cancel-btn" hidden>Cancel edit</button>
+        </div>
+      </form>
+
+      <div id="loan-log-empty" class="empty-state" hidden>
+        <p>No coverage issued yet. Use Issue Coverage to create the first register entry.</p>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col" class="numeric">Loan ID</th>
+              <th scope="col">Loan date</th>
+              <th scope="col">Loan officer</th>
+              <th scope="col">Member response</th>
+              <th scope="col" class="numeric">Amount</th>
+              <th scope="col" class="numeric">Term</th>
+              <th scope="col" class="numeric">APR</th>
+              <th scope="col" class="numeric">Mileage</th>
+              <th scope="col">VIN</th>
+              <th scope="col">Coverage</th>
+              <th scope="col">Products</th>
+              <th scope="col" class="numeric">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="loan-log-list"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    window.localStorage.setItem('gfsWorkspace', 'quotes');
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

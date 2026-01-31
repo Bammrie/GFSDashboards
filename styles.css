@@ -1812,6 +1812,10 @@ pre {
   line-height: 1.4;
 }
 
+.table-actions {
+  padding: 0 1.25rem 1rem;
+}
+
 .back-link {
   margin: 0 0 1rem;
 }
@@ -1890,6 +1894,43 @@ pre {
 .data-table .table-link:hover,
 .data-table .table-link:focus {
   text-decoration: underline;
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.status-tag[data-status='awaiting_response'] {
+  border-color: rgba(122, 30, 44, 0.5);
+  background: rgba(122, 30, 44, 0.15);
+  color: var(--accent-strong);
+}
+
+.status-tag[data-status='response_received'] {
+  border-color: rgba(57, 145, 95, 0.6);
+  background: rgba(57, 145, 95, 0.18);
+  color: #b8f0cb;
+}
+
+.status-tag[data-status='draft'] {
+  border-color: rgba(201, 170, 62, 0.6);
+  background: rgba(201, 170, 62, 0.18);
+  color: #f7e0a1;
+}
+
+.coverage-response-select {
+  min-width: 140px;
 }
 
 .account-directory__table {

@@ -18,7 +18,7 @@ const DEFAULT_REVENUE_TYPES = ['Commission'];
 const REPORTING_START_PERIOD = '2023-01';
 const WORKSPACE_STORAGE_KEY = 'gfsWorkspace';
 const WORKSPACE_PAGES = {
-  quotes: new Set(['quotes.html', 'quotes-workspace.html']),
+  quotes: new Set(['quotes.html', 'quotes-workspace.html', 'quotes-requests.html']),
   accounts: new Set([
     'accounts.html',
     'account-workspace.html',
@@ -269,6 +269,9 @@ const selectors = {
   coverageRequestReceipt: document.getElementById('coverage-request-receipt'),
   coverageRequestPayload: document.getElementById('coverage-request-payload'),
   coverageRequestWebhookTarget: document.getElementById('coverage-request-webhook-target'),
+  coverageRequestSummary: document.getElementById('coverage-request-summary'),
+  coverageRequestList: document.getElementById('coverage-request-list'),
+  coverageRequestEmpty: document.getElementById('coverage-request-empty'),
   loanCreditUnionMarkupInput: document.getElementById('loan-credit-union-markup'),
   loanGfsMarkupInput: document.getElementById('loan-gfs-markup'),
   loanGapCostInput: document.getElementById('loan-gap-cost'),
@@ -915,6 +918,134 @@ function renderCoverageRequestReceipt() {
   container.append(status, label, time, details);
 }
 
+function createCoverageRequestStatusTag(status) {
+  const tag = document.createElement('span');
+  tag.className = 'status-tag';
+  tag.dataset.status = status || 'unknown';
+  tag.textContent = formatCoverageRequestStatusLabel(status);
+  return tag;
+}
+
+function createCoverageRequestResponseSelect(request) {
+  const select = document.createElement('select');
+  select.className = 'coverage-response-select';
+  select.dataset.requestId = request.requestId || '';
+
+  const selectedValue = Number.isFinite(request.memberChoice) ? String(request.memberChoice) : '';
+  select.append(createOption('', 'Not received', false, selectedValue === ''));
+  for (let choice = 0; choice <= 6; choice += 1) {
+    const label = choice === 0 ? '0 - No coverage' : `${choice} - Option ${choice}`;
+    select.append(createOption(String(choice), label, false, selectedValue === String(choice)));
+  }
+
+  return select;
+}
+
+function renderCoverageRequests() {
+  if (!selectors.coverageRequestList) return;
+
+  const list = selectors.coverageRequestList;
+  const summary = selectors.coverageRequestSummary;
+  const emptyState = selectors.coverageRequestEmpty;
+  const creditUnionId = appState.accountSelectionId;
+
+  list.replaceChildren();
+
+  if (!creditUnionId) {
+    if (summary) {
+      summary.textContent = 'Select a credit union to view coverage requests.';
+    }
+    if (emptyState) {
+      emptyState.hidden = true;
+    }
+    return;
+  }
+
+  const requests = Array.isArray(appState.coverageRequests) ? appState.coverageRequests : [];
+  const creditUnionName = getCreditUnionNameById(creditUnionId) || 'this credit union';
+
+  const statusCounts = requests.reduce(
+    (acc, request) => {
+      const status = request.status || 'draft';
+      if (!acc[status]) {
+        acc[status] = 0;
+      }
+      acc[status] += 1;
+      return acc;
+    },
+    { draft: 0, awaiting_response: 0, response_received: 0 }
+  );
+
+  if (summary) {
+    const requestLabel = `${requests.length} request${requests.length === 1 ? '' : 's'}`;
+    summary.textContent = `${requestLabel} for ${creditUnionName} • ${statusCounts.awaiting_response} awaiting response • ${statusCounts.response_received} responded • ${statusCounts.draft} drafts`;
+  }
+
+  if (!requests.length) {
+    if (emptyState) {
+      emptyState.hidden = false;
+    }
+    return;
+  }
+
+  if (emptyState) {
+    emptyState.hidden = true;
+  }
+
+  const fragment = document.createDocumentFragment();
+  requests.forEach((request) => {
+    const row = document.createElement('tr');
+
+    const statusCell = document.createElement('td');
+    statusCell.append(createCoverageRequestStatusTag(request.status));
+
+    const sentCell = document.createElement('td');
+    sentCell.textContent = request.sentAt ? formatCoverageRequestReceiptDate(request.sentAt) : 'Not sent';
+
+    const requestIdCell = document.createElement('td');
+    requestIdCell.textContent = request.requestId || '—';
+
+    const loanIdCell = document.createElement('td');
+    loanIdCell.className = 'numeric';
+    loanIdCell.textContent = Number.isFinite(request.loanId) ? integerFormatter.format(request.loanId) : '—';
+
+    const memberCell = document.createElement('td');
+    memberCell.textContent = request.memberName || '—';
+
+    const responseCell = document.createElement('td');
+    const responseSelect = createCoverageRequestResponseSelect(request);
+    responseCell.append(responseSelect);
+
+    const respondedCell = document.createElement('td');
+    respondedCell.textContent = request.respondedAt ? formatCoverageRequestReceiptDate(request.respondedAt) : '—';
+
+    const actionsCell = document.createElement('td');
+    actionsCell.className = 'numeric';
+    const updateButton = document.createElement('button');
+    updateButton.type = 'button';
+    updateButton.className = 'table-action-button';
+    updateButton.dataset.action = 'update-coverage-response';
+    updateButton.dataset.requestId = request.requestId || '';
+    updateButton.textContent = 'Update';
+    updateButton.disabled = !responseSelect.value;
+    actionsCell.append(updateButton);
+
+    row.append(
+      statusCell,
+      sentCell,
+      requestIdCell,
+      loanIdCell,
+      memberCell,
+      responseCell,
+      respondedCell,
+      actionsCell
+    );
+    fragment.append(row);
+  });
+
+  list.append(fragment);
+}
+
 function mergeCoverageRequestLatest(receipt) {
   if (!receipt) return;
   const incomingTime = new Date(receipt.sentAt || 0).getTime();
@@ -971,6 +1102,39 @@ async function loadCoverageRequestSummary() {
     appState.coverageRequestSummary = {};
   } finally {
     renderQuotesDirectory();
+  }
+}
+
+async function loadCoverageRequests(creditUnionId) {
+  if (!creditUnionId) {
+    appState.coverageRequests = [];
+    appState.coverageRequestsLoadedFor = null;
+    renderCoverageRequests();
+    return;
+  }
+
+  if (appState.coverageRequestsLoadedFor === creditUnionId) {
+    renderCoverageRequests();
+    return;
+  }
+
+  appState.coverageRequestsLoadedFor = creditUnionId;
+  renderCoverageRequests();
+
+  try {
+    const response = await fetch(`${COVERAGE_REQUEST_ENDPOINT}?creditUnionId=${encodeURIComponent(creditUnionId)}`);
+    if (!response.ok) {
+      appState.coverageRequests = [];
+      renderCoverageRequests();
+      return;
+    }
+    const payload = await response.json();
+    appState.coverageRequests = Array.isArray(payload?.requests) ? payload.requests : [];
+  } catch (error) {
+    console.warn('Unable to load coverage requests.', error);
+    appState.coverageRequests = [];
+  } finally {
+    renderCoverageRequests();
   }
 }
 
@@ -1071,6 +1235,10 @@ async function handleCoverageRequestSuccess({ payload, request, zapier }) {
     });
   }
   await loadCoverageRequestSummary();
+  if (selectors.coverageRequestList && appState.accountSelectionId) {
+    appState.coverageRequestsLoadedFor = null;
+    await loadCoverageRequests(appState.accountSelectionId);
+  }
   renderQuotesDirectory();
 }
 
@@ -2990,7 +3158,9 @@ const appState = {
   coverageRequestWebhookUrl: '',
   coverageRequestLatest: null,
   coverageRequestLatestLoadedFor: null,
-  coverageRequestSummary: {}
+  coverageRequestSummary: {},
+  coverageRequests: [],
+  coverageRequestsLoadedFor: null
 };
 
 function showDialog(dialog) {
@@ -4054,6 +4224,7 @@ function renderQuotesWorkspace() {
         : 'Add a quote client to begin quoting.';
     }
     renderCoverageRequestReceipt();
+    renderCoverageRequests();
     renderLoanOfficerCalculator();
     renderLoanIllustrationHistory();
     renderLoanLog();
@@ -4066,6 +4237,7 @@ function renderQuotesWorkspace() {
   }
 
   void loadCoverageRequestLatest(creditUnionId);
+  void loadCoverageRequests(creditUnionId);
   renderLoanOfficerCalculator();
   renderLoanIllustrationHistory();
   renderLoanLog();
@@ -7719,6 +7891,62 @@ selectors.loanLogList?.addEventListener('click', async (event) => {
       button.disabled = false;
       button.textContent = 'Delete';
     }
+  }
+});
+
+selectors.coverageRequestList?.addEventListener('change', (event) => {
+  const select = event.target.closest('select[data-request-id]');
+  if (!select || !selectors.coverageRequestList.contains(select)) {
+    return;
+  }
+  const row = select.closest('tr');
+  const button = row?.querySelector('button[data-action="update-coverage-response"]');
+  if (button) {
+    button.disabled = !select.value;
+  }
+});
+
+selectors.coverageRequestList?.addEventListener('click', async (event) => {
+  const button = event.target.closest('button[data-action="update-coverage-response"]');
+  if (!button || !selectors.coverageRequestList.contains(button)) return;
+
+  const requestId = button.dataset.requestId;
+  if (!requestId) return;
+
+  const row = button.closest('tr');
+  const select = row?.querySelector(`select[data-request-id="${requestId}"]`);
+  const selectedValue = select?.value ?? '';
+
+  if (!selectedValue) {
+    setFeedback(selectors.coverageRequestFeedback, 'Select a response code before updating.', 'error');
+    return;
+  }
+
+  const previousText = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Updating...';
+  setFeedback(selectors.coverageRequestFeedback, 'Updating member response...', 'info');
+
+  try {
+    await request(COVERAGE_REQUEST_RESPONSE_ENDPOINT, {
+      method: 'POST',
+      body: JSON.stringify({
+        quote_request_id: requestId,
+        member_choice: Number(selectedValue)
+      })
+    });
+    setFeedback(selectors.coverageRequestFeedback, 'Member response updated.', 'success');
+    appState.coverageRequestsLoadedFor = null;
+    if (appState.accountSelectionId) {
+      await loadCoverageRequests(appState.accountSelectionId);
+      await loadCoverageRequestSummary();
+      void loadCoverageRequestLatest(appState.accountSelectionId);
+    }
+  } catch (error) {
+    setFeedback(selectors.coverageRequestFeedback, error.message, 'error');
+  } finally {
+    button.disabled = false;
+    button.textContent = previousText;
   }
 });
 
