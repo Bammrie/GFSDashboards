@@ -972,7 +972,7 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
   const miles = parseNumericInput(selectors.loanMilesInput?.value);
   const vin = selectors.loanVinInput?.value?.trim() ?? '';
   const coverageDetails = buildCoverageRequestOptionDetails(
-    appState.loanIllustrationDraft?.coverageCombos,
+    appState.loanIllustrationDraft?.outputs?.coverageCombos,
     termMonths
   );
   const quoteOptions = buildCoverageRequestQuoteOptions(coverageDetails);
