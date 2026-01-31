@@ -1,3 +1,4 @@
+2029-02-17: Added a quote workspace warning when coverage request quote options are missing or invalid, so loan officers know to calculate Base/VSC/VSC+GAP pricing before sending requests.
 2029-02-16: Updated coverage request availability to read quote option combos from loan illustration outputs so send readiness tracks generated options.
 2029-02-14: Added a fallback file-backed store for menu pricing configs so saves persist even when the database is unavailable.
 2029-02-13: Restored the landing page workspace chooser so the site no longer auto-redirects to Quotes, letting users select Accounts or Quotes on entry.
