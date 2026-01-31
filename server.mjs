@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 import dotenv from 'dotenv';
+import { randomUUID } from 'crypto';
 
 dotenv.config();
 
@@ -36,6 +37,8 @@ const PUBLIC_API_ROUTES = new Set([
   '/api/coverage-request',
   '/api/coverage-requests',
   '/api/coverage-requests/latest',
+  '/api/coverage-requests/summary',
+  '/api/coverage-requests/response',
   '/api/credit-unions',
   '/api/account-warranty-configs'
 ]);
@@ -146,6 +149,22 @@ app.get('/api/config', (req, res) => {
   });
 });
 
+async function sendCoverageRequestToZapier(payload) {
+  const response = await fetch(COVERAGE_REQUEST_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const details = await response.text().catch(() => '');
+    const error = new Error(`Zapier webhook failed (${response.status}).`);
+    error.details = details || null;
+    error.statusCode = response.status;
+    throw error;
+  }
+}
+
 app.post('/api/coverage-request', async (req, res) => {
   const payload = req.body;
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
@@ -154,24 +173,13 @@ app.post('/api/coverage-request', async (req, res) => {
   }
 
   try {
-    const response = await fetch(COVERAGE_REQUEST_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      const details = await response.text().catch(() => '');
-      res.status(502).json({
-        error: `Zapier webhook failed (${response.status}).`,
-        details: details || null
-      });
-      return;
-    }
-
+    await sendCoverageRequestToZapier(payload);
     res.json({ ok: true });
   } catch (error) {
-    res.status(502).json({ error: 'Unable to send coverage request.' });
+    res.status(502).json({
+      error: error?.message || 'Unable to send coverage request.',
+      details: error?.details || null
+    });
   }
 });
 
@@ -328,18 +336,28 @@ const loanIllustrationSchema = new mongoose.Schema(
 );
 loanIllustrationSchema.index({ creditUnion: 1, updatedAt: -1 });
 
-const coverageRequestReceiptSchema = new mongoose.Schema(
+const coverageRequestSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, index: true },
-    payloadHash: { type: String, required: true, trim: true },
+    requestId: { type: String, required: true, unique: true, index: true },
+    status: {
+      type: String,
+      enum: ['draft', 'awaiting_response', 'response_received'],
+      default: 'draft',
+      index: true
+    },
+    payload: { type: mongoose.Schema.Types.Mixed, default: {} },
     loanId: { type: Number, default: null },
     memberName: { type: String, trim: true, default: '' },
-    sentAt: { type: Date, default: Date.now }
+    memberChoice: { type: Number, default: null },
+    responsePayload: { type: mongoose.Schema.Types.Mixed, default: {} },
+    sentAt: { type: Date, default: null },
+    respondedAt: { type: Date, default: null }
   },
   { timestamps: true }
 );
 
-coverageRequestReceiptSchema.index({ creditUnion: 1, sentAt: -1 });
+coverageRequestSchema.index({ creditUnion: 1, sentAt: -1 });
 const callReportSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true },
@@ -391,7 +409,7 @@ const AccountChangeLog = mongoose.model('AccountChangeLog', accountChangeLogSche
 const AccountWarrantyConfig = mongoose.model('AccountWarrantyConfig', accountWarrantyConfigSchema);
 const Loan = mongoose.model('Loan', loanSchema);
 const LoanIllustration = mongoose.model('LoanIllustration', loanIllustrationSchema);
-const CoverageRequestReceipt = mongoose.model('CoverageRequestReceipt', coverageRequestReceiptSchema);
+const CoverageRequest = mongoose.model('CoverageRequest', coverageRequestSchema);
 
 const databaseReady = await initializeDatabase();
 
@@ -456,38 +474,118 @@ app.post('/api/credit-unions', async (req, res, next) => {
 
 app.post('/api/coverage-requests', async (req, res, next) => {
   try {
-    const creditUnionId = req.body?.creditUnionId;
-    const payloadHash = typeof req.body?.payloadHash === 'string' ? req.body.payloadHash.trim() : '';
-    const sentAtInput = req.body?.sentAt ? new Date(req.body.sentAt) : new Date();
-    const loanId = Number.isFinite(Number(req.body?.loanId)) ? Number(req.body.loanId) : null;
-    const memberName = typeof req.body?.memberName === 'string' ? req.body.memberName.trim() : '';
+    const payload = req.body;
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      res.status(400).json({ error: 'Coverage request payload must be an object.' });
+      return;
+    }
 
+    const creditUnionId = payload.credit_union_id || payload.creditUnionId;
     if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
       res.status(400).json({ error: 'Valid credit union ID is required.' });
       return;
     }
 
-    if (!payloadHash) {
-      res.status(400).json({ error: 'Payload hash is required.' });
+    const quoteOptions = Array.isArray(payload.quote_options) ? payload.quote_options : [];
+    if (quoteOptions.length !== 3) {
+      res.status(400).json({ error: 'Coverage requests require exactly three quote options.' });
+      return;
+    }
+    const hasInvalidOption = quoteOptions.some((option) => {
+      const payment = Number(option?.monthly_payment);
+      const term = Number(option?.term_months);
+      const products = option?.products;
+      return !Number.isFinite(payment) || !Number.isFinite(term) || !Array.isArray(products) || products.length === 0;
+    });
+    if (hasInvalidOption) {
+      res.status(400).json({
+        error: 'Each quote option must include monthly_payment, term_months, and products.'
+      });
       return;
     }
 
-    const sentAt = Number.isNaN(sentAtInput.getTime()) ? new Date() : sentAtInput;
-    const created = await CoverageRequestReceipt.create({
+    const requestId = randomUUID();
+    const payloadWithId = { ...payload, quote_request_id: requestId };
+    const created = await CoverageRequest.create({
       creditUnion: creditUnionId,
-      payloadHash,
-      loanId,
-      memberName,
-      sentAt
+      requestId,
+      status: 'draft',
+      payload: payloadWithId,
+      loanId: Number.isFinite(Number(payload.loan_id)) ? Number(payload.loan_id) : null,
+      memberName: typeof payload.member_name === 'string' ? payload.member_name.trim() : ''
     });
 
+    try {
+      await sendCoverageRequestToZapier(payloadWithId);
+      created.status = 'awaiting_response';
+      created.sentAt = new Date();
+      await created.save();
+    } catch (error) {
+      res.status(502).json({
+        error: error?.message || 'Unable to send coverage request.',
+        details: error?.details || null,
+        request: {
+          id: created._id.toString(),
+          creditUnionId,
+          requestId,
+          status: created.status,
+          loanId: created.loanId ?? null,
+          memberName: created.memberName ?? '',
+          sentAt: created.sentAt?.toISOString() ?? null
+        }
+      });
+      return;
+    }
+
     res.status(201).json({
-      id: created._id.toString(),
-      creditUnionId,
-      payloadHash: created.payloadHash,
-      loanId: created.loanId ?? null,
-      memberName: created.memberName ?? '',
-      sentAt: created.sentAt?.toISOString() ?? sentAt.toISOString()
+      request: {
+        id: created._id.toString(),
+        creditUnionId,
+        requestId,
+        status: created.status,
+        loanId: created.loanId ?? null,
+        memberName: created.memberName ?? '',
+        sentAt: created.sentAt?.toISOString() ?? null
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/coverage-requests', async (req, res, next) => {
+  try {
+    const creditUnionId = req.query?.creditUnionId;
+    const status = typeof req.query?.status === 'string' ? req.query.status.trim() : '';
+
+    const query = {};
+    if (creditUnionId) {
+      if (!mongoose.Types.ObjectId.isValid(creditUnionId)) {
+        res.status(400).json({ error: 'Valid credit union ID is required.' });
+        return;
+      }
+      query.creditUnion = creditUnionId;
+    }
+    if (status) {
+      query.status = status;
+    }
+
+    const requests = await CoverageRequest.find(query)
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json({
+      requests: requests.map((request) => ({
+        id: request._id.toString(),
+        creditUnionId: request.creditUnion.toString(),
+        requestId: request.requestId,
+        status: request.status,
+        loanId: request.loanId ?? null,
+        memberName: request.memberName ?? '',
+        memberChoice: request.memberChoice ?? null,
+        sentAt: request.sentAt?.toISOString() ?? null,
+        respondedAt: request.respondedAt?.toISOString() ?? null
+      }))
     });
   } catch (error) {
     next(error);
@@ -502,22 +600,99 @@ app.get('/api/coverage-requests/latest', async (req, res, next) => {
       return;
     }
 
-    const receipt = await CoverageRequestReceipt.findOne({ creditUnion: creditUnionId })
+    const request = await CoverageRequest.findOne({ creditUnion: creditUnionId })
       .sort({ sentAt: -1, createdAt: -1 })
       .lean();
 
-    if (!receipt) {
-      res.status(404).json({ error: 'No coverage request receipts found.' });
+    if (!request) {
+      res.status(404).json({ error: 'No coverage requests found.' });
       return;
     }
 
     res.json({
-      id: receipt._id.toString(),
+      id: request._id.toString(),
       creditUnionId,
-      payloadHash: receipt.payloadHash,
-      loanId: receipt.loanId ?? null,
-      memberName: receipt.memberName ?? '',
-      sentAt: receipt.sentAt?.toISOString() ?? null
+      requestId: request.requestId,
+      status: request.status,
+      loanId: request.loanId ?? null,
+      memberName: request.memberName ?? '',
+      memberChoice: request.memberChoice ?? null,
+      sentAt: request.sentAt?.toISOString() ?? null,
+      respondedAt: request.respondedAt?.toISOString() ?? null
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/coverage-requests/summary', async (req, res, next) => {
+  try {
+    const summary = await CoverageRequest.aggregate([
+      {
+        $group: {
+          _id: { creditUnion: '$creditUnion', status: '$status' },
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const formatted = summary.reduce((memo, entry) => {
+      const creditUnionId = entry._id?.creditUnion?.toString();
+      if (!creditUnionId) return memo;
+      if (!memo[creditUnionId]) {
+        memo[creditUnionId] = {
+          draft: 0,
+          awaiting_response: 0,
+          response_received: 0
+        };
+      }
+      const status = entry._id?.status;
+      if (status && memo[creditUnionId]) {
+        memo[creditUnionId][status] = entry.count;
+      }
+      return memo;
+    }, {});
+
+    res.json({ summary: formatted });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/coverage-requests/response', async (req, res, next) => {
+  try {
+    const requestId = typeof req.body?.quote_request_id === 'string' ? req.body.quote_request_id.trim() : '';
+    const choice = Number.isFinite(Number(req.body?.member_choice)) ? Number(req.body.member_choice) : null;
+
+    if (!requestId) {
+      res.status(400).json({ error: 'Quote request ID is required.' });
+      return;
+    }
+
+    const request = await CoverageRequest.findOne({ requestId });
+    if (!request) {
+      res.status(404).json({ error: 'Coverage request not found.' });
+      return;
+    }
+
+    request.status = 'response_received';
+    request.memberChoice = choice;
+    request.responsePayload = req.body || {};
+    request.respondedAt = new Date();
+    await request.save();
+
+    res.json({
+      request: {
+        id: request._id.toString(),
+        creditUnionId: request.creditUnion.toString(),
+        requestId: request.requestId,
+        status: request.status,
+        loanId: request.loanId ?? null,
+        memberName: request.memberName ?? '',
+        memberChoice: request.memberChoice ?? null,
+        sentAt: request.sentAt?.toISOString() ?? null,
+        respondedAt: request.respondedAt?.toISOString() ?? null
+      }
     });
   } catch (error) {
     next(error);

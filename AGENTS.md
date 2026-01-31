@@ -407,3 +407,5 @@ quotes.
 2029-02-04: Re-rendered account/quote workspaces after warranty configs load so Menu Pricing inputs hydrate from MongoDB instead of resetting on open.
 
 2029-02-09: Added a static prospects-data fallback for account directory loading so the Accounts list still populates when the credit union API is unavailable.
+
+2029-02-15: Added coverage request IDs/status tracking with Zapier payload options, created coverage request summary counts, and updated the quotes UI to show outstanding requests plus a Change Account link.
