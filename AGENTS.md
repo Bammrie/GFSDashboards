@@ -1,3 +1,4 @@
+2029-02-16: Updated coverage request availability to read quote option combos from loan illustration outputs so send readiness tracks generated options.
 2029-02-14: Added a fallback file-backed store for menu pricing configs so saves persist even when the database is unavailable.
 2029-02-13: Restored the landing page workspace chooser so the site no longer auto-redirects to Quotes, letting users select Accounts or Quotes on entry.
 2029-02-12: Focused the UI on the quote-only service, added quote client 
