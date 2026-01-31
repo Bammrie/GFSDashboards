@@ -226,6 +226,22 @@ body {
   margin: 0 0 1rem;
 }
 
+.panel-link {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.panel-link:hover,
+.panel-link:focus-visible {
+  color: var(--text-primary);
+  border-color: currentColor;
+  outline: none;
+}
+
 .panel__title {
   margin: 0;
   font-size: clamp(1.2rem, 2.1vw, 1.75rem);

@@ -23,26 +23,17 @@
     <section class="panel panel--full" aria-labelledby="quote-select-heading">
       <header class="panel__header panel__header--split">
         <div>
-          <h2 id="quote-select-heading" class="panel__title">Select a quote client</h2>
+          <h2 id="quote-select-heading" class="panel__title">Quote client</h2>
           <p class="panel__description">
-            Choose a credit union to start a quote. Issued coverage entries sync across users.
+            Review the selected credit union and issue coverage requests. Issued coverage entries sync across users.
           </p>
         </div>
         <div class="panel__actions">
+          <a class="panel-link" href="quotes.html">Change Account</a>
           <button type="button" class="secondary-button" id="open-menu-pricing-btn">Menu Pricing</button>
         </div>
       </header>
-      <div class="account-select-header">
-        <div class="field-group account-select-field">
-          <label for="account-credit-union-select" class="sr-only">Credit union / entity</label>
-          <div class="field-with-action">
-            <select id="account-credit-union-select" name="creditUnionId" required>
-              <option value="" disabled selected>Select a credit union</option>
-            </select>
-          </div>
-        </div>
-        <p id="quote-workspace-summary" class="panel__note">Select a credit union to start a quote.</p>
-      </div>
+      <p id="quote-workspace-summary" class="panel__note">Select a credit union to start a quote.</p>
     </section>
 
     <section class="panel panel--full" aria-labelledby="loan-officer-heading">
