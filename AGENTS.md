@@ -1,3 +1,4 @@
+2029-02-22: Stacked Outstanding requests and Sales register into full-width rows so the Requests & Sales Register page no longer splits the screen layout.
 2029-02-21: Created a Requests & Sales Register page that merges coverage request tracking with the sales register so responses can be edited and issued coverage is logged in one place.
 2029-02-20: Added responsive overflow controls for media and payload previews so quote workspace layouts stay within the viewport on all screen sizes.
 2029-02-19: Moved the personal loan calculator and sales register into a dedicated loan tools page so the quote workspace stays focused on coverage requests.
