@@ -24,6 +24,14 @@
   box-sizing: border-box;
 }
 
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
 [hidden] {
   display: none !important;
 }
@@ -346,6 +354,13 @@ input[type='month']:focus-visible {
   margin: -0.25rem 0 0;
   font-size: 0.85rem;
   color: var(--text-secondary);
+}
+
+pre {
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .icon-button {
@@ -1204,6 +1219,17 @@ input[type='month']:focus-visible {
 
 .loan-officer-request .primary-button {
   width: 100%;
+}
+
+.payload-preview {
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.08);
+  max-height: 320px;
+  overflow: auto;
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 
 .field-label {
