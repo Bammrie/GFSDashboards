@@ -1,3 +1,4 @@
+2029-02-20: Added responsive overflow controls for media and payload previews so quote workspace layouts stay within the viewport on all screen sizes.
 2029-02-19: Moved the personal loan calculator and sales register into a dedicated loan tools page so the quote workspace stays focused on coverage requests.
 2029-02-18: Added per-request webhook targeting plus Zapier response status reporting for coverage requests so delivery issues can be traced end-to-end.
 2029-02-17: Added a quote workspace warning when coverage request quote options are missing or invalid, so loan officers know to calculate Base/VSC/VSC+GAP pricing before sending requests.
