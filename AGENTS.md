@@ -409,3 +409,4 @@ quotes.
 2029-02-09: Added a static prospects-data fallback for account directory loading so the Accounts list still populates when the credit union API is unavailable.
 
 2029-02-15: Added coverage request IDs/status tracking with Zapier payload options, created coverage request summary counts, and updated the quotes UI to show outstanding requests plus a Change Account link.
+2026-01-31: Updated coverage request payload builder to read coverage combos from loan illustration outputs so coverage options remain populated after refactor.
