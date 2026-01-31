@@ -745,7 +745,7 @@ function buildCoverageRequestPayload() {
   const mileage = parseNumericInput(selectors.loanMilesInput?.value);
   const vin = selectors.loanVinInput?.value?.trim() || '';
   const coverageDetails = buildCoverageRequestOptionDetails(
-    appState.loanIllustrationDraft?.coverageCombos,
+    appState.loanIllustrationDraft?.outputs?.coverageCombos,
     termMonths
   );
   const filteredCoverageDetails = coverageDetails.filter((option) =>
