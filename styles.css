@@ -1794,6 +1794,10 @@ pre {
   overflow: hidden;
 }
 
+.layout--account .table-card--full {
+  grid-column: 1 / -1;
+}
+
 .table-header {
   padding: 1.1rem 1.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
