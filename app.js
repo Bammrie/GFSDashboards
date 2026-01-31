@@ -265,6 +265,7 @@ const selectors = {
   coverageRequestEmail: document.getElementById('coverage-request-email'),
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
+  coverageRequestWarning: document.getElementById('coverage-request-warning'),
   coverageRequestReceipt: document.getElementById('coverage-request-receipt'),
   coverageRequestPayload: document.getElementById('coverage-request-payload'),
   coverageRequestWebhookTarget: document.getElementById('coverage-request-webhook-target'),
@@ -730,6 +731,34 @@ function buildCoverageRequestOptionLabels(quoteOptions = []) {
   });
 }
 
+function areCoverageRequestQuoteOptionsReady(quoteOptions = []) {
+  if (!Array.isArray(quoteOptions) || quoteOptions.length !== 3) {
+    return false;
+  }
+  return quoteOptions.every(
+    (option) =>
+      Number.isFinite(option.monthly_payment) &&
+      Number.isFinite(option.term_months) &&
+      Array.isArray(option.products) &&
+      option.products.length > 0
+  );
+}
+
+function updateCoverageRequestQuoteWarning(quoteOptions = []) {
+  if (!selectors.coverageRequestWarning) return;
+  const hasQuoteOptions = Array.isArray(quoteOptions) && quoteOptions.length > 0;
+  const optionsReady = areCoverageRequestQuoteOptionsReady(quoteOptions);
+  if (!hasQuoteOptions || !optionsReady) {
+    setFeedback(
+      selectors.coverageRequestWarning,
+      'Pricing inputs must be calculated for Base, VSC, and VSC + GAP so three valid quote options are available.',
+      'warning'
+    );
+    return;
+  }
+  setFeedback(selectors.coverageRequestWarning, '', 'info');
+}
+
 function buildCoverageRequestPayload() {
   const creditUnionId = appState.accountSelectionId;
   const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
@@ -976,6 +1005,8 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
     termMonths
   );
   const quoteOptions = buildCoverageRequestQuoteOptions(coverageDetails);
+  const quoteOptionsReady = areCoverageRequestQuoteOptionsReady(quoteOptions);
+  updateCoverageRequestQuoteWarning(quoteOptions);
 
   if (!creditUnionId) {
     selectors.coverageRequestBtn.disabled = true;
@@ -1002,14 +1033,7 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
     Number.isFinite(miles) &&
     miles >= 0 &&
     vin.length === 17 &&
-    quoteOptions.length === 3 &&
-    quoteOptions.every(
-      (option) =>
-        Number.isFinite(option.monthly_payment) &&
-        Number.isFinite(option.term_months) &&
-        Array.isArray(option.products) &&
-        option.products.length > 0
-    );
+    quoteOptionsReady;
   selectors.coverageRequestBtn.disabled = !isReady;
   if (!preserveFeedback) {
     if (!isReady) {

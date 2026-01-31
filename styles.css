@@ -923,6 +923,10 @@ input[type='month']:focus-visible {
   color: #ef5350;
 }
 
+.feedback[data-state='warning'] {
+  color: #f57c00;
+}
+
 #toast-container {
   position: fixed;
   bottom: 2rem;
