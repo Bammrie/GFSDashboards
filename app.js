@@ -762,6 +762,7 @@ function updateCoverageRequestQuoteWarning(quoteOptions = []) {
 function buildCoverageRequestPayload() {
   const creditUnionId = appState.accountSelectionId;
   const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
+  const coverageRequestWebhookUrl = appState.coverageRequestWebhookUrl || '';
   const loanId = parseNumericInput(selectors.coverageRequestLoanId?.value);
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
@@ -815,6 +816,7 @@ function buildCoverageRequestPayload() {
 
   return {
     credit_union_id: creditUnionId,
+    coverage_request_webhook_url: coverageRequestWebhookUrl ? coverageRequestWebhookUrl : null,
     loan_id: Number.isFinite(loanId) ? loanId : null,
     phone_number: phoneNumber,
     member_phone: phoneNumber,
@@ -1048,10 +1050,11 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
   }
 }
 
-async function handleCoverageRequestSuccess({ payload, request }) {
+async function handleCoverageRequestSuccess({ payload, request, zapier }) {
+  const zapierNote = zapier?.status ? ` Zapier accepted the request (HTTP ${zapier.status}).` : '';
   const sentLabel = request?.requestId
-    ? `Successfully sent coverage request ${request.requestId}. The member will receive a Podium text shortly.`
-    : 'Successfully sent coverage request. The member will receive a Podium text shortly.';
+    ? `Successfully sent coverage request ${request.requestId}. The member will receive a Podium text shortly.${zapierNote}`
+    : `Successfully sent coverage request. The member will receive a Podium text shortly.${zapierNote}`;
   setFeedback(selectors.coverageRequestFeedback, sentLabel, 'success');
   showToast('Request sent successfully!', 'success');
 
@@ -7282,7 +7285,11 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
       }
       throw new Error(responseBody?.error || `Coverage request failed (${response.status}).`);
     }
-    await handleCoverageRequestSuccess({ payload, request: responseBody.request });
+    await handleCoverageRequestSuccess({
+      payload,
+      request: responseBody.request,
+      zapier: responseBody.zapier
+    });
   } catch (error) {
     setFeedback(
       selectors.coverageRequestFeedback,
