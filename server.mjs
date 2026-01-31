@@ -149,20 +149,49 @@ app.get('/api/config', (req, res) => {
   });
 });
 
+function resolveCoverageRequestWebhookUrl(payload) {
+  const candidate = typeof payload?.coverage_request_webhook_url === 'string'
+    ? payload.coverage_request_webhook_url.trim()
+    : '';
+  if (!candidate) return COVERAGE_REQUEST_WEBHOOK_URL;
+
+  try {
+    const parsed = new URL(candidate);
+    if (parsed.protocol !== 'https:') return COVERAGE_REQUEST_WEBHOOK_URL;
+    if (!parsed.hostname.endsWith('zapier.com')) return COVERAGE_REQUEST_WEBHOOK_URL;
+    return parsed.toString();
+  } catch (error) {
+    return COVERAGE_REQUEST_WEBHOOK_URL;
+  }
+}
+
 async function sendCoverageRequestToZapier(payload) {
-  const response = await fetch(COVERAGE_REQUEST_WEBHOOK_URL, {
+  const webhookUrl = resolveCoverageRequestWebhookUrl(payload);
+  if (!webhookUrl) {
+    const error = new Error('Zapier webhook URL is not configured.');
+    error.statusCode = 500;
+    throw error;
+  }
+
+  const response = await fetch(webhookUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   });
 
+  const details = await response.text().catch(() => '');
   if (!response.ok) {
-    const details = await response.text().catch(() => '');
     const error = new Error(`Zapier webhook failed (${response.status}).`);
     error.details = details || null;
     error.statusCode = response.status;
     throw error;
   }
+
+  return {
+    status: response.status,
+    details: details || null,
+    webhookUrl
+  };
 }
 
 app.post('/api/coverage-request', async (req, res) => {
@@ -173,8 +202,8 @@ app.post('/api/coverage-request', async (req, res) => {
   }
 
   try {
-    await sendCoverageRequestToZapier(payload);
-    res.json({ ok: true });
+    const zapier = await sendCoverageRequestToZapier(payload);
+    res.json({ ok: true, zapier });
   } catch (error) {
     res.status(502).json({
       error: error?.message || 'Unable to send coverage request.',
@@ -515,8 +544,9 @@ app.post('/api/coverage-requests', async (req, res, next) => {
       memberName: typeof payload.member_name === 'string' ? payload.member_name.trim() : ''
     });
 
+    let zapierResult = null;
     try {
-      await sendCoverageRequestToZapier(payloadWithId);
+      zapierResult = await sendCoverageRequestToZapier(payloadWithId);
       created.status = 'awaiting_response';
       created.sentAt = new Date();
       await created.save();
@@ -532,7 +562,8 @@ app.post('/api/coverage-requests', async (req, res, next) => {
           loanId: created.loanId ?? null,
           memberName: created.memberName ?? '',
           sentAt: created.sentAt?.toISOString() ?? null
-        }
+        },
+        zapier: zapierResult
       });
       return;
     }
@@ -546,7 +577,8 @@ app.post('/api/coverage-requests', async (req, res, next) => {
         loanId: created.loanId ?? null,
         memberName: created.memberName ?? '',
         sentAt: created.sentAt?.toISOString() ?? null
-      }
+      },
+      zapier: zapierResult
     });
   } catch (error) {
     next(error);

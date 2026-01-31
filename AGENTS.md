@@ -1,3 +1,4 @@
+2029-02-18: Added per-request webhook targeting plus Zapier response status reporting for coverage requests so delivery issues can be traced end-to-end.
 2029-02-17: Added a quote workspace warning when coverage request quote options are missing or invalid, so loan officers know to calculate Base/VSC/VSC+GAP pricing before sending requests.
 2029-02-16: Updated coverage request availability to read quote option combos from loan illustration outputs so send readiness tracks generated options.
 2029-02-14: Added a fallback file-backed store for menu pricing configs so saves persist even when the database is unavailable.
