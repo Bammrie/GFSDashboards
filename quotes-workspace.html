@@ -12,7 +12,7 @@
     <div class="header-content">
       <div class="branding">
         <h1 class="site-title">Quote workspace</h1>
-        <p class="site-subtitle">Build member-facing quotes and issue coverage without leaving the sales register.</p>
+        <p class="site-subtitle">Build member-facing quotes and issue coverage requests from a focused workspace.</p>
       </div>
     </div>
   </header>
@@ -30,6 +30,7 @@
         </div>
         <div class="panel__actions">
           <a class="panel-link" href="quotes.html">Change Account</a>
+          <a class="panel-link" href="quotes-loan-tools.html">Loan tools</a>
           <button type="button" class="secondary-button" id="open-menu-pricing-btn">Menu Pricing</button>
         </div>
       </header>
@@ -139,189 +140,6 @@
         </div>
       </div>
 
-      <div class="loan-officer-grid loan-officer-grid--personal">
-        <div class="loan-officer-card loan-officer-card--personal">
-          <h3 class="loan-officer-card__title">Personal loan calculator</h3>
-          <p class="field-help">
-            Estimate personal loan payments with credit insurance or debt protection premiums.
-          </p>
-          <div class="loan-officer-fields">
-            <div class="field-group">
-              <label for="personal-loan-amount">Loan amount</label>
-              <input type="number" id="personal-loan-amount" inputmode="decimal" min="0" placeholder="12,000" />
-            </div>
-            <div class="field-group">
-              <label for="personal-loan-term">Term (months)</label>
-              <input type="number" id="personal-loan-term" inputmode="numeric" min="1" placeholder="48" />
-            </div>
-            <div class="field-group">
-              <label for="personal-loan-apr">APR (%)</label>
-              <input type="number" id="personal-loan-apr" inputmode="decimal" step="0.01" min="0" placeholder="9.5" />
-            </div>
-          </div>
-          <div class="loan-officer-fields">
-            <div class="field-group">
-              <label for="personal-mob-coverage-type">Coverage type</label>
-              <select id="personal-mob-coverage-type">
-                <option value="credit-insurance">Credit insurance</option>
-                <option value="debt-protection">Debt protection</option>
-              </select>
-              <p class="field-help">Matches the credit union MOB rate setup.</p>
-            </div>
-            <div id="personal-mob-credit-controls">
-              <div class="field-options">
-                <label class="field-option">
-                  <input type="checkbox" id="personal-mob-credit-life" checked />
-                  Credit life
-                </label>
-                <label class="field-option">
-                  <input type="checkbox" id="personal-mob-credit-disability" />
-                  Credit disability
-                </label>
-              </div>
-              <div class="field-group">
-                <label for="personal-mob-credit-tier">Borrower type</label>
-                <select id="personal-mob-credit-tier">
-                  <option value="single">Single</option>
-                  <option value="joint">Joint</option>
-                  <option value="blended">Blended</option>
-                </select>
-                <p class="field-help" id="personal-mob-credit-tier-help">
-                  Rate tier follows the credit union setup.
-                </p>
-              </div>
-            </div>
-            <div id="personal-mob-debt-controls" hidden>
-              <div class="field-group">
-                <span class="field-label">Debt protection package</span>
-                <div class="field-options">
-                  <label class="field-option">
-                    <input type="radio" name="personal-mob-debt-package" value="package-a" checked />
-                    Package A
-                  </label>
-                  <label class="field-option">
-                    <input type="radio" name="personal-mob-debt-package" value="package-b" />
-                    Package B
-                  </label>
-                  <label class="field-option">
-                    <input type="radio" name="personal-mob-debt-package" value="package-c" />
-                    Package C
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="loan-officer-results">
-            <div class="payment-row">
-              <span>Base payment</span>
-              <strong id="personal-base-payment">—</strong>
-            </div>
-            <div class="payment-row">
-              <span>First month MOB premium</span>
-              <strong id="personal-mob-premium-start">—</strong>
-            </div>
-            <div class="payment-row">
-              <span>Average MOB premium</span>
-              <strong id="personal-mob-premium-average">—</strong>
-            </div>
-            <div class="payment-row payment-row--highlight">
-              <span>Payment with MOB coverage</span>
-              <strong id="personal-payment-with-mob">—</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <section class="table-card loan-log-card" aria-live="polite">
-        <header class="table-header">
-          <h3 class="table-title">Sales register</h3>
-          <p id="loan-log-summary" class="table-description">
-            Issue coverage for funded loans. Loan amount, term, APR, mileage, and VIN are pulled from the loan details
-            above while coverage combinations follow the Protection Options selections. Use the member response code
-            to override Zapier replies when needed.
-          </p>
-        </header>
-        <form id="loan-log-form" class="loan-log-form">
-          <div class="loan-log-fields">
-            <div class="field-group">
-              <label for="loan-log-id">Loan ID</label>
-              <input type="number" id="loan-log-id" min="1" placeholder="10234" />
-            </div>
-            <div class="field-group">
-              <label for="loan-log-date">Loan date</label>
-              <input type="date" id="loan-log-date" required />
-            </div>
-            <div class="field-group">
-              <label for="loan-log-officer">Loan officer</label>
-              <input type="text" id="loan-log-officer" placeholder="Officer name" required />
-            </div>
-            <div class="field-group">
-              <label for="loan-log-response-code">Member response</label>
-              <select id="loan-log-response-code">
-                <option value="" selected>Not received</option>
-                <option value="0">0 - No coverage</option>
-                <option value="1">1 - Option 1</option>
-                <option value="2">2 - Option 2</option>
-                <option value="3">3 - Option 3</option>
-                <option value="4">4 - Option 4</option>
-                <option value="5">5 - Option 5</option>
-                <option value="6">6 - Option 6</option>
-              </select>
-            </div>
-            <div class="field-group">
-              <label for="loan-log-coverage-selected">Coverage selected</label>
-              <select id="loan-log-coverage-selected" required>
-                <option value="" selected>Select</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-              </select>
-            </div>
-            <div class="field-group">
-              <span class="field-label">Products selected</span>
-              <div class="field-options">
-                <label class="field-option">
-                  <input type="checkbox" id="loan-log-vsc-selected" />
-                  VSC
-                </label>
-                <label class="field-option">
-                  <input type="checkbox" id="loan-log-gap-selected" />
-                  GAP
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="loan-log-actions">
-            <p class="feedback" id="loan-log-feedback" role="status" aria-live="polite"></p>
-            <button type="submit" class="primary-button" id="loan-log-save-btn">Issue coverage</button>
-            <button type="button" class="secondary-button" id="loan-log-cancel-btn" hidden>Cancel edit</button>
-          </div>
-        </form>
-
-        <div id="loan-log-empty" class="empty-state" hidden>
-          <p>No coverage issued yet. Use Issue Coverage to create the first register entry.</p>
-        </div>
-        <div class="table-scroll">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th scope="col" class="numeric">Loan ID</th>
-                <th scope="col">Loan date</th>
-                <th scope="col">Loan officer</th>
-                <th scope="col">Member response</th>
-                <th scope="col" class="numeric">Amount</th>
-                <th scope="col" class="numeric">Term</th>
-                <th scope="col" class="numeric">APR</th>
-                <th scope="col" class="numeric">Mileage</th>
-                <th scope="col">VIN</th>
-                <th scope="col">Coverage</th>
-                <th scope="col">Products</th>
-                <th scope="col" class="numeric">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="loan-log-list"></tbody>
-          </table>
-        </div>
-      </section>
     </section>
   </main>
 
