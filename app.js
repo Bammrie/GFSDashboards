@@ -263,6 +263,8 @@ const selectors = {
   coverageRequestMemberName: document.getElementById('coverage-request-member-name'),
   coverageRequestPhone: document.getElementById('coverage-request-phone'),
   coverageRequestEmail: document.getElementById('coverage-request-email'),
+  coverageRequestChannel: document.getElementById('coverage-request-channel'),
+  coverageRequestChannelIdentifier: document.getElementById('coverage-request-channel-identifier'),
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
   coverageRequestWarning: document.getElementById('coverage-request-warning'),
@@ -770,6 +772,8 @@ function buildCoverageRequestPayload() {
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
   const email = selectors.coverageRequestEmail?.value.trim() || '';
+  const channel = selectors.coverageRequestChannel?.value?.trim() || 'sms';
+  const channelIdentifier = selectors.coverageRequestChannelIdentifier?.value.trim() || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
   const loanAmountLabel = Number.isFinite(loanAmount) ? currencyFormatterNoCents.format(loanAmount) : '';
   const loanAmountValue = Number.isFinite(loanAmount) ? loanAmount : null;
@@ -815,6 +819,12 @@ function buildCoverageRequestPayload() {
   if (creditUnionName) {
     phraseParts.push(`Credit union: ${creditUnionName}`);
   }
+  if (channel) {
+    phraseParts.push(`Channel: ${channel}`);
+  }
+  if (channelIdentifier) {
+    phraseParts.push(`Channel identifier: ${channelIdentifier}`);
+  }
   const phrase = phraseParts.join(' | ') || 'Coverage request';
 
   return {
@@ -825,6 +835,14 @@ function buildCoverageRequestPayload() {
     member_phone: phoneNumber,
     email,
     member_email: email,
+    channel,
+    channel_identifier: channelIdentifier || null,
+    channelIdentifier: channelIdentifier || null,
+    podium_channel: channel,
+    podium_channel_identifier: channelIdentifier || null,
+    message: phrase,
+    sms_message: phrase,
+    messenger_message: phrase,
     loan_amount: loanAmountValue,
     loan_amount_value: loanAmountValue,
     loan_amount_display: loanAmountLabel,
@@ -1161,6 +1179,8 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
   const loanId = parseNumericInput(selectors.coverageRequestLoanId?.value);
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
+  const channel = selectors.coverageRequestChannel?.value?.trim() || 'sms';
+  const channelIdentifier = selectors.coverageRequestChannelIdentifier?.value.trim() || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
   const termMonths = parseNumericInput(selectors.loanTermInput?.value);
   const apr = parseNumericInput(selectors.loanAprInput?.value);
@@ -1199,13 +1219,14 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
     Number.isFinite(miles) &&
     miles >= 0 &&
     vin.length === 17 &&
-    quoteOptionsReady;
+    quoteOptionsReady &&
+    (channel !== 'messenger' || Boolean(channelIdentifier));
   selectors.coverageRequestBtn.disabled = !isReady;
   if (!preserveFeedback) {
     if (!isReady) {
       setFeedback(
         selectors.coverageRequestFeedback,
-        'Enter loan ID, member name, phone, and three complete quote options to send a coverage request.',
+        'Enter loan ID, member name, phone, and three complete quote options to send a coverage request. Messenger requires a channel identifier.',
         'info'
       );
     } else {
@@ -2008,6 +2029,8 @@ function setLoanOfficerDisabled(isDisabled) {
     selectors.coverageRequestMemberName,
     selectors.coverageRequestPhone,
     selectors.coverageRequestEmail,
+    selectors.coverageRequestChannel,
+    selectors.coverageRequestChannelIdentifier,
     selectors.coverageRequestBtn,
     selectors.loanCreditUnionMarkupInput,
     selectors.loanGfsMarkupInput,
@@ -7233,7 +7256,9 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   selectors.coverageRequestLoanId,
   selectors.coverageRequestMemberName,
   selectors.coverageRequestPhone,
-  selectors.coverageRequestEmail
+  selectors.coverageRequestEmail,
+  selectors.coverageRequestChannel,
+  selectors.coverageRequestChannelIdentifier
 ].forEach((element) => {
   element?.addEventListener('input', () => {
     updateCoverageRequestAvailability();
@@ -7402,6 +7427,9 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
   if (!Number.isFinite(payload.apr) && payload.apr !== 0) missingFields.push('APR');
   if (!Number.isFinite(payload.mileage) && payload.mileage !== 0) missingFields.push('mileage');
   if (!payload.vin || payload.vin.length !== 17) missingFields.push('VIN');
+  if (payload.channel === 'messenger' && !payload.channel_identifier) {
+    missingFields.push('messenger channel identifier');
+  }
   if (!Array.isArray(payload.quote_options) || payload.quote_options.length !== 3) {
     missingFields.push('three quote options');
   } else if (

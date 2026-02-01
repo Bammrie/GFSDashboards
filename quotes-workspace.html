@@ -102,6 +102,21 @@
                 <label for="coverage-request-email">Member email (optional)</label>
                 <input type="email" id="coverage-request-email" placeholder="member@email.com" />
               </div>
+              <div class="field-group">
+                <label for="coverage-request-channel">Podium channel</label>
+                <select id="coverage-request-channel">
+                  <option value="sms" selected>SMS</option>
+                  <option value="messenger">Messenger</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="coverage-request-channel-identifier">Messenger channel identifier</label>
+                <input
+                  type="text"
+                  id="coverage-request-channel-identifier"
+                  placeholder="Messenger channelIdentifier (required for Messenger)"
+                />
+              </div>
             </div>
             <div class="loan-officer-actions">
               <p class="feedback" id="coverage-request-warning" role="status" aria-live="polite"></p>
