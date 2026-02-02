@@ -1,3 +1,4 @@
+2029-02-23: Added a Zapier Code step snippet for parsing raw_body into individual coverage request fields for Podium.
 2029-02-22: Added Podium channel selection and messenger channel identifier fields to coverage request payloads so Zapier has the required channel identifiers for Messenger sends.
 2029-02-21: Created a Requests & Sales Register page that merges coverage request tracking with the sales register so responses can be edited and issued coverage is logged in one place.
 2029-02-20: Added responsive overflow controls for media and payload previews so quote workspace layouts stay within the viewport on all screen sizes.
