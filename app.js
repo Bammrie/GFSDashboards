@@ -736,6 +736,18 @@ function buildCoverageRequestOptionLabels(quoteOptions = []) {
   });
 }
 
+function buildCoverageRequestOptionResponses(quoteOptions = []) {
+  if (!Array.isArray(quoteOptions)) return [];
+  return quoteOptions.map((option, index) => {
+    const choice = index + 1;
+    const paymentLabel = Number.isFinite(option.monthly_payment)
+      ? `${formatCurrencyValue(option.monthly_payment)}/month`
+      : 'payment TBD';
+    const termLabel = Number.isFinite(option.term_months) ? `${option.term_months}` : 'term TBD';
+    return `Respond with a (${choice}) if you choose to have GAP coverage & Warranty Repair Coverage for ${paymentLabel} for ${termLabel} months.`;
+  });
+}
+
 function areCoverageRequestQuoteOptionsReady(quoteOptions = []) {
   if (!Array.isArray(quoteOptions) || quoteOptions.length !== 3) {
     return false;
@@ -791,6 +803,8 @@ function buildCoverageRequestPayload() {
   const quoteOptions = buildCoverageRequestQuoteOptions(coverageDetails);
   const coverageOptions = buildCoverageRequestOptionLabels(quoteOptions);
   const coverageOptionsText = coverageOptions.length ? coverageOptions.join(' | ') : '';
+  const coverageOptionResponses = buildCoverageRequestOptionResponses(quoteOptions);
+  const [option1, option2, option3] = coverageOptionResponses;
   const coverageSummary = appState.loanIllustrationDraft?.selections
     ? formatLoanIllustrationCoverageSummary(appState.loanIllustrationDraft.selections)
     : '';
@@ -854,6 +868,9 @@ function buildCoverageRequestPayload() {
     coverage_options: coverageOptions,
     coverage_options_detail: filteredCoverageDetails,
     coverage_options_text: coverageOptionsText,
+    option_1: option1 || null,
+    option_2: option2 || null,
+    option_3: option3 || null,
     quote_options: quoteOptions,
     quote_request_id: null,
     credit_union_name: creditUnionName,
