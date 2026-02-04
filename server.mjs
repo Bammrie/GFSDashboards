@@ -18,6 +18,8 @@ const __dirname = path.dirname(__filename);
 const publicDir = __dirname;
 const WARRANTY_CONFIG_STORAGE_PATH =
   process.env.WARRANTY_CONFIG_STORAGE_PATH || path.join(__dirname, 'data', 'account-warranty-configs.json');
+const PODIUM_OAUTH_STORAGE_PATH =
+  process.env.PODIUM_OAUTH_STORAGE_PATH || path.join(__dirname, 'data', 'podium-oauth.json');
 
 const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -30,6 +32,10 @@ const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || 'adminpass';
 const DASHBOARD_USERNAME = process.env.DASHBOARD_USERNAME || null;
 const COVERAGE_REQUEST_WEBHOOK_URL =
   process.env.COVERAGE_REQUEST_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/4330880/ugp09bj/';
+const PODIUM_CLIENT_ID = process.env.PODIUM_CLIENT_ID || '';
+const PODIUM_CLIENT_SECRET = process.env.PODIUM_CLIENT_SECRET || '';
+const PODIUM_REDIRECT_URI = process.env.PODIUM_REDIRECT_URI || '';
+const PODIUM_OAUTH_SCOPES = process.env.PODIUM_OAUTH_SCOPES || '';
 
 const PUBLIC_PAGES = new Set(['/', '/index.html', '/quotes.html', '/quotes-workspace.html']);
 const PUBLIC_API_ROUTES = new Set([
@@ -40,7 +46,8 @@ const PUBLIC_API_ROUTES = new Set([
   '/api/coverage-requests/summary',
   '/api/coverage-requests/response',
   '/api/credit-unions',
-  '/api/account-warranty-configs'
+  '/api/account-warranty-configs',
+  '/api/podium/oauth/callback'
 ]);
 const PUBLIC_API_PREFIXES = ['/api/loans', '/api/loan-illustrations'];
 const DATABASE_OPTIONAL_API_ROUTES = new Set(['/account-warranty-configs']);
@@ -66,6 +73,30 @@ async function writeWarrantyConfigStorage(data) {
     await fs.writeFile(WARRANTY_CONFIG_STORAGE_PATH, JSON.stringify(data, null, 2));
   } catch (error) {
     console.warn('Unable to write warranty config fallback storage.', error);
+  }
+}
+
+async function readPodiumOauthStorage() {
+  try {
+    const raw = await fs.readFile(PODIUM_OAUTH_STORAGE_PATH, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed;
+    }
+  } catch (error) {
+    if (error?.code !== 'ENOENT') {
+      console.warn('Unable to read Podium OAuth storage.', error);
+    }
+  }
+  return {};
+}
+
+async function writePodiumOauthStorage(data) {
+  try {
+    await fs.mkdir(path.dirname(PODIUM_OAUTH_STORAGE_PATH), { recursive: true });
+    await fs.writeFile(PODIUM_OAUTH_STORAGE_PATH, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.warn('Unable to write Podium OAuth storage.', error);
   }
 }
 
@@ -149,6 +180,119 @@ app.get('/api/config', (req, res) => {
   });
 });
 
+function decodeJwtExpiry(token) {
+  if (!token || typeof token !== 'string') return null;
+  const parts = token.split('.');
+  if (parts.length < 2) return null;
+  const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+  try {
+    const json = JSON.parse(Buffer.from(payload, 'base64').toString('utf8'));
+    if (json && typeof json.exp === 'number') {
+      return json.exp * 1000;
+    }
+  } catch (error) {
+    return null;
+  }
+  return null;
+}
+
+function resolvePodiumExpiry(response) {
+  if (typeof response?.expires_at === 'number') {
+    return response.expires_at * 1000;
+  }
+  if (typeof response?.expires_in === 'number') {
+    return Date.now() + response.expires_in * 1000;
+  }
+  const jwtExpiry = decodeJwtExpiry(response?.access_token);
+  if (jwtExpiry) return jwtExpiry;
+  return Date.now() + 10 * 60 * 60 * 1000;
+}
+
+function requirePodiumClientConfig(res) {
+  if (!PODIUM_CLIENT_ID || !PODIUM_CLIENT_SECRET || !PODIUM_REDIRECT_URI) {
+    res.status(500).json({
+      error: 'Podium OAuth configuration is missing.',
+      details: 'Set PODIUM_CLIENT_ID, PODIUM_CLIENT_SECRET, and PODIUM_REDIRECT_URI.'
+    });
+    return false;
+  }
+  return true;
+}
+
+function buildPodiumAuthorizeUrl({ state, scope }) {
+  const params = new URLSearchParams({
+    client_id: PODIUM_CLIENT_ID,
+    redirect_uri: PODIUM_REDIRECT_URI,
+    scope: scope || PODIUM_OAUTH_SCOPES || '',
+    state
+  });
+  return `https://api.podium.com/oauth/authorize?${params.toString()}`;
+}
+
+async function requestPodiumToken(payload) {
+  const response = await fetch('https://api.podium.com/oauth/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(`Podium OAuth request failed (${response.status}).`);
+    error.details = data || null;
+    error.statusCode = response.status;
+    throw error;
+  }
+  return data;
+}
+
+async function storePodiumTokenResponse(response, { grantType, state } = {}) {
+  const expiresAt = resolvePodiumExpiry(response);
+  const stored = await readPodiumOauthStorage();
+  const updated = {
+    ...stored,
+    accessToken: response.access_token || stored.accessToken || '',
+    refreshToken: response.refresh_token || stored.refreshToken || '',
+    tokenType: response.token_type || stored.tokenType || 'bearer',
+    scope: response.scope || stored.scope || PODIUM_OAUTH_SCOPES || '',
+    expiresAt,
+    refreshedAt: Date.now(),
+    lastGrantType: grantType || stored.lastGrantType || null,
+    state: state || stored.state || null,
+    clientId: PODIUM_CLIENT_ID,
+    redirectUri: PODIUM_REDIRECT_URI
+  };
+  await writePodiumOauthStorage(updated);
+  return updated;
+}
+
+async function refreshPodiumAccessToken({ force } = {}) {
+  const stored = await readPodiumOauthStorage();
+  if (!stored.refreshToken) {
+    const error = new Error('No Podium refresh token found.');
+    error.statusCode = 400;
+    throw error;
+  }
+  if (!force && stored.expiresAt && stored.expiresAt - Date.now() > 30 * 60 * 1000) {
+    return stored;
+  }
+  const response = await requestPodiumToken({
+    client_id: PODIUM_CLIENT_ID,
+    client_secret: PODIUM_CLIENT_SECRET,
+    grant_type: 'refresh_token',
+    refresh_token: stored.refreshToken
+  });
+  return storePodiumTokenResponse(response, { grantType: 'refresh_token', state: stored.state });
+}
+
+async function refreshPodiumAccessTokenIfNeeded() {
+  if (!PODIUM_CLIENT_ID || !PODIUM_CLIENT_SECRET) return;
+  try {
+    await refreshPodiumAccessToken();
+  } catch (error) {
+    console.warn('Podium OAuth refresh failed.', error?.details || error);
+  }
+}
+
 function resolveCoverageRequestWebhookUrl(payload) {
   const candidate = typeof payload?.coverage_request_webhook_url === 'string'
     ? payload.coverage_request_webhook_url.trim()
@@ -210,6 +354,92 @@ app.post('/api/coverage-request', async (req, res) => {
       details: error?.details || null
     });
   }
+});
+
+app.post('/api/podium/oauth/state', async (_req, res) => {
+  const state = randomUUID();
+  const stored = await readPodiumOauthStorage();
+  await writePodiumOauthStorage({ ...stored, state });
+  res.json({ state });
+});
+
+app.post('/api/podium/oauth/authorize-url', async (req, res) => {
+  if (!requirePodiumClientConfig(res)) return;
+  const scope = typeof req.body?.scope === 'string' ? req.body.scope.trim() : '';
+  const stored = await readPodiumOauthStorage();
+  const state = stored.state || randomUUID();
+  if (!stored.state) {
+    await writePodiumOauthStorage({ ...stored, state });
+  }
+  res.json({ url: buildPodiumAuthorizeUrl({ state, scope }) });
+});
+
+app.get('/api/podium/oauth/callback', async (req, res) => {
+  if (!requirePodiumClientConfig(res)) return;
+  const code = typeof req.query?.code === 'string' ? req.query.code.trim() : '';
+  const state = typeof req.query?.state === 'string' ? req.query.state.trim() : '';
+  if (!code) {
+    res.status(400).json({ error: 'Missing OAuth authorization code.' });
+    return;
+  }
+  const stored = await readPodiumOauthStorage();
+  if (stored.state && state && stored.state !== state) {
+    res.status(400).json({ error: 'OAuth state mismatch.' });
+    return;
+  }
+  try {
+    const response = await requestPodiumToken({
+      client_id: PODIUM_CLIENT_ID,
+      client_secret: PODIUM_CLIENT_SECRET,
+      redirect_uri: PODIUM_REDIRECT_URI,
+      grant_type: 'authorization_code',
+      code
+    });
+    const updated = await storePodiumTokenResponse(response, {
+      grantType: 'authorization_code',
+      state: state || stored.state || null
+    });
+    res.json({
+      ok: true,
+      expiresAt: updated.expiresAt,
+      scope: updated.scope || null
+    });
+  } catch (error) {
+    res.status(502).json({
+      error: error?.message || 'Unable to exchange authorization code.',
+      details: error?.details || null
+    });
+  }
+});
+
+app.post('/api/podium/oauth/refresh', async (_req, res) => {
+  if (!requirePodiumClientConfig(res)) return;
+  try {
+    const updated = await refreshPodiumAccessToken({ force: true });
+    res.json({
+      ok: true,
+      expiresAt: updated.expiresAt,
+      refreshedAt: updated.refreshedAt
+    });
+  } catch (error) {
+    res.status(error?.statusCode || 502).json({
+      error: error?.message || 'Unable to refresh Podium access token.',
+      details: error?.details || null
+    });
+  }
+});
+
+app.get('/api/podium/oauth/status', async (_req, res) => {
+  const stored = await readPodiumOauthStorage();
+  res.json({
+    configured: Boolean(PODIUM_CLIENT_ID && PODIUM_CLIENT_SECRET && PODIUM_REDIRECT_URI),
+    hasAccessToken: Boolean(stored.accessToken),
+    hasRefreshToken: Boolean(stored.refreshToken),
+    expiresAt: stored.expiresAt || null,
+    refreshedAt: stored.refreshedAt || null,
+    scope: stored.scope || null,
+    state: stored.state || null
+  });
 });
 
 const creditUnionSchema = new mongoose.Schema(
@@ -2778,6 +3008,9 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   console.log(`Income dashboard running on http://localhost:${port}`);
 });
+
+refreshPodiumAccessTokenIfNeeded();
+setInterval(refreshPodiumAccessTokenIfNeeded, 60 * 60 * 1000);
 
 async function extractCallReportText(buffer, mimeType) {
   const pages = [];
