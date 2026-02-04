@@ -1,4 +1,5 @@
 2029-02-22: Added Podium channel selection and messenger channel identifier fields to coverage request payloads so Zapier has the required channel identifiers for Messenger sends.
+2029-02-23: Added Podium OAuth storage plus callback/refresh endpoints with automated token refresh scheduling so access tokens stay current for consistent API access.
 2029-02-21: Created a Requests & Sales Register page that merges coverage request tracking with the sales register so responses can be edited and issued coverage is logged in one place.
 2029-02-20: Added responsive overflow controls for media and payload previews so quote workspace layouts stay within the viewport on all screen sizes.
 2029-02-19: Moved the personal loan calculator and sales register into a dedicated loan tools page so the quote workspace stays focused on coverage requests.
