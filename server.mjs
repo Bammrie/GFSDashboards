@@ -374,7 +374,7 @@ app.post('/api/podium/oauth/authorize-url', async (req, res) => {
   res.json({ url: buildPodiumAuthorizeUrl({ state, scope }) });
 });
 
-app.get('/api/podium/oauth/callback', async (req, res) => {
+const handlePodiumOauthCallback = async (req, res) => {
   if (!requirePodiumClientConfig(res)) return;
   const code = typeof req.query?.code === 'string' ? req.query.code.trim() : '';
   const state = typeof req.query?.state === 'string' ? req.query.state.trim() : '';
@@ -410,7 +410,10 @@ app.get('/api/podium/oauth/callback', async (req, res) => {
       details: error?.details || null
     });
   }
-});
+};
+
+app.get('/api/podium/oauth/callback', handlePodiumOauthCallback);
+app.get('/oauth/podium/callback', handlePodiumOauthCallback);
 
 app.post('/api/podium/oauth/refresh', async (_req, res) => {
   if (!requirePodiumClientConfig(res)) return;
