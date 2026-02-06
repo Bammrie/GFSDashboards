@@ -1,3 +1,4 @@
+2029-02-23: Added coverage request webhook option_1/2/3 message fields so Zapier can attach numbered member response prompts per coverage choice.
 2029-02-22: Added Podium channel selection and messenger channel identifier fields to coverage request payloads so Zapier has the required channel identifiers for Messenger sends.
 2029-02-23: Added Podium OAuth storage plus callback/refresh endpoints with automated token refresh scheduling so access tokens stay current for consistent API access.
 2029-02-21: Created a Requests & Sales Register page that merges coverage request tracking with the sales register so responses can be edited and issued coverage is logged in one place.
