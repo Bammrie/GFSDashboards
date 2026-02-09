@@ -136,6 +136,35 @@
               <p class="field-label">Coverage request payload</p>
               <p class="field-help">Read-only JSON preview of the Zapier request.</p>
               <pre id="coverage-request-payload" class="payload-preview" aria-live="polite"></pre>
+              <p class="field-help">
+                Zapier Catch Raw Hook setup: use a Code by Zapier step to parse <strong>raw_body</strong> into
+                individual outputs for Podium.
+              </p>
+              <pre class="payload-preview" aria-label="Zapier raw body parsing helper">
+const rawBody = inputData.raw_body || inputData.body || '{}';
+const payload = typeof rawBody === 'string' ? JSON.parse(rawBody) : rawBody;
+
+return {
+  loanid: payload.loanid,
+  phonenumber: payload.phonenumber,
+  membername: payload.membername,
+  email: payload.email,
+  channel: payload.channel,
+  channelidentifier: payload.channelidentifier,
+  formattedmessage: payload.formattedmessage,
+  coverageoptions_detail: payload.coverageoptions_detail,
+  coverageoptions_summary: payload.coverageoptions_summary,
+  quote_options: payload.quote_options,
+  quote_summary: payload.quote_summary,
+  termextensions: payload.termextensions,
+  created_at: payload.created_at,
+  loan_amount: payload.loan_amount,
+  loan_term: payload.loan_term,
+  loan_apr: payload.loan_apr,
+  loan_miles: payload.loan_miles,
+  loan_vin: payload.loan_vin
+};
+              </pre>
             </div>
           </div>
           <div class="loan-officer-actions">
