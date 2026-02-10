@@ -1,3 +1,4 @@
+2026-02-10: Added a manual Podium token ingestion endpoint (/api/podium/oauth/manual-token) so newly issued access tokens can be saved directly with parsed expiration metadata, and expanded OAuth status responses with canRefresh visibility for quick readiness checks.
 2029-02-25: Replaced Zapier webhook coverage requests with direct Podium messaging (OAuth token usage, location UID/sender fields) and updated the quote workspace UI to capture Podium metadata.
 2029-02-22: Added Podium channel selection and messenger channel identifier fields to coverage request payloads so Zapier has the required channel identifiers for Messenger sends.
 2029-02-23: Added Podium OAuth storage plus callback/refresh endpoints with automated token refresh scheduling so access tokens stay current for consistent API access.

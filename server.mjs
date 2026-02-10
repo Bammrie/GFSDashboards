@@ -208,6 +208,27 @@ function resolvePodiumExpiry(response) {
   return Date.now() + 10 * 60 * 60 * 1000;
 }
 
+function resolveManualPodiumExpiry(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value > 10_000_000_000 ? Math.round(value) : Math.round(value * 1000);
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    if (/^\d+$/.test(trimmed)) {
+      const numeric = Number(trimmed);
+      if (Number.isFinite(numeric)) {
+        return numeric > 10_000_000_000 ? Math.round(numeric) : Math.round(numeric * 1000);
+      }
+    }
+    const parsed = Date.parse(trimmed);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+  return null;
+}
+
 function requirePodiumClientConfig(res) {
   if (!PODIUM_CLIENT_ID || !PODIUM_CLIENT_SECRET || !PODIUM_REDIRECT_URI) {
     res.status(500).json({
@@ -395,6 +416,44 @@ app.post('/api/podium/oauth/state', async (_req, res) => {
   res.json({ state });
 });
 
+app.post('/api/podium/oauth/manual-token', async (req, res) => {
+  const accessToken = typeof req.body?.accessToken === 'string' ? req.body.accessToken.trim() : '';
+  const refreshToken = typeof req.body?.refreshToken === 'string' ? req.body.refreshToken.trim() : '';
+  const tokenType = typeof req.body?.tokenType === 'string' ? req.body.tokenType.trim() : '';
+  const scope = typeof req.body?.scope === 'string' ? req.body.scope.trim() : '';
+  const expiresAtInput = req.body?.expiresAt ?? req.body?.expires_at ?? req.body?.expiration;
+
+  if (!accessToken) {
+    res.status(400).json({ error: 'Missing accessToken.' });
+    return;
+  }
+
+  const expiresAt = resolveManualPodiumExpiry(expiresAtInput);
+  if (expiresAtInput != null && !expiresAt) {
+    res.status(400).json({ error: 'Unable to parse expiresAt. Use epoch seconds, epoch milliseconds, or ISO 8601.' });
+    return;
+  }
+
+  const stored = await readPodiumOauthStorage();
+  const updated = {
+    ...stored,
+    accessToken,
+    refreshToken: refreshToken || stored.refreshToken || '',
+    tokenType: tokenType || stored.tokenType || 'bearer',
+    scope: scope || stored.scope || PODIUM_OAUTH_SCOPES || '',
+    expiresAt: expiresAt || stored.expiresAt || null,
+    refreshedAt: Date.now(),
+    lastGrantType: 'manual_token'
+  };
+
+  await writePodiumOauthStorage(updated);
+  res.json({
+    ok: true,
+    expiresAt: updated.expiresAt,
+    hasRefreshToken: Boolean(updated.refreshToken)
+  });
+});
+
 app.post('/api/podium/oauth/authorize-url', async (req, res) => {
   if (!requirePodiumClientConfig(res)) return;
   const scope = typeof req.body?.scope === 'string' ? req.body.scope.trim() : '';
@@ -470,6 +529,7 @@ app.get('/api/podium/oauth/status', async (_req, res) => {
     configured: Boolean(PODIUM_CLIENT_ID && PODIUM_CLIENT_SECRET && PODIUM_REDIRECT_URI),
     hasAccessToken: Boolean(stored.accessToken),
     hasRefreshToken: Boolean(stored.refreshToken),
+    canRefresh: Boolean(stored.refreshToken && PODIUM_CLIENT_ID && PODIUM_CLIENT_SECRET),
     expiresAt: stored.expiresAt || null,
     refreshedAt: stored.refreshedAt || null,
     scope: stored.scope || null,
