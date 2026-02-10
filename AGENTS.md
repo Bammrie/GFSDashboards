@@ -1,3 +1,4 @@
+2026-02-10: Updated coverage request submit UX in app.js so Podium failures are labeled "Saved as Draft (Not Delivered)", the latest request receipt shows a delivery failed badge, and the success toast only appears after 2xx Podium delivery.
 2026-02-10: Clarified Podium OAuth status reporting with a configuredForRefresh flag and added env-based token seeding so deployments can persist access/refresh tokens at startup without manual endpoint calls.
 2026-02-10: Added Podium OAuth environment seeding (PODIUM_ACCESS_TOKEN/PODIUM_REFRESH_TOKEN plus optional expiry/scope fields) so deploys can bootstrap tokens on startup and immediately enable automatic refresh without manual API calls.
 2026-02-10: Added a manual Podium token ingestion endpoint (/api/podium/oauth/manual-token) so newly issued access tokens can be saved directly with parsed expiration metadata, and expanded OAuth status responses with canRefresh visibility for quick readiness checks.
