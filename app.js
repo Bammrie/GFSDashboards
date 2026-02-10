@@ -263,6 +263,8 @@ const selectors = {
   coverageRequestMemberName: document.getElementById('coverage-request-member-name'),
   coverageRequestPhone: document.getElementById('coverage-request-phone'),
   coverageRequestEmail: document.getElementById('coverage-request-email'),
+  coverageRequestLocationUid: document.getElementById('coverage-request-location-uid'),
+  coverageRequestSenderName: document.getElementById('coverage-request-sender-name'),
   coverageRequestChannel: document.getElementById('coverage-request-channel'),
   coverageRequestChannelIdentifier: document.getElementById('coverage-request-channel-identifier'),
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
@@ -270,7 +272,6 @@ const selectors = {
   coverageRequestWarning: document.getElementById('coverage-request-warning'),
   coverageRequestReceipt: document.getElementById('coverage-request-receipt'),
   coverageRequestPayload: document.getElementById('coverage-request-payload'),
-  coverageRequestWebhookTarget: document.getElementById('coverage-request-webhook-target'),
   coverageRequestSummary: document.getElementById('coverage-request-summary'),
   coverageRequestList: document.getElementById('coverage-request-list'),
   coverageRequestEmpty: document.getElementById('coverage-request-empty'),
@@ -591,25 +592,27 @@ async function loadAccountWarrantyConfigs() {
 }
 
 async function loadAppConfig() {
-  let resolved = '';
+  let podiumLocationUid = '';
+  let podiumSenderName = '';
   try {
     const response = await fetch('/api/config');
     if (response.ok) {
       const payload = await response.json();
-      resolved = payload?.coverageRequestWebhookUrl || '';
+      podiumLocationUid = payload?.podiumLocationUid || '';
+      podiumSenderName = payload?.podiumSenderName || '';
     }
   } catch (error) {
     console.error('Unable to load app config', error);
   }
 
-  if (!resolved) {
-    resolved = typeof window !== 'undefined' ? window.COVERAGE_REQUEST_WEBHOOK_URL : '';
+  if (!podiumLocationUid) {
+    podiumLocationUid = typeof window !== 'undefined' ? window.PODIUM_LOCATION_UID : '';
   }
-  if (!resolved && selectors.coverageRequestBtn?.dataset?.webhookUrl) {
-    resolved = selectors.coverageRequestBtn.dataset.webhookUrl;
+  if (!podiumSenderName) {
+    podiumSenderName = typeof window !== 'undefined' ? window.PODIUM_SENDER_NAME : '';
   }
 
-  setCoverageRequestWebhookUrl(resolved);
+  setPodiumDefaults({ locationUid: podiumLocationUid, senderName: podiumSenderName });
 }
 
 async function persistWarrantyConfigs(creditUnionId, config) {
@@ -767,11 +770,12 @@ function updateCoverageRequestQuoteWarning(quoteOptions = []) {
 function buildCoverageRequestPayload() {
   const creditUnionId = appState.accountSelectionId;
   const creditUnionName = getCreditUnionNameById(creditUnionId) || '';
-  const coverageRequestWebhookUrl = appState.coverageRequestWebhookUrl || '';
   const loanId = parseNumericInput(selectors.coverageRequestLoanId?.value);
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
   const email = selectors.coverageRequestEmail?.value.trim() || '';
+  const locationUid = selectors.coverageRequestLocationUid?.value.trim() || appState.podiumLocationUid || '';
+  const senderName = selectors.coverageRequestSenderName?.value.trim() || appState.podiumSenderName || '';
   const channel = selectors.coverageRequestChannel?.value?.trim() || 'sms';
   const channelIdentifier = selectors.coverageRequestChannelIdentifier?.value.trim() || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
@@ -819,6 +823,12 @@ function buildCoverageRequestPayload() {
   if (creditUnionName) {
     phraseParts.push(`Credit union: ${creditUnionName}`);
   }
+  if (locationUid) {
+    phraseParts.push(`Podium location: ${locationUid}`);
+  }
+  if (senderName) {
+    phraseParts.push(`Sender: ${senderName}`);
+  }
   if (channel) {
     phraseParts.push(`Channel: ${channel}`);
   }
@@ -829,20 +839,19 @@ function buildCoverageRequestPayload() {
 
   return {
     credit_union_id: creditUnionId,
-    coverage_request_webhook_url: coverageRequestWebhookUrl ? coverageRequestWebhookUrl : null,
     loan_id: Number.isFinite(loanId) ? loanId : null,
     phone_number: phoneNumber,
     member_phone: phoneNumber,
     email,
     member_email: email,
+    podium_location_uid: locationUid || null,
+    podium_sender_name: senderName || null,
     channel,
     channel_identifier: channelIdentifier || null,
     channelIdentifier: channelIdentifier || null,
     podium_channel: channel,
     podium_channel_identifier: channelIdentifier || null,
     message: phrase,
-    sms_message: phrase,
-    messenger_message: phrase,
     loan_amount: loanAmountValue,
     loan_amount_value: loanAmountValue,
     loan_amount_display: loanAmountLabel,
@@ -1156,19 +1165,20 @@ async function loadCoverageRequests(creditUnionId) {
   }
 }
 
-function setCoverageRequestWebhookUrl(value) {
-  const normalized = typeof value === 'string' ? value.trim() : '';
-  appState.coverageRequestWebhookUrl = normalized;
+function setPodiumDefaults({ locationUid, senderName }) {
+  const normalizedLocation = typeof locationUid === 'string' ? locationUid.trim() : '';
+  const normalizedSender = typeof senderName === 'string' ? senderName.trim() : '';
+  appState.podiumLocationUid = normalizedLocation;
+  appState.podiumSenderName = normalizedSender;
   if (typeof window !== 'undefined') {
-    window.COVERAGE_REQUEST_WEBHOOK_URL = normalized;
+    window.PODIUM_LOCATION_UID = normalizedLocation;
+    window.PODIUM_SENDER_NAME = normalizedSender;
   }
-  if (selectors.coverageRequestBtn) {
-    selectors.coverageRequestBtn.dataset.webhookUrl = normalized;
+  if (selectors.coverageRequestLocationUid && !selectors.coverageRequestLocationUid.value) {
+    selectors.coverageRequestLocationUid.value = normalizedLocation;
   }
-  if (selectors.coverageRequestWebhookTarget) {
-    selectors.coverageRequestWebhookTarget.textContent = normalized
-      ? `Sending to: ${normalized}`
-      : 'Sending to: Not configured (backend only).';
+  if (selectors.coverageRequestSenderName && !selectors.coverageRequestSenderName.value) {
+    selectors.coverageRequestSenderName.value = normalizedSender;
   }
 }
 
@@ -1179,6 +1189,7 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
   const loanId = parseNumericInput(selectors.coverageRequestLoanId?.value);
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
+  const locationUid = selectors.coverageRequestLocationUid?.value.trim() || appState.podiumLocationUid || '';
   const channel = selectors.coverageRequestChannel?.value?.trim() || 'sms';
   const channelIdentifier = selectors.coverageRequestChannelIdentifier?.value.trim() || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
@@ -1220,13 +1231,14 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
     miles >= 0 &&
     vin.length === 17 &&
     quoteOptionsReady &&
+    Boolean(locationUid) &&
     (channel !== 'messenger' || Boolean(channelIdentifier));
   selectors.coverageRequestBtn.disabled = !isReady;
   if (!preserveFeedback) {
     if (!isReady) {
       setFeedback(
         selectors.coverageRequestFeedback,
-        'Enter loan ID, member name, phone, and three complete quote options to send a coverage request. Messenger requires a channel identifier.',
+        'Enter loan ID, member name, phone, and three complete quote options to send a coverage request. Podium requires a location UID, and Messenger requires a channel identifier.',
         'info'
       );
     } else {
@@ -1235,11 +1247,11 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
   }
 }
 
-async function handleCoverageRequestSuccess({ payload, request, zapier }) {
-  const zapierNote = zapier?.status ? ` Zapier accepted the request (HTTP ${zapier.status}).` : '';
+async function handleCoverageRequestSuccess({ payload, request, podium }) {
+  const podiumNote = podium?.status ? ` Podium accepted the request (HTTP ${podium.status}).` : '';
   const sentLabel = request?.requestId
-    ? `Successfully sent coverage request ${request.requestId}. The member will receive a Podium text shortly.${zapierNote}`
-    : `Successfully sent coverage request. The member will receive a Podium text shortly.${zapierNote}`;
+    ? `Successfully sent coverage request ${request.requestId}. The member will receive a Podium message shortly.${podiumNote}`
+    : `Successfully sent coverage request. The member will receive a Podium message shortly.${podiumNote}`;
   setFeedback(selectors.coverageRequestFeedback, sentLabel, 'success');
   showToast('Request sent successfully!', 'success');
 
@@ -3178,7 +3190,8 @@ const appState = {
   loanIllustrations: {},
   loanIllustrationEditingId: null,
   loanIllustrationDraft: null,
-  coverageRequestWebhookUrl: '',
+  podiumLocationUid: '',
+  podiumSenderName: '',
   coverageRequestLatest: null,
   coverageRequestLatestLoadedFor: null,
   coverageRequestSummary: {},
@@ -7257,6 +7270,8 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   selectors.coverageRequestMemberName,
   selectors.coverageRequestPhone,
   selectors.coverageRequestEmail,
+  selectors.coverageRequestLocationUid,
+  selectors.coverageRequestSenderName,
   selectors.coverageRequestChannel,
   selectors.coverageRequestChannelIdentifier
 ].forEach((element) => {
@@ -7422,6 +7437,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
   if (!Number.isFinite(payload.loan_id) || payload.loan_id <= 0) missingFields.push('loan ID');
   if (!payload.member_name) missingFields.push('member name');
   if (!payload.phone_number) missingFields.push('phone number');
+  if (!payload.podium_location_uid) missingFields.push('Podium location UID');
   if (!payload.loan_amount) missingFields.push('loan amount');
   if (!payload.term_months) missingFields.push('term');
   if (!Number.isFinite(payload.apr) && payload.apr !== 0) missingFields.push('APR');
@@ -7488,7 +7504,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
     await handleCoverageRequestSuccess({
       payload,
       request: responseBody.request,
-      zapier: responseBody.zapier
+      podium: responseBody.podium
     });
   } catch (error) {
     setFeedback(

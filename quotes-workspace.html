@@ -79,11 +79,8 @@
           <div class="loan-officer-request loan-officer-request--primary">
             <p class="field-label">Send coverage request (Baycel Federal Credit Union)</p>
             <p class="field-help">
-              Capture the loan ID and member contact details, then send the menu options to Zapier. Member replies
-              with 0-6 to confirm coverage, and you can override it in the sales register if needed.
-            </p>
-            <p id="coverage-request-webhook-target" class="field-help">
-              Sending to: Loading webhook target...
+              Capture the loan ID and member contact details, then send the menu options directly through Podium.
+              Member replies with 0-6 to confirm coverage, and you can override it in the sales register if needed.
             </p>
             <div class="loan-officer-fields">
               <div class="field-group">
@@ -101,6 +98,22 @@
               <div class="field-group">
                 <label for="coverage-request-email">Member email (optional)</label>
                 <input type="email" id="coverage-request-email" placeholder="member@email.com" />
+              </div>
+              <div class="field-group">
+                <label for="coverage-request-location-uid">Podium location UID</label>
+                <input
+                  type="text"
+                  id="coverage-request-location-uid"
+                  placeholder="Podium location UID"
+                />
+              </div>
+              <div class="field-group">
+                <label for="coverage-request-sender-name">Podium sender name (optional)</label>
+                <input
+                  type="text"
+                  id="coverage-request-sender-name"
+                  placeholder="Loan officer or branch name"
+                />
               </div>
               <div class="field-group">
                 <label for="coverage-request-channel">Podium channel</label>
@@ -125,7 +138,6 @@
                 type="button"
                 id="coverage-request-btn"
                 class="primary-button"
-                data-webhook-url=""
                 disabled
               >
                 Send Request
@@ -134,7 +146,7 @@
             </div>
             <div class="loan-officer-request-preview">
               <p class="field-label">Coverage request payload</p>
-              <p class="field-help">Read-only JSON preview of the Zapier request.</p>
+              <p class="field-help">Read-only JSON preview of the Podium request.</p>
               <pre id="coverage-request-payload" class="payload-preview" aria-live="polite"></pre>
             </div>
           </div>
