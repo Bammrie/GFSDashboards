@@ -269,6 +269,8 @@ const selectors = {
   coverageRequestChannelIdentifier: document.getElementById('coverage-request-channel-identifier'),
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
+  coverageRequestTechnicalDetails: document.getElementById('coverage-request-technical-details'),
+  coverageRequestTechnicalContent: document.getElementById('coverage-request-technical-content'),
   coverageRequestWarning: document.getElementById('coverage-request-warning'),
   coverageRequestReceipt: document.getElementById('coverage-request-receipt'),
   coverageRequestPayload: document.getElementById('coverage-request-payload'),
@@ -3280,6 +3282,79 @@ function setFeedback(element, message, type = 'info') {
   if (!element) return;
   element.textContent = message;
   element.dataset.state = type;
+}
+
+const SENSITIVE_KEY_PATTERN = /(authorization|api[_-]?key|token|secret|password|passphrase|client[_-]?secret)/i;
+const SENSITIVE_VALUE_PATTERN = /(bearer\s+[a-z0-9._-]+|\b(?:sk|pk|rk|xoxb|xoxp|ghp)_[a-z0-9._-]+\b)/gi;
+
+function redactSensitiveValue(value) {
+  if (typeof value !== 'string') {
+    return value;
+  }
+  return value.replace(SENSITIVE_VALUE_PATTERN, '[REDACTED]');
+}
+
+function sanitizeForDisplay(value, key = '', seen = new WeakSet()) {
+  if (value === null || value === undefined) {
+    return value;
+  }
+  if (typeof value === 'string') {
+    return SENSITIVE_KEY_PATTERN.test(key) ? '[REDACTED]' : redactSensitiveValue(value);
+  }
+  if (typeof value !== 'object') {
+    return value;
+  }
+  if (seen.has(value)) {
+    return '[Circular]';
+  }
+  seen.add(value);
+  if (Array.isArray(value)) {
+    return value.map((entry) => sanitizeForDisplay(entry, key, seen));
+  }
+  return Object.entries(value).reduce((acc, [entryKey, entryValue]) => {
+    if (SENSITIVE_KEY_PATTERN.test(entryKey)) {
+      acc[entryKey] = '[REDACTED]';
+      return acc;
+    }
+    acc[entryKey] = sanitizeForDisplay(entryValue, entryKey, seen);
+    return acc;
+  }, {});
+}
+
+function setCoverageRequestTechnicalDetails(details) {
+  const detailsEl = selectors.coverageRequestTechnicalDetails;
+  const contentEl = selectors.coverageRequestTechnicalContent;
+  if (!detailsEl || !contentEl) return;
+  if (!details) {
+    detailsEl.hidden = true;
+    detailsEl.open = false;
+    contentEl.textContent = '';
+    return;
+  }
+  detailsEl.hidden = false;
+  const safeDetails = sanitizeForDisplay(details);
+  contentEl.textContent = typeof safeDetails === 'string' ? safeDetails : JSON.stringify(safeDetails, null, 2);
+}
+
+function buildCoverageRequestError(status, responseBody) {
+  const safeDetails = sanitizeForDisplay(responseBody?.details);
+  const safeError = sanitizeForDisplay(responseBody?.error);
+  const detailsMessage =
+    typeof safeDetails === 'string'
+      ? safeDetails
+      : safeDetails && typeof safeDetails === 'object'
+        ? JSON.stringify(safeDetails)
+        : '';
+  const baseMessage = safeError || `Coverage request failed (${status}).`;
+  const message = detailsMessage ? `${baseMessage} Details: ${detailsMessage}` : baseMessage;
+  const error = new Error(message);
+  error.details = safeDetails;
+  error.technicalDetails = {
+    status,
+    error: safeError || null,
+    details: safeDetails || null
+  };
+  return error;
 }
 
 let toastTimeoutId;
@@ -7470,6 +7545,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
   }
 
   if (missingFields.length) {
+    setCoverageRequestTechnicalDetails(null);
     setFeedback(
       selectors.coverageRequestFeedback,
       `Add ${missingFields.join(', ')} to send a coverage request.`,
@@ -7485,6 +7561,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
     button.textContent = 'Sending...';
   }
   setFeedback(selectors.coverageRequestFeedback, 'Sending coverage request...', 'info');
+  setCoverageRequestTechnicalDetails(null);
 
   try {
     const response = await fetch(COVERAGE_REQUEST_ENDPOINT, {
@@ -7495,7 +7572,8 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
     const responseBody = await response.json().catch(() => ({}));
     if (!response.ok) {
       if (responseBody?.request) {
-        const podiumFailureMessage = responseBody?.error || `Podium delivery failed (${response.status}).`;
+        const podiumError = buildCoverageRequestError(response.status, responseBody);
+        const podiumFailureMessage = podiumError.message || `Podium delivery failed (${response.status}).`;
         mergeCoverageRequestLatest({
           creditUnionId: responseBody.request.creditUnionId || appState.accountSelectionId,
           requestId: responseBody.request.requestId,
@@ -7509,11 +7587,18 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
         });
         await loadCoverageRequestSummary();
         renderQuotesDirectory();
-        throw new Error(
+        const draftError = new Error(
           `Saved as Draft (Not Delivered): local request ${responseBody.request.requestId || 'was'} saved, but Podium delivery failed. ${podiumFailureMessage}`
         );
+        draftError.details = podiumError.details;
+        draftError.technicalDetails = {
+          ...podiumError.technicalDetails,
+          requestId: responseBody.request.requestId || null,
+          requestStatus: responseBody.request.status || 'draft'
+        };
+        throw draftError;
       }
-      throw new Error(responseBody?.error || `Coverage request failed (${response.status}).`);
+      throw buildCoverageRequestError(response.status, responseBody);
     }
     await handleCoverageRequestSuccess({
       payload,
@@ -7521,6 +7606,7 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
       podium: responseBody.podium
     });
   } catch (error) {
+    setCoverageRequestTechnicalDetails(error?.technicalDetails || error?.details || null);
     setFeedback(
       selectors.coverageRequestFeedback,
       error?.message || 'Unable to send coverage request.',
