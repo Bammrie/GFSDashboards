@@ -36,6 +36,9 @@ const PODIUM_REDIRECT_URI = process.env.PODIUM_REDIRECT_URI || '';
 const PODIUM_OAUTH_SCOPES = process.env.PODIUM_OAUTH_SCOPES || '';
 const PODIUM_LOCATION_UID = process.env.PODIUM_LOCATION_UID || '';
 const PODIUM_SENDER_NAME = process.env.PODIUM_SENDER_NAME || '';
+const PODIUM_CHANNEL = process.env.PODIUM_CHANNEL || 'sms';
+const PODIUM_CHANNEL_IDENTIFIER = process.env.PODIUM_CHANNEL_IDENTIFIER || '';
+const PODIUM_ACCOUNT_ROUTING_JSON = process.env.PODIUM_ACCOUNT_ROUTING_JSON || '';
 const PODIUM_ACCESS_TOKEN = process.env.PODIUM_ACCESS_TOKEN || '';
 const PODIUM_REFRESH_TOKEN = process.env.PODIUM_REFRESH_TOKEN || '';
 const PODIUM_TOKEN_TYPE = process.env.PODIUM_TOKEN_TYPE || '';
@@ -204,7 +207,9 @@ const REPORTING_START_MONTH = 1;
 app.get('/api/config', (req, res) => {
   res.json({
     podiumLocationUid: PODIUM_LOCATION_UID || '',
-    podiumSenderName: PODIUM_SENDER_NAME || ''
+    podiumSenderName: PODIUM_SENDER_NAME || '',
+    podiumChannel: PODIUM_CHANNEL || 'sms',
+    podiumChannelIdentifier: PODIUM_CHANNEL_IDENTIFIER || ''
   });
 });
 
@@ -286,12 +291,63 @@ async function getPodiumAccessToken({ allowRefresh = true } = {}) {
   return refreshed.accessToken || stored.accessToken;
 }
 
-function resolvePodiumChannelIdentifier(channelType, payload) {
+function parsePodiumAccountRoutingByName() {
+  if (!PODIUM_ACCOUNT_ROUTING_JSON) return {};
+  try {
+    const parsed = JSON.parse(PODIUM_ACCOUNT_ROUTING_JSON);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    return Object.entries(parsed).reduce((acc, [name, value]) => {
+      const normalizedName = typeof name === 'string' ? name.trim().toLowerCase() : '';
+      if (!normalizedName || !value || typeof value !== 'object' || Array.isArray(value)) return acc;
+      acc[normalizedName] = {
+        locationUid: typeof value.locationUid === 'string' ? value.locationUid.trim() : '',
+        senderName: typeof value.senderName === 'string' ? value.senderName.trim() : '',
+        channel: typeof value.channel === 'string' && value.channel.trim() ? value.channel.trim().toLowerCase() : 'sms',
+        channelIdentifier:
+          typeof value.channelIdentifier === 'string' ? value.channelIdentifier.trim() : ''
+      };
+      return acc;
+    }, {});
+  } catch (error) {
+    console.warn('Unable to parse PODIUM_ACCOUNT_ROUTING_JSON. Falling back to defaults.', error);
+    return {};
+  }
+}
+
+const PODIUM_ACCOUNT_ROUTING_BY_NAME = parsePodiumAccountRoutingByName();
+
+function resolvePodiumRoutingForCreditUnion(creditUnionName) {
+  const normalizedName = typeof creditUnionName === 'string' ? creditUnionName.trim().toLowerCase() : '';
+  const accountRoute = normalizedName ? PODIUM_ACCOUNT_ROUTING_BY_NAME[normalizedName] : null;
+  if (accountRoute) {
+    return {
+      locationUid: accountRoute.locationUid || PODIUM_LOCATION_UID,
+      senderName: accountRoute.senderName || PODIUM_SENDER_NAME,
+      channel: accountRoute.channel || PODIUM_CHANNEL || 'sms',
+      channelIdentifier: accountRoute.channelIdentifier || PODIUM_CHANNEL_IDENTIFIER || ''
+    };
+  }
+
+  return {
+    locationUid: PODIUM_LOCATION_UID,
+    senderName: PODIUM_SENDER_NAME,
+    channel: PODIUM_CHANNEL || 'sms',
+    channelIdentifier: PODIUM_CHANNEL_IDENTIFIER || ''
+  };
+}
+
+function resolvePodiumChannelIdentifier(channelType, payload, routing) {
   const normalizedType = typeof channelType === 'string' ? channelType.trim().toLowerCase() : 'sms';
   if (normalizedType === 'messenger') {
-    return payload?.podium_channel_identifier || payload?.channel_identifier || payload?.channelIdentifier || '';
+    return (
+      payload?.podium_channel_identifier ||
+      payload?.channel_identifier ||
+      payload?.channelIdentifier ||
+      routing?.channelIdentifier ||
+      ''
+    );
   }
-  return payload?.member_phone || payload?.phone_number || payload?.phoneNumber || '';
+  return payload?.member_phone || payload?.phone_number || payload?.phoneNumber || routing?.channelIdentifier || '';
 }
 
 function resolvePodiumMessageBody(payload) {
@@ -305,15 +361,16 @@ function resolvePodiumMessageBody(payload) {
   );
 }
 
-async function sendCoverageRequestToPodium(payload) {
-  const locationUid = payload?.podium_location_uid || payload?.location_uid || PODIUM_LOCATION_UID;
+async function sendCoverageRequestToPodium(payload, creditUnion = null) {
+  const routing = resolvePodiumRoutingForCreditUnion(creditUnion?.name || payload?.credit_union_name || '');
+  const locationUid = payload?.podium_location_uid || payload?.location_uid || routing.locationUid || PODIUM_LOCATION_UID;
   if (!locationUid) {
     const error = new Error('Podium location UID is not configured.');
     error.statusCode = 400;
     throw error;
   }
-  const channelType = payload?.podium_channel || payload?.channel || 'sms';
-  const channelIdentifier = resolvePodiumChannelIdentifier(channelType, payload);
+  const channelType = payload?.podium_channel || payload?.channel || routing.channel || PODIUM_CHANNEL || 'sms';
+  const channelIdentifier = resolvePodiumChannelIdentifier(channelType, payload, routing);
   if (!channelIdentifier) {
     const error = new Error('Podium channel identifier is required.');
     error.statusCode = 400;
@@ -342,7 +399,7 @@ async function sendCoverageRequestToPodium(payload) {
       },
       locationUid,
       contactName: payload?.member_name || payload?.memberName || '',
-      senderName: payload?.podium_sender_name || payload?.sender_name || PODIUM_SENDER_NAME || undefined
+      senderName: payload?.podium_sender_name || payload?.sender_name || routing.senderName || PODIUM_SENDER_NAME || undefined
     })
   });
 
@@ -887,8 +944,26 @@ app.post('/api/coverage-requests', async (req, res, next) => {
       return;
     }
 
+    const creditUnion = await CreditUnion.findById(creditUnionId).lean();
+    if (!creditUnion) {
+      res.status(404).json({ error: 'Credit union not found for coverage request.' });
+      return;
+    }
+
+    const routing = resolvePodiumRoutingForCreditUnion(creditUnion.name);
     const requestId = randomUUID();
-    const payloadWithId = { ...payload, quote_request_id: requestId };
+    const payloadWithId = {
+      ...payload,
+      quote_request_id: requestId,
+      credit_union_name: payload.credit_union_name || creditUnion.name,
+      podium_location_uid: routing.locationUid || payload.podium_location_uid || null,
+      podium_channel: routing.channel || payload.podium_channel || 'sms',
+      channel: routing.channel || payload.channel || 'sms',
+      podium_channel_identifier: routing.channelIdentifier || payload.podium_channel_identifier || null,
+      channel_identifier: routing.channelIdentifier || payload.channel_identifier || null,
+      channelIdentifier: routing.channelIdentifier || payload.channelIdentifier || null,
+      podium_sender_name: payload.podium_sender_name || routing.senderName || null
+    };
     const created = await CoverageRequest.create({
       creditUnion: creditUnionId,
       requestId,
@@ -900,7 +975,7 @@ app.post('/api/coverage-requests', async (req, res, next) => {
 
     let podiumResult = null;
     try {
-      podiumResult = await sendCoverageRequestToPodium(payloadWithId);
+      podiumResult = await sendCoverageRequestToPodium(payloadWithId, creditUnion);
       created.status = 'awaiting_response';
       created.sentAt = new Date();
       await created.save();
