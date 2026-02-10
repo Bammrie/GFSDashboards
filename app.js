@@ -925,6 +925,14 @@ function renderCoverageRequestReceipt() {
   const status = document.createElement('span');
   status.textContent = `${formatCoverageRequestStatusLabel(receipt.status)} • `;
 
+  if (receipt.deliveryFailed) {
+    const deliveryFailedBadge = document.createElement('span');
+    deliveryFailedBadge.className = 'status-tag';
+    deliveryFailedBadge.dataset.status = 'delivery_failed';
+    deliveryFailedBadge.textContent = 'Delivery failed';
+    status.append(deliveryFailedBadge, document.createTextNode(' • '));
+  }
+
   const label = document.createElement('span');
   label.textContent = 'Latest request: ';
   const time = document.createElement('strong');
@@ -1260,6 +1268,7 @@ async function handleCoverageRequestSuccess({ payload, request, podium }) {
       creditUnionId: request.creditUnionId || appState.accountSelectionId,
       requestId: request.requestId,
       status: request.status || 'awaiting_response',
+      deliveryFailed: false,
       loanId: request.loanId ?? payload.loan_id ?? null,
       memberName: request.memberName ?? payload.member_name ?? '',
       memberChoice: request.memberChoice ?? null,
@@ -7486,10 +7495,12 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
     const responseBody = await response.json().catch(() => ({}));
     if (!response.ok) {
       if (responseBody?.request) {
+        const podiumFailureMessage = responseBody?.error || `Podium delivery failed (${response.status}).`;
         mergeCoverageRequestLatest({
           creditUnionId: responseBody.request.creditUnionId || appState.accountSelectionId,
           requestId: responseBody.request.requestId,
           status: responseBody.request.status || 'draft',
+          deliveryFailed: true,
           loanId: responseBody.request.loanId ?? payload.loan_id ?? null,
           memberName: responseBody.request.memberName ?? payload.member_name ?? '',
           memberChoice: responseBody.request.memberChoice ?? null,
@@ -7498,6 +7509,9 @@ selectors.coverageRequestBtn?.addEventListener('click', async () => {
         });
         await loadCoverageRequestSummary();
         renderQuotesDirectory();
+        throw new Error(
+          `Saved as Draft (Not Delivered): local request ${responseBody.request.requestId || 'was'} saved, but Podium delivery failed. ${podiumFailureMessage}`
+        );
       }
       throw new Error(responseBody?.error || `Coverage request failed (${response.status}).`);
     }
