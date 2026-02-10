@@ -36,6 +36,12 @@ const PODIUM_REDIRECT_URI = process.env.PODIUM_REDIRECT_URI || '';
 const PODIUM_OAUTH_SCOPES = process.env.PODIUM_OAUTH_SCOPES || '';
 const PODIUM_LOCATION_UID = process.env.PODIUM_LOCATION_UID || '';
 const PODIUM_SENDER_NAME = process.env.PODIUM_SENDER_NAME || '';
+const PODIUM_ACCESS_TOKEN = process.env.PODIUM_ACCESS_TOKEN || '';
+const PODIUM_REFRESH_TOKEN = process.env.PODIUM_REFRESH_TOKEN || '';
+const PODIUM_TOKEN_TYPE = process.env.PODIUM_TOKEN_TYPE || '';
+const PODIUM_TOKEN_SCOPE = process.env.PODIUM_TOKEN_SCOPE || '';
+const PODIUM_EXPIRES_AT = process.env.PODIUM_EXPIRES_AT || '';
+const PODIUM_OAUTH_SEED_FORCE = process.env.PODIUM_OAUTH_SEED_FORCE === 'true';
 
 const PUBLIC_PAGES = new Set(['/', '/index.html', '/quotes.html', '/quotes-workspace.html']);
 const PUBLIC_API_ROUTES = new Set([
@@ -97,6 +103,28 @@ async function writePodiumOauthStorage(data) {
   } catch (error) {
     console.warn('Unable to write Podium OAuth storage.', error);
   }
+}
+
+async function seedPodiumOauthStorageFromEnv() {
+  if (!PODIUM_ACCESS_TOKEN && !PODIUM_REFRESH_TOKEN) return;
+  const stored = await readPodiumOauthStorage();
+  if (!PODIUM_OAUTH_SEED_FORCE && stored.accessToken) return;
+
+  const expiresAt = resolveManualPodiumExpiry(PODIUM_EXPIRES_AT);
+  const updated = {
+    ...stored,
+    accessToken: PODIUM_ACCESS_TOKEN || stored.accessToken || '',
+    refreshToken: PODIUM_REFRESH_TOKEN || stored.refreshToken || '',
+    tokenType: PODIUM_TOKEN_TYPE || stored.tokenType || 'bearer',
+    scope: PODIUM_TOKEN_SCOPE || PODIUM_OAUTH_SCOPES || stored.scope || '',
+    expiresAt: expiresAt || stored.expiresAt || decodeJwtExpiry(PODIUM_ACCESS_TOKEN) || null,
+    refreshedAt: Date.now(),
+    lastGrantType: 'env_seed',
+    clientId: PODIUM_CLIENT_ID || stored.clientId || null,
+    redirectUri: PODIUM_REDIRECT_URI || stored.redirectUri || null
+  };
+
+  await writePodiumOauthStorage(updated);
 }
 
 const requiresAuth = (req) => {
@@ -527,6 +555,7 @@ app.get('/api/podium/oauth/status', async (_req, res) => {
   const stored = await readPodiumOauthStorage();
   res.json({
     configured: Boolean(PODIUM_CLIENT_ID && PODIUM_CLIENT_SECRET && PODIUM_REDIRECT_URI),
+    configuredForRefresh: Boolean(PODIUM_CLIENT_ID && PODIUM_CLIENT_SECRET),
     hasAccessToken: Boolean(stored.accessToken),
     hasRefreshToken: Boolean(stored.refreshToken),
     canRefresh: Boolean(stored.refreshToken && PODIUM_CLIENT_ID && PODIUM_CLIENT_SECRET),
@@ -3104,7 +3133,11 @@ app.listen(port, () => {
   console.log(`Income dashboard running on http://localhost:${port}`);
 });
 
-refreshPodiumAccessTokenIfNeeded();
+seedPodiumOauthStorageFromEnv()
+  .then(() => refreshPodiumAccessTokenIfNeeded())
+  .catch((error) => {
+    console.warn('Unable to seed Podium OAuth storage from environment.', error);
+  });
 setInterval(refreshPodiumAccessTokenIfNeeded, 60 * 60 * 1000);
 
 async function extractCallReportText(buffer, mimeType) {

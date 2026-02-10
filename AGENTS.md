@@ -1,3 +1,5 @@
+2026-02-10: Clarified Podium OAuth status reporting with a configuredForRefresh flag and added env-based token seeding so deployments can persist access/refresh tokens at startup without manual endpoint calls.
+2026-02-10: Added Podium OAuth environment seeding (PODIUM_ACCESS_TOKEN/PODIUM_REFRESH_TOKEN plus optional expiry/scope fields) so deploys can bootstrap tokens on startup and immediately enable automatic refresh without manual API calls.
 2026-02-10: Added a manual Podium token ingestion endpoint (/api/podium/oauth/manual-token) so newly issued access tokens can be saved directly with parsed expiration metadata, and expanded OAuth status responses with canRefresh visibility for quick readiness checks.
 2029-02-25: Replaced Zapier webhook coverage requests with direct Podium messaging (OAuth token usage, location UID/sender fields) and updated the quote workspace UI to capture Podium metadata.
 2029-02-22: Added Podium channel selection and messenger channel identifier fields to coverage request payloads so Zapier has the required channel identifiers for Messenger sends.
