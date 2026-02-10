@@ -30,17 +30,16 @@ const upload = multer({
 
 const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || 'adminpass';
 const DASHBOARD_USERNAME = process.env.DASHBOARD_USERNAME || null;
-const COVERAGE_REQUEST_WEBHOOK_URL =
-  process.env.COVERAGE_REQUEST_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/4330880/ugp09bj/';
 const PODIUM_CLIENT_ID = process.env.PODIUM_CLIENT_ID || '';
 const PODIUM_CLIENT_SECRET = process.env.PODIUM_CLIENT_SECRET || '';
 const PODIUM_REDIRECT_URI = process.env.PODIUM_REDIRECT_URI || '';
 const PODIUM_OAUTH_SCOPES = process.env.PODIUM_OAUTH_SCOPES || '';
+const PODIUM_LOCATION_UID = process.env.PODIUM_LOCATION_UID || '';
+const PODIUM_SENDER_NAME = process.env.PODIUM_SENDER_NAME || '';
 
 const PUBLIC_PAGES = new Set(['/', '/index.html', '/quotes.html', '/quotes-workspace.html']);
 const PUBLIC_API_ROUTES = new Set([
   '/api/config',
-  '/api/coverage-request',
   '/api/coverage-requests',
   '/api/coverage-requests/latest',
   '/api/coverage-requests/summary',
@@ -176,7 +175,8 @@ const REPORTING_START_MONTH = 1;
 
 app.get('/api/config', (req, res) => {
   res.json({
-    coverageRequestWebhookUrl: COVERAGE_REQUEST_WEBHOOK_URL || ''
+    podiumLocationUid: PODIUM_LOCATION_UID || '',
+    podiumSenderName: PODIUM_SENDER_NAME || ''
   });
 });
 
@@ -217,6 +217,101 @@ function requirePodiumClientConfig(res) {
     return false;
   }
   return true;
+}
+
+async function getPodiumAccessToken({ allowRefresh = true } = {}) {
+  const stored = await readPodiumOauthStorage();
+  if (!stored.accessToken) {
+    const error = new Error('Podium access token is not configured.');
+    error.statusCode = 401;
+    throw error;
+  }
+  const expiresAt = Number(stored.expiresAt);
+  if (!allowRefresh || !Number.isFinite(expiresAt)) {
+    return stored.accessToken;
+  }
+  if (expiresAt - Date.now() > 2 * 60 * 1000) {
+    return stored.accessToken;
+  }
+  const refreshed = await refreshPodiumAccessToken({ force: true });
+  return refreshed.accessToken || stored.accessToken;
+}
+
+function resolvePodiumChannelIdentifier(channelType, payload) {
+  const normalizedType = typeof channelType === 'string' ? channelType.trim().toLowerCase() : 'sms';
+  if (normalizedType === 'messenger') {
+    return payload?.podium_channel_identifier || payload?.channel_identifier || payload?.channelIdentifier || '';
+  }
+  return payload?.member_phone || payload?.phone_number || payload?.phoneNumber || '';
+}
+
+function resolvePodiumMessageBody(payload) {
+  return (
+    payload?.message ||
+    payload?.podium_message ||
+    payload?.sms_message ||
+    payload?.messenger_message ||
+    payload?.phrase ||
+    ''
+  );
+}
+
+async function sendCoverageRequestToPodium(payload) {
+  const locationUid = payload?.podium_location_uid || payload?.location_uid || PODIUM_LOCATION_UID;
+  if (!locationUid) {
+    const error = new Error('Podium location UID is not configured.');
+    error.statusCode = 400;
+    throw error;
+  }
+  const channelType = payload?.podium_channel || payload?.channel || 'sms';
+  const channelIdentifier = resolvePodiumChannelIdentifier(channelType, payload);
+  if (!channelIdentifier) {
+    const error = new Error('Podium channel identifier is required.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const body = resolvePodiumMessageBody(payload);
+  if (!body) {
+    const error = new Error('Podium message body is required.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const accessToken = await getPodiumAccessToken();
+  const response = await fetch('https://api.podium.com/v4/messages', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      body,
+      channel: {
+        type: channelType,
+        identifier: channelIdentifier
+      },
+      locationUid,
+      contactName: payload?.member_name || payload?.memberName || '',
+      senderName: payload?.podium_sender_name || payload?.sender_name || PODIUM_SENDER_NAME || undefined
+    })
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(`Podium message failed (${response.status}).`);
+    error.details = data || null;
+    error.statusCode = response.status;
+    throw error;
+  }
+
+  return {
+    status: response.status,
+    messageUid: data?.data?.uid || null,
+    conversationUid: data?.data?.conversation?.uid || null,
+    locationUid: data?.data?.location?.uid || locationUid,
+    channel: data?.data?.conversation?.channel || { type: channelType, identifier: channelIdentifier }
+  };
 }
 
 function buildPodiumAuthorizeUrl({ state, scope }) {
@@ -292,69 +387,6 @@ async function refreshPodiumAccessTokenIfNeeded() {
     console.warn('Podium OAuth refresh failed.', error?.details || error);
   }
 }
-
-function resolveCoverageRequestWebhookUrl(payload) {
-  const candidate = typeof payload?.coverage_request_webhook_url === 'string'
-    ? payload.coverage_request_webhook_url.trim()
-    : '';
-  if (!candidate) return COVERAGE_REQUEST_WEBHOOK_URL;
-
-  try {
-    const parsed = new URL(candidate);
-    if (parsed.protocol !== 'https:') return COVERAGE_REQUEST_WEBHOOK_URL;
-    if (!parsed.hostname.endsWith('zapier.com')) return COVERAGE_REQUEST_WEBHOOK_URL;
-    return parsed.toString();
-  } catch (error) {
-    return COVERAGE_REQUEST_WEBHOOK_URL;
-  }
-}
-
-async function sendCoverageRequestToZapier(payload) {
-  const webhookUrl = resolveCoverageRequestWebhookUrl(payload);
-  if (!webhookUrl) {
-    const error = new Error('Zapier webhook URL is not configured.');
-    error.statusCode = 500;
-    throw error;
-  }
-
-  const response = await fetch(webhookUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-
-  const details = await response.text().catch(() => '');
-  if (!response.ok) {
-    const error = new Error(`Zapier webhook failed (${response.status}).`);
-    error.details = details || null;
-    error.statusCode = response.status;
-    throw error;
-  }
-
-  return {
-    status: response.status,
-    details: details || null,
-    webhookUrl
-  };
-}
-
-app.post('/api/coverage-request', async (req, res) => {
-  const payload = req.body;
-  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
-    res.status(400).json({ error: 'Coverage request payload must be an object.' });
-    return;
-  }
-
-  try {
-    const zapier = await sendCoverageRequestToZapier(payload);
-    res.json({ ok: true, zapier });
-  } catch (error) {
-    res.status(502).json({
-      error: error?.message || 'Unable to send coverage request.',
-      details: error?.details || null
-    });
-  }
-});
 
 app.post('/api/podium/oauth/state', async (_req, res) => {
   const state = randomUUID();
@@ -777,14 +809,14 @@ app.post('/api/coverage-requests', async (req, res, next) => {
       memberName: typeof payload.member_name === 'string' ? payload.member_name.trim() : ''
     });
 
-    let zapierResult = null;
+    let podiumResult = null;
     try {
-      zapierResult = await sendCoverageRequestToZapier(payloadWithId);
+      podiumResult = await sendCoverageRequestToPodium(payloadWithId);
       created.status = 'awaiting_response';
       created.sentAt = new Date();
       await created.save();
     } catch (error) {
-      res.status(502).json({
+      res.status(error?.statusCode || 502).json({
         error: error?.message || 'Unable to send coverage request.',
         details: error?.details || null,
         request: {
@@ -796,7 +828,7 @@ app.post('/api/coverage-requests', async (req, res, next) => {
           memberName: created.memberName ?? '',
           sentAt: created.sentAt?.toISOString() ?? null
         },
-        zapier: zapierResult
+        podium: podiumResult
       });
       return;
     }
@@ -811,7 +843,7 @@ app.post('/api/coverage-requests', async (req, res, next) => {
         memberName: created.memberName ?? '',
         sentAt: created.sentAt?.toISOString() ?? null
       },
-      zapier: zapierResult
+      podium: podiumResult
     });
   } catch (error) {
     next(error);
