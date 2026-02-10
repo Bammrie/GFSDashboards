@@ -1221,6 +1221,23 @@ pre {
   width: 100%;
 }
 
+
+.coverage-request-technical {
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.04);
+  padding: 0.45rem 0.6rem;
+}
+
+.coverage-request-technical > summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.coverage-request-technical > .payload-preview {
+  margin-top: 0.5rem;
+}
+
 .payload-preview {
   margin: 0;
   padding: 0.75rem;
