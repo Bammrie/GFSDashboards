@@ -54,6 +54,8 @@ const CLASSIFICATIONS = ['account', 'prospect'];
 const COVERAGE_REQUEST_ENDPOINT = '/api/coverage-requests';
 const COVERAGE_REQUEST_SUMMARY_ENDPOINT = '/api/coverage-requests/summary';
 const COVERAGE_REQUEST_RESPONSE_ENDPOINT = '/api/coverage-requests/response';
+const PODIUM_FORCED_LOCATION_UID = 'e232a469-efc9-5c8f-be0f-c6ac8050927a';
+const PODIUM_FORCED_CHANNEL_TYPE = 'sms';
 const COVERAGE_OPTION_LABELS = {
   base: 'Base loan',
   vsc: 'Vehicle service contract',
@@ -263,7 +265,6 @@ const selectors = {
   coverageRequestMemberName: document.getElementById('coverage-request-member-name'),
   coverageRequestPhone: document.getElementById('coverage-request-phone'),
   coverageRequestEmail: document.getElementById('coverage-request-email'),
-  coverageRequestLocationUid: document.getElementById('coverage-request-location-uid'),
   coverageRequestSenderName: document.getElementById('coverage-request-sender-name'),
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
@@ -784,10 +785,9 @@ function buildCoverageRequestPayload() {
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
   const email = selectors.coverageRequestEmail?.value.trim() || '';
-  const locationUid =
-    selectors.coverageRequestLocationUid?.value.trim() || appState.podiumLocationUid || '';
+  const locationUid = PODIUM_FORCED_LOCATION_UID;
   const senderName = selectors.coverageRequestSenderName?.value.trim() || appState.podiumSenderName || '';
-  const channel = appState.podiumChannel || 'sms';
+  const channel = PODIUM_FORCED_CHANNEL_TYPE;
   const channelIdentifier = appState.podiumChannelIdentifier || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
   const loanAmountLabel = Number.isFinite(loanAmount) ? currencyFormatterNoCents.format(loanAmount) : '';
@@ -1200,9 +1200,6 @@ function setPodiumDefaults({ locationUid, senderName, channel, channelIdentifier
     window.PODIUM_CHANNEL = normalizedChannel;
     window.PODIUM_CHANNEL_IDENTIFIER = normalizedChannelIdentifier;
   }
-  if (selectors.coverageRequestLocationUid && !selectors.coverageRequestLocationUid.value) {
-    selectors.coverageRequestLocationUid.value = normalizedLocation;
-  }
   if (selectors.coverageRequestSenderName && !selectors.coverageRequestSenderName.value) {
     selectors.coverageRequestSenderName.value = normalizedSender;
   }
@@ -1210,7 +1207,7 @@ function setPodiumDefaults({ locationUid, senderName, channel, channelIdentifier
     const channelLabel = normalizedChannel.toUpperCase();
     const identifierLabel = normalizedChannelIdentifier || 'member phone';
     selectors.coverageRequestRoutingSummary.textContent =
-      `Podium routing is auto-configured by credit union account (default channel ${channelLabel}, identifier ${identifierLabel}).`;
+      `Podium routing is fixed for all requests (location UID ${PODIUM_FORCED_LOCATION_UID}, channel ${channelLabel}, identifier ${identifierLabel}).`;
   }
 }
 
@@ -7371,7 +7368,6 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   selectors.coverageRequestMemberName,
   selectors.coverageRequestPhone,
   selectors.coverageRequestEmail,
-  selectors.coverageRequestLocationUid,
   selectors.coverageRequestSenderName
 ].forEach((element) => {
   element?.addEventListener('input', () => {

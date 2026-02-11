@@ -38,7 +38,7 @@ const PODIUM_LOCATION_UID = process.env.PODIUM_LOCATION_UID || '';
 const PODIUM_SENDER_NAME = process.env.PODIUM_SENDER_NAME || '';
 const PODIUM_CHANNEL = process.env.PODIUM_CHANNEL || 'sms';
 const PODIUM_CHANNEL_IDENTIFIER = process.env.PODIUM_CHANNEL_IDENTIFIER || '';
-const PODIUM_FORCED_LOCATION_UID = '8a7f0d1a-3c41-4b9f-9c9d-2e3b7f6a9123';
+const PODIUM_FORCED_LOCATION_UID = 'e232a469-efc9-5c8f-be0f-c6ac8050927a';
 const PODIUM_FORCED_CHANNEL_TYPE = 'sms';
 const PODIUM_ACCOUNT_ROUTING_JSON = process.env.PODIUM_ACCOUNT_ROUTING_JSON || '';
 const PODIUM_ACCOUNT_ROUTING_BY_ID_JSON = process.env.PODIUM_ACCOUNT_ROUTING_BY_ID_JSON || '';
@@ -1068,9 +1068,9 @@ app.post('/api/coverage-requests', async (req, res, next) => {
       ...payload,
       quote_request_id: requestId,
       credit_union_name: payload.credit_union_name || creditUnion.name,
-      podium_location_uid: routing.locationUid || payload.podium_location_uid || null,
-      podium_channel: routing.channel || payload.podium_channel || 'sms',
-      channel: routing.channel || payload.channel || 'sms',
+      podium_location_uid: PODIUM_FORCED_LOCATION_UID,
+      podium_channel: PODIUM_FORCED_CHANNEL_TYPE,
+      channel: PODIUM_FORCED_CHANNEL_TYPE,
       podium_channel_identifier: routing.channelIdentifier || payload.podium_channel_identifier || null,
       channel_identifier: routing.channelIdentifier || payload.channel_identifier || null,
       channelIdentifier: routing.channelIdentifier || payload.channelIdentifier || null,
