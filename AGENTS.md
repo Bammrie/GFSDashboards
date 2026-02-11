@@ -428,3 +428,5 @@ quotes.
 2029-02-24: Added a backend Podium OAuth callback alias at /oauth/podium/callback so the redirect no longer falls through to the SPA homepage and returns JSON for OAuth exchanges.
 
 2026-02-11: Hardened Podium routing fallback resolution so new/renamed credit unions still inherit a usable location UID/channel settings from default/env routing when exact name matching misses, preventing draft-only coverage requests due to missing location UIDs.
+
+2026-02-11: Added a checked-in .env.example snippet for PODIUM_ACCOUNT_ROUTING_JSON (__default + account-specific route) plus PODIUM_LOCATION_UID fallback so deployments can configure Podium routing without null location UID errors.
