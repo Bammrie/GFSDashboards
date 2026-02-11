@@ -210,9 +210,7 @@ const REPORTING_START_MONTH = 1;
 app.get('/api/config', (req, res) => {
   res.json({
     podiumLocationUid: PODIUM_LOCATION_UID || '',
-    podiumSenderName: PODIUM_SENDER_NAME || '',
-    podiumChannel: PODIUM_CHANNEL || 'sms',
-    podiumChannelIdentifier: PODIUM_CHANNEL_IDENTIFIER || ''
+    podiumSenderName: PODIUM_SENDER_NAME || ''
   });
 });
 
@@ -447,17 +445,7 @@ function resolvePodiumRoutingForCreditUnion(creditUnion = {}) {
   };
 }
 
-function resolvePodiumChannelIdentifier(channelType, payload, routing) {
-  const normalizedType = typeof channelType === 'string' ? channelType.trim().toLowerCase() : 'sms';
-  if (normalizedType === 'messenger') {
-    return (
-      payload?.podium_channel_identifier ||
-      payload?.channel_identifier ||
-      payload?.channelIdentifier ||
-      routing?.channelIdentifier ||
-      ''
-    );
-  }
+function resolvePodiumChannelIdentifier(payload, routing) {
   return payload?.member_phone || payload?.phone_number || payload?.phoneNumber || routing?.channelIdentifier || '';
 }
 
@@ -479,7 +467,7 @@ async function sendCoverageRequestToPodium(payload, creditUnion = null) {
   });
   const locationUid = PODIUM_FORCED_LOCATION_UID;
   const channelType = PODIUM_FORCED_CHANNEL_TYPE;
-  const channelIdentifier = resolvePodiumChannelIdentifier(channelType, payload, routing);
+  const channelIdentifier = resolvePodiumChannelIdentifier(payload, routing);
   if (!channelIdentifier) {
     const error = new Error('Podium channel identifier is required.');
     error.statusCode = 400;
@@ -1073,16 +1061,20 @@ app.post('/api/coverage-requests', async (req, res, next) => {
       name: creditUnion.name
     });
     const requestId = randomUUID();
+    const {
+      channel: _ignoredChannel,
+      podium_channel: _ignoredPodiumChannel,
+      channel_identifier: _ignoredChannelIdentifier,
+      channelIdentifier: _ignoredChannelIdentifierCamel,
+      podium_channel_identifier: _ignoredPodiumChannelIdentifier,
+      ...payloadWithoutChannelFields
+    } = payload;
+
     const payloadWithId = {
-      ...payload,
+      ...payloadWithoutChannelFields,
       quote_request_id: requestId,
       credit_union_name: payload.credit_union_name || creditUnion.name,
       podium_location_uid: PODIUM_FORCED_LOCATION_UID,
-      podium_channel: PODIUM_FORCED_CHANNEL_TYPE,
-      channel: PODIUM_FORCED_CHANNEL_TYPE,
-      podium_channel_identifier: routing.channelIdentifier || payload.podium_channel_identifier || null,
-      channel_identifier: routing.channelIdentifier || payload.channel_identifier || null,
-      channelIdentifier: routing.channelIdentifier || payload.channelIdentifier || null,
       podium_sender_name: payload.podium_sender_name || routing.senderName || null
     };
     const created = await CoverageRequest.create({
