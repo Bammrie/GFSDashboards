@@ -263,6 +263,7 @@ const selectors = {
   coverageRequestMemberName: document.getElementById('coverage-request-member-name'),
   coverageRequestPhone: document.getElementById('coverage-request-phone'),
   coverageRequestEmail: document.getElementById('coverage-request-email'),
+  coverageRequestLocationUid: document.getElementById('coverage-request-location-uid'),
   coverageRequestSenderName: document.getElementById('coverage-request-sender-name'),
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
@@ -783,7 +784,8 @@ function buildCoverageRequestPayload() {
   const memberName = selectors.coverageRequestMemberName?.value.trim() || '';
   const phoneNumber = selectors.coverageRequestPhone?.value.trim() || '';
   const email = selectors.coverageRequestEmail?.value.trim() || '';
-  const locationUid = appState.podiumLocationUid || '';
+  const locationUid =
+    selectors.coverageRequestLocationUid?.value.trim() || appState.podiumLocationUid || '';
   const senderName = selectors.coverageRequestSenderName?.value.trim() || appState.podiumSenderName || '';
   const channel = appState.podiumChannel || 'sms';
   const channelIdentifier = appState.podiumChannelIdentifier || '';
@@ -1197,6 +1199,9 @@ function setPodiumDefaults({ locationUid, senderName, channel, channelIdentifier
     window.PODIUM_SENDER_NAME = normalizedSender;
     window.PODIUM_CHANNEL = normalizedChannel;
     window.PODIUM_CHANNEL_IDENTIFIER = normalizedChannelIdentifier;
+  }
+  if (selectors.coverageRequestLocationUid && !selectors.coverageRequestLocationUid.value) {
+    selectors.coverageRequestLocationUid.value = normalizedLocation;
   }
   if (selectors.coverageRequestSenderName && !selectors.coverageRequestSenderName.value) {
     selectors.coverageRequestSenderName.value = normalizedSender;
@@ -7366,6 +7371,7 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
   selectors.coverageRequestMemberName,
   selectors.coverageRequestPhone,
   selectors.coverageRequestEmail,
+  selectors.coverageRequestLocationUid,
   selectors.coverageRequestSenderName
 ].forEach((element) => {
   element?.addEventListener('input', () => {
