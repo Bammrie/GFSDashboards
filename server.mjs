@@ -38,6 +38,8 @@ const PODIUM_LOCATION_UID = process.env.PODIUM_LOCATION_UID || '';
 const PODIUM_SENDER_NAME = process.env.PODIUM_SENDER_NAME || '';
 const PODIUM_CHANNEL = process.env.PODIUM_CHANNEL || 'sms';
 const PODIUM_CHANNEL_IDENTIFIER = process.env.PODIUM_CHANNEL_IDENTIFIER || '';
+const PODIUM_FORCED_LOCATION_UID = 'e232a469-efc9-5c8f-be0f-c6ac8050927a';
+const PODIUM_FORCED_CHANNEL_TYPE = 'sms';
 const PODIUM_ACCOUNT_ROUTING_JSON = process.env.PODIUM_ACCOUNT_ROUTING_JSON || '';
 const PODIUM_ACCOUNT_ROUTING_BY_ID_JSON = process.env.PODIUM_ACCOUNT_ROUTING_BY_ID_JSON || '';
 const PODIUM_ACCESS_TOKEN = process.env.PODIUM_ACCESS_TOKEN || '';
@@ -475,13 +477,8 @@ async function sendCoverageRequestToPodium(payload, creditUnion = null) {
     _id: creditUnion?._id || payload?.credit_union_id || payload?.creditUnionId || null,
     name: creditUnion?.name || payload?.credit_union_name || ''
   });
-  const locationUid = payload?.podium_location_uid || payload?.location_uid || routing.locationUid || PODIUM_LOCATION_UID;
-  if (!locationUid) {
-    const error = new Error('Podium location UID is not configured.');
-    error.statusCode = 400;
-    throw error;
-  }
-  const channelType = payload?.podium_channel || payload?.channel || routing.channel || PODIUM_CHANNEL || 'sms';
+  const locationUid = PODIUM_FORCED_LOCATION_UID;
+  const channelType = PODIUM_FORCED_CHANNEL_TYPE;
   const channelIdentifier = resolvePodiumChannelIdentifier(channelType, payload, routing);
   if (!channelIdentifier) {
     const error = new Error('Podium channel identifier is required.');
@@ -1071,9 +1068,9 @@ app.post('/api/coverage-requests', async (req, res, next) => {
       ...payload,
       quote_request_id: requestId,
       credit_union_name: payload.credit_union_name || creditUnion.name,
-      podium_location_uid: routing.locationUid || payload.podium_location_uid || null,
-      podium_channel: routing.channel || payload.podium_channel || 'sms',
-      channel: routing.channel || payload.channel || 'sms',
+      podium_location_uid: PODIUM_FORCED_LOCATION_UID,
+      podium_channel: PODIUM_FORCED_CHANNEL_TYPE,
+      channel: PODIUM_FORCED_CHANNEL_TYPE,
       podium_channel_identifier: routing.channelIdentifier || payload.podium_channel_identifier || null,
       channel_identifier: routing.channelIdentifier || payload.channel_identifier || null,
       channelIdentifier: routing.channelIdentifier || payload.channelIdentifier || null,
