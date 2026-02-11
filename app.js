@@ -596,16 +596,12 @@ async function loadAccountWarrantyConfigs() {
 async function loadAppConfig() {
   let podiumLocationUid = '';
   let podiumSenderName = '';
-  let podiumChannel = 'sms';
-  let podiumChannelIdentifier = '';
   try {
     const response = await fetch('/api/config');
     if (response.ok) {
       const payload = await response.json();
       podiumLocationUid = payload?.podiumLocationUid || '';
       podiumSenderName = payload?.podiumSenderName || '';
-      podiumChannel = payload?.podiumChannel || 'sms';
-      podiumChannelIdentifier = payload?.podiumChannelIdentifier || '';
     }
   } catch (error) {
     console.error('Unable to load app config', error);
@@ -620,9 +616,7 @@ async function loadAppConfig() {
 
   setPodiumDefaults({
     locationUid: podiumLocationUid,
-    senderName: podiumSenderName,
-    channel: podiumChannel,
-    channelIdentifier: podiumChannelIdentifier
+    senderName: podiumSenderName
   });
 }
 
@@ -787,8 +781,6 @@ function buildCoverageRequestPayload() {
   const email = selectors.coverageRequestEmail?.value.trim() || '';
   const locationUid = PODIUM_FORCED_LOCATION_UID;
   const senderName = selectors.coverageRequestSenderName?.value.trim() || appState.podiumSenderName || '';
-  const channel = PODIUM_FORCED_CHANNEL_TYPE;
-  const channelIdentifier = appState.podiumChannelIdentifier || '';
   const loanAmount = parseNumericInput(selectors.loanAmountInput?.value);
   const loanAmountLabel = Number.isFinite(loanAmount) ? currencyFormatterNoCents.format(loanAmount) : '';
   const loanAmountValue = Number.isFinite(loanAmount) ? loanAmount : null;
@@ -840,12 +832,6 @@ function buildCoverageRequestPayload() {
   if (senderName) {
     phraseParts.push(`Sender: ${senderName}`);
   }
-  if (channel) {
-    phraseParts.push(`Channel: ${channel}`);
-  }
-  if (channelIdentifier) {
-    phraseParts.push(`Channel identifier: ${channelIdentifier}`);
-  }
   const phrase = phraseParts.join(' | ') || 'Coverage request';
 
   return {
@@ -857,11 +843,6 @@ function buildCoverageRequestPayload() {
     member_email: email,
     podium_location_uid: locationUid || null,
     podium_sender_name: senderName || null,
-    channel,
-    channel_identifier: channelIdentifier || null,
-    channelIdentifier: channelIdentifier || null,
-    podium_channel: channel,
-    podium_channel_identifier: channelIdentifier || null,
     message: phrase,
     loan_amount: loanAmountValue,
     loan_amount_value: loanAmountValue,
@@ -1184,30 +1165,25 @@ async function loadCoverageRequests(creditUnionId) {
   }
 }
 
-function setPodiumDefaults({ locationUid, senderName, channel, channelIdentifier }) {
+function setPodiumDefaults({ locationUid, senderName }) {
   const normalizedLocation = typeof locationUid === 'string' ? locationUid.trim() : '';
   const normalizedSender = typeof senderName === 'string' ? senderName.trim() : '';
-  const normalizedChannel = typeof channel === 'string' && channel.trim() ? channel.trim().toLowerCase() : 'sms';
-  const normalizedChannelIdentifier =
-    typeof channelIdentifier === 'string' ? channelIdentifier.trim() : '';
   appState.podiumLocationUid = normalizedLocation;
   appState.podiumSenderName = normalizedSender;
-  appState.podiumChannel = normalizedChannel;
-  appState.podiumChannelIdentifier = normalizedChannelIdentifier;
+  appState.podiumChannel = PODIUM_FORCED_CHANNEL_TYPE;
+  appState.podiumChannelIdentifier = '';
   if (typeof window !== 'undefined') {
     window.PODIUM_LOCATION_UID = normalizedLocation;
     window.PODIUM_SENDER_NAME = normalizedSender;
-    window.PODIUM_CHANNEL = normalizedChannel;
-    window.PODIUM_CHANNEL_IDENTIFIER = normalizedChannelIdentifier;
+    window.PODIUM_CHANNEL = PODIUM_FORCED_CHANNEL_TYPE;
+    window.PODIUM_CHANNEL_IDENTIFIER = '';
   }
   if (selectors.coverageRequestSenderName && !selectors.coverageRequestSenderName.value) {
     selectors.coverageRequestSenderName.value = normalizedSender;
   }
   if (selectors.coverageRequestRoutingSummary) {
-    const channelLabel = normalizedChannel.toUpperCase();
-    const identifierLabel = normalizedChannelIdentifier || 'member phone';
     selectors.coverageRequestRoutingSummary.textContent =
-      `Podium routing is fixed for all requests (location UID ${PODIUM_FORCED_LOCATION_UID}, channel ${channelLabel}, identifier ${identifierLabel}).`;
+      `Podium routing is fixed for all requests (location UID ${PODIUM_FORCED_LOCATION_UID}, destination member phone).`;
   }
 }
 
@@ -1262,7 +1238,7 @@ function updateCoverageRequestAvailability({ preserveFeedback = false } = {}) {
     if (!isReady) {
       setFeedback(
         selectors.coverageRequestFeedback,
-        'Enter loan ID, member name, phone, and three complete quote options to send a coverage request. Podium routing (location/channel) is now assigned automatically by credit union account settings.',
+        'Enter loan ID, member name, phone, and three complete quote options to send a coverage request. Podium routing is now assigned automatically by credit union account settings.',
         'info'
       );
     } else {

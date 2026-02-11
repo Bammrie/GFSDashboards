@@ -1,3 +1,4 @@
+2026-02-11: Removed channel and channel_identifier fields from quote coverage-request payload generation/storage so Podium requests only use member phone destination data and avoid null channel metadata errors.
 2026-02-11: Adjusted Podium coverage-request message delivery payload construction so SMS sends omit the channel object and instead pass customerPhoneNumber, preventing channel enum/object coercion errors while preserving non-SMS channel payload support.
 2026-02-11: Updated forced Podium routing to use global locationUid e232a469-efc9-5c8f-be0f-c6ac8050927a with channel.type locked to sms for all dashboard coverage requests, and removed the manual location UID override input from the quote workspace UI.
 2026-02-11: Forced Podium coverage-request delivery payloads to always send channel.type as sms and locationUid as 8a7f0d1a-3c41-4b9f-9c9d-2e3b7f6a9123 to prevent invalid channel-type/location routing errors.
