@@ -316,23 +316,58 @@ function parsePodiumAccountRoutingByName() {
 
 const PODIUM_ACCOUNT_ROUTING_BY_NAME = parsePodiumAccountRoutingByName();
 
+function normalizePodiumAccountName(value) {
+  if (typeof value !== 'string') return '';
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function resolveDefaultPodiumRoute() {
+  const explicitDefaultKeys = ['__default', 'default', '*'];
+  for (const key of explicitDefaultKeys) {
+    const route = PODIUM_ACCOUNT_ROUTING_BY_NAME[key];
+    if (route) {
+      return route;
+    }
+  }
+
+  return (
+    Object.values(PODIUM_ACCOUNT_ROUTING_BY_NAME).find(
+      (route) => route?.locationUid || route?.senderName || route?.channelIdentifier
+    ) || null
+  );
+}
+
+const PODIUM_DEFAULT_ACCOUNT_ROUTE = resolveDefaultPodiumRoute();
+
 function resolvePodiumRoutingForCreditUnion(creditUnionName) {
   const normalizedName = typeof creditUnionName === 'string' ? creditUnionName.trim().toLowerCase() : '';
-  const accountRoute = normalizedName ? PODIUM_ACCOUNT_ROUTING_BY_NAME[normalizedName] : null;
+  const normalizedComparableName = normalizePodiumAccountName(creditUnionName);
+  let accountRoute = normalizedName ? PODIUM_ACCOUNT_ROUTING_BY_NAME[normalizedName] : null;
+
+  if (!accountRoute && normalizedComparableName) {
+    const matchedEntry = Object.entries(PODIUM_ACCOUNT_ROUTING_BY_NAME).find(([key]) => {
+      if (key === '__default' || key === 'default' || key === '*') return false;
+      return normalizePodiumAccountName(key) === normalizedComparableName;
+    });
+    accountRoute = matchedEntry ? matchedEntry[1] : null;
+  }
+
+  const fallbackRoute = PODIUM_DEFAULT_ACCOUNT_ROUTE;
   if (accountRoute) {
     return {
-      locationUid: accountRoute.locationUid || PODIUM_LOCATION_UID,
-      senderName: accountRoute.senderName || PODIUM_SENDER_NAME,
-      channel: accountRoute.channel || PODIUM_CHANNEL || 'sms',
-      channelIdentifier: accountRoute.channelIdentifier || PODIUM_CHANNEL_IDENTIFIER || ''
+      locationUid: accountRoute.locationUid || PODIUM_LOCATION_UID || fallbackRoute?.locationUid || '',
+      senderName: accountRoute.senderName || PODIUM_SENDER_NAME || fallbackRoute?.senderName || '',
+      channel: accountRoute.channel || PODIUM_CHANNEL || fallbackRoute?.channel || 'sms',
+      channelIdentifier:
+        accountRoute.channelIdentifier || PODIUM_CHANNEL_IDENTIFIER || fallbackRoute?.channelIdentifier || ''
     };
   }
 
   return {
-    locationUid: PODIUM_LOCATION_UID,
-    senderName: PODIUM_SENDER_NAME,
-    channel: PODIUM_CHANNEL || 'sms',
-    channelIdentifier: PODIUM_CHANNEL_IDENTIFIER || ''
+    locationUid: PODIUM_LOCATION_UID || fallbackRoute?.locationUid || '',
+    senderName: PODIUM_SENDER_NAME || fallbackRoute?.senderName || '',
+    channel: PODIUM_CHANNEL || fallbackRoute?.channel || 'sms',
+    channelIdentifier: PODIUM_CHANNEL_IDENTIFIER || fallbackRoute?.channelIdentifier || ''
   };
 }
 
