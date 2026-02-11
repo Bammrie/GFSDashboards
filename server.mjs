@@ -39,7 +39,7 @@ const PODIUM_SENDER_NAME = process.env.PODIUM_SENDER_NAME || '';
 const PODIUM_CHANNEL = process.env.PODIUM_CHANNEL || 'sms';
 const PODIUM_CHANNEL_IDENTIFIER = process.env.PODIUM_CHANNEL_IDENTIFIER || '';
 const PODIUM_FORCED_LOCATION_UID = 'e232a469-efc9-5c8f-be0f-c6ac8050927a';
-const PODIUM_FORCED_CHANNEL_TYPE = 'sms';
+const PODIUM_FORCED_CHANNEL_TYPE = 'phone';
 const PODIUM_ACCOUNT_ROUTING_JSON = process.env.PODIUM_ACCOUNT_ROUTING_JSON || '';
 const PODIUM_ACCOUNT_ROUTING_BY_ID_JSON = process.env.PODIUM_ACCOUNT_ROUTING_BY_ID_JSON || '';
 const PODIUM_ACCESS_TOKEN = process.env.PODIUM_ACCESS_TOKEN || '';
@@ -493,12 +493,6 @@ async function sendCoverageRequestToPodium(payload, creditUnion = null) {
     type: channelType,
     identifier: channelIdentifier
   };
-
-  if (channelType === 'sms') {
-    // Keep customerPhoneNumber aligned with SMS identifier for compatibility,
-    // while still sending the required channel object Podium validates.
-    podiumRequestBody.customerPhoneNumber = channelIdentifier;
-  }
 
   const response = await fetch('https://api.podium.com/v4/messages', {
     method: 'POST',

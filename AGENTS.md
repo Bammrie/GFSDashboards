@@ -438,3 +438,4 @@ quotes.
 2026-02-11: Hardened Podium routing fallback resolution so new/renamed credit unions still inherit a usable location UID/channel settings from default/env routing when exact name matching misses, preventing draft-only coverage requests due to missing location UIDs.
 
 2026-02-11: Added a checked-in .env.example snippet for PODIUM_ACCOUNT_ROUTING_JSON (__default + account-specific route) plus PODIUM_LOCATION_UID fallback so deployments can configure Podium routing without null location UID errors.
+2026-02-11: Updated Podium coverage-request outbound payload generation to send channel.type=phone and channel.identifier from member phone while removing SMS-only customerPhoneNumber injection, resolving /channel missing field validation errors on /v4/messages.
