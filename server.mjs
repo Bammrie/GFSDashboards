@@ -54,6 +54,7 @@ const PUBLIC_API_ROUTES = new Set([
   '/api/config',
   '/api/coverage-requests',
   '/api/coverage-requests/latest',
+  '/api/coverage-requests/sync-podium-replies',
   '/api/coverage-requests/summary',
   '/api/coverage-requests/response',
   '/api/credit-unions',
@@ -458,6 +459,181 @@ function resolvePodiumMessageBody(payload) {
     payload?.phrase ||
     ''
   );
+}
+
+
+function normalizePodiumCollection(payload) {
+  const data = payload?.data;
+  if (Array.isArray(data)) return data;
+  if (data && typeof data === 'object') return [data];
+  return [];
+}
+
+function normalizePodiumMessageText(raw) {
+  if (typeof raw === 'string') return raw.trim();
+  if (!raw || typeof raw !== 'object') return '';
+  const candidates = [raw.body, raw.message, raw.text, raw.content, raw.value, raw.smsBody, raw.sms_body];
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim()) return candidate.trim();
+  }
+  return '';
+}
+
+function extractPodiumReplyChoice(text) {
+  if (typeof text !== 'string' || !text.trim()) return null;
+  const normalized = text.trim();
+  const strict = normalized.match(/^([123])$/);
+  if (strict) return Number(strict[1]);
+  const relaxed = normalized.match(/(?:^|\D)([123])(?:\D|$)/);
+  if (!relaxed) return null;
+  return Number(relaxed[1]);
+}
+
+function extractPodiumMessageTimestamp(item) {
+  const raw = item?.createdAt || item?.sentAt || item?.timestamp || item?.updatedAt || null;
+  const date = raw ? new Date(raw) : null;
+  return Number.isFinite(date?.getTime()) ? date : null;
+}
+
+function isInboundPodiumMessage(item) {
+  const direction = typeof item?.direction === 'string' ? item.direction.toLowerCase() : '';
+  if (direction.includes('inbound') || direction.includes('incoming') || direction.includes('received')) return true;
+  if (direction.includes('outbound') || direction.includes('sent')) return false;
+
+  const sourceType =
+    typeof item?.sourceType === 'string'
+      ? item.sourceType.toLowerCase()
+      : typeof item?.authorType === 'string'
+        ? item.authorType.toLowerCase()
+        : '';
+
+  if (
+    sourceType.includes('customer') ||
+    sourceType.includes('contact') ||
+    sourceType.includes('consumer') ||
+    sourceType.includes('member')
+  ) {
+    return true;
+  }
+  if (sourceType.includes('user') || sourceType.includes('business') || sourceType.includes('agent')) {
+    return false;
+  }
+
+  return false;
+}
+
+function extractPodiumMessagesFromConversationPayload(payload) {
+  const data = payload?.data;
+  if (!data || typeof data !== 'object') return [];
+  const nestedCollections = [data.messages, data.items, data.events, data.timeline, data.timelineItems, data.entries];
+
+  for (const collection of nestedCollections) {
+    if (Array.isArray(collection)) return collection;
+  }
+
+  if (data.lastMessage && typeof data.lastMessage === 'object') {
+    return [data.lastMessage];
+  }
+
+  return [];
+}
+
+async function fetchPodiumConversationByUid({ accessToken, conversationUid }) {
+  if (!conversationUid) return null;
+  const response = await fetch(`https://api.podium.com/v4/conversations/${encodeURIComponent(conversationUid)}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(`Podium conversation lookup failed (${response.status}).`);
+    error.details = data || null;
+    error.statusCode = response.status;
+    throw error;
+  }
+  return data;
+}
+
+async function fetchPodiumConversationsByLocation({ accessToken, locationUid, limit = 50, cursor = null }) {
+  if (!locationUid) return { data: [], metadata: {} };
+  const params = new URLSearchParams({ locationUid, limit: String(Math.max(1, Math.min(100, Number(limit) || 50))) });
+  if (cursor) params.set('cursor', cursor);
+  const response = await fetch(`https://api.podium.com/v4/conversations?${params.toString()}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(`Podium conversations list failed (${response.status}).`);
+    error.details = data || null;
+    error.statusCode = response.status;
+    throw error;
+  }
+  return data;
+}
+
+
+function extractLatestInboundChoiceFromMessages(messages) {
+  if (!Array.isArray(messages) || !messages.length) return null;
+
+  const ranked = messages
+    .filter((item) => item && typeof item === 'object')
+    .map((item) => ({
+      item,
+      text: normalizePodiumMessageText(item),
+      timestamp: extractPodiumMessageTimestamp(item)
+    }))
+    .filter((entry) => isInboundPodiumMessage(entry.item) && entry.text)
+    .sort((a, b) => {
+      const aTime = a.timestamp ? a.timestamp.getTime() : 0;
+      const bTime = b.timestamp ? b.timestamp.getTime() : 0;
+      return bTime - aTime;
+    });
+
+  for (const entry of ranked) {
+    const choice = extractPodiumReplyChoice(entry.text);
+    if (choice) {
+      return {
+        choice,
+        text: entry.text,
+        respondedAt: entry.timestamp ? entry.timestamp.toISOString() : null,
+        source: 'conversation_messages'
+      };
+    }
+  }
+
+  return null;
+}
+
+function extractLatestInboundChoiceFromConversationPayload(payload) {
+  const messages = extractPodiumMessagesFromConversationPayload(payload);
+  const fromMessages = extractLatestInboundChoiceFromMessages(messages);
+  if (fromMessages) return fromMessages;
+
+  const possibleLastItems = [payload?.data?.lastMessage, payload?.data?.lastItem, payload?.data?.latestMessage];
+  for (const item of possibleLastItems) {
+    if (!item || typeof item !== 'object') continue;
+    if (!isInboundPodiumMessage(item)) continue;
+    const text = normalizePodiumMessageText(item);
+    const choice = extractPodiumReplyChoice(text);
+    if (choice) {
+      const timestamp = extractPodiumMessageTimestamp(item);
+      return {
+        choice,
+        text,
+        respondedAt: timestamp ? timestamp.toISOString() : null,
+        source: 'conversation_last_message'
+      };
+    }
+  }
+
+  return null;
 }
 
 async function sendCoverageRequestToPodium(payload, creditUnion = null) {
@@ -890,7 +1066,12 @@ const coverageRequestSchema = new mongoose.Schema(
     loanId: { type: Number, default: null },
     memberName: { type: String, trim: true, default: '' },
     memberChoice: { type: Number, default: null },
+    messageUid: { type: String, default: null },
+    conversationUid: { type: String, default: null },
+    podiumLocationUid: { type: String, default: null },
+    podiumChannelIdentifier: { type: String, default: null },
     responsePayload: { type: mongoose.Schema.Types.Mixed, default: {} },
+    podiumReplySyncedAt: { type: Date, default: null },
     sentAt: { type: Date, default: null },
     respondedAt: { type: Date, default: null }
   },
@@ -1077,7 +1258,9 @@ app.post('/api/coverage-requests', async (req, res, next) => {
       status: 'draft',
       payload: payloadWithId,
       loanId: Number.isFinite(Number(payload.loan_id)) ? Number(payload.loan_id) : null,
-      memberName: typeof payload.member_name === 'string' ? payload.member_name.trim() : ''
+      memberName: typeof payload.member_name === 'string' ? payload.member_name.trim() : '',
+      podiumLocationUid: PODIUM_FORCED_LOCATION_UID,
+      podiumChannelIdentifier: resolvePodiumChannelIdentifier(payloadWithId, routing) || null
     });
 
     let podiumResult = null;
@@ -1085,6 +1268,10 @@ app.post('/api/coverage-requests', async (req, res, next) => {
       podiumResult = await sendCoverageRequestToPodium(payloadWithId, creditUnion);
       created.status = 'awaiting_response';
       created.sentAt = new Date();
+      created.messageUid = podiumResult?.messageUid || null;
+      created.conversationUid = podiumResult?.conversationUid || null;
+      created.podiumLocationUid = podiumResult?.locationUid || created.podiumLocationUid || PODIUM_FORCED_LOCATION_UID;
+      created.podiumChannelIdentifier = podiumResult?.channel?.identifier || created.podiumChannelIdentifier || null;
       await created.save();
     } catch (error) {
       res.status(error?.statusCode || 502).json({
@@ -1151,6 +1338,7 @@ app.get('/api/coverage-requests', async (req, res, next) => {
         loanId: request.loanId ?? null,
         memberName: request.memberName ?? '',
         memberChoice: request.memberChoice ?? null,
+        conversationUid: request.conversationUid ?? null,
         sentAt: request.sentAt?.toISOString() ?? null,
         respondedAt: request.respondedAt?.toISOString() ?? null
       }))
@@ -1185,8 +1373,155 @@ app.get('/api/coverage-requests/latest', async (req, res, next) => {
       loanId: request.loanId ?? null,
       memberName: request.memberName ?? '',
       memberChoice: request.memberChoice ?? null,
+      conversationUid: request.conversationUid ?? null,
       sentAt: request.sentAt?.toISOString() ?? null,
       respondedAt: request.respondedAt?.toISOString() ?? null
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/coverage-requests/sync-podium-replies', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    const onlyRequestId = typeof req.body?.requestId === 'string' ? req.body.requestId.trim() : '';
+    const maxRequests = Math.max(1, Math.min(100, Number(req.body?.limit) || 25));
+
+    const query = { status: 'awaiting_response' };
+    if (creditUnionId) {
+      if (!mongoose.Types.ObjectId.isValid(creditUnionId)) {
+        res.status(400).json({ error: 'Valid credit union ID is required.' });
+        return;
+      }
+      query.creditUnion = creditUnionId;
+    }
+    if (onlyRequestId) {
+      query.requestId = onlyRequestId;
+    }
+
+    const pendingRequests = await CoverageRequest.find(query)
+      .sort({ sentAt: -1, createdAt: -1 })
+      .limit(maxRequests)
+      .lean();
+
+    if (!pendingRequests.length) {
+      res.json({ ok: true, checked: 0, updated: 0, updates: [] });
+      return;
+    }
+
+    const accessToken = await getPodiumAccessToken();
+    let locationConversations = null;
+    let locationConversationLookup = new Map();
+
+    const updates = [];
+
+    for (const pending of pendingRequests) {
+      let resolved = null;
+      let conversationPayload = null;
+
+      if (pending.conversationUid) {
+        try {
+          conversationPayload = await fetchPodiumConversationByUid({
+            accessToken,
+            conversationUid: pending.conversationUid
+          });
+          resolved = extractLatestInboundChoiceFromConversationPayload(conversationPayload);
+        } catch (error) {
+          console.warn('Unable to lookup Podium conversation for coverage request.', {
+            requestId: pending.requestId,
+            conversationUid: pending.conversationUid,
+            error: error?.message || 'unknown_error'
+          });
+        }
+      }
+
+      if (!resolved && pending.podiumLocationUid && pending.podiumChannelIdentifier) {
+        if (!locationConversations) {
+          try {
+            locationConversations = await fetchPodiumConversationsByLocation({
+              accessToken,
+              locationUid: pending.podiumLocationUid,
+              limit: 100
+            });
+            const collection = normalizePodiumCollection(locationConversations);
+            locationConversationLookup = new Map(
+              collection
+                .map((item) => {
+                  const key = `${item?.uid || ''}::${item?.channel?.identifier || ''}`;
+                  return [key, item];
+                })
+                .filter(([key]) => key !== '::')
+            );
+          } catch (error) {
+            console.warn('Unable to list Podium conversations for fallback lookup.', {
+              requestId: pending.requestId,
+              locationUid: pending.podiumLocationUid,
+              error: error?.message || 'unknown_error'
+            });
+          }
+        }
+
+        if (!resolved) {
+          for (const item of locationConversationLookup.values()) {
+            const isSameConversation = pending.conversationUid && item?.uid === pending.conversationUid;
+            const isSameChannel =
+              item?.channel?.identifier &&
+              pending.podiumChannelIdentifier &&
+              String(item.channel.identifier).trim() === String(pending.podiumChannelIdentifier).trim();
+            if (!isSameConversation && !isSameChannel) continue;
+            const payload = { data: item };
+            resolved = extractLatestInboundChoiceFromConversationPayload(payload);
+            if (resolved) {
+              conversationPayload = payload;
+              break;
+            }
+          }
+        }
+      }
+
+      if (!resolved) continue;
+
+      const updateDoc = await CoverageRequest.findByIdAndUpdate(
+        pending._id,
+        {
+          $set: {
+            status: 'response_received',
+            memberChoice: resolved.choice,
+            respondedAt: resolved.respondedAt ? new Date(resolved.respondedAt) : new Date(),
+            podiumReplySyncedAt: new Date(),
+            responsePayload: {
+              ...(pending.responsePayload && typeof pending.responsePayload === 'object' ? pending.responsePayload : {}),
+              source: 'podium_sync',
+              podiumReply: {
+                text: resolved.text,
+                choice: resolved.choice,
+                source: resolved.source,
+                syncedAt: new Date().toISOString()
+              },
+              podiumConversation: conversationPayload?.data || null
+            }
+          }
+        },
+        { new: true, lean: true }
+      );
+
+      if (updateDoc) {
+        updates.push({
+          requestId: updateDoc.requestId,
+          creditUnionId: updateDoc.creditUnion.toString(),
+          memberChoice: updateDoc.memberChoice ?? null,
+          status: updateDoc.status,
+          respondedAt: updateDoc.respondedAt?.toISOString() ?? null
+        });
+      }
+    }
+
+    res.json({
+      ok: true,
+      checked: pendingRequests.length,
+      updated: updates.length,
+      updates
     });
   } catch (error) {
     next(error);
@@ -1258,6 +1593,7 @@ app.post('/api/coverage-requests/response', async (req, res, next) => {
         loanId: request.loanId ?? null,
         memberName: request.memberName ?? '',
         memberChoice: request.memberChoice ?? null,
+        conversationUid: request.conversationUid ?? null,
         sentAt: request.sentAt?.toISOString() ?? null,
         respondedAt: request.respondedAt?.toISOString() ?? null
       }
