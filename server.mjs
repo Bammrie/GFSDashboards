@@ -489,15 +489,15 @@ async function sendCoverageRequestToPodium(payload, creditUnion = null) {
     senderName: payload?.podium_sender_name || payload?.sender_name || routing.senderName || PODIUM_SENDER_NAME || undefined
   };
 
+  podiumRequestBody.channel = {
+    type: channelType,
+    identifier: channelIdentifier
+  };
+
   if (channelType === 'sms') {
-    // Podium can infer SMS delivery from the destination number; omitting `channel`
-    // avoids invalid enum/object transformation errors seen in coverage requests.
+    // Keep customerPhoneNumber aligned with SMS identifier for compatibility,
+    // while still sending the required channel object Podium validates.
     podiumRequestBody.customerPhoneNumber = channelIdentifier;
-  } else {
-    podiumRequestBody.channel = {
-      type: channelType,
-      identifier: channelIdentifier
-    };
   }
 
   const response = await fetch('https://api.podium.com/v4/messages', {
