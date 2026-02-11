@@ -54,6 +54,7 @@ const CLASSIFICATIONS = ['account', 'prospect'];
 const COVERAGE_REQUEST_ENDPOINT = '/api/coverage-requests';
 const COVERAGE_REQUEST_SUMMARY_ENDPOINT = '/api/coverage-requests/summary';
 const COVERAGE_REQUEST_RESPONSE_ENDPOINT = '/api/coverage-requests/response';
+const COVERAGE_REQUEST_SYNC_ENDPOINT = '/api/coverage-requests/sync-podium-replies';
 const PODIUM_FORCED_LOCATION_UID = 'e232a469-efc9-5c8f-be0f-c6ac8050927a';
 const PODIUM_FORCED_CHANNEL_TYPE = 'sms';
 const COVERAGE_OPTION_LABELS = {
@@ -268,6 +269,7 @@ const selectors = {
   coverageRequestSenderName: document.getElementById('coverage-request-sender-name'),
   coverageRequestBtn: document.getElementById('coverage-request-btn'),
   coverageRequestFeedback: document.getElementById('coverage-request-feedback'),
+  coverageRequestSyncBtn: document.getElementById('coverage-request-sync-btn'),
   coverageRequestTechnicalDetails: document.getElementById('coverage-request-technical-details'),
   coverageRequestTechnicalContent: document.getElementById('coverage-request-technical-content'),
   coverageRequestWarning: document.getElementById('coverage-request-warning'),
@@ -1111,6 +1113,62 @@ async function loadCoverageRequestLatest(creditUnionId) {
     });
   } catch (error) {
     console.warn('Unable to load coverage request receipt.', error);
+  }
+}
+
+
+
+async function syncCoverageRequestPodiumReplies() {
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    setFeedback(selectors.coverageRequestFeedback, 'Select a credit union before syncing Podium replies.', 'error');
+    return;
+  }
+
+  const button = selectors.coverageRequestSyncBtn;
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Syncing...';
+  }
+
+  setFeedback(selectors.coverageRequestFeedback, 'Checking Podium for inbound member responses...', 'info');
+
+  try {
+    const payload = await request(COVERAGE_REQUEST_SYNC_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ creditUnionId, limit: 50 })
+    });
+
+    const updatedCount = Number(payload?.updated) || 0;
+    if (updatedCount > 0) {
+      setFeedback(
+        selectors.coverageRequestFeedback,
+        `Synced ${updatedCount} member response${updatedCount === 1 ? '' : 's'} from Podium.`,
+        'success'
+      );
+    } else {
+      setFeedback(selectors.coverageRequestFeedback, 'No new Podium replies were found for pending requests.', 'info');
+    }
+
+    appState.coverageRequestsLoadedFor = null;
+    appState.coverageRequestLatestLoadedFor = null;
+    await Promise.all([
+      loadCoverageRequests(creditUnionId),
+      loadCoverageRequestLatest(creditUnionId),
+      loadCoverageRequestSummary()
+    ]);
+  } catch (error) {
+    setFeedback(
+      selectors.coverageRequestFeedback,
+      error?.message || 'Unable to sync Podium replies right now.',
+      'error'
+    );
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Sync Podium Replies';
+    }
   }
 }
 
@@ -7493,6 +7551,10 @@ selectors.loanProtectionOptionsBtn?.addEventListener('click', () => {
 
 selectors.menuPricingSaveBtn?.addEventListener('click', () => {
   saveMenuPricingConfig();
+});
+
+selectors.coverageRequestSyncBtn?.addEventListener('click', async () => {
+  await syncCoverageRequestPodiumReplies();
 });
 
 selectors.coverageRequestBtn?.addEventListener('click', async () => {
