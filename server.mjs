@@ -292,13 +292,28 @@ async function getPodiumAccessToken({ allowRefresh = true } = {}) {
   return refreshed.accessToken || stored.accessToken;
 }
 
+function readFirstNonEmptyString(...values) {
+  for (const value of values) {
+    if (typeof value !== 'string') continue;
+    const trimmed = value.trim();
+    if (trimmed) {
+      return trimmed;
+    }
+  }
+  return '';
+}
+
 function normalizePodiumRouteConfig(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   return {
-    locationUid: typeof value.locationUid === 'string' ? value.locationUid.trim() : '',
-    senderName: typeof value.senderName === 'string' ? value.senderName.trim() : '',
-    channel: typeof value.channel === 'string' && value.channel.trim() ? value.channel.trim().toLowerCase() : 'sms',
-    channelIdentifier: typeof value.channelIdentifier === 'string' ? value.channelIdentifier.trim() : ''
+    locationUid: readFirstNonEmptyString(value.locationUid, value.location_uid, value.podium_location_uid),
+    senderName: readFirstNonEmptyString(value.senderName, value.sender_name, value.podium_sender_name),
+    channel: readFirstNonEmptyString(value.channel, value.podium_channel).toLowerCase() || 'sms',
+    channelIdentifier: readFirstNonEmptyString(
+      value.channelIdentifier,
+      value.channel_identifier,
+      value.podium_channel_identifier
+    )
   };
 }
 
@@ -320,13 +335,24 @@ function parsePodiumAccountRoutingByName() {
   }
 }
 
+function normalizePodiumRoutingId(value) {
+  if (typeof value !== 'string') return '';
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  const objectIdMatch = trimmed.match(/^ObjectId\((['"])?([a-fA-F0-9]{24})\1\)$/i);
+  if (objectIdMatch?.[2]) {
+    return objectIdMatch[2].toLowerCase();
+  }
+  return trimmed.toLowerCase();
+}
+
 function parsePodiumAccountRoutingById() {
   if (!PODIUM_ACCOUNT_ROUTING_BY_ID_JSON) return {};
   try {
     const parsed = JSON.parse(PODIUM_ACCOUNT_ROUTING_BY_ID_JSON);
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
     return Object.entries(parsed).reduce((acc, [id, value]) => {
-      const normalizedId = typeof id === 'string' ? id.trim() : '';
+      const normalizedId = normalizePodiumRoutingId(id);
       const route = normalizePodiumRouteConfig(value);
       if (!normalizedId || !route) return acc;
       acc[normalizedId] = route;
@@ -365,8 +391,9 @@ function resolveDefaultPodiumRoute() {
 const PODIUM_DEFAULT_ACCOUNT_ROUTE = resolveDefaultPodiumRoute();
 
 function resolvePodiumRoutingForCreditUnion(creditUnion = {}) {
-  const creditUnionId =
+  const creditUnionIdRaw =
     creditUnion?.id || creditUnion?._id?.toString?.() || creditUnion?._id || creditUnion?.creditUnionId || '';
+  const creditUnionId = normalizePodiumRoutingId(String(creditUnionIdRaw || ''));
   const creditUnionName = creditUnion?.name || creditUnion?.creditUnionName || '';
   const normalizedName = typeof creditUnionName === 'string' ? creditUnionName.trim().toLowerCase() : '';
   const normalizedComparableName = normalizePodiumAccountName(creditUnionName);
@@ -404,6 +431,7 @@ function resolvePodiumRoutingForCreditUnion(creditUnion = {}) {
 
   console.warn('Podium routing unresolved for credit union. Using default/environment fallback.', {
     attemptedIdKey: creditUnionId || null,
+    attemptedIdRaw: creditUnionIdRaw || null,
     attemptedNameKey: normalizedName || null,
     attemptedNormalizedNameKey: normalizedComparableName || null,
     matchedBy: matchedBy || null
