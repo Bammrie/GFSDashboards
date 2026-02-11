@@ -426,3 +426,5 @@ quotes.
 2029-02-15: Added coverage request IDs/status tracking with Zapier payload options, created coverage request summary counts, and updated the quotes UI to show outstanding requests plus a Change Account link.
 2026-01-31: Updated coverage request payload builder to read coverage combos from loan illustration outputs so coverage options remain populated after refactor.
 2029-02-24: Added a backend Podium OAuth callback alias at /oauth/podium/callback so the redirect no longer falls through to the SPA homepage and returns JSON for OAuth exchanges.
+
+2026-02-11: Hardened Podium routing fallback resolution so new/renamed credit unions still inherit a usable location UID/channel settings from default/env routing when exact name matching misses, preventing draft-only coverage requests due to missing location UIDs.
