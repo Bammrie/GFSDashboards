@@ -494,22 +494,31 @@ async function sendCoverageRequestToPodium(payload, creditUnion = null) {
   }
 
   const accessToken = await getPodiumAccessToken();
+  const podiumRequestBody = {
+    body,
+    locationUid,
+    contactName: payload?.member_name || payload?.memberName || '',
+    senderName: payload?.podium_sender_name || payload?.sender_name || routing.senderName || PODIUM_SENDER_NAME || undefined
+  };
+
+  if (channelType === 'sms') {
+    // Podium can infer SMS delivery from the destination number; omitting `channel`
+    // avoids invalid enum/object transformation errors seen in coverage requests.
+    podiumRequestBody.customerPhoneNumber = channelIdentifier;
+  } else {
+    podiumRequestBody.channel = {
+      type: channelType,
+      identifier: channelIdentifier
+    };
+  }
+
   const response = await fetch('https://api.podium.com/v4/messages', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      body,
-      channel: {
-        type: channelType,
-        identifier: channelIdentifier
-      },
-      locationUid,
-      contactName: payload?.member_name || payload?.memberName || '',
-      senderName: payload?.podium_sender_name || payload?.sender_name || routing.senderName || PODIUM_SENDER_NAME || undefined
-    })
+    body: JSON.stringify(podiumRequestBody)
   });
 
   const data = await response.json().catch(() => ({}));
