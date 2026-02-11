@@ -39,6 +39,7 @@ const PODIUM_SENDER_NAME = process.env.PODIUM_SENDER_NAME || '';
 const PODIUM_CHANNEL = process.env.PODIUM_CHANNEL || 'sms';
 const PODIUM_CHANNEL_IDENTIFIER = process.env.PODIUM_CHANNEL_IDENTIFIER || '';
 const PODIUM_ACCOUNT_ROUTING_JSON = process.env.PODIUM_ACCOUNT_ROUTING_JSON || '';
+const PODIUM_ACCOUNT_ROUTING_BY_ID_JSON = process.env.PODIUM_ACCOUNT_ROUTING_BY_ID_JSON || '';
 const PODIUM_ACCESS_TOKEN = process.env.PODIUM_ACCESS_TOKEN || '';
 const PODIUM_REFRESH_TOKEN = process.env.PODIUM_REFRESH_TOKEN || '';
 const PODIUM_TOKEN_TYPE = process.env.PODIUM_TOKEN_TYPE || '';
@@ -291,6 +292,16 @@ async function getPodiumAccessToken({ allowRefresh = true } = {}) {
   return refreshed.accessToken || stored.accessToken;
 }
 
+function normalizePodiumRouteConfig(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  return {
+    locationUid: typeof value.locationUid === 'string' ? value.locationUid.trim() : '',
+    senderName: typeof value.senderName === 'string' ? value.senderName.trim() : '',
+    channel: typeof value.channel === 'string' && value.channel.trim() ? value.channel.trim().toLowerCase() : 'sms',
+    channelIdentifier: typeof value.channelIdentifier === 'string' ? value.channelIdentifier.trim() : ''
+  };
+}
+
 function parsePodiumAccountRoutingByName() {
   if (!PODIUM_ACCOUNT_ROUTING_JSON) return {};
   try {
@@ -298,14 +309,9 @@ function parsePodiumAccountRoutingByName() {
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
     return Object.entries(parsed).reduce((acc, [name, value]) => {
       const normalizedName = typeof name === 'string' ? name.trim().toLowerCase() : '';
-      if (!normalizedName || !value || typeof value !== 'object' || Array.isArray(value)) return acc;
-      acc[normalizedName] = {
-        locationUid: typeof value.locationUid === 'string' ? value.locationUid.trim() : '',
-        senderName: typeof value.senderName === 'string' ? value.senderName.trim() : '',
-        channel: typeof value.channel === 'string' && value.channel.trim() ? value.channel.trim().toLowerCase() : 'sms',
-        channelIdentifier:
-          typeof value.channelIdentifier === 'string' ? value.channelIdentifier.trim() : ''
-      };
+      const route = normalizePodiumRouteConfig(value);
+      if (!normalizedName || !route) return acc;
+      acc[normalizedName] = route;
       return acc;
     }, {});
   } catch (error) {
@@ -314,7 +320,26 @@ function parsePodiumAccountRoutingByName() {
   }
 }
 
+function parsePodiumAccountRoutingById() {
+  if (!PODIUM_ACCOUNT_ROUTING_BY_ID_JSON) return {};
+  try {
+    const parsed = JSON.parse(PODIUM_ACCOUNT_ROUTING_BY_ID_JSON);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    return Object.entries(parsed).reduce((acc, [id, value]) => {
+      const normalizedId = typeof id === 'string' ? id.trim() : '';
+      const route = normalizePodiumRouteConfig(value);
+      if (!normalizedId || !route) return acc;
+      acc[normalizedId] = route;
+      return acc;
+    }, {});
+  } catch (error) {
+    console.warn('Unable to parse PODIUM_ACCOUNT_ROUTING_BY_ID_JSON. Falling back to name/default routing.', error);
+    return {};
+  }
+}
+
 const PODIUM_ACCOUNT_ROUTING_BY_NAME = parsePodiumAccountRoutingByName();
+const PODIUM_ACCOUNT_ROUTING_BY_ID = parsePodiumAccountRoutingById();
 
 function normalizePodiumAccountName(value) {
   if (typeof value !== 'string') return '';
@@ -339,10 +364,21 @@ function resolveDefaultPodiumRoute() {
 
 const PODIUM_DEFAULT_ACCOUNT_ROUTE = resolveDefaultPodiumRoute();
 
-function resolvePodiumRoutingForCreditUnion(creditUnionName) {
+function resolvePodiumRoutingForCreditUnion(creditUnion = {}) {
+  const creditUnionId =
+    creditUnion?.id || creditUnion?._id?.toString?.() || creditUnion?._id || creditUnion?.creditUnionId || '';
+  const creditUnionName = creditUnion?.name || creditUnion?.creditUnionName || '';
   const normalizedName = typeof creditUnionName === 'string' ? creditUnionName.trim().toLowerCase() : '';
   const normalizedComparableName = normalizePodiumAccountName(creditUnionName);
-  let accountRoute = normalizedName ? PODIUM_ACCOUNT_ROUTING_BY_NAME[normalizedName] : null;
+  let accountRoute = creditUnionId ? PODIUM_ACCOUNT_ROUTING_BY_ID[creditUnionId] : null;
+  let matchedBy = accountRoute ? `id:${creditUnionId}` : '';
+
+  if (!accountRoute && normalizedName) {
+    accountRoute = PODIUM_ACCOUNT_ROUTING_BY_NAME[normalizedName] || null;
+    if (accountRoute) {
+      matchedBy = `name:${normalizedName}`;
+    }
+  }
 
   if (!accountRoute && normalizedComparableName) {
     const matchedEntry = Object.entries(PODIUM_ACCOUNT_ROUTING_BY_NAME).find(([key]) => {
@@ -350,6 +386,9 @@ function resolvePodiumRoutingForCreditUnion(creditUnionName) {
       return normalizePodiumAccountName(key) === normalizedComparableName;
     });
     accountRoute = matchedEntry ? matchedEntry[1] : null;
+    if (accountRoute) {
+      matchedBy = `normalized-name:${normalizedComparableName}`;
+    }
   }
 
   const fallbackRoute = PODIUM_DEFAULT_ACCOUNT_ROUTE;
@@ -362,6 +401,13 @@ function resolvePodiumRoutingForCreditUnion(creditUnionName) {
         accountRoute.channelIdentifier || PODIUM_CHANNEL_IDENTIFIER || fallbackRoute?.channelIdentifier || ''
     };
   }
+
+  console.warn('Podium routing unresolved for credit union. Using default/environment fallback.', {
+    attemptedIdKey: creditUnionId || null,
+    attemptedNameKey: normalizedName || null,
+    attemptedNormalizedNameKey: normalizedComparableName || null,
+    matchedBy: matchedBy || null
+  });
 
   return {
     locationUid: PODIUM_LOCATION_UID || fallbackRoute?.locationUid || '',
@@ -397,7 +443,10 @@ function resolvePodiumMessageBody(payload) {
 }
 
 async function sendCoverageRequestToPodium(payload, creditUnion = null) {
-  const routing = resolvePodiumRoutingForCreditUnion(creditUnion?.name || payload?.credit_union_name || '');
+  const routing = resolvePodiumRoutingForCreditUnion({
+    _id: creditUnion?._id || payload?.credit_union_id || payload?.creditUnionId || null,
+    name: creditUnion?.name || payload?.credit_union_name || ''
+  });
   const locationUid = payload?.podium_location_uid || payload?.location_uid || routing.locationUid || PODIUM_LOCATION_UID;
   if (!locationUid) {
     const error = new Error('Podium location UID is not configured.');
@@ -985,7 +1034,10 @@ app.post('/api/coverage-requests', async (req, res, next) => {
       return;
     }
 
-    const routing = resolvePodiumRoutingForCreditUnion(creditUnion.name);
+    const routing = resolvePodiumRoutingForCreditUnion({
+      _id: creditUnion._id,
+      name: creditUnion.name
+    });
     const requestId = randomUUID();
     const payloadWithId = {
       ...payload,
