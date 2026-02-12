@@ -496,9 +496,16 @@ function extractPodiumMessageTimestamp(item) {
 }
 
 function isInboundPodiumMessage(item) {
+  if (item?.isInbound === true || item?.inbound === true || item?.incoming === true) return true;
+  if (item?.isOutbound === true || item?.outbound === true) return false;
+
   const direction = typeof item?.direction === 'string' ? item.direction.toLowerCase() : '';
   if (direction.includes('inbound') || direction.includes('incoming') || direction.includes('received')) return true;
   if (direction.includes('outbound') || direction.includes('sent')) return false;
+
+  const type = typeof item?.type === 'string' ? item.type.toLowerCase() : '';
+  if (type.includes('inbound') || type.includes('incoming') || type.includes('received')) return true;
+  if (type.includes('outbound') || type.includes('sent')) return false;
 
   const sourceType =
     typeof item?.sourceType === 'string'
@@ -516,6 +523,25 @@ function isInboundPodiumMessage(item) {
     return true;
   }
   if (sourceType.includes('user') || sourceType.includes('business') || sourceType.includes('agent')) {
+    return false;
+  }
+
+  const senderType =
+    typeof item?.senderType === 'string'
+      ? item.senderType.toLowerCase()
+      : typeof item?.from?.type === 'string'
+        ? item.from.type.toLowerCase()
+        : '';
+
+  if (
+    senderType.includes('customer') ||
+    senderType.includes('contact') ||
+    senderType.includes('consumer') ||
+    senderType.includes('member')
+  ) {
+    return true;
+  }
+  if (senderType.includes('user') || senderType.includes('business') || senderType.includes('agent')) {
     return false;
   }
 
@@ -1438,6 +1464,7 @@ app.post('/api/coverage-requests/sync-podium-replies', async (req, res, next) =>
     const accessToken = await getPodiumAccessToken();
     let locationConversations = null;
     let locationConversationLookup = new Map();
+    const conversationPayloadByUid = new Map();
 
     const updates = [];
 
@@ -1497,7 +1524,35 @@ app.post('/api/coverage-requests/sync-podium-replies', async (req, res, next) =>
             if (!isSameConversation && !isSameChannel) continue;
             const payload = { data: item };
             resolved = extractLatestInboundChoiceFromConversationPayload(payload);
-            if (resolved) {
+            if (!resolved && item?.uid) {
+              const cachedPayload = conversationPayloadByUid.get(item.uid);
+              if (cachedPayload) {
+                resolved = extractLatestInboundChoiceFromConversationPayload(cachedPayload);
+                if (resolved) {
+                  conversationPayload = cachedPayload;
+                  break;
+                }
+              } else {
+                try {
+                  const fetchedPayload = await fetchPodiumConversationByUid({
+                    accessToken,
+                    conversationUid: item.uid
+                  });
+                  conversationPayloadByUid.set(item.uid, fetchedPayload);
+                  resolved = extractLatestInboundChoiceFromConversationPayload(fetchedPayload);
+                  if (resolved) {
+                    conversationPayload = fetchedPayload;
+                    break;
+                  }
+                } catch (error) {
+                  console.warn('Unable to fetch Podium conversation during fallback sync.', {
+                    requestId: pending.requestId,
+                    conversationUid: item.uid,
+                    error: error?.message || 'unknown_error'
+                  });
+                }
+              }
+            } else if (resolved) {
               conversationPayload = payload;
               break;
             }

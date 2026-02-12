@@ -442,3 +442,5 @@ quotes.
 2026-02-11: Updated Podium coverage-request outbound payload generation to send channel.type=phone and channel.identifier from member phone while removing SMS-only customerPhoneNumber injection, resolving /channel missing field validation errors on /v4/messages.
 
 2026-02-12: Updated coverage-request tracking to preserve selected credit union across quote/request pages, rewrote outgoing Podium coverage SMS copy to explicitly prompt replies 1/2/3 with loan amount + option terms/payments/products, and added response handling so non-1/2/3 inbound replies are stored/displayed as 'Check Podium' in the Requests & Sales Register.
+
+2026-02-12: Hardened Podium reply sync matching by recognizing additional inbound message metadata fields (isInbound/type/senderType) and deep-fetching fallback conversations by UID when list payloads omit message timelines, fixing missed member 1/2/3 replies during Sync Podium Replies.
