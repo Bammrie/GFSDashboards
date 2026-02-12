@@ -18,7 +18,7 @@
   </header>
 
   <main class="layout layout--account">
-    <p class="back-link"><a href="quotes.html">&larr; Back to Quotes directory</a></p>
+    <p class="back-link"><a href="quotes.html" data-credit-union-link="true">&larr; Back to Quotes directory</a></p>
 
     <section class="panel panel--full" aria-labelledby="quote-select-heading">
       <header class="panel__header panel__header--split">
@@ -29,9 +29,9 @@
           </p>
         </div>
         <div class="panel__actions">
-          <a class="panel-link" href="quotes.html">Change Account</a>
-          <a class="panel-link" href="quotes-requests.html">Requests & Sales Register</a>
-          <a class="panel-link" href="quotes-loan-tools.html">Loan tools</a>
+          <a class="panel-link" href="quotes.html" data-credit-union-link="true">Change Account</a>
+          <a class="panel-link" href="quotes-requests.html" data-credit-union-link="true">Requests & Sales Register</a>
+          <a class="panel-link" href="quotes-loan-tools.html" data-credit-union-link="true">Loan tools</a>
           <button type="button" class="secondary-button" id="open-menu-pricing-btn">Menu Pricing</button>
         </div>
       </header>
@@ -80,7 +80,7 @@
             <p class="field-label">Send coverage request (Baycel Federal Credit Union)</p>
             <p class="field-help">
               Capture the loan ID and member contact details, then send the menu options directly through Podium.
-              Member replies with 0-6 to confirm coverage, and you can override it in the sales register if needed.
+              Member replies with 1, 2, or 3 to confirm coverage. Any other response should be reviewed in Podium and tracked as Check Podium.
             </p>
             <div class="loan-officer-fields">
               <div class="field-group">

@@ -440,3 +440,5 @@ quotes.
 
 2026-02-11: Added a checked-in .env.example snippet for PODIUM_ACCOUNT_ROUTING_JSON (__default + account-specific route) plus PODIUM_LOCATION_UID fallback so deployments can configure Podium routing without null location UID errors.
 2026-02-11: Updated Podium coverage-request outbound payload generation to send channel.type=phone and channel.identifier from member phone while removing SMS-only customerPhoneNumber injection, resolving /channel missing field validation errors on /v4/messages.
+
+2026-02-12: Updated coverage-request tracking to preserve selected credit union across quote/request pages, rewrote outgoing Podium coverage SMS copy to explicitly prompt replies 1/2/3 with loan amount + option terms/payments/products, and added response handling so non-1/2/3 inbound replies are stored/displayed as 'Check Podium' in the Requests & Sales Register.

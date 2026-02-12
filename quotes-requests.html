@@ -20,8 +20,8 @@
   </header>
 
   <main class="layout layout--account">
-    <p class="back-link"><a href="quotes-workspace.html">&larr; Back to Quote workspace</a></p>
-    <p class="back-link"><a href="quotes.html">&larr; Back to Quotes directory</a></p>
+    <p class="back-link"><a href="quotes-workspace.html" data-credit-union-link="true">&larr; Back to Quote workspace</a></p>
+    <p class="back-link"><a href="quotes.html" data-credit-union-link="true">&larr; Back to Quotes directory</a></p>
 
     <section class="panel panel--full" aria-labelledby="request-tracker-heading">
       <header class="panel__header panel__header--split">
@@ -32,9 +32,9 @@
           </p>
         </div>
         <div class="panel__actions">
-          <a class="panel-link" href="quotes-workspace.html">Coverage requests</a>
-          <a class="panel-link" href="quotes-loan-tools.html">Loan tools</a>
-          <a class="panel-link" href="quotes.html">Change Account</a>
+          <a class="panel-link" href="quotes-workspace.html" data-credit-union-link="true">Coverage requests</a>
+          <a class="panel-link" href="quotes-loan-tools.html" data-credit-union-link="true">Loan tools</a>
+          <a class="panel-link" href="quotes.html" data-credit-union-link="true">Change Account</a>
         </div>
       </header>
       <p id="quote-workspace-summary" class="panel__note">Select a credit union to review coverage requests.</p>
@@ -140,13 +140,10 @@
             <label for="loan-log-response-code">Member response</label>
             <select id="loan-log-response-code">
               <option value="" selected>Not received</option>
-              <option value="0">0 - No coverage</option>
               <option value="1">1 - Option 1</option>
               <option value="2">2 - Option 2</option>
               <option value="3">3 - Option 3</option>
-              <option value="4">4 - Option 4</option>
-              <option value="5">5 - Option 5</option>
-              <option value="6">6 - Option 6</option>
+              <option value="check_podium">Check Podium</option>
             </select>
           </div>
           <div class="field-group">

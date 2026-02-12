@@ -603,9 +603,21 @@ function extractLatestInboundChoiceFromMessages(messages) {
         choice,
         text: entry.text,
         respondedAt: entry.timestamp ? entry.timestamp.toISOString() : null,
-        source: 'conversation_messages'
+        source: 'conversation_messages',
+        needsPodiumCheck: false
       };
     }
+  }
+
+  const latestInbound = ranked[0];
+  if (latestInbound) {
+    return {
+      choice: null,
+      text: latestInbound.text,
+      respondedAt: latestInbound.timestamp ? latestInbound.timestamp.toISOString() : null,
+      source: 'conversation_messages',
+      needsPodiumCheck: true
+    };
   }
 
   return null;
@@ -622,13 +634,23 @@ function extractLatestInboundChoiceFromConversationPayload(payload) {
     if (!isInboundPodiumMessage(item)) continue;
     const text = normalizePodiumMessageText(item);
     const choice = extractPodiumReplyChoice(text);
+    const timestamp = extractPodiumMessageTimestamp(item);
     if (choice) {
-      const timestamp = extractPodiumMessageTimestamp(item);
       return {
         choice,
         text,
         respondedAt: timestamp ? timestamp.toISOString() : null,
-        source: 'conversation_last_message'
+        source: 'conversation_last_message',
+        needsPodiumCheck: false
+      };
+    }
+    if (text) {
+      return {
+        choice: null,
+        text,
+        respondedAt: timestamp ? timestamp.toISOString() : null,
+        source: 'conversation_last_message',
+        needsPodiumCheck: true
       };
     }
   }
@@ -1066,6 +1088,7 @@ const coverageRequestSchema = new mongoose.Schema(
     loanId: { type: Number, default: null },
     memberName: { type: String, trim: true, default: '' },
     memberChoice: { type: Number, default: null },
+    responseNeedsPodiumCheck: { type: Boolean, default: false },
     messageUid: { type: String, default: null },
     conversationUid: { type: String, default: null },
     podiumLocationUid: { type: String, default: null },
@@ -1338,6 +1361,7 @@ app.get('/api/coverage-requests', async (req, res, next) => {
         loanId: request.loanId ?? null,
         memberName: request.memberName ?? '',
         memberChoice: request.memberChoice ?? null,
+        responseNeedsPodiumCheck: Boolean(request.responseNeedsPodiumCheck),
         conversationUid: request.conversationUid ?? null,
         sentAt: request.sentAt?.toISOString() ?? null,
         respondedAt: request.respondedAt?.toISOString() ?? null
@@ -1373,6 +1397,7 @@ app.get('/api/coverage-requests/latest', async (req, res, next) => {
       loanId: request.loanId ?? null,
       memberName: request.memberName ?? '',
       memberChoice: request.memberChoice ?? null,
+      responseNeedsPodiumCheck: Boolean(request.responseNeedsPodiumCheck),
       conversationUid: request.conversationUid ?? null,
       sentAt: request.sentAt?.toISOString() ?? null,
       respondedAt: request.respondedAt?.toISOString() ?? null
@@ -1488,6 +1513,7 @@ app.post('/api/coverage-requests/sync-podium-replies', async (req, res, next) =>
           $set: {
             status: 'response_received',
             memberChoice: resolved.choice,
+            responseNeedsPodiumCheck: Boolean(resolved.needsPodiumCheck),
             respondedAt: resolved.respondedAt ? new Date(resolved.respondedAt) : new Date(),
             podiumReplySyncedAt: new Date(),
             responsePayload: {
@@ -1511,6 +1537,7 @@ app.post('/api/coverage-requests/sync-podium-replies', async (req, res, next) =>
           requestId: updateDoc.requestId,
           creditUnionId: updateDoc.creditUnion.toString(),
           memberChoice: updateDoc.memberChoice ?? null,
+          responseNeedsPodiumCheck: Boolean(updateDoc.responseNeedsPodiumCheck),
           status: updateDoc.status,
           respondedAt: updateDoc.respondedAt?.toISOString() ?? null
         });
@@ -1565,7 +1592,10 @@ app.get('/api/coverage-requests/summary', async (req, res, next) => {
 app.post('/api/coverage-requests/response', async (req, res, next) => {
   try {
     const requestId = typeof req.body?.quote_request_id === 'string' ? req.body.quote_request_id.trim() : '';
-    const choice = Number.isFinite(Number(req.body?.member_choice)) ? Number(req.body.member_choice) : null;
+    const requestedChoice = Number.isFinite(Number(req.body?.member_choice)) ? Number(req.body.member_choice) : null;
+    const choice = requestedChoice === 1 || requestedChoice === 2 || requestedChoice === 3 ? requestedChoice : null;
+    const needsPodiumCheck =
+      Boolean(req.body?.response_needs_podium_check) || (requestedChoice !== null && choice === null) || choice === null;
 
     if (!requestId) {
       res.status(400).json({ error: 'Quote request ID is required.' });
@@ -1579,7 +1609,8 @@ app.post('/api/coverage-requests/response', async (req, res, next) => {
     }
 
     request.status = 'response_received';
-    request.memberChoice = choice;
+    request.memberChoice = needsPodiumCheck ? null : choice;
+    request.responseNeedsPodiumCheck = needsPodiumCheck;
     request.responsePayload = req.body || {};
     request.respondedAt = new Date();
     await request.save();
@@ -1593,6 +1624,7 @@ app.post('/api/coverage-requests/response', async (req, res, next) => {
         loanId: request.loanId ?? null,
         memberName: request.memberName ?? '',
         memberChoice: request.memberChoice ?? null,
+        responseNeedsPodiumCheck: Boolean(request.responseNeedsPodiumCheck),
         conversationUid: request.conversationUid ?? null,
         sentAt: request.sentAt?.toISOString() ?? null,
         respondedAt: request.respondedAt?.toISOString() ?? null

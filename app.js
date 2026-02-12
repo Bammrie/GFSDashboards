@@ -803,38 +803,25 @@ function buildCoverageRequestPayload() {
   const coverageSummary = appState.loanIllustrationDraft?.selections
     ? formatLoanIllustrationCoverageSummary(appState.loanIllustrationDraft.selections)
     : '';
-  const phraseParts = [];
-  if (Number.isFinite(loanId)) {
-    phraseParts.push(`Loan ID: ${loanId}`);
-  }
-  if (memberName) {
-    phraseParts.push(`Member: ${memberName}`);
-  }
-  if (phoneNumber) {
-    phraseParts.push(`Phone: ${phoneNumber}`);
-  }
-  if (email) {
-    phraseParts.push(`Email: ${email}`);
-  }
-  if (loanAmountLabel) {
-    phraseParts.push(`Loan amount: ${loanAmountLabel}`);
-  }
-  if (coverageOptionsText) {
-    phraseParts.push(`Coverage options: ${coverageOptionsText}`);
-  }
-  if (coverageSummary) {
-    phraseParts.push(`Summary: ${coverageSummary}`);
-  }
-  if (creditUnionName) {
-    phraseParts.push(`Credit union: ${creditUnionName}`);
-  }
-  if (locationUid) {
-    phraseParts.push(`Podium location: ${locationUid}`);
-  }
-  if (senderName) {
-    phraseParts.push(`Sender: ${senderName}`);
-  }
-  const phrase = phraseParts.join(' | ') || 'Coverage request';
+  const optionLines = quoteOptions.slice(0, 3).map((option, index) => {
+    const paymentLabel = Number.isFinite(option.monthly_payment)
+      ? formatCurrencyValue(option.monthly_payment)
+      : 'payment TBD';
+    const termLabel = Number.isFinite(option.term_months) ? `${option.term_months} months` : 'term TBD';
+    const productLabel = Array.isArray(option.products) && option.products.length
+      ? option.products.join(' and ')
+      : 'the listed coverage';
+    return `Reply with ${index + 1} for a ${paymentLabel} monthly payment over ${termLabel} with ${productLabel}.`;
+  });
+  const phrase = [
+    `Congrats on your new loan approval for ${loanAmountLabel || 'your approved amount'}!`,
+    '',
+    'We’re preparing your loan documents and need you to choose how you would like to repay. You have qualified for term extensions within our lending guidelines and have the following options:',
+    '',
+    ...optionLines,
+    '',
+    'Please reply with 1, 2, or 3 so we can finalize your documents.'
+  ].join('\n');
 
   return {
     credit_union_id: creditUnionId,
@@ -936,9 +923,10 @@ function renderCoverageRequestReceipt() {
   const requestLabel = receipt.requestId ? `Request ${receipt.requestId}` : 'Request ID unavailable';
   const loanLabel = receipt.loanId ? `Loan ${receipt.loanId}` : 'Loan ID unavailable';
   const memberLabel = receipt.memberName ? receipt.memberName : 'Member name unavailable';
-  const choiceLabel =
-    Number.isFinite(receipt.memberChoice) && receipt.memberChoice !== null
-      ? `Member choice ${receipt.memberChoice}`
+  const choiceLabel = Number.isFinite(receipt.memberChoice) && receipt.memberChoice !== null
+    ? `Member choice ${receipt.memberChoice}`
+    : receipt.responseNeedsPodiumCheck
+      ? 'Member response: Check Podium'
       : null;
   details.textContent = ` • ${requestLabel} • ${loanLabel} • ${memberLabel}${
     choiceLabel ? ` • ${choiceLabel}` : ''
@@ -960,12 +948,17 @@ function createCoverageRequestResponseSelect(request) {
   select.className = 'coverage-response-select';
   select.dataset.requestId = request.requestId || '';
 
-  const selectedValue = Number.isFinite(request.memberChoice) ? String(request.memberChoice) : '';
+  const selectedValue = Number.isFinite(request.memberChoice)
+    ? String(request.memberChoice)
+    : request.responseNeedsPodiumCheck
+      ? 'check_podium'
+      : '';
   select.append(createOption('', 'Not received', false, selectedValue === ''));
-  for (let choice = 0; choice <= 6; choice += 1) {
-    const label = choice === 0 ? '0 - No coverage' : `${choice} - Option ${choice}`;
+  for (let choice = 1; choice <= 3; choice += 1) {
+    const label = `${choice} - Option ${choice}`;
     select.append(createOption(String(choice), label, false, selectedValue === String(choice)));
   }
+  select.append(createOption('check_podium', 'Check Podium', false, selectedValue === 'check_podium'));
 
   return select;
 }
@@ -2475,7 +2468,10 @@ function buildLoanPayload() {
   const selectedPackage =
     document.querySelector('input[name="mob-debt-package"]:checked')?.value || 'none';
   const memberResponseCodeValue = selectors.loanLogResponseCodeSelect?.value ?? '';
-  const memberResponseCode = memberResponseCodeValue === '' ? null : Number(memberResponseCodeValue);
+  const memberResponseCode =
+    memberResponseCodeValue === '' || memberResponseCodeValue === 'check_podium'
+      ? null
+      : Number(memberResponseCodeValue);
 
   return {
     creditUnionId,
@@ -4386,6 +4382,7 @@ function renderQuotesWorkspace() {
   const hasCreditUnions = appState.creditUnions.length > 0;
 
   if (!creditUnionId) {
+    updateQuoteNavigationLinks(null);
     if (summary) {
       summary.textContent = hasCreditUnions
         ? 'Select a credit union to start a quote.'
@@ -4400,6 +4397,7 @@ function renderQuotesWorkspace() {
   }
 
   const creditUnionName = getCreditUnionNameById(creditUnionId) || 'Selected credit union';
+  updateQuoteNavigationLinks(creditUnionId);
   if (summary) {
     summary.textContent = `Showing quotes for ${creditUnionName}.`;
   }
@@ -4409,6 +4407,26 @@ function renderQuotesWorkspace() {
   renderLoanOfficerCalculator();
   renderLoanIllustrationHistory();
   renderLoanLog();
+}
+
+function updateQuoteNavigationLinks(creditUnionId) {
+  const links = document.querySelectorAll('a[data-credit-union-link="true"]');
+  links.forEach((link) => {
+    const baseHref = link.dataset.baseHref || link.getAttribute('href') || '';
+    if (!baseHref) return;
+    if (!link.dataset.baseHref) {
+      link.dataset.baseHref = baseHref;
+    }
+    const [path, queryString = ''] = baseHref.split('?');
+    const params = new URLSearchParams(queryString);
+    if (creditUnionId) {
+      params.set('creditUnionId', creditUnionId);
+    } else {
+      params.delete('creditUnionId');
+    }
+    const nextQuery = params.toString();
+    link.setAttribute('href', nextQuery ? `${path}?${nextQuery}` : path);
+  });
 }
 
 function setCallReportFeedback(message, state = 'info') {
@@ -8121,7 +8139,8 @@ selectors.coverageRequestList?.addEventListener('click', async (event) => {
       method: 'POST',
       body: JSON.stringify({
         quote_request_id: requestId,
-        member_choice: Number(selectedValue)
+        member_choice: selectedValue === 'check_podium' ? null : Number(selectedValue),
+        response_needs_podium_check: selectedValue === 'check_podium'
       })
     });
     setFeedback(selectors.coverageRequestFeedback, 'Member response updated.', 'success');
