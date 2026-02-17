@@ -104,6 +104,36 @@
       </div>
     </section>
 
+    <section class="panel panel--full" aria-labelledby="account-documents-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="account-documents-heading" class="panel__title">Account documents</h2>
+          <p class="panel__description">Upload and download account forms by document type for the selected credit union.</p>
+        </div>
+      </header>
+      <form id="account-documents-upload-form" class="account-documents-upload-form">
+        <div class="field-group">
+          <label for="account-document-category">Document category</label>
+          <select id="account-document-category" required>
+            <option value="gap_waiver">GAP Waiver</option>
+            <option value="production_documents">Production Documents</option>
+            <option value="other">Other</option>
+            <option value="debt_waiver">Debt Waiver</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label for="account-document-file">Document file</label>
+          <input type="file" id="account-document-file" required />
+        </div>
+        <button type="submit" class="primary-button">Upload document</button>
+        <p class="feedback" id="account-documents-feedback" role="status" aria-live="polite"></p>
+      </form>
+      <div id="account-documents-empty" class="empty-state" hidden>
+        <p>Select a credit union to manage documents.</p>
+      </div>
+      <div id="account-documents-groups" class="account-documents-groups"></div>
+    </section>
+
     <section class="panel panel--full" aria-labelledby="account-review-heading">
       <header class="panel__header">
         <div>

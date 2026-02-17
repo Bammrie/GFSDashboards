@@ -71,6 +71,15 @@ const COVERAGE_OPTION_PRODUCTS = {
   'vsc-gap': ['Vehicle service contract', 'Guaranteed asset protection']
 };
 
+
+const ACCOUNT_DOCUMENT_CATEGORY_LABELS = {
+  gap_waiver: 'GAP Waiver',
+  production_documents: 'Production Documents',
+  other: 'Other',
+  debt_waiver: 'Debt Waiver'
+};
+const ACCOUNT_DOCUMENT_CATEGORIES = ['gap_waiver', 'production_documents', 'other', 'debt_waiver'];
+
 function normalizeClassification(value) {
   return CLASSIFICATIONS.includes(value) ? value : 'account';
 }
@@ -247,6 +256,12 @@ const selectors = {
   accountNotesFeedback: document.getElementById('account-notes-feedback'),
   accountNotesList: document.getElementById('account-notes-list'),
   accountNotesEmpty: document.getElementById('account-notes-empty'),
+  accountDocumentsUploadForm: document.getElementById('account-documents-upload-form'),
+  accountDocumentCategory: document.getElementById('account-document-category'),
+  accountDocumentFile: document.getElementById('account-document-file'),
+  accountDocumentsFeedback: document.getElementById('account-documents-feedback'),
+  accountDocumentsGroups: document.getElementById('account-documents-groups'),
+  accountDocumentsEmpty: document.getElementById('account-documents-empty'),
   accountReviewForm: document.getElementById('account-review-form'),
   accountReviewLocked: document.getElementById('account-review-locked'),
   accountReviewFeedback: document.getElementById('account-review-feedback'),
@@ -393,6 +408,56 @@ async function persistAccountNotes(creditUnionId, note) {
   } catch (error) {
     console.error('Unable to persist account notes', error);
     return null;
+  }
+}
+
+
+async function loadAccountDocumentsForCreditUnion(creditUnionId) {
+  if (!creditUnionId) return [];
+  try {
+    const response = await fetch(`/api/account-documents?creditUnionId=${encodeURIComponent(creditUnionId)}`);
+    if (!response.ok) throw new Error(`Account document request failed (${response.status})`);
+    const payload = await response.json();
+    const documents = Array.isArray(payload?.documents) ? payload.documents : [];
+    appState.accountDocuments = {
+      ...appState.accountDocuments,
+      [creditUnionId]: documents
+    };
+    return documents;
+  } catch (error) {
+    console.error('Unable to load account documents', error);
+    appState.accountDocuments = {
+      ...appState.accountDocuments,
+      [creditUnionId]: []
+    };
+    return [];
+  }
+}
+
+async function uploadAccountDocument({ creditUnionId, category, file }) {
+  const body = new FormData();
+  body.append('creditUnionId', creditUnionId);
+  body.append('category', category);
+  body.append('file', file);
+
+  const response = await fetch('/api/account-documents', {
+    method: 'POST',
+    body
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload?.error || `Document upload failed (${response.status})`);
+  }
+  return payload?.document || null;
+}
+
+async function deleteAccountDocument(documentId) {
+  const response = await fetch(`/api/account-documents/${encodeURIComponent(documentId)}`, {
+    method: 'DELETE'
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload?.error || `Document delete failed (${response.status})`);
   }
 }
 
@@ -3235,6 +3300,7 @@ const appState = {
   missingFilters: { month: null, revenueType: 'all' },
   callReports: [],
   accountNotes: {},
+  accountDocuments: {},
   accountReviewData: {},
   accountChangeLog: {},
   accountWarrantyConfigs: {},
@@ -4317,6 +4383,7 @@ function renderAccountWorkspace() {
     updateAccountProductOptions();
     setAccountStatusFeedback('', 'info');
     renderAccountNotes();
+    renderAccountDocuments();
     renderAccountReview();
     renderAccountChangeLog();
     renderLoanOfficerCalculator();
@@ -4366,6 +4433,7 @@ function renderAccountWorkspace() {
 
   renderCallReports();
   renderAccountNotes();
+  renderAccountDocuments();
   renderAccountReview();
   renderAccountChangeLog();
   renderLoanOfficerCalculator();
@@ -4974,6 +5042,112 @@ function renderAccountNotes() {
   });
 
   list.append(fragment);
+}
+
+
+function formatDocumentSize(bytes) {
+  const value = Number(bytes);
+  if (!Number.isFinite(value) || value <= 0) return '0 B';
+  if (value < 1024) return `${value} B`;
+  if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
+  return `${(value / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function renderAccountDocuments() {
+  const groupsContainer = selectors.accountDocumentsGroups;
+  const empty = selectors.accountDocumentsEmpty;
+  const form = selectors.accountDocumentsUploadForm;
+  const categorySelect = selectors.accountDocumentCategory;
+  const fileInput = selectors.accountDocumentFile;
+  const submitButton = form?.querySelector('button[type="submit"]');
+  if (!groupsContainer || !empty) return;
+
+  const creditUnionId = appState.accountSelectionId;
+  const shouldDisable = !creditUnionId;
+  [categorySelect, fileInput, submitButton].forEach((el) => {
+    if (el) el.disabled = shouldDisable;
+  });
+
+  if (!creditUnionId) {
+    empty.hidden = false;
+    empty.querySelector('p').textContent = 'Select a credit union to manage documents.';
+    setFeedback(selectors.accountDocumentsFeedback, 'Select a credit union before uploading documents.', 'info');
+    groupsContainer.replaceChildren();
+    return;
+  }
+
+  const docs = Array.isArray(appState.accountDocuments[creditUnionId]) ? appState.accountDocuments[creditUnionId] : [];
+  setFeedback(selectors.accountDocumentsFeedback, '', 'info');
+
+  groupsContainer.replaceChildren();
+  const grouped = docs.reduce((memo, doc) => {
+    const key = ACCOUNT_DOCUMENT_CATEGORIES.includes(doc?.category) ? doc.category : 'other';
+    if (!memo[key]) memo[key] = [];
+    memo[key].push(doc);
+    return memo;
+  }, {});
+
+  const fragment = document.createDocumentFragment();
+  ACCOUNT_DOCUMENT_CATEGORIES.forEach((category) => {
+    const section = document.createElement('section');
+    section.className = 'account-documents-group';
+
+    const heading = document.createElement('h3');
+    heading.textContent = ACCOUNT_DOCUMENT_CATEGORY_LABELS[category] || category;
+    section.append(heading);
+
+    const list = document.createElement('ul');
+    list.className = 'account-documents-list';
+
+    const items = grouped[category] || [];
+    if (!items.length) {
+      const emptyItem = document.createElement('li');
+      emptyItem.className = 'account-documents-item';
+      emptyItem.textContent = 'No documents uploaded yet.';
+      list.append(emptyItem);
+    } else {
+      items.forEach((doc) => {
+        const item = document.createElement('li');
+        item.className = 'account-documents-item';
+
+        const info = document.createElement('div');
+        const name = document.createElement('strong');
+        name.textContent = doc.originalName || 'Document';
+        const meta = document.createElement('div');
+        meta.className = 'account-documents-meta';
+        meta.textContent = `${formatDocumentSize(doc.size)} • ${formatNoteDate(doc.uploadedAt)}`;
+        info.append(name, meta);
+
+        const actions = document.createElement('div');
+        actions.className = 'account-documents-actions';
+        const downloadLink = document.createElement('a');
+        downloadLink.href = doc.downloadUrl || '#';
+        downloadLink.className = 'secondary-button';
+        downloadLink.textContent = 'Download';
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'icon-button';
+        deleteBtn.textContent = '✕';
+        deleteBtn.setAttribute('aria-label', `Delete ${doc.originalName || 'document'}`);
+        deleteBtn.dataset.action = 'delete-account-document';
+        deleteBtn.dataset.documentId = doc.id || '';
+
+        actions.append(downloadLink, deleteBtn);
+        item.append(info, actions);
+        list.append(item);
+      });
+    }
+
+    section.append(list);
+    fragment.append(section);
+  });
+
+  groupsContainer.append(fragment);
+  empty.hidden = docs.length > 0;
+  if (!docs.length) {
+    empty.querySelector('p').textContent = 'No documents uploaded for this credit union yet.';
+  }
 }
 
 function formatLogTimestamp(timestamp) {
@@ -7388,10 +7562,12 @@ selectors.accountCreditUnionSelect?.addEventListener('change', async (event) => 
     await Promise.all([
       selectors.callReportList ? loadCallReports(appState.accountSelectionId) : Promise.resolve(),
       appState.accountSelectionId ? loadLoanEntries(appState.accountSelectionId) : Promise.resolve(),
-      appState.accountSelectionId ? loadLoanIllustrations(appState.accountSelectionId) : Promise.resolve()
+      appState.accountSelectionId ? loadLoanIllustrations(appState.accountSelectionId) : Promise.resolve(),
+      appState.accountSelectionId ? loadAccountDocumentsForCreditUnion(appState.accountSelectionId) : Promise.resolve()
     ]);
     renderLoanLog();
     renderLoanIllustrationHistory();
+    renderAccountDocuments();
   } catch (error) {
     setCallReportFeedback(error.message, 'error');
   }
@@ -7737,6 +7913,66 @@ selectors.loanIllustrationList?.addEventListener('click', (event) => {
   applyLoanIllustrationSnapshot(illustration);
   renderLoanIllustrationHistory();
   setLoanIllustrationSaveStatus('Snapshot loaded.', 'success');
+});
+
+
+selectors.accountDocumentsUploadForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    setFeedback(selectors.accountDocumentsFeedback, 'Select a credit union before uploading documents.', 'error');
+    return;
+  }
+
+  const category = selectors.accountDocumentCategory?.value || 'other';
+  const file = selectors.accountDocumentFile?.files?.[0] || null;
+  if (!file) {
+    setFeedback(selectors.accountDocumentsFeedback, 'Choose a file to upload.', 'error');
+    return;
+  }
+
+  const submitButton = selectors.accountDocumentsUploadForm.querySelector('button[type="submit"]');
+  const previousLabel = submitButton?.textContent || 'Upload document';
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Uploading…';
+  }
+
+  try {
+    await uploadAccountDocument({ creditUnionId, category, file });
+    await loadAccountDocumentsForCreditUnion(creditUnionId);
+    renderAccountDocuments();
+    selectors.accountDocumentsUploadForm.reset();
+    if (selectors.accountDocumentCategory) {
+      selectors.accountDocumentCategory.value = category;
+    }
+    setFeedback(selectors.accountDocumentsFeedback, 'Document uploaded.', 'success');
+  } catch (error) {
+    setFeedback(selectors.accountDocumentsFeedback, error.message || 'Unable to upload document.', 'error');
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = previousLabel;
+    }
+  }
+});
+
+selectors.accountDocumentsGroups?.addEventListener('click', async (event) => {
+  const button = event.target.closest('[data-action="delete-account-document"]');
+  if (!button || !selectors.accountDocumentsGroups.contains(button)) return;
+
+  const documentId = button.dataset.documentId;
+  const creditUnionId = appState.accountSelectionId;
+  if (!documentId || !creditUnionId) return;
+
+  try {
+    await deleteAccountDocument(documentId);
+    await loadAccountDocumentsForCreditUnion(creditUnionId);
+    renderAccountDocuments();
+    setFeedback(selectors.accountDocumentsFeedback, 'Document removed.', 'success');
+  } catch (error) {
+    setFeedback(selectors.accountDocumentsFeedback, error.message || 'Unable to remove document.', 'error');
+  }
 });
 
 selectors.accountNotesForm?.addEventListener('submit', async (event) => {
@@ -8273,6 +8509,15 @@ async function bootstrap() {
     renderQuotesWorkspace();
   } catch (error) {
     console.error(error);
+  }
+
+  if (appState.accountSelectionId) {
+    try {
+      await loadAccountDocumentsForCreditUnion(appState.accountSelectionId);
+      renderAccountDocuments();
+    } catch (error) {
+      console.error('Unable to load account documents during bootstrap', error);
+    }
   }
 
   if (appState.detailCreditUnionId) {

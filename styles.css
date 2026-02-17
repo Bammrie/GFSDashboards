@@ -2365,3 +2365,60 @@ pre {
     width: 100%;
   }
 }
+
+.account-documents-upload-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.account-documents-groups {
+  display: grid;
+  gap: 1rem;
+}
+
+.account-documents-group {
+  border: 1px solid rgba(128, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.8rem;
+}
+
+.account-documents-group h3 {
+  margin: 0 0 0.6rem;
+  font-size: 0.98rem;
+}
+
+.account-documents-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.account-documents-item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(17, 17, 17, 0.16);
+  padding: 0.45rem 0.6rem;
+}
+
+.account-documents-meta {
+  font-size: 0.84rem;
+  color: #444;
+}
+
+.account-documents-actions {
+  display: inline-flex;
+  gap: 0.45rem;
+}
+
+.account-documents-actions .secondary-button,
+.account-documents-actions .icon-button {
+  min-height: 32px;
+}

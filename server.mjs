@@ -4,6 +4,7 @@ import multer from 'multer';
 import pdfParse from 'pdf-parse';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fsSync from 'fs';
 import fs from 'fs/promises';
 import dotenv from 'dotenv';
 import { randomUUID } from 'crypto';
@@ -20,6 +21,9 @@ const WARRANTY_CONFIG_STORAGE_PATH =
   process.env.WARRANTY_CONFIG_STORAGE_PATH || path.join(__dirname, 'data', 'account-warranty-configs.json');
 const PODIUM_OAUTH_STORAGE_PATH =
   process.env.PODIUM_OAUTH_STORAGE_PATH || path.join(__dirname, 'data', 'podium-oauth.json');
+const ACCOUNT_DOCUMENTS_STORAGE_PATH =
+  process.env.ACCOUNT_DOCUMENTS_STORAGE_PATH || path.join(__dirname, 'data', 'account-documents');
+const ACCOUNT_DOCUMENT_TYPES = new Set(['gap_waiver', 'production_documents', 'other', 'debt_waiver']);
 
 const app = express();
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -195,6 +199,34 @@ app.use((req, res, next) => {
 
   next();
 });
+
+
+app.use('/account-documents', express.static(ACCOUNT_DOCUMENTS_STORAGE_PATH, {
+  setHeaders: (res) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+  }
+}));
+
+async function ensureAccountDocumentsStorage() {
+  await fs.mkdir(ACCOUNT_DOCUMENTS_STORAGE_PATH, { recursive: true });
+}
+
+function sanitizeDocumentFilename(name = '') {
+  const base = String(name || '').trim() || 'document';
+  return base.replace(/[^a-zA-Z0-9._-]+/g, '_').slice(0, 120);
+}
+
+async function removeStoredAccountDocument(storedName) {
+  if (!storedName) return;
+  const filePath = path.join(ACCOUNT_DOCUMENTS_STORAGE_PATH, storedName);
+  try {
+    await fs.unlink(filePath);
+  } catch (error) {
+    if (error?.code !== 'ENOENT') {
+      console.warn('Unable to remove account document file.', error);
+    }
+  }
+}
 
 app.use(express.json({ limit: '1mb' }));
 app.use((req, res, next) => {
@@ -1059,6 +1091,24 @@ const accountWarrantyConfigSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+const accountDocumentSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, index: true },
+    category: {
+      type: String,
+      enum: ['gap_waiver', 'production_documents', 'other', 'debt_waiver'],
+      required: true
+    },
+    originalName: { type: String, required: true, trim: true },
+    storedName: { type: String, required: true, trim: true, unique: true },
+    mimeType: { type: String, default: 'application/octet-stream' },
+    size: { type: Number, default: 0 },
+    uploadedAt: { type: Date, default: Date.now }
+  },
+  { timestamps: true }
+);
+accountDocumentSchema.index({ creditUnion: 1, category: 1, createdAt: -1 });
 const loanSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, index: true },
@@ -1177,9 +1227,12 @@ const AccountReview = mongoose.model('AccountReview', accountReviewSchema);
 const AccountNotes = mongoose.model('AccountNotes', accountNotesSchema);
 const AccountChangeLog = mongoose.model('AccountChangeLog', accountChangeLogSchema);
 const AccountWarrantyConfig = mongoose.model('AccountWarrantyConfig', accountWarrantyConfigSchema);
+const AccountDocument = mongoose.model('AccountDocument', accountDocumentSchema);
 const Loan = mongoose.model('Loan', loanSchema);
 const LoanIllustration = mongoose.model('LoanIllustration', loanIllustrationSchema);
 const CoverageRequest = mongoose.model('CoverageRequest', coverageRequestSchema);
+
+await ensureAccountDocumentsStorage();
 
 const databaseReady = await initializeDatabase();
 
@@ -1817,6 +1870,140 @@ app.post('/api/account-warranty-configs', async (req, res, next) => {
     ).lean();
 
     res.json({ config: updated?.config || {} });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+app.get('/api/account-documents', async (req, res, next) => {
+  try {
+    const creditUnionId = typeof req.query?.creditUnionId === 'string' ? req.query.creditUnionId.trim() : '';
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid credit union ID is required.' });
+      return;
+    }
+
+    const documents = await AccountDocument.find({ creditUnion: creditUnionId })
+      .sort({ category: 1, createdAt: -1 })
+      .lean();
+
+    res.json({
+      documents: documents.map((doc) => ({
+        id: doc._id.toString(),
+        creditUnionId: doc.creditUnion.toString(),
+        category: doc.category,
+        originalName: doc.originalName,
+        mimeType: doc.mimeType || 'application/octet-stream',
+        size: Number.isFinite(doc.size) ? doc.size : 0,
+        uploadedAt: doc.uploadedAt?.toISOString?.() || doc.createdAt?.toISOString?.() || null,
+        downloadUrl: `/api/account-documents/${doc._id.toString()}/download`
+      }))
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/account-documents', upload.single('file'), async (req, res, next) => {
+  try {
+    const creditUnionId = typeof req.body?.creditUnionId === 'string' ? req.body.creditUnionId.trim() : '';
+    const category = typeof req.body?.category === 'string' ? req.body.category.trim() : '';
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid credit union ID is required.' });
+      return;
+    }
+    if (!ACCOUNT_DOCUMENT_TYPES.has(category)) {
+      res.status(400).json({ error: 'Document category is invalid.' });
+      return;
+    }
+    if (!req.file) {
+      res.status(400).json({ error: 'A document file is required.' });
+      return;
+    }
+
+    const creditUnionExists = await CreditUnion.exists({ _id: creditUnionId });
+    if (!creditUnionExists) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const safeOriginalName = sanitizeDocumentFilename(req.file.originalname || 'document');
+    const extension = path.extname(safeOriginalName).slice(0, 16);
+    const storedName = `${Date.now()}-${randomUUID()}${extension}`;
+    const destinationPath = path.join(ACCOUNT_DOCUMENTS_STORAGE_PATH, storedName);
+
+    await fs.writeFile(destinationPath, req.file.buffer);
+
+    const created = await AccountDocument.create({
+      creditUnion: creditUnionId,
+      category,
+      originalName: safeOriginalName,
+      storedName,
+      mimeType: req.file.mimetype || 'application/octet-stream',
+      size: req.file.size || 0,
+      uploadedAt: new Date()
+    });
+
+    res.status(201).json({
+      document: {
+        id: created._id.toString(),
+        creditUnionId,
+        category: created.category,
+        originalName: created.originalName,
+        mimeType: created.mimeType,
+        size: created.size,
+        uploadedAt: created.uploadedAt?.toISOString?.() || null,
+        downloadUrl: `/api/account-documents/${created._id.toString()}/download`
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/account-documents/:id/download', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ error: 'Invalid document ID.' });
+      return;
+    }
+
+    const document = await AccountDocument.findById(id).lean();
+    if (!document) {
+      res.status(404).json({ error: 'Document not found.' });
+      return;
+    }
+
+    const filePath = path.join(ACCOUNT_DOCUMENTS_STORAGE_PATH, document.storedName || '');
+    if (!document.storedName || !fsSync.existsSync(filePath)) {
+      res.status(404).json({ error: 'Stored document file is missing.' });
+      return;
+    }
+
+    res.download(filePath, document.originalName || 'document');
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/api/account-documents/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ error: 'Invalid document ID.' });
+      return;
+    }
+
+    const removed = await AccountDocument.findByIdAndDelete(id).lean();
+    if (!removed) {
+      res.status(404).json({ error: 'Document not found.' });
+      return;
+    }
+
+    await removeStoredAccountDocument(removed.storedName);
+    res.json({ success: true });
   } catch (error) {
     next(error);
   }
