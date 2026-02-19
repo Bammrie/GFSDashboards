@@ -367,6 +367,43 @@
       </form>
     </section>
 
+    <section class="panel panel--full" aria-labelledby="account-training-log-heading">
+      <header class="panel__header">
+        <div>
+          <h2 id="account-training-log-heading" class="panel__title">Training Log</h2>
+          <p class="panel__description">Capture each training encounter, what changed, and what still needs work.</p>
+        </div>
+      </header>
+      <form id="account-training-log-form" class="training-log-form">
+        <div class="training-log-grid">
+          <div class="field-group">
+            <label for="account-training-contact">Reported by</label>
+            <input type="text" id="account-training-contact" name="trainer" placeholder="Team member name" required />
+          </div>
+          <div class="field-group">
+            <label for="account-training-report">Full encounter report</label>
+            <textarea id="account-training-report" name="report" rows="5" placeholder="Document the full training report and account context" required></textarea>
+          </div>
+          <div class="field-group">
+            <label for="account-training-changed">What changed</label>
+            <textarea id="account-training-changed" name="changed" rows="3" placeholder="Summarize updates and progress since the last visit" required></textarea>
+          </div>
+          <div class="field-group">
+            <label for="account-training-needs-work">Needs to be worked on</label>
+            <textarea id="account-training-needs-work" name="needsWork" rows="3" placeholder="Capture open issues, coaching needs, or follow-up actions" required></textarea>
+          </div>
+        </div>
+        <div class="notes-actions">
+          <p class="feedback" id="account-training-log-feedback" role="status" aria-live="polite"></p>
+          <button type="submit" class="primary-button">Save training report</button>
+        </div>
+      </form>
+      <div id="account-training-log-empty" class="empty-state" hidden>
+        <p>No training reports saved yet. Add one to track your latest encounter.</p>
+      </div>
+      <ul id="account-training-log-list" class="notes-list" aria-live="polite"></ul>
+    </section>
+
   <dialog id="account-notes-dialog" aria-labelledby="account-notes-dialog-title">
     <div class="dialog-form dialog-form--wide">
       <header class="dialog-header">

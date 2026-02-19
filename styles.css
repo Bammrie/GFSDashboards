@@ -1008,6 +1008,17 @@ pre {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
+.training-log-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.training-log-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
 .notes-actions {
   display: flex;
   align-items: center;

@@ -1069,6 +1069,22 @@ const accountNotesSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const accountTrainingLogSchema = new mongoose.Schema(
+  {
+    creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, unique: true },
+    entries: [
+      {
+        trainer: { type: String, trim: true, default: '' },
+        report: { type: String, trim: true, required: true },
+        changed: { type: String, trim: true, required: true },
+        needsWork: { type: String, trim: true, required: true },
+        createdAt: { type: Date, default: Date.now }
+      }
+    ]
+  },
+  { timestamps: true }
+);
+
 const accountChangeLogSchema = new mongoose.Schema(
   {
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, unique: true },
@@ -1225,6 +1241,7 @@ callReportSchema.index({ creditUnion: 1, extractedAt: -1 });
 const CallReport = mongoose.model('CallReport', callReportSchema);
 const AccountReview = mongoose.model('AccountReview', accountReviewSchema);
 const AccountNotes = mongoose.model('AccountNotes', accountNotesSchema);
+const AccountTrainingLog = mongoose.model('AccountTrainingLog', accountTrainingLogSchema);
 const AccountChangeLog = mongoose.model('AccountChangeLog', accountChangeLogSchema);
 const AccountWarrantyConfig = mongoose.model('AccountWarrantyConfig', accountWarrantyConfigSchema);
 const AccountDocument = mongoose.model('AccountDocument', accountDocumentSchema);
@@ -2004,6 +2021,57 @@ app.delete('/api/account-documents/:id', async (req, res, next) => {
 
     await removeStoredAccountDocument(removed.storedName);
     res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/account-training-log', async (req, res, next) => {
+  try {
+    const logs = await AccountTrainingLog.find().lean();
+    const data = logs.reduce((memo, entry) => {
+      memo[entry.creditUnion.toString()] = Array.isArray(entry.entries) ? entry.entries : [];
+      return memo;
+    }, {});
+    res.json({ data });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/account-training-log', async (req, res, next) => {
+  try {
+    const creditUnionId = req.body?.creditUnionId;
+    if (!creditUnionId || !mongoose.Types.ObjectId.isValid(creditUnionId)) {
+      res.status(400).json({ error: 'Valid credit union ID is required.' });
+      return;
+    }
+
+    const entry = req.body?.entry;
+    const trainer = typeof entry?.trainer === 'string' ? entry.trainer.trim() : '';
+    const report = typeof entry?.report === 'string' ? entry.report.trim() : '';
+    const changed = typeof entry?.changed === 'string' ? entry.changed.trim() : '';
+    const needsWork = typeof entry?.needsWork === 'string' ? entry.needsWork.trim() : '';
+
+    if (!trainer || !report || !changed || !needsWork) {
+      res.status(400).json({ error: 'Trainer, report, changed, and needs-work fields are required.' });
+      return;
+    }
+
+    const creditUnionExists = await CreditUnion.exists({ _id: creditUnionId });
+    if (!creditUnionExists) {
+      res.status(404).json({ error: 'Credit union not found.' });
+      return;
+    }
+
+    const trainingEntry = { trainer, report, changed, needsWork, createdAt: new Date() };
+    const updated = await AccountTrainingLog.findOneAndUpdate(
+      { creditUnion: creditUnionId },
+      { $push: { entries: { $each: [trainingEntry], $position: 0, $slice: 100 } } },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    ).lean();
+
+    res.json({ entries: Array.isArray(updated?.entries) ? updated.entries : [] });
   } catch (error) {
     next(error);
   }
