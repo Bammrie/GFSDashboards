@@ -256,6 +256,14 @@ const selectors = {
   accountNotesFeedback: document.getElementById('account-notes-feedback'),
   accountNotesList: document.getElementById('account-notes-list'),
   accountNotesEmpty: document.getElementById('account-notes-empty'),
+  accountTrainingLogForm: document.getElementById('account-training-log-form'),
+  accountTrainingContact: document.getElementById('account-training-contact'),
+  accountTrainingReport: document.getElementById('account-training-report'),
+  accountTrainingChanged: document.getElementById('account-training-changed'),
+  accountTrainingNeedsWork: document.getElementById('account-training-needs-work'),
+  accountTrainingLogFeedback: document.getElementById('account-training-log-feedback'),
+  accountTrainingLogList: document.getElementById('account-training-log-list'),
+  accountTrainingLogEmpty: document.getElementById('account-training-log-empty'),
   accountDocumentsUploadForm: document.getElementById('account-documents-upload-form'),
   accountDocumentCategory: document.getElementById('account-document-category'),
   accountDocumentFile: document.getElementById('account-document-file'),
@@ -407,6 +415,42 @@ async function persistAccountNotes(creditUnionId, note) {
     return notes;
   } catch (error) {
     console.error('Unable to persist account notes', error);
+    return null;
+  }
+}
+
+async function loadAccountTrainingLogs() {
+  try {
+    const response = await fetch('/api/account-training-log');
+    if (!response.ok) throw new Error(`Training log request failed (${response.status})`);
+    const payload = await response.json();
+    const data = payload?.data;
+    appState.accountTrainingLogs = data && typeof data === 'object' ? data : {};
+  } catch (error) {
+    console.error('Unable to load account training logs', error);
+    appState.accountTrainingLogs = {};
+  }
+}
+
+async function persistAccountTrainingLog(creditUnionId, entry) {
+  try {
+    const response = await fetch('/api/account-training-log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ creditUnionId, entry })
+    });
+    if (!response.ok) throw new Error(`Training log save failed (${response.status})`);
+    const payload = await response.json();
+    const entries = Array.isArray(payload?.entries) ? payload.entries : null;
+    if (entries) {
+      appState.accountTrainingLogs = {
+        ...appState.accountTrainingLogs,
+        [creditUnionId]: entries
+      };
+    }
+    return entries;
+  } catch (error) {
+    console.error('Unable to persist account training log', error);
     return null;
   }
 }
@@ -3300,6 +3344,7 @@ const appState = {
   missingFilters: { month: null, revenueType: 'all' },
   callReports: [],
   accountNotes: {},
+  accountTrainingLogs: {},
   accountDocuments: {},
   accountReviewData: {},
   accountChangeLog: {},
@@ -4383,6 +4428,7 @@ function renderAccountWorkspace() {
     updateAccountProductOptions();
     setAccountStatusFeedback('', 'info');
     renderAccountNotes();
+    renderAccountTrainingLog();
     renderAccountDocuments();
     renderAccountReview();
     renderAccountChangeLog();
@@ -4433,6 +4479,7 @@ function renderAccountWorkspace() {
 
   renderCallReports();
   renderAccountNotes();
+  renderAccountTrainingLog();
   renderAccountDocuments();
   renderAccountReview();
   renderAccountChangeLog();
@@ -5043,6 +5090,81 @@ function renderAccountNotes() {
 
   list.append(fragment);
 }
+
+function renderAccountTrainingLog() {
+  if (!selectors.accountTrainingLogList || !selectors.accountTrainingLogEmpty) return;
+
+  const creditUnionId = appState.accountSelectionId;
+  const entries = creditUnionId && Array.isArray(appState.accountTrainingLogs[creditUnionId])
+    ? appState.accountTrainingLogs[creditUnionId]
+    : [];
+
+  const list = selectors.accountTrainingLogList;
+  const empty = selectors.accountTrainingLogEmpty;
+  const feedback = selectors.accountTrainingLogFeedback;
+  const trainerInput = selectors.accountTrainingContact;
+  const reportInput = selectors.accountTrainingReport;
+  const changedInput = selectors.accountTrainingChanged;
+  const needsWorkInput = selectors.accountTrainingNeedsWork;
+  const submitButton = selectors.accountTrainingLogForm?.querySelector('button[type="submit"]');
+
+  const shouldDisable = !creditUnionId;
+  [trainerInput, reportInput, changedInput, needsWorkInput, submitButton].forEach((el) => {
+    if (!el) return;
+    el.disabled = shouldDisable;
+  });
+
+  if (!creditUnionId) {
+    setFeedback(feedback, 'Select a credit union to add a training report.', 'info');
+  } else {
+    setFeedback(feedback, '', 'info');
+  }
+
+  list.replaceChildren();
+
+  if (!entries.length) {
+    empty.hidden = false;
+    return;
+  }
+
+  empty.hidden = true;
+  const fragment = document.createDocumentFragment();
+  entries.forEach((entry) => {
+    const item = document.createElement('li');
+    item.className = 'note-card';
+
+    const header = document.createElement('div');
+    header.className = 'note-card__meta';
+
+    const author = document.createElement('span');
+    author.className = 'note-card__author';
+    author.textContent = entry.trainer || 'Unknown team member';
+
+    const date = document.createElement('span');
+    date.className = 'note-card__date';
+    date.textContent = formatNoteDate(entry.createdAt);
+
+    header.append(author, date);
+
+    const report = document.createElement('p');
+    report.className = 'note-card__text';
+    report.textContent = `Report: ${entry.report || ''}`;
+
+    const changed = document.createElement('p');
+    changed.className = 'note-card__text';
+    changed.textContent = `Changed: ${entry.changed || ''}`;
+
+    const needsWork = document.createElement('p');
+    needsWork.className = 'note-card__text';
+    needsWork.textContent = `Needs work: ${entry.needsWork || ''}`;
+
+    item.append(header, report, changed, needsWork);
+    fragment.append(item);
+  });
+
+  list.append(fragment);
+}
+
 
 
 function formatDocumentSize(bytes) {
@@ -7975,6 +8097,50 @@ selectors.accountDocumentsGroups?.addEventListener('click', async (event) => {
   }
 });
 
+
+selectors.accountTrainingLogForm?.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const creditUnionId = appState.accountSelectionId;
+  if (!creditUnionId) {
+    setFeedback(selectors.accountTrainingLogFeedback, 'Select a credit union before saving training details.', 'error');
+    return;
+  }
+
+  const trainer = selectors.accountTrainingContact?.value.trim();
+  const report = selectors.accountTrainingReport?.value.trim();
+  const changed = selectors.accountTrainingChanged?.value.trim();
+  const needsWork = selectors.accountTrainingNeedsWork?.value.trim();
+
+  if (!trainer || !report || !changed || !needsWork) {
+    setFeedback(selectors.accountTrainingLogFeedback, 'Complete all Training Log fields before saving.', 'error');
+    return;
+  }
+
+  const entry = { trainer, report, changed, needsWork, createdAt: new Date().toISOString() };
+  const existing = Array.isArray(appState.accountTrainingLogs[creditUnionId]) ? appState.accountTrainingLogs[creditUnionId] : [];
+  appState.accountTrainingLogs = {
+    ...appState.accountTrainingLogs,
+    [creditUnionId]: [entry, ...existing]
+  };
+
+  const savedEntries = await persistAccountTrainingLog(creditUnionId, { trainer, report, changed, needsWork });
+  if (!savedEntries) {
+    setFeedback(selectors.accountTrainingLogFeedback, 'Unable to save training report right now.', 'error');
+    return;
+  }
+
+  selectors.accountTrainingLogForm.reset();
+  setFeedback(selectors.accountTrainingLogFeedback, 'Training report saved.', 'success');
+  renderAccountTrainingLog();
+
+  addAccountChangeLog({
+    creditUnionId,
+    action: 'Added training log report',
+    details: changed,
+    actor: trainer
+  });
+});
+
 selectors.accountNotesForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const creditUnionId = appState.accountSelectionId;
@@ -8499,7 +8665,7 @@ async function bootstrap() {
   try {
     const tasks = [loadCreditUnions(), loadAccountWarrantyConfigs(), loadAppConfig()];
     if (hasAccountSurface && !hasQuoteSurface) {
-      tasks.push(loadIncomeStreams(), loadAccountReviewData(), loadAccountNotes(), loadAccountChangeLog());
+      tasks.push(loadIncomeStreams(), loadAccountReviewData(), loadAccountNotes(), loadAccountTrainingLogs(), loadAccountChangeLog());
     }
     if (selectors.quotesDirectoryBody) {
       tasks.push(loadCoverageRequestSummary());
@@ -8606,6 +8772,9 @@ async function bootstrap() {
   }
   if (selectors.accountNotesList) {
     renderAccountNotes();
+  }
+  if (selectors.accountTrainingLogList) {
+    renderAccountTrainingLog();
   }
   if (selectors.accountChangeLog) {
     renderAccountChangeLog();
