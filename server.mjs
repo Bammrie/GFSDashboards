@@ -1074,7 +1074,8 @@ const accountTrainingLogSchema = new mongoose.Schema(
     creditUnion: { type: mongoose.Schema.Types.ObjectId, ref: 'CreditUnion', required: true, unique: true },
     entries: [
       {
-        trainer: { type: String, trim: true, default: '' },
+        trainer: { type: String, trim: true, enum: ['Brady', 'Blake', 'Royce'], required: true },
+        visitDate: { type: Date, required: true },
         report: { type: String, trim: true, required: true },
         changed: { type: String, trim: true, required: true },
         needsWork: { type: String, trim: true, required: true },
@@ -2048,13 +2049,18 @@ app.post('/api/account-training-log', async (req, res, next) => {
     }
 
     const entry = req.body?.entry;
+    const allowedTrainers = new Set(['Brady', 'Blake', 'Royce']);
     const trainer = typeof entry?.trainer === 'string' ? entry.trainer.trim() : '';
+    const visitDateRaw = typeof entry?.visitDate === 'string' ? entry.visitDate.trim() : '';
     const report = typeof entry?.report === 'string' ? entry.report.trim() : '';
     const changed = typeof entry?.changed === 'string' ? entry.changed.trim() : '';
     const needsWork = typeof entry?.needsWork === 'string' ? entry.needsWork.trim() : '';
 
-    if (!trainer || !report || !changed || !needsWork) {
-      res.status(400).json({ error: 'Trainer, report, changed, and needs-work fields are required.' });
+    const visitDate = visitDateRaw ? new Date(visitDateRaw) : null;
+    const validVisitDate = Boolean(visitDate && !Number.isNaN(visitDate.getTime()));
+
+    if (!allowedTrainers.has(trainer) || !validVisitDate || !report || !changed || !needsWork) {
+      res.status(400).json({ error: 'Trainer (Brady/Blake/Royce), visit date, report, changed, and needs-work fields are required.' });
       return;
     }
 
@@ -2064,7 +2070,7 @@ app.post('/api/account-training-log', async (req, res, next) => {
       return;
     }
 
-    const trainingEntry = { trainer, report, changed, needsWork, createdAt: new Date() };
+    const trainingEntry = { trainer, visitDate, report, changed, needsWork, createdAt: new Date() };
     const updated = await AccountTrainingLog.findOneAndUpdate(
       { creditUnion: creditUnionId },
       { $push: { entries: { $each: [trainingEntry], $position: 0, $slice: 100 } } },

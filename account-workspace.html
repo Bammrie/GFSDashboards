@@ -371,17 +371,40 @@
       <header class="panel__header">
         <div>
           <h2 id="account-training-log-heading" class="panel__title">Training Log</h2>
-          <p class="panel__description">Capture each training encounter, what changed, and what still needs work.</p>
+          <p class="panel__description">Capture each after-visit update, what changed, and what still needs work.</p>
         </div>
       </header>
+      <div class="review-systems" id="account-training-summary" aria-live="polite">
+        <div class="field-group">
+          <label>Brady total visits/updates</label>
+          <output id="account-training-count-brady">0</output>
+        </div>
+        <div class="field-group">
+          <label>Blake total visits/updates</label>
+          <output id="account-training-count-blake">0</output>
+        </div>
+        <div class="field-group">
+          <label>Royce total visits/updates</label>
+          <output id="account-training-count-royce">0</output>
+        </div>
+      </div>
       <form id="account-training-log-form" class="training-log-form">
         <div class="training-log-grid">
           <div class="field-group">
-            <label for="account-training-contact">Reported by</label>
-            <input type="text" id="account-training-contact" name="trainer" placeholder="Team member name" required />
+            <label for="account-training-contact">Visited by</label>
+            <select id="account-training-contact" name="trainer" required>
+              <option value="">Select team member</option>
+              <option value="Brady">Brady</option>
+              <option value="Blake">Blake</option>
+              <option value="Royce">Royce</option>
+            </select>
           </div>
           <div class="field-group">
-            <label for="account-training-report">Full encounter report</label>
+            <label for="account-training-visit-date">Visit date</label>
+            <input type="date" id="account-training-visit-date" name="visitDate" required />
+          </div>
+          <div class="field-group">
+            <label for="account-training-report">After visit update</label>
             <textarea id="account-training-report" name="report" rows="5" placeholder="Document the full training report and account context" required></textarea>
           </div>
           <div class="field-group">

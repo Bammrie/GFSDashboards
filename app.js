@@ -261,6 +261,10 @@ const selectors = {
   accountTrainingReport: document.getElementById('account-training-report'),
   accountTrainingChanged: document.getElementById('account-training-changed'),
   accountTrainingNeedsWork: document.getElementById('account-training-needs-work'),
+  accountTrainingVisitDate: document.getElementById('account-training-visit-date'),
+  accountTrainingCountBrady: document.getElementById('account-training-count-brady'),
+  accountTrainingCountBlake: document.getElementById('account-training-count-blake'),
+  accountTrainingCountRoyce: document.getElementById('account-training-count-royce'),
   accountTrainingLogFeedback: document.getElementById('account-training-log-feedback'),
   accountTrainingLogList: document.getElementById('account-training-log-list'),
   accountTrainingLogEmpty: document.getElementById('account-training-log-empty'),
@@ -5106,21 +5110,32 @@ function renderAccountTrainingLog() {
   const reportInput = selectors.accountTrainingReport;
   const changedInput = selectors.accountTrainingChanged;
   const needsWorkInput = selectors.accountTrainingNeedsWork;
+  const visitDateInput = selectors.accountTrainingVisitDate;
   const submitButton = selectors.accountTrainingLogForm?.querySelector('button[type="submit"]');
 
   const shouldDisable = !creditUnionId;
-  [trainerInput, reportInput, changedInput, needsWorkInput, submitButton].forEach((el) => {
+  [trainerInput, reportInput, changedInput, needsWorkInput, visitDateInput, submitButton].forEach((el) => {
     if (!el) return;
     el.disabled = shouldDisable;
   });
 
   if (!creditUnionId) {
-    setFeedback(feedback, 'Select a credit union to add a training report.', 'info');
+    setFeedback(feedback, 'Select a credit union to add an after visit update.', 'info');
   } else {
     setFeedback(feedback, '', 'info');
   }
 
   list.replaceChildren();
+
+  const visitTotals = entries.reduce((totals, entry) => {
+    const key = typeof entry?.trainer === 'string' ? entry.trainer.trim().toLowerCase() : '';
+    if (key === 'brady' || key === 'blake' || key === 'royce') totals[key] += 1;
+    return totals;
+  }, { brady: 0, blake: 0, royce: 0 });
+
+  if (selectors.accountTrainingCountBrady) selectors.accountTrainingCountBrady.textContent = String(visitTotals.brady);
+  if (selectors.accountTrainingCountBlake) selectors.accountTrainingCountBlake.textContent = String(visitTotals.blake);
+  if (selectors.accountTrainingCountRoyce) selectors.accountTrainingCountRoyce.textContent = String(visitTotals.royce);
 
   if (!entries.length) {
     empty.hidden = false;
@@ -5148,7 +5163,11 @@ function renderAccountTrainingLog() {
 
     const report = document.createElement('p');
     report.className = 'note-card__text';
-    report.textContent = `Report: ${entry.report || ''}`;
+    report.textContent = `After visit update: ${entry.report || ''}`;
+
+    const visitDate = document.createElement('p');
+    visitDate.className = 'note-card__text';
+    visitDate.textContent = `Visit date: ${entry.visitDate ? formatNoteDate(entry.visitDate) : 'Not provided'}`;
 
     const changed = document.createElement('p');
     changed.className = 'note-card__text';
@@ -5158,7 +5177,7 @@ function renderAccountTrainingLog() {
     needsWork.className = 'note-card__text';
     needsWork.textContent = `Needs work: ${entry.needsWork || ''}`;
 
-    item.append(header, report, changed, needsWork);
+    item.append(header, visitDate, report, changed, needsWork);
     fragment.append(item);
   });
 
@@ -8110,32 +8129,33 @@ selectors.accountTrainingLogForm?.addEventListener('submit', async (event) => {
   const report = selectors.accountTrainingReport?.value.trim();
   const changed = selectors.accountTrainingChanged?.value.trim();
   const needsWork = selectors.accountTrainingNeedsWork?.value.trim();
+  const visitDate = selectors.accountTrainingVisitDate?.value;
 
-  if (!trainer || !report || !changed || !needsWork) {
+  if (!trainer || !report || !changed || !needsWork || !visitDate) {
     setFeedback(selectors.accountTrainingLogFeedback, 'Complete all Training Log fields before saving.', 'error');
     return;
   }
 
-  const entry = { trainer, report, changed, needsWork, createdAt: new Date().toISOString() };
+  const entry = { trainer, report, changed, needsWork, visitDate, createdAt: new Date().toISOString() };
   const existing = Array.isArray(appState.accountTrainingLogs[creditUnionId]) ? appState.accountTrainingLogs[creditUnionId] : [];
   appState.accountTrainingLogs = {
     ...appState.accountTrainingLogs,
     [creditUnionId]: [entry, ...existing]
   };
 
-  const savedEntries = await persistAccountTrainingLog(creditUnionId, { trainer, report, changed, needsWork });
+  const savedEntries = await persistAccountTrainingLog(creditUnionId, { trainer, report, changed, needsWork, visitDate });
   if (!savedEntries) {
-    setFeedback(selectors.accountTrainingLogFeedback, 'Unable to save training report right now.', 'error');
+    setFeedback(selectors.accountTrainingLogFeedback, 'Unable to save after visit update right now.', 'error');
     return;
   }
 
   selectors.accountTrainingLogForm.reset();
-  setFeedback(selectors.accountTrainingLogFeedback, 'Training report saved.', 'success');
+  setFeedback(selectors.accountTrainingLogFeedback, 'After visit update saved.', 'success');
   renderAccountTrainingLog();
 
   addAccountChangeLog({
     creditUnionId,
-    action: 'Added training log report',
+    action: 'Added after visit update',
     details: changed,
     actor: trainer
   });
