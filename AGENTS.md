@@ -1,3 +1,4 @@
+2026-02-20: Increased the Year End Review PDF header logo render bounds and aligned title offset to actual rendered width so the top-left branding prints at a readable size without crowding header text.
 2026-02-20: Expanded the Account Workspace Training Log into an after-visit update workflow with required visit-date + Brady/Blake/Royce selection and per-account totals showing how many visits/updates each teammate has logged.
 2026-02-19: Added an Account Workspace Training Log panel so teams can save full encounter reports, what changed, and follow-up work needed per credit union using new /api/account-training-log load/save endpoints and persisted account training-log storage.
 2026-02-17: Added Account Workspace document management (GAP Waiver, Production Documents, Other, Debt Waiver) with per-credit-union upload/download/delete UI and new account-document APIs/storage so teams can keep required forms attached to each account.

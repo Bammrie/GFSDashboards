@@ -5648,8 +5648,9 @@ function addPdfTable(doc, { title, headers, rows }, x, y, maxWidth, margin, page
 }
 
 function addPdfHeader(doc, { title, subtitle, meta }, margin, pageWidth, logoData) {
-  const logoMaxWidth = 140;
-  const logoMaxHeight = 40;
+  const logoMaxWidth = 190;
+  const logoMaxHeight = 60;
+  let logoRenderWidth = 0;
 
   if (logoData?.dataUrl) {
     const intrinsicWidth = logoData.width || logoMaxWidth;
@@ -5657,13 +5658,14 @@ function addPdfHeader(doc, { title, subtitle, meta }, margin, pageWidth, logoDat
     const scale = Math.min(logoMaxWidth / intrinsicWidth, logoMaxHeight / intrinsicHeight, 1);
     const renderWidth = intrinsicWidth * scale;
     const renderHeight = intrinsicHeight * scale;
+    logoRenderWidth = renderWidth;
     doc.addImage(logoData.dataUrl, 'PNG', margin, margin - 6, renderWidth, renderHeight);
   }
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(20);
   doc.setTextColor(...pdfTheme.primary);
-  const textOffset = logoData?.dataUrl ? logoMaxWidth + 30 : 0;
+  const textOffset = logoData?.dataUrl ? logoRenderWidth + 18 : 0;
   doc.text(title, margin + textOffset, margin + 16);
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
