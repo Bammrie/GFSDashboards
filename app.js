@@ -26,11 +26,13 @@ const WORKSPACE_PAGES = {
     'reporting.html',
     'monthly.html',
     'monthly-detail.html',
+    'map.html',
     'credit-union.html',
     'stream.html',
     'revenue.html'
   ])
 };
+const MAP_PINS_STORAGE_KEY = 'gfsAccountMapPins';
 const PRODUCT_REVENUE_PAIRS = PRODUCT_OPTIONS.flatMap((product) => {
   const revenueTypes = PRODUCT_REVENUE_TYPES[product] || DEFAULT_REVENUE_TYPES;
   return revenueTypes.map((revenueType) => ({ product, revenueType }));
@@ -135,6 +137,30 @@ function applyWorkspaceGate() {
     }
   } else if (selection === 'accounts') {
     document.querySelectorAll('.header-link[href="quotes.html"]').forEach((link) => link.remove());
+  }
+
+  if (selection === 'accounts') {
+    const navRows = document.querySelectorAll('.header-group__links');
+    if (!navRows.length) {
+      return;
+    }
+
+    navRows.forEach((row) => {
+      const hasMapLink = row.querySelector('a[href="map.html"]');
+      if (hasMapLink) {
+        return;
+      }
+
+      const mapLink = document.createElement('a');
+      mapLink.href = 'map.html';
+      mapLink.className = 'header-link';
+      mapLink.textContent = 'Map';
+      if (getCurrentPageName() === 'map.html') {
+        mapLink.setAttribute('aria-current', 'page');
+      }
+
+      row.append(mapLink);
+    });
   }
 }
 
@@ -250,6 +276,14 @@ const selectors = {
   protectionOptionsDialog: document.getElementById('protection-options-dialog'),
   closeProtectionOptionsDialogBtn: document.getElementById('close-protection-options-dialog'),
   quoteWorkspaceSummary: document.getElementById('quote-workspace-summary'),
+  mapCanvas: document.getElementById('accounts-map-canvas'),
+  mapPinNameInput: document.getElementById('map-pin-name'),
+  mapPinLatitudeInput: document.getElementById('map-pin-latitude'),
+  mapPinLongitudeInput: document.getElementById('map-pin-longitude'),
+  mapPinForm: document.getElementById('map-pin-form'),
+  mapPinList: document.getElementById('map-pin-list'),
+  mapPinCount: document.getElementById('map-pin-count'),
+  mapPinsClearBtn: document.getElementById('map-pins-clear'),
   accountNotesForm: document.getElementById('account-notes-form'),
   accountNotesAuthor: document.getElementById('account-note-author'),
   accountNotesText: document.getElementById('account-note-text'),
@@ -386,6 +420,123 @@ const selectors = {
   loanVscTermExtensionInput: document.getElementById('loan-vsc-term-extension'),
   loanGapTermExtensionInput: document.getElementById('loan-gap-term-extension')
 };
+
+function readMapPins() {
+  try {
+    const raw = window.localStorage.getItem(MAP_PINS_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn('Unable to parse saved map pins', error);
+    return [];
+  }
+}
+
+function writeMapPins(pins) {
+  window.localStorage.setItem(MAP_PINS_STORAGE_KEY, JSON.stringify(pins));
+}
+
+function initializeAccountsMap() {
+  if (!selectors.mapCanvas) {
+    return false;
+  }
+
+  if (!window.L) {
+    console.error('Leaflet is required to render the map page.');
+    return true;
+  }
+
+  const pins = readMapPins();
+  const markers = [];
+  const map = window.L.map(selectors.mapCanvas).setView([39.8283, -98.5795], 4);
+
+  window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  function saveAndRender() {
+    writeMapPins(pins);
+    if (selectors.mapPinCount) {
+      selectors.mapPinCount.textContent = `${pins.length} pin${pins.length === 1 ? '' : 's'} saved`;
+    }
+    if (!selectors.mapPinList) {
+      return;
+    }
+
+    selectors.mapPinList.innerHTML = '';
+    pins.forEach((pin, index) => {
+      const item = document.createElement('li');
+      item.className = 'map-pin-item';
+
+      const label = document.createElement('span');
+      label.className = 'map-pin-item__label';
+      label.textContent = `${pin.name} (${pin.latitude.toFixed(5)}, ${pin.longitude.toFixed(5)})`;
+
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.className = 'tertiary-button map-pin-item__remove';
+      removeButton.textContent = 'Remove';
+      removeButton.addEventListener('click', () => {
+        pins.splice(index, 1);
+        const marker = markers.splice(index, 1)[0];
+        marker?.remove();
+        saveAndRender();
+      });
+
+      item.append(label, removeButton);
+      selectors.mapPinList.append(item);
+    });
+  }
+
+  function addPin(latitude, longitude, name) {
+    const normalizedPin = {
+      latitude,
+      longitude,
+      name: name || `Pin ${pins.length + 1}`
+    };
+
+    pins.push(normalizedPin);
+    const marker = window.L.marker([latitude, longitude]).addTo(map);
+    marker.bindPopup(`<strong>${normalizedPin.name}</strong><br>${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
+    markers.push(marker);
+    saveAndRender();
+  }
+
+  pins.forEach((pin) => {
+    const marker = window.L.marker([pin.latitude, pin.longitude]).addTo(map);
+    marker.bindPopup(`<strong>${pin.name}</strong><br>${pin.latitude.toFixed(5)}, ${pin.longitude.toFixed(5)}`);
+    markers.push(marker);
+  });
+  saveAndRender();
+
+  map.on('click', (event) => {
+    const customName = selectors.mapPinNameInput?.value.trim();
+    addPin(event.latlng.lat, event.latlng.lng, customName || `Pin ${pins.length + 1}`);
+  });
+
+  selectors.mapPinForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const latitude = Number.parseFloat(selectors.mapPinLatitudeInput?.value || '');
+    const longitude = Number.parseFloat(selectors.mapPinLongitudeInput?.value || '');
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      return;
+    }
+
+    const customName = selectors.mapPinNameInput?.value.trim();
+    addPin(latitude, longitude, customName || `Pin ${pins.length + 1}`);
+    map.setView([latitude, longitude], 9);
+    selectors.mapPinLatitudeInput.value = '';
+    selectors.mapPinLongitudeInput.value = '';
+  });
+
+  selectors.mapPinsClearBtn?.addEventListener('click', () => {
+    pins.splice(0, pins.length);
+    markers.splice(0, markers.length).forEach((marker) => marker.remove());
+    saveAndRender();
+  });
+
+  return true;
+}
 
 async function loadAccountNotes() {
   try {
@@ -8667,6 +8818,10 @@ selectors.incomeStreamFilter?.addEventListener('change', (event) => {
 });
 
 async function bootstrap() {
+  if (initializeAccountsMap()) {
+    return;
+  }
+
   appState.monthlyDetailMonthKey = getMonthFromQuery();
   appState.detailCreditUnionId = getDetailCreditUnionIdFromQuery();
   appState.detailCreditUnionName = getDetailCreditUnionNameFromQuery();
