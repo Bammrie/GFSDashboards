@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Map | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Account Map</h1>
+        <p class="site-subtitle">Plot account locations and click anywhere on the map to drop pins.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <div class="header-group" aria-label="Main">
+          <span class="header-group__label">Main</span>
+          <div class="header-group__links">
+            <a href="accounts.html" class="header-link">Accounts</a>
+          </div>
+        </div>
+        <div class="header-group" aria-label="Income and reporting">
+          <span class="header-group__label">Income &amp; reporting</span>
+          <div class="header-group__links">
+            <a href="income-streams.html" class="header-link">Income Streams</a>
+            <a href="reporting.html" class="header-link">Reporting</a>
+            <a href="monthly.html" class="header-link">Monthly Totals</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel map-panel" aria-labelledby="map-panel-heading">
+      <header class="panel__header">
+        <h2 id="map-panel-heading" class="panel__title">Credit Union Map</h2>
+        <p class="panel__description">
+          Click on the map to save a pin. Or enter coordinates manually if you already have a specific location.
+        </p>
+      </header>
+
+      <div class="map-panel__controls">
+        <form id="map-pin-form" class="map-pin-form">
+          <label class="map-pin-form__field">
+            <span>Pin label</span>
+            <input id="map-pin-name" type="text" placeholder="Example: Baycel Federal CU" />
+          </label>
+          <label class="map-pin-form__field">
+            <span>Latitude</span>
+            <input id="map-pin-latitude" type="number" step="any" placeholder="29.7604" />
+          </label>
+          <label class="map-pin-form__field">
+            <span>Longitude</span>
+            <input id="map-pin-longitude" type="number" step="any" placeholder="-95.3698" />
+          </label>
+          <button type="submit" class="primary-button">Add pin by coordinates</button>
+        </form>
+        <div class="map-panel__summary">
+          <p id="map-pin-count" class="panel__description">0 pins saved</p>
+          <button id="map-pins-clear" type="button" class="secondary-button">Clear all pins</button>
+        </div>
+      </div>
+
+      <div id="accounts-map-canvas" class="accounts-map-canvas" role="application" aria-label="Account locations map"></div>
+
+      <section class="map-pin-list-wrap" aria-labelledby="saved-pin-heading">
+        <h3 id="saved-pin-heading" class="panel__title panel__title--small">Saved pins</h3>
+        <ul id="map-pin-list" class="map-pin-list"></ul>
+      </section>
+    </section>
+  </main>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
