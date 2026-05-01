@@ -22,6 +22,7 @@ const WORKSPACE_PAGES = {
   accounts: new Set([
     'accounts.html',
     'account-workspace.html',
+    'overview.html',
     'income-streams.html',
     'reporting.html',
     'monthly.html',
@@ -205,6 +206,8 @@ const selectors = {
   incomeStreamFilter: document.getElementById('income-stream-filter'),
   incomeStreamList: document.getElementById('income-stream-list'),
   incomeStreamCount: document.getElementById('income-stream-count'),
+  overviewList: document.getElementById('overview-list'),
+  overviewCount: document.getElementById('overview-count'),
   revenueForm: document.getElementById('revenue-form'),
   revenueStreamSelect: document.getElementById('revenue-stream-select'),
   revenueFeedback: document.getElementById('revenue-feedback'),
@@ -3999,6 +4002,85 @@ function renderCreditUnionOptions() {
   renderQuotesWorkspace();
 }
 
+
+function renderOverviewList() {
+  const list = selectors.overviewList;
+  const count = selectors.overviewCount;
+  if (!list) return;
+
+  list.replaceChildren();
+
+  const grouped = appState.incomeStreams.reduce((map, stream) => {
+    const key = stream.creditUnionId || 'unknown';
+    if (!map.has(key)) {
+      map.set(key, {
+        id: key,
+        name: stream.creditUnionName || 'Unassigned credit union',
+        streams: []
+      });
+    }
+    map.get(key).streams.push(stream);
+    return map;
+  }, new Map());
+
+  const groups = Array.from(grouped.values()).sort((a, b) => a.name.localeCompare(b.name));
+
+  if (count) {
+    count.textContent = `${integerFormatter.format(groups.length)} account${groups.length === 1 ? '' : 's'} with active streams`;
+  }
+
+  if (!groups.length) {
+    const empty = document.createElement('div');
+    empty.className = 'item';
+    const heading = document.createElement('p');
+    heading.className = 'item__title';
+    heading.textContent = 'No active income streams yet';
+    const sub = document.createElement('p');
+    sub.className = 'item__subtitle';
+    sub.textContent = 'Activate a stream in Accounts to populate this overview.';
+    empty.append(heading, sub);
+    list.append(empty);
+    return;
+  }
+
+  groups.forEach((group) => {
+    const section = document.createElement('section');
+    section.className = 'stream-group';
+
+    const header = document.createElement('header');
+    header.className = 'stream-group__header';
+    const title = document.createElement('h4');
+    title.className = 'stream-group__title';
+    title.textContent = group.name;
+    const streamCount = document.createElement('p');
+    streamCount.className = 'stream-group__count';
+    streamCount.textContent = `${integerFormatter.format(group.streams.length)} stream${group.streams.length === 1 ? '' : 's'}`;
+    header.append(title, streamCount);
+
+    const streamList = document.createElement('ul');
+    streamList.className = 'item-list';
+    streamList.setAttribute('role', 'list');
+
+    group.streams
+      .slice()
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .forEach((stream) => {
+        const item = document.createElement('li');
+        item.className = 'item';
+        const name = document.createElement('p');
+        name.className = 'item__title';
+        name.textContent = stream.label;
+        const meta = document.createElement('p');
+        meta.className = 'item__subtitle';
+        meta.textContent = `${stream.product} · ${stream.revenueType}`;
+        item.append(name, meta);
+        streamList.append(item);
+      });
+
+    section.append(header, streamList);
+    list.append(section);
+  });
+}
 function renderIncomeStreamList() {
   const list = selectors.incomeStreamList;
   const template = selectors.incomeStreamTemplate;
@@ -6617,6 +6699,7 @@ async function loadIncomeStreams() {
   }));
   renderCreditUnionOptions();
   renderIncomeStreamList();
+  renderOverviewList();
   renderProspectAccountList();
   renderAccountDirectory();
 }

@@ -450,3 +450,5 @@ quotes.
 2026-02-12: Hardened Podium reply sync matching by recognizing additional inbound message metadata fields (isInbound/type/senderType) and deep-fetching fallback conversations by UID when list payloads omit message timelines, fixing missed member 1/2/3 replies during Sync Podium Replies.
 
 2026-03-31: Added a new Accounts Map tab/page powered by OpenStreetMap + Leaflet with clickable/manual pin placement, removable/savable local pins, and shared top navigation link insertion across account workspace pages.
+
+2026-05-01: Added an Overview tab/page in Income & reporting navigation plus grouped active-stream account listing so teams can quickly see every account with active income streams and which streams are being tracked.

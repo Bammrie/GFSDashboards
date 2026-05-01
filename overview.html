@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Overview | Income Stream Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Overview</h1>
+        <p class="site-subtitle">See every account with active streams and what each account is tracking.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <div class="header-group" aria-label="Main">
+          <span class="header-group__label">Main</span>
+          <div class="header-group__links">
+            <a href="quotes.html" class="header-link">Quotes</a>
+            <a href="accounts.html" class="header-link">Accounts</a>
+          </div>
+        </div>
+        <div class="header-group" aria-label="Income and reporting">
+          <span class="header-group__label">Income &amp; reporting</span>
+          <div class="header-group__links">
+            <a href="overview.html" class="header-link" aria-current="page">Overview</a>
+            <a href="income-streams.html" class="header-link">Income Streams</a>
+            <a href="reporting.html" class="header-link">Reporting</a>
+            <a href="monthly.html" class="header-link">Monthly Totals</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-labelledby="overview-heading">
+      <header class="panel__header">
+        <h2 id="overview-heading" class="panel__title">Active income stream overview</h2>
+        <p class="panel__description">Only accounts with at least one active income stream are shown below.</p>
+      </header>
+      <header class="list-header">
+        <h3 class="list-title">Accounts with active streams</h3>
+        <p class="list-subtitle" id="overview-count">Loading&hellip;</p>
+      </header>
+      <div id="overview-list" class="stream-groups" role="list" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
