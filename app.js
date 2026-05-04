@@ -4973,6 +4973,14 @@ function renderCallReportAssetChart() {
 
   summary.textContent = `Assets ${direction} by ${changeText} from ${timeRange}, reaching ${latestText}.`;
   container.append(summary);
+
+  const projection = estimateFiveYearAssetProjection(reports);
+  if (projection && Number.isFinite(projection.projectedValue)) {
+    const projectionSummary = document.createElement('p');
+    projectionSummary.className = 'chart-summary';
+    projectionSummary.textContent = `At the current trend, assets are estimated around ${currencyFormatter.format(projection.projectedValue)} by ${projection.projectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}.`;
+    container.append(projectionSummary);
+  }
 }
 
 function getConsumerLoanTotal(report) {
@@ -5006,6 +5014,43 @@ function formatDelta(latest, previous, formatter) {
   const percent = previous !== 0 ? Math.abs((delta / Math.abs(previous)) * 100) : null;
   const percentText = Number.isFinite(percent) ? ` (${percent.toFixed(1)}%)` : '';
   return `${arrow} ${changeText} since last report${percentText}`;
+}
+
+function estimateFiveYearAssetProjection(reports) {
+  const datedPoints = reports
+    .map((report) => {
+      const value = Number(report?.assetSize);
+      if (!Number.isFinite(value) || value <= 0) return null;
+
+      let timestamp = null;
+      if (report?.periodYear && report?.periodMonth) {
+        timestamp = Date.UTC(Number(report.periodYear), Number(report.periodMonth) - 1, 1);
+      } else if (report?.reportDate) {
+        const parsed = new Date(report.reportDate).getTime();
+        timestamp = Number.isFinite(parsed) ? parsed : null;
+      }
+
+      if (!Number.isFinite(timestamp)) return null;
+      return { value, timestamp };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.timestamp - b.timestamp);
+
+  if (datedPoints.length < 2) return null;
+
+  const first = datedPoints[0];
+  const latest = datedPoints[datedPoints.length - 1];
+  const elapsedYears = (latest.timestamp - first.timestamp) / (365.25 * 24 * 60 * 60 * 1000);
+  if (!Number.isFinite(elapsedYears) || elapsedYears <= 0) return null;
+
+  const annualGrowthRate = Math.pow(latest.value / first.value, 1 / elapsedYears) - 1;
+  if (!Number.isFinite(annualGrowthRate)) return null;
+
+  const projectedValue = latest.value * Math.pow(1 + annualGrowthRate, 5);
+  const projectedDate = new Date(latest.timestamp);
+  projectedDate.setUTCFullYear(projectedDate.getUTCFullYear() + 5);
+
+  return { projectedValue, projectedDate };
 }
 
 function renderCallReportMetrics() {
