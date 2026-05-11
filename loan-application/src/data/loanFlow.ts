@@ -44,14 +44,22 @@ export const loanFlow: QuestionStep[] = [
     question: 'Loan amount requested',
     type: 'number',
     placeholder: '$0.00',
-    next: 'vehiclePrice'
+    next: (application) =>
+      application.loanPurpose.includes('Vehicle') ? 'knowsVin' : 'downPayment'
   },
   {
-    id: 'vehiclePrice',
+    id: 'knowsVin',
     title: 'Loan Details',
-    question: 'Estimated vehicle price',
-    type: 'number',
-    placeholder: '$0.00',
+    question: 'Do you know the VIN?',
+    type: 'singleChoice',
+    options: ['Yes', 'No'],
+    next: (application) => (application.knowsVin === 'Yes' ? 'vin' : 'downPayment')
+  },
+  {
+    id: 'vin',
+    title: 'Loan Details',
+    question: 'Enter the VIN',
+    type: 'text',
     next: 'downPayment'
   },
   {
