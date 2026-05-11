@@ -5,38 +5,61 @@ const isAtLeast18 = (value: string) => {
   if (Number.isNaN(birthDate.getTime())) return false;
 
   const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDelta = today.getMonth() - birthDate.getMonth();
-  if (monthDelta < 0 || (monthDelta === 0 && today.getDate() < birthDate.getDate())) {
-    age -= 1;
-  }
+  const eighteenthBirthday = new Date(
+    birthDate.getFullYear() + 18,
+    birthDate.getMonth(),
+    birthDate.getDate()
+  );
 
-  return age >= 18;
+  return today >= eighteenthBirthday;
 };
 
 export const loanFlow: QuestionStep[] = [
   {
-    id: 'loanType',
-    title: 'Loan Details',
-    question: 'What type of loan are you applying for?',
+    id: 'loanPurpose',
+    title: 'Buying New Vehicle',
+    question: 'Type Of Loan',
     type: 'singleChoice',
-    options: ['Auto Loan', 'Personal Loan', 'Recreational Vehicle', 'Other'],
+    options: [
+      'Buying New Vehicle',
+      'Buying Used Vehicle',
+      'Refinancing Existing Vehicle',
+      'Personal Loan',
+      'Other'
+    ],
+    next: (application) =>
+      application.loanPurpose.includes('Vehicle') ? 'vehicleType' : 'loanAmount'
+  },
+  {
+    id: 'vehicleType',
+    title: 'Vehicle Loan',
+    question: 'Vehicle Type',
+    type: 'singleChoice',
+    options: ['New Car Purchase', 'Used Car Purchase'],
     next: 'loanAmount'
   },
   {
     id: 'loanAmount',
     title: 'Loan Details',
-    question: 'How much would you like to borrow?',
+    question: 'Loan amount requested',
     type: 'number',
     placeholder: '$0.00',
-    next: 'purchaseType'
+    next: 'vehiclePrice'
   },
   {
-    id: 'purchaseType',
+    id: 'vehiclePrice',
     title: 'Loan Details',
-    question: 'Is this a new purchase or refinance?',
-    type: 'singleChoice',
-    options: ['New Purchase', 'Refinance'],
+    question: 'Estimated vehicle price',
+    type: 'number',
+    placeholder: '$0.00',
+    next: 'downPayment'
+  },
+  {
+    id: 'downPayment',
+    title: 'Loan Details',
+    question: 'Down payment',
+    type: 'number',
+    placeholder: '$0.00',
     next: 'tradeIn'
   },
   {
