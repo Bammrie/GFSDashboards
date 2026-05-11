@@ -68,7 +68,8 @@
     writeJson(appKey, { ...application, ...patch });
   };
 
-  const showVinEntry = (container) => {
+  const showVinEntry = (prompt, container) => {
+    prompt.textContent = 'Enter the VIN';
     container.replaceChildren();
     const input = document.createElement('input');
     input.className = 'w-full border rounded-xl p-3';
@@ -101,7 +102,7 @@
     prompt.textContent = 'Do you know the VIN?';
     container.setAttribute('data-vin-prompt', 'true');
     container.replaceChildren(
-      makeButton('Yes', buttonClass, () => showVinEntry(container)),
+      makeButton('Yes', buttonClass, () => showVinEntry(prompt, container)),
       makeButton('No', buttonClass, () => {
         rememberStep(vinPromptStep);
         saveApplicationPatch({ knowsVin: 'No', vin: '' });
