@@ -68,7 +68,20 @@
     writeJson(appKey, { ...application, ...patch });
   };
 
-  const showVinEntry = (prompt, container) => {
+  const renderVinChoice = (prompt, container) => {
+    prompt.textContent = 'Do you know the VIN?';
+    container.replaceChildren(
+      makeButton('Yes', buttonClass, () => showVinEntry(prompt, container)),
+      makeButton('No', buttonClass, () => {
+        rememberStep(vinPromptStep);
+        saveApplicationPatch({ knowsVin: 'No', vin: '' });
+        setStepAndReload(nextAfterVin);
+      }),
+      makeButton('Back', secondaryClass, goBack)
+    );
+  };
+
+  function showVinEntry(prompt, container) {
     prompt.textContent = 'Enter the VIN';
     container.replaceChildren();
     const input = document.createElement('input');
@@ -84,10 +97,10 @@
         saveApplicationPatch({ knowsVin: 'Yes', vin });
         setStepAndReload(nextAfterVin);
       }),
-      makeButton('Back', secondaryClass, goBack)
+      makeButton('Back', secondaryClass, () => renderVinChoice(prompt, container))
     );
     input.focus();
-  };
+  }
 
   const showVinPrompt = () => {
     const prompt = Array.from(document.querySelectorAll('p')).find(
@@ -99,17 +112,8 @@
     const container = section?.querySelector('.flex.flex-col.items-center.gap-3');
     if (!container || container.getAttribute('data-vin-prompt') === 'true') return;
 
-    prompt.textContent = 'Do you know the VIN?';
     container.setAttribute('data-vin-prompt', 'true');
-    container.replaceChildren(
-      makeButton('Yes', buttonClass, () => showVinEntry(prompt, container)),
-      makeButton('No', buttonClass, () => {
-        rememberStep(vinPromptStep);
-        saveApplicationPatch({ knowsVin: 'No', vin: '' });
-        setStepAndReload(nextAfterVin);
-      }),
-      makeButton('Back', secondaryClass, goBack)
-    );
+    renderVinChoice(prompt, container);
   };
 
   const replaceStartOverWithBack = () => {
