@@ -1,205 +1,170 @@
-import { useEffect, useMemo, useState } from 'react';
-import { loanFlow } from '../data/loanFlow';
-import { LoanApplication } from '../types/application';
-import ChoiceButton from './ChoiceButton';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import ProgressIndicator from './ProgressIndicator';
 import StepCard from './StepCard';
-import ReviewApplication from './ReviewApplication';
+
+type IntakeStep = 'licenseFront' | 'licenseBack' | 'loanAmount' | 'waiting';
+
+const stepOrder: IntakeStep[] = ['licenseFront', 'licenseBack', 'loanAmount', 'waiting'];
 
 const formatCurrency = (value: string) =>
   value.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-const formatPhone = (value: string) => {
-  const digits = value.replace(/\D/g, '').slice(0, 10);
-  if (digits.length < 4) return digits;
-  if (digits.length < 7) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-};
-
-const readStoredJson = <T,>(key: string, fallback: T): T => {
-  try {
-    return JSON.parse(localStorage.getItem(key) || '') as T;
-  } catch {
-    return fallback;
-  }
-};
+const isLikelyMobile = () =>
+  typeof window !== 'undefined' &&
+  (window.matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
 
 export default function LoanWizard() {
-  const [application, setApplication] = useState<LoanApplication>(() => readStoredJson('loanApp', {}));
-  const [currentId, setCurrentId] = useState(localStorage.getItem('loanStep') || loanFlow[0].id);
-  const [stepHistory, setStepHistory] = useState<string[]>(() => readStoredJson('loanStepHistory', []));
-  const [input, setInput] = useState('');
+  const [currentStep, setCurrentStep] = useState<IntakeStep>('licenseFront');
+  const [frontLicense, setFrontLicense] = useState<File | null>(null);
+  const [backLicense, setBackLicense] = useState<File | null>(null);
+  const [loanAmount, setLoanAmount] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const step = useMemo(() => loanFlow.find((item) => item.id === currentId) || loanFlow[0], [currentId]);
+  const [mobileCameraPrompt, setMobileCameraPrompt] = useState(false);
 
-  useEffect(() => {
-    localStorage.setItem('loanApp', JSON.stringify(application));
-    localStorage.setItem('loanStep', currentId);
-  }, [application, currentId]);
+  useEffect(() => setMobileCameraPrompt(isLikelyMobile()), []);
 
-  useEffect(() => {
-    localStorage.setItem('loanStepHistory', JSON.stringify(stepHistory));
-  }, [stepHistory]);
+  const progressIndex = stepOrder.findIndex((step) => step === currentStep) + 1;
+  const selectedFile = currentStep === 'licenseFront' ? frontLicense : backLicense;
 
-  useEffect(() => {
-    if (step.id !== currentId) {
-      setCurrentId(step.id);
+  const copy = useMemo(() => {
+    if (currentStep === 'licenseFront') {
+      return {
+        title: "Upload Driver's License",
+        question: "Let's start with the front of your driver's license.",
+        help: 'Use a clear, well-lit photo so we can read the name, address, date of birth, and license details.'
+      };
     }
-  }, [currentId, step.id]);
 
-  useEffect(() => setInput(application[step.id] || ''), [step.id, application]);
+    if (currentStep === 'licenseBack') {
+      return {
+        title: "Upload Driver's License",
+        question: "Now upload the back of your driver's license.",
+        help: 'The barcode side helps us pull structured identity data quickly and reduce manual typing.'
+      };
+    }
 
-  const goToStep = (nextId?: string) => {
-    if (!nextId) return;
-    setStepHistory((history) => [...history, currentId]);
-    setCurrentId(nextId);
+    if (currentStep === 'loanAmount') {
+      return {
+        title: 'Loan Amount',
+        question: 'How much would you like to borrow?',
+        help: 'Enter the requested amount and we will start the conditional decision process.'
+      };
+    }
+
+    return {
+      title: 'Application Submitted',
+      question: 'We will have your conditional approval/rejection in just a few moments.',
+      help: 'Please keep this page open while we prepare the next step.'
+    };
+  }, [currentStep]);
+
+  const onFileChange =
+    (side: 'front' | 'back') =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0] ?? null;
+      setError('');
+      if (side === 'front') {
+        setFrontLicense(file);
+      } else {
+        setBackLicense(file);
+      }
+    };
+
+  const goNext = () => {
+    setError('');
+
+    if (currentStep === 'licenseFront') {
+      if (!frontLicense) return setError("Upload the front of your driver's license to continue.");
+      return setCurrentStep('licenseBack');
+    }
+
+    if (currentStep === 'licenseBack') {
+      if (!backLicense) return setError("Upload the back of your driver's license to continue.");
+      return setCurrentStep('loanAmount');
+    }
+
+    if (currentStep === 'loanAmount') {
+      if (!loanAmount) return setError('Enter a loan amount to submit.');
+      console.log('loanApplicationPrototype payload', {
+        loanAmount,
+        licenseFrontFileName: frontLicense?.name ?? null,
+        licenseBackFileName: backLicense?.name ?? null
+      });
+      return setCurrentStep('waiting');
+    }
   };
 
   const goBack = () => {
     setError('');
-    setStepHistory((history) => {
-      const previousId = history[history.length - 1];
-      if (previousId) {
-        setCurrentId(previousId);
-      }
-      return history.slice(0, -1);
-    });
+    if (currentStep === 'licenseBack') setCurrentStep('licenseFront');
+    if (currentStep === 'loanAmount') setCurrentStep('licenseBack');
   };
 
-  const resetApplication = () => {
-    setApplication({});
-    setStepHistory([]);
-    setCurrentId(loanFlow[0].id);
-    setError('');
-  };
-
-  const goNext = async (value?: string) => {
-    const final = value ?? input;
-
-    if (step.type !== 'review' && step.type !== 'completion' && !final) {
-      return setError('This field is required.');
-    }
-
-    if (step.validate) {
-      const message = step.validate(final, application);
-      if (message) return setError(message);
-    }
-
-    setError('');
-
-    if (step.id === 'review') {
-      setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 900));
-      console.log('submitApplication payload', application);
-      setLoading(false);
-      goToStep('completion');
-      return;
-    }
-
-    const nextApplication = { ...application, [step.id]: final };
-    const nextId = typeof step.next === 'function' ? step.next(nextApplication) : step.next;
-
-    if (step.type !== 'review' && step.type !== 'completion') {
-      setApplication(nextApplication);
-    }
-
-    goToStep(nextId);
-  };
-
-  const progressIndex = loanFlow.findIndex((item) => item.id === step.id) + 1;
+  const renderLicenseUpload = (side: 'front' | 'back') => (
+    <>
+      {mobileCameraPrompt && (
+        <p className="text-center text-sm text-gray-600">
+          When prompted, allow camera access so you can take the photo now.
+        </p>
+      )}
+      <label className="w-full border-2 border-dashed border-gray-200 rounded-3xl p-8 text-center bg-gray-50 cursor-pointer hover:border-burgundy transition">
+        <span className="block text-sm font-semibold text-burgundy">Upload Your Driver&apos;s License</span>
+        <span className="block text-xs text-gray-500 mt-2">
+          {selectedFile ? selectedFile.name : `${side === 'front' ? 'Front' : 'Back'} photo or image file`}
+        </span>
+        <input
+          className="hidden"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={onFileChange(side)}
+        />
+      </label>
+      <button className="rounded-full bg-burgundy text-white px-8 py-3" onClick={goNext}>
+        Continue
+      </button>
+    </>
+  );
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-8">
-      <ProgressIndicator current={progressIndex} total={loanFlow.length} />
-      <div className="text-right mt-3">
-        <a href="#" className="text-sm text-burgundy">Disclosures</a>
-      </div>
-      <StepCard title={step.title}>
-        <p className="text-center text-xl mb-6">{step.question}</p>
+      {currentStep !== 'waiting' && <ProgressIndicator current={progressIndex} total={stepOrder.length} />}
+      <StepCard title={copy.title}>
+        <p className="text-center text-xl mb-3">{copy.question}</p>
+        <p className="text-center text-sm text-gray-600 mb-6">{copy.help}</p>
         <div className="flex flex-col items-center gap-3">
-          {step.type === 'singleChoice' &&
-            step.options?.map((option) => (
-              <ChoiceButton key={option} label={option} onClick={() => goNext(option)} />
-            ))}
+          {currentStep === 'licenseFront' && renderLicenseUpload('front')}
+          {currentStep === 'licenseBack' && renderLicenseUpload('back')}
 
-          {(step.type === 'text' || step.type === 'number' || step.type === 'date' || step.type === 'select') && (
-            <>
-              {step.type === 'select' ? (
-                <select
-                  className="w-full border rounded-xl p-3"
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                >
-                  {['', ...(step.options || [])].map((option) => (
-                    <option key={option} value={option}>{option || 'Select an option'}</option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  className="w-full border rounded-xl p-3"
-                  type={step.type === 'date' ? 'date' : 'text'}
-                  value={input}
-                  onChange={(event) =>
-                    setInput(
-                      step.id === 'phone'
-                        ? formatPhone(event.target.value)
-                        : step.type === 'number'
-                          ? formatCurrency(event.target.value)
-                          : event.target.value
-                    )
-                  }
-                  onKeyDown={(event) => event.key === 'Enter' && goNext()}
-                />
-              )}
-              <button className="rounded-full bg-burgundy text-white px-8 py-3" onClick={() => goNext()}>
-                Continue
-              </button>
-            </>
-          )}
-
-          {step.type === 'contact' && (
+          {currentStep === 'loanAmount' && (
             <>
               <input
-                className="w-full border rounded-xl p-3"
-                placeholder="First Name"
-                value={application.firstName || ''}
-                onChange={(event) => setApplication((previous) => ({ ...previous, firstName: event.target.value }))}
+                className="w-full border rounded-xl p-3 text-center text-xl font-semibold"
+                inputMode="numeric"
+                placeholder="$0.00"
+                value={loanAmount}
+                onChange={(event) => setLoanAmount(formatCurrency(event.target.value))}
+                onKeyDown={(event) => event.key === 'Enter' && goNext()}
               />
-              <input
-                className="w-full border rounded-xl p-3"
-                placeholder="Last Name"
-                value={application.lastName || ''}
-                onChange={(event) => setApplication((previous) => ({ ...previous, lastName: event.target.value }))}
-              />
-              <button className="rounded-full bg-burgundy text-white px-8 py-3" onClick={() => goToStep(step.next as string)}>
-                Continue
+              <button className="rounded-full bg-burgundy text-white px-8 py-3" onClick={goNext}>
+                Submit
               </button>
             </>
           )}
 
-          {step.type === 'review' && (
-            <>
-              <ReviewApplication application={application} onEdit={setCurrentId} />
-              <button className="rounded-full bg-burgundy text-white px-8 py-3" onClick={() => goNext()}>
-                {loading ? 'Submitting...' : 'Submit Application'}
-              </button>
-            </>
-          )}
-
-          {step.type === 'completion' && (
-            <div className="text-center">
-              <p className="text-lg font-semibold">Application Submitted</p>
-              <p className="text-gray-600 mt-2">We received your application. A loan specialist will contact you soon.</p>
+          {currentStep === 'waiting' && (
+            <div className="flex flex-col items-center gap-4 py-8">
+              <div className="h-14 w-14 rounded-full border-4 border-gray-200 border-t-burgundy animate-spin" />
+              <p className="text-sm text-gray-500 text-center">
+                We are reviewing the license images and requested amount.
+              </p>
             </div>
           )}
 
           {!!error && <p className="text-red-600 text-sm">{error}</p>}
 
-          {stepHistory.length > 0 && step.type !== 'completion' ? (
+          {(currentStep === 'licenseBack' || currentStep === 'loanAmount') && (
             <button className="text-sm text-gray-500" onClick={goBack}>Back</button>
-          ) : (
-            <button className="text-sm text-gray-500" onClick={resetApplication}>Start Over</button>
           )}
         </div>
       </StepCard>
