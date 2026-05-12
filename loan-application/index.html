@@ -4,20 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GFS Loan Application</title>
-    <link rel="stylesheet" crossorigin href="./dist/assets/index-B7W-DYvl.css">
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="./src/main.tsx"></script>
-    <script type="module">
-      const mountBuiltApp = () => {
-        const root = document.getElementById('root');
-        if (!root || root.hasChildNodes()) return;
-        import('./dist/assets/' + 'index-D-GxPTgo.js');
-      };
-      window.addEventListener('error', mountBuiltApp);
-      window.setTimeout(mountBuiltApp, 250);
-    </script>
-    <script src="./runtime-fixes.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
