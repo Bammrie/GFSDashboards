@@ -151,4 +151,7 @@
   };
 
   render();
+  window.setTimeout(render, 0);
+  window.setTimeout(render, 250);
+  window.setTimeout(render, 750);
 })();
