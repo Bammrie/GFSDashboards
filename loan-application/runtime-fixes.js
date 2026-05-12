@@ -1,144 +1,154 @@
 (() => {
-  const stepKey = 'loanStep';
-  const appKey = 'loanApp';
-  const historyKey = 'loanStepHistoryPatch';
-  const firstStep = 'loanPurpose';
-  const completionStep = 'completion';
-  const vinPromptStep = 'vehiclePrice';
-  const nextAfterVin = 'downPayment';
-  let lastStep = localStorage.getItem(stepKey) || firstStep;
-  const wiredButtons = new WeakSet();
+  const root = document.getElementById('root');
+  if (!root) return;
 
-  const readJson = (key, fallback) => {
-    try {
-      return JSON.parse(localStorage.getItem(key) || '') || fallback;
-    } catch {
-      return fallback;
+  const state = {
+    step: 'front',
+    frontFile: null,
+    backFile: null,
+    loanAmount: '',
+    error: '',
+    mobile: window.matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+  };
+
+  const formatCurrency = (value) => value.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  const pageShell = (title, question, help, body, showProgress = true) => `
+    <div class="max-w-3xl mx-auto p-4 md:p-8">
+      ${showProgress ? '<div class="h-2 bg-gray-200 rounded-full"><div class="h-2 bg-tan rounded-full transition-all" style="width: 33%"></div></div>' : ''}
+      <section class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-10 mt-6">
+        <h1 class="text-2xl font-semibold text-gray-900 mb-6">${title}</h1>
+        <p class="text-center text-xl mb-3">${question}</p>
+        <p class="text-center text-sm text-gray-600 mb-6">${help}</p>
+        <div class="flex flex-col items-center gap-3">${body}</div>
+      </section>
+    </div>
+  `;
+
+  const uploadBody = (side) => `
+    ${state.mobile ? '<p class="text-center text-sm text-gray-600">When prompted, allow camera access so you can take the photo now.</p>' : ''}
+    <label class="w-full border-2 border-dashed border-gray-200 rounded-3xl p-8 text-center bg-gray-50 cursor-pointer hover:border-burgundy transition">
+      <span class="block text-sm font-semibold text-burgundy">Upload Your Driver's License</span>
+      <span class="block text-xs text-gray-500 mt-2">${
+        side === 'front'
+          ? state.frontFile?.name || 'Front photo or image file'
+          : state.backFile?.name || 'Back photo or image file'
+      }</span>
+      <input id="license-file" class="hidden" type="file" accept="image/*" capture="environment">
+    </label>
+    <button id="continue-btn" class="rounded-full bg-burgundy text-white px-8 py-3">Continue</button>
+    ${state.step === 'back' ? '<button id="back-btn" class="text-sm text-gray-500">Back</button>' : ''}
+    ${state.error ? `<p class="text-red-600 text-sm">${state.error}</p>` : ''}
+  `;
+
+  const render = () => {
+    if (state.step === 'front') {
+      root.innerHTML = pageShell(
+        "Upload Driver's License",
+        "Let's start with the front of your driver's license.",
+        'Use a clear, well-lit photo so we can read the key identity details.',
+        uploadBody('front')
+      );
     }
-  };
 
-  const writeJson = (key, value) => localStorage.setItem(key, JSON.stringify(value));
-
-  const rememberStep = (stepId) => {
-    if (!stepId) return;
-    const history = readJson(historyKey, []);
-    if (history[history.length - 1] !== stepId) {
-      writeJson(historyKey, [...history, stepId].slice(-40));
+    if (state.step === 'back') {
+      root.innerHTML = pageShell(
+        "Upload Driver's License",
+        "Now upload the back of your driver's license.",
+        'The barcode side helps us pull structured identity data quickly and reduce manual typing.',
+        uploadBody('back')
+      );
     }
-  };
 
-  const setStepAndReload = (stepId) => {
-    localStorage.setItem(stepKey, stepId);
-    window.location.reload();
-  };
-
-  const goBack = () => {
-    const history = readJson(historyKey, []);
-    const previousStep = history.pop();
-    writeJson(historyKey, history);
-    setStepAndReload(previousStep || firstStep);
-  };
-
-  const updateHistoryFromReact = () => {
-    const currentStep = localStorage.getItem(stepKey) || firstStep;
-    if (currentStep !== lastStep) {
-      rememberStep(lastStep);
-      lastStep = currentStep;
+    if (state.step === 'amount') {
+      root.innerHTML = pageShell(
+        'Loan Amount',
+        'How much would you like to borrow?',
+        'Enter the requested amount and we will start the conditional decision process.',
+        `
+          <input id="loan-amount" class="w-full border rounded-xl p-3 text-center text-xl font-semibold" inputmode="numeric" placeholder="$0.00" value="${state.loanAmount}">
+          <button id="submit-btn" class="rounded-full bg-burgundy text-white px-8 py-3">Submit</button>
+          <button id="back-btn" class="text-sm text-gray-500">Back</button>
+          ${state.error ? `<p class="text-red-600 text-sm">${state.error}</p>` : ''}
+        `
+      );
     }
-  };
 
-  const buttonClass = 'rounded-full bg-burgundy text-white px-8 py-3';
-  const secondaryClass = 'text-sm text-gray-500';
-
-  const makeButton = (label, className, onClick) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = className;
-    button.textContent = label;
-    button.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      onClick();
-    }, true);
-    return button;
-  };
-
-  const saveApplicationPatch = (patch) => {
-    const application = readJson(appKey, {});
-    writeJson(appKey, { ...application, ...patch });
-  };
-
-  const renderVinChoice = (prompt, container) => {
-    prompt.textContent = 'Do you know the VIN?';
-    container.replaceChildren(
-      makeButton('Yes', buttonClass, () => showVinEntry(prompt, container)),
-      makeButton('No', buttonClass, () => {
-        rememberStep(vinPromptStep);
-        saveApplicationPatch({ knowsVin: 'No', vin: '' });
-        setStepAndReload(nextAfterVin);
-      }),
-      makeButton('Back', secondaryClass, goBack)
-    );
-  };
-
-  function showVinEntry(prompt, container) {
-    prompt.textContent = 'Enter the VIN';
-    container.replaceChildren();
-    const input = document.createElement('input');
-    input.className = 'w-full border rounded-xl p-3';
-    input.placeholder = 'VIN';
-    input.autocomplete = 'off';
-    container.append(
-      input,
-      makeButton('Continue', buttonClass, () => {
-        const vin = input.value.trim();
-        if (!vin) return;
-        rememberStep(vinPromptStep);
-        saveApplicationPatch({ knowsVin: 'Yes', vin });
-        setStepAndReload(nextAfterVin);
-      }),
-      makeButton('Back', secondaryClass, () => renderVinChoice(prompt, container))
-    );
-    input.focus();
-  }
-
-  const showVinPrompt = () => {
-    const prompt = Array.from(document.querySelectorAll('p')).find(
-      (item) => item.textContent?.trim() === 'Estimated vehicle price'
-    );
-    if (!prompt) return;
-
-    const section = prompt.closest('section');
-    const container = section?.querySelector('.flex.flex-col.items-center.gap-3');
-    if (!container || container.getAttribute('data-vin-prompt') === 'true') return;
-
-    container.setAttribute('data-vin-prompt', 'true');
-    renderVinChoice(prompt, container);
-  };
-
-  const replaceStartOverWithBack = () => {
-    const currentStep = localStorage.getItem(stepKey) || firstStep;
-    if (currentStep === firstStep || currentStep === completionStep) return;
-
-    for (const button of document.querySelectorAll('button')) {
-      if (button.textContent?.trim() !== 'Start Over' || wiredButtons.has(button)) continue;
-      button.textContent = 'Back';
-      wiredButtons.add(button);
-      button.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        goBack();
-      }, true);
+    if (state.step === 'waiting') {
+      root.innerHTML = pageShell(
+        'Application Submitted',
+        'We will have your conditional approval/rejection in just a few moments.',
+        'Please keep this page open while we prepare the next step.',
+        `
+          <div class="flex flex-col items-center gap-4 py-8">
+            <div class="h-14 w-14 rounded-full border-4 border-gray-200 border-t-burgundy animate-spin"></div>
+            <p class="text-sm text-gray-500 text-center">We are reviewing the license images and requested amount.</p>
+          </div>
+        `,
+        false
+      );
     }
+
+    bindEvents();
   };
 
-  const applyFixes = () => {
-    updateHistoryFromReact();
-    showVinPrompt();
-    replaceStartOverWithBack();
+  const bindEvents = () => {
+    document.getElementById('license-file')?.addEventListener('change', (event) => {
+      const file = event.target.files?.[0] || null;
+      if (state.step === 'front') state.frontFile = file;
+      if (state.step === 'back') state.backFile = file;
+      state.error = '';
+      render();
+    });
+
+    document.getElementById('continue-btn')?.addEventListener('click', () => {
+      state.error = '';
+      if (state.step === 'front') {
+        if (!state.frontFile) {
+          state.error = "Upload the front of your driver's license to continue.";
+          return render();
+        }
+        state.step = 'back';
+        return render();
+      }
+
+      if (state.step === 'back') {
+        if (!state.backFile) {
+          state.error = "Upload the back of your driver's license to continue.";
+          return render();
+        }
+        state.step = 'amount';
+        return render();
+      }
+    });
+
+    document.getElementById('loan-amount')?.addEventListener('input', (event) => {
+      state.loanAmount = formatCurrency(event.target.value);
+      event.target.value = state.loanAmount;
+    });
+
+    document.getElementById('submit-btn')?.addEventListener('click', () => {
+      state.error = '';
+      if (!state.loanAmount) {
+        state.error = 'Enter a loan amount to submit.';
+        return render();
+      }
+      console.log('loanApplicationPrototype payload', {
+        loanAmount: state.loanAmount,
+        licenseFrontFileName: state.frontFile?.name || null,
+        licenseBackFileName: state.backFile?.name || null
+      });
+      state.step = 'waiting';
+      render();
+    });
+
+    document.getElementById('back-btn')?.addEventListener('click', () => {
+      state.error = '';
+      if (state.step === 'back') state.step = 'front';
+      else if (state.step === 'amount') state.step = 'back';
+      render();
+    });
   };
 
-  new MutationObserver(applyFixes).observe(document.documentElement, { childList: true, subtree: true });
-  window.setInterval(applyFixes, 200);
-  applyFixes();
+  render();
 })();
