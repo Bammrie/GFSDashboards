@@ -1,0 +1,167 @@
+.stacked-form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+textarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: 320px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  padding: 0.85rem 1rem;
+  font: 0.92rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.decisioning-matrix,
+.decisioning-checklist,
+.decisioning-result,
+.decisioning-score-grid,
+.reason-code-list,
+.conditions-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.decisioning-matrix {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  margin-top: 1.25rem;
+}
+
+.matrix-card,
+.checklist-card,
+.score-card,
+.reason-code-card,
+.condition-card,
+.result-card {
+  border: 1px solid var(--border);
+  background: var(--surface-card);
+  padding: 1rem;
+}
+
+.matrix-card h3,
+.checklist-card h3,
+.score-card h3,
+.reason-code-card h3 {
+  margin: 0 0 0.65rem;
+  font-size: 1rem;
+}
+
+.matrix-field {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.8rem;
+}
+
+.matrix-field__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+.matrix-field input[type='range'] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.matrix-field input[type='number'] {
+  max-width: 110px;
+}
+
+.matrix-value,
+.result-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.decisioning-checklist {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.checklist-card ul,
+.reason-code-card ul,
+.conditions-list ul {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.decision-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid var(--border);
+  background: rgba(122, 30, 44, 0.12);
+  color: var(--accent);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+.decision-badge[data-decision='approve'],
+.decision-badge[data-decision='conditional_approval'] {
+  color: #145a37;
+  background: rgba(47, 122, 79, 0.14);
+  border-color: rgba(47, 122, 79, 0.35);
+}
+
+.decision-badge[data-decision='decline'] {
+  color: #9b1c1c;
+  background: rgba(207, 63, 63, 0.12);
+  border-color: rgba(207, 63, 63, 0.35);
+}
+
+.decision-badge[data-decision='manual_review'],
+.decision-badge[data-decision='counteroffer'] {
+  color: #8a4b00;
+  background: rgba(245, 124, 0, 0.14);
+  border-color: rgba(245, 124, 0, 0.35);
+}
+
+.decisioning-score-grid {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.score-meter {
+  height: 0.7rem;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.score-meter span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #7a1e2c, #2f7a4f);
+}
+
+.reason-code-list {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.reason-code-card p,
+.result-card p,
+.score-card p {
+  margin: 0.3rem 0 0;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .decisioning-matrix,
+  .decisioning-checklist,
+  .decisioning-score-grid,
+  .reason-code-list {
+    grid-template-columns: 1fr;
+  }
+
+  .panel__header--split {
+    align-items: stretch;
+  }
+}
