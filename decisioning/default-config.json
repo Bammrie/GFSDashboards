@@ -1,0 +1,69 @@
+{
+  "modelVersion": "decision-support-v1",
+  "configVersion": "2026-05-12-default",
+  "scoreWeights": {
+    "credit": 0.3,
+    "capacity": 0.25,
+    "cashFlow": 0.15,
+    "collateral": 0.15,
+    "relationship": 0.05,
+    "fraud": 0.1
+  },
+  "thresholds": {
+    "approveScore": 78,
+    "conditionalApproveScore": 70,
+    "manualReviewScore": 58,
+    "declineScore": 44,
+    "minimumCreditScore": { "auto": 620, "personal": 640, "default": 640 },
+    "maximumDti": { "auto": 0.48, "personal": 0.43, "default": 0.45 },
+    "maximumPti": { "auto": 0.18, "personal": 0.15, "default": 0.16 },
+    "maximumLtv": { "auto_new": 1.1, "auto_used": 1.05, "auto_older": 0.95, "personal": 1, "default": 1 },
+    "maximumFraudRisk": 72,
+    "manualReviewFraudRisk": 48,
+    "incomeMismatchPercent": 0.2,
+    "maxOverdrafts90Days": 6,
+    "thinCreditOpenTradelines": 3,
+    "thinCreditOldestTradelineMonths": 24,
+    "oldVehicleAgeYears": 12,
+    "highMileage": 125000
+  },
+  "termLimits": { "default": 72, "auto_new": 84, "auto_used": 72, "auto_older": 60, "personal": 60 },
+  "pricingTiers": [
+    { "id": "A_PLUS", "minimumScore": 88, "aprAdjustmentBps": 0, "label": "A+ tier" },
+    { "id": "A", "minimumScore": 78, "aprAdjustmentBps": 75, "label": "A tier" },
+    { "id": "B", "minimumScore": 68, "aprAdjustmentBps": 175, "label": "B tier" },
+    { "id": "C", "minimumScore": 58, "aprAdjustmentBps": 325, "label": "C tier/manual review" }
+  ],
+  "rules": [
+    { "id": "active-bankruptcy-hard-decline", "type": "hard_decline", "reasonCode": "ACTIVE_BANKRUPTCY", "description": "Decline if an active bankruptcy is present.", "conditions": [{ "path": "credit.bankruptcies.active", "operator": "eq", "value": true }] },
+    { "id": "recent-bankruptcy-review", "type": "manual_review", "reasonCode": "RECENT_BANKRUPTCY", "description": "Refer if a bankruptcy is present but not marked active.", "conditions": [{ "path": "credit.bankruptcies.count", "operator": "gt", "value": 0 }] },
+    { "id": "credit-score-below-minimum", "type": "manual_review", "reasonCode": "LOW_CREDIT_SCORE", "description": "Refer when credit score is below the configured product threshold.", "conditions": [{ "path": "credit.creditScore", "operator": "ltConfig", "configPath": "minimumCreditScore" }] },
+    { "id": "income-mismatch", "type": "manual_review", "reasonCode": "INCOME_MISMATCH", "description": "Refer when stated income differs materially from verified income.", "conditions": [{ "metric": "incomeMismatchPercent", "operator": "gtConfig", "configPath": "incomeMismatchPercent" }] },
+    { "id": "fraud-risk-review", "type": "manual_review", "reasonCode": "HIGH_APPLICATION_FRAUD_RISK", "description": "Refer when fraud/device risk exceeds configured tolerance.", "conditions": [{ "path": "fraud.deviceFingerprintRisk", "operator": "gteConfig", "configPath": "manualReviewFraudRisk" }] },
+    { "id": "ltv-counteroffer", "type": "counteroffer", "reasonCode": "HIGH_LTV", "description": "Counteroffer when loan-to-value is too high but can be fixed with down payment.", "conditions": [{ "path": "collateral.loanToValue", "operator": "gtConfig", "configPath": "maximumLtv" }] },
+    { "id": "pti-counteroffer", "type": "counteroffer", "reasonCode": "HIGH_PTI", "description": "Counteroffer when payment-to-income exceeds policy.", "conditions": [{ "path": "loanRequest.paymentToIncomeRatio", "operator": "gtConfig", "configPath": "maximumPti" }] },
+    { "id": "old-collateral-review", "type": "manual_review", "reasonCode": "COLLATERAL_TOO_OLD", "description": "Refer older collateral for manual review.", "conditions": [{ "path": "collateral.collateralAgeYears", "operator": "gtConfig", "configPath": "oldVehicleAgeYears" }] }
+  ],
+  "reasonCodes": {
+    "ACTIVE_BANKRUPTCY": { "severity": "critical", "category": "credit", "internalExplanation": "Active bankruptcy was reported on the credit/application data.", "consumerExplanation": "Recent bankruptcy information affected the application.", "adverseActionRelevant": true },
+    "RECENT_BANKRUPTCY": { "severity": "high", "category": "credit", "internalExplanation": "Bankruptcy history requires an underwriter review before final decision.", "consumerExplanation": "Bankruptcy history affected the application review.", "adverseActionRelevant": true },
+    "LOW_CREDIT_SCORE": { "severity": "high", "category": "credit", "internalExplanation": "Credit score is below the configured threshold for the requested product.", "consumerExplanation": "Credit score did not meet the program guideline.", "adverseActionRelevant": true },
+    "LIMITED_CREDIT_HISTORY": { "severity": "medium", "category": "credit", "internalExplanation": "Open tradelines or oldest tradeline age indicate limited credit depth.", "consumerExplanation": "Limited credit history affected the application.", "adverseActionRelevant": true },
+    "RECENT_DELINQUENCY": { "severity": "high", "category": "credit", "internalExplanation": "Recent 60+ or 90+ day delinquency was reported.", "consumerExplanation": "Recent delinquency affected the application.", "adverseActionRelevant": true },
+    "HIGH_DTI": { "severity": "high", "category": "capacity", "internalExplanation": "Debt-to-income ratio exceeds the configured guideline.", "consumerExplanation": "Debt obligations were high compared with income.", "adverseActionRelevant": true },
+    "HIGH_PTI": { "severity": "high", "category": "capacity", "internalExplanation": "Proposed payment-to-income ratio exceeds the configured guideline.", "consumerExplanation": "The requested payment was high compared with income.", "adverseActionRelevant": true },
+    "INSUFFICIENT_VERIFIED_INCOME": { "severity": "high", "category": "capacity", "internalExplanation": "Verified income is missing or insufficient for the requested obligation.", "consumerExplanation": "Verified income was not sufficient for the requested terms.", "adverseActionRelevant": true },
+    "INCOME_MISMATCH": { "severity": "high", "category": "capacity", "internalExplanation": "Stated income materially differs from verified income.", "consumerExplanation": "Income information could not be verified as stated.", "adverseActionRelevant": true },
+    "EXCESSIVE_OVERDRAFTS": { "severity": "medium", "category": "cashFlow", "internalExplanation": "Bank data shows overdrafts above configured tolerance.", "consumerExplanation": "Recent account overdraft activity affected the review.", "adverseActionRelevant": true },
+    "UNSTABLE_CASH_FLOW": { "severity": "medium", "category": "cashFlow", "internalExplanation": "Deposit, payroll, or balance trends suggest unstable cash flow.", "consumerExplanation": "Deposit or balance patterns affected the review.", "adverseActionRelevant": true },
+    "CONSISTENT_PAYROLL_DEPOSITS": { "severity": "positive", "category": "cashFlow", "internalExplanation": "Consistent payroll deposits support repayment capacity.", "consumerExplanation": "Consistent payroll deposits supported the review.", "adverseActionRelevant": false },
+    "HIGH_LTV": { "severity": "high", "category": "collateral", "internalExplanation": "Requested amount financed exceeds maximum loan-to-value.", "consumerExplanation": "The amount requested was high compared with collateral value.", "adverseActionRelevant": true },
+    "COLLATERAL_TOO_OLD": { "severity": "medium", "category": "collateral", "internalExplanation": "Collateral age exceeds configured guideline.", "consumerExplanation": "Collateral age affected the application review.", "adverseActionRelevant": true },
+    "HIGH_MILEAGE": { "severity": "medium", "category": "collateral", "internalExplanation": "Vehicle mileage exceeds configured tolerance.", "consumerExplanation": "Vehicle mileage affected the application review.", "adverseActionRelevant": true },
+    "STRONG_MEMBER_RELATIONSHIP": { "severity": "positive", "category": "relationship", "internalExplanation": "Long member/customer tenure is a positive relationship factor.", "consumerExplanation": "Relationship history supported the review.", "adverseActionRelevant": false },
+    "HIGH_APPLICATION_FRAUD_RISK": { "severity": "critical", "category": "fraud", "internalExplanation": "Fraud/device/identity signals exceed configured risk tolerance.", "consumerExplanation": "Identity or application verification requires additional review.", "adverseActionRelevant": true },
+    "IDENTITY_NOT_VERIFIED": { "severity": "high", "category": "fraud", "internalExplanation": "Identity verification is missing or failed.", "consumerExplanation": "Identity verification could not be completed.", "adverseActionRelevant": true },
+    "LOW_REVOLVING_UTILIZATION": { "severity": "positive", "category": "credit", "internalExplanation": "Revolving utilization is low.", "consumerExplanation": "Low revolving balances supported the review.", "adverseActionRelevant": false },
+    "MISSING_REQUIRED_DATA": { "severity": "medium", "category": "application", "internalExplanation": "Required decision-support fields are missing.", "consumerExplanation": "Additional information is needed to complete the review.", "adverseActionRelevant": false }
+  }
+}
