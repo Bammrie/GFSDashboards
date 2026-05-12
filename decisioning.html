@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Decisioning | GFS Dashboards</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Decisioning</h1>
+        <p class="site-subtitle">Internal decision-support recommendations for consumer loan applications.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <div class="header-group" aria-label="Main">
+          <span class="header-group__label">Main</span>
+          <div class="header-group__links">
+            <a href="quotes.html" class="header-link">Quotes</a>
+            <a href="accounts.html" class="header-link">Accounts</a>
+            <a href="decisioning.html" class="header-link" aria-current="page">Decisioning</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel" aria-labelledby="decisioning-matrix-heading">
+      <header class="panel__header panel__header--split">
+        <div>
+          <h2 id="decisioning-matrix-heading" class="panel__title">Decision matrix controls</h2>
+          <p class="panel__description">
+            Tune the active decision-support scales. Saved changes apply to future evaluations and create a new config version.
+          </p>
+        </div>
+        <div class="form-actions">
+          <button type="button" id="decisioning-reset-config" class="secondary-button">Reset draft</button>
+          <button type="button" id="decisioning-save-config" class="primary-button">Save matrix</button>
+        </div>
+      </header>
+      <p id="decisioning-config-summary" class="panel__description">Loading current configuration...</p>
+      <div id="decisioning-matrix" class="decisioning-matrix"></div>
+      <p id="decisioning-config-feedback" class="feedback" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="decisioning-data-heading">
+      <header class="panel__header">
+        <h2 id="decisioning-data-heading" class="panel__title">Data needed to complete the matrix</h2>
+        <p class="panel__description">
+          Current license-upload intake does not collect enough underwriting data. This checklist shows the data points needed to make every score and rule reliable.
+        </p>
+      </header>
+      <div id="decisioning-data-checklist" class="decisioning-checklist"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="decisioning-heading">
+      <header class="panel__header panel__header--split">
+        <div>
+          <h2 id="decisioning-heading" class="panel__title">Evaluate application</h2>
+          <p class="panel__description">
+            Paste a normalized or raw application payload. This is decision-support only and requires compliance approval before final underwriting use.
+          </p>
+        </div>
+        <button type="button" id="decisioning-sample-btn" class="secondary-button">Load sample</button>
+      </header>
+
+      <form id="decisioning-form" class="stacked-form">
+        <label for="decisioning-payload">Application JSON</label>
+        <textarea id="decisioning-payload" rows="18" spellcheck="false" placeholder='{"loanRequest":{"loanType":"auto","requestedAmount":25000}}'></textarea>
+        <div class="form-actions">
+          <button type="submit" class="primary-button">Evaluate</button>
+          <p id="decisioning-feedback" class="feedback" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel" aria-labelledby="decisioning-result-heading">
+      <header class="panel__header">
+        <h2 id="decisioning-result-heading" class="panel__title">Decision result</h2>
+        <p id="decisioning-result-summary" class="panel__description">No decision has been run yet.</p>
+      </header>
+      <div id="decisioning-result" class="decisioning-result" hidden></div>
+    </section>
+
+    <section class="panel" aria-labelledby="decisioning-history-heading">
+      <header class="panel__header panel__header--split">
+        <div>
+          <h2 id="decisioning-history-heading" class="panel__title">Audit history</h2>
+          <p class="panel__description">Recent stored decision-support runs.</p>
+        </div>
+        <button type="button" id="decisioning-refresh-history" class="secondary-button">Refresh</button>
+      </header>
+      <div id="decisioning-history-empty" class="empty-state">
+        <p>No decisioning runs found.</p>
+      </div>
+      <div id="decisioning-history" class="table-scroll" hidden></div>
+    </section>
+  </main>
+
+  <script type="module" src="decisioning.js?v=matrix-20260512"></script>
+</body>
+</html>
