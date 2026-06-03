@@ -4,15 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Reporting | Income Stream Dashboard</title>
+  <title>Commission Dashboard | GFS Dashboards</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="commission-report.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="header-content">
       <div class="branding">
-        <h1 class="site-title">Revenue Intelligence</h1>
-        <p class="site-subtitle">Spot missing revenue updates and log them without leaving the page.</p>
+        <h1 class="site-title">Commission Intelligence</h1>
+        <p class="site-subtitle">Front-end commission performance by account, month, and year.</p>
       </div>
       <nav class="header-actions" aria-label="Primary navigation">
         <div class="header-group" aria-label="Main">
@@ -35,70 +36,161 @@
     </div>
   </header>
 
-  <main class="layout">
-    <section id="reporting" class="panel" aria-labelledby="reporting-heading">
-      <header class="panel__header">
-        <h2 id="reporting-heading" class="panel__title">Missing revenue updates</h2>
-        <p class="panel__description">
-          View every active income stream that still needs a monthly revenue entry, filter by period and income type, and log the
-          missing amounts inline.
-        </p>
+  <main class="layout layout--wide">
+    <section id="commission-dashboard" class="panel commission-dashboard" aria-labelledby="commission-heading">
+      <header class="panel__header panel__header--split">
+        <div>
+          <h2 id="commission-heading" class="panel__title">Front-end commission report</h2>
+          <p class="panel__description">
+            Hardcoded sales commission results across the loaded credit union accounts, with monthly, yearly,
+            momentum, and account comparison views.
+          </p>
+        </div>
+        <form id="commission-filter" class="commission-toolbar" autocomplete="off">
+          <div class="field-group">
+            <label for="commission-account-filter">Account</label>
+            <select id="commission-account-filter" name="account">
+              <option value="all">All accounts</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="commission-year-filter">Year</label>
+            <select id="commission-year-filter" name="year">
+              <option value="all">All years</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+            </select>
+          </div>
+        </form>
       </header>
-      <section class="insights">
-        <article class="insight-card" aria-live="polite">
-          <h3 class="insight-title">Missing revenue updates</h3>
-          <p id="missing-total" class="insight-value">0</p>
-          <p class="insight-subtext">Active income streams without a reported month.</p>
+
+      <section class="insights commission-kpis" aria-live="polite">
+        <article class="insight-card">
+          <h3 class="insight-title">Total commission</h3>
+          <p id="commission-total" class="insight-value">$0.00</p>
+          <p id="commission-total-note" class="insight-subtext">All reported months</p>
+        </article>
+        <article class="insight-card">
+          <h3 class="insight-title">Latest reported month</h3>
+          <p id="commission-latest" class="insight-value">$0.00</p>
+          <p id="commission-latest-note" class="insight-subtext">Waiting for data</p>
+        </article>
+        <article class="insight-card">
+          <h3 class="insight-title">Average month</h3>
+          <p id="commission-average" class="insight-value">$0.00</p>
+          <p id="commission-average-note" class="insight-subtext">Across selected months</p>
+        </article>
+        <article class="insight-card">
+          <h3 class="insight-title">Year focus</h3>
+          <p id="commission-year-total" class="insight-value">$0.00</p>
+          <p id="commission-year-note" class="insight-subtext">Latest YTD or selected year</p>
+        </article>
+        <article class="insight-card">
+          <h3 class="insight-title">Comparable change</h3>
+          <p id="commission-momentum" class="insight-value">$0.00</p>
+          <p id="commission-momentum-note" class="insight-subtext">First to latest comparable month</p>
+        </article>
+        <article class="insight-card">
+          <h3 class="insight-title">Leading account</h3>
+          <p id="commission-leader" class="insight-value">Waiting</p>
+          <p id="commission-leader-note" class="insight-subtext">By selected total commission</p>
         </article>
       </section>
 
-      <form id="missing-filter" class="filter-grid" autocomplete="off">
-        <div class="field-group">
-          <label for="missing-month">Month to fill</label>
-          <input type="month" id="missing-month" name="month" required />
-        </div>
-        <div class="field-group">
-          <label for="missing-type">Income type</label>
-          <select id="missing-type" name="revenueType">
-            <option value="all">All income types</option>
-            <option value="Frontend">Frontend</option>
-            <option value="Backend">Backend</option>
-            <option value="Commission">Commission</option>
-          </select>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="secondary-button">Find missing revenue</button>
-        </div>
-      </form>
+      <section class="commission-report-grid commission-report-grid--charts" aria-label="Commission charts">
+        <article class="chart-card commission-chart-card commission-chart-card--wide">
+          <header class="chart-header">
+            <h3 class="chart-title">Monthly commission trend</h3>
+            <p id="commission-trend-note" class="chart-subtitle">Combined monthly front-end commission.</p>
+          </header>
+          <div id="commission-trend-chart" class="commission-line-chart" aria-label="Monthly commission trend"></div>
+        </article>
 
-      <section class="table-card" aria-live="polite">
+        <article class="chart-card commission-chart-card">
+          <header class="chart-header">
+            <h3 class="chart-title">Account total comparison</h3>
+            <p class="chart-subtitle">Selected-period production ranked by account.</p>
+          </header>
+          <div id="commission-account-chart" class="commission-bar-chart" aria-label="Account total comparison"></div>
+        </article>
+
+        <article class="chart-card commission-chart-card">
+          <header class="chart-header">
+            <h3 class="chart-title">Commission mix</h3>
+            <p class="chart-subtitle">Share of selected production by account.</p>
+          </header>
+          <div id="commission-share-chart" class="commission-share-chart" aria-label="Commission share"></div>
+        </article>
+      </section>
+
+      <section id="commission-account-cards" class="commission-account-cards" aria-label="Account scorecards"></section>
+
+      <section class="commission-report-grid" aria-label="Commission summary reports">
+        <article class="table-card">
+          <header class="table-header">
+            <h3 class="table-title">Year totals</h3>
+            <p class="table-description">Annual front-end commission totals with year-over-year movement.</p>
+          </header>
+          <div class="table-scroll">
+            <table class="data-table commission-table commission-table--year">
+              <thead>
+                <tr id="commission-year-head"></tr>
+              </thead>
+              <tbody id="commission-year-body"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="table-card">
+          <header class="table-header">
+            <h3 class="table-title">Momentum readout</h3>
+            <p class="table-description">Latest month, high-water mark, and rolling three-month direction.</p>
+          </header>
+          <div class="table-scroll">
+            <table class="data-table commission-table">
+              <thead>
+                <tr>
+                  <th scope="col">Account</th>
+                  <th scope="col" class="numeric">Latest</th>
+                  <th scope="col" class="numeric">Best month</th>
+                  <th scope="col" class="numeric">3-mo trend</th>
+                </tr>
+              </thead>
+              <tbody id="commission-momentum-body"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="table-card commission-monthly-card" aria-live="polite">
         <header class="table-header">
-          <h3 class="table-title">Missing entries</h3>
-          <p id="missing-summary" class="table-description">Select a month to see which updates are missing.</p>
+          <h3 class="table-title">Month-by-month production</h3>
+          <p id="commission-month-note" class="table-description">
+            Every reported business month, account contribution, combined total, and month-over-month movement.
+          </p>
         </header>
-
-        <div class="feedback" id="missing-feedback" role="status" aria-live="polite"></div>
-
-        <div id="missing-empty-state" class="empty-state" hidden>
-          <p>All income streams are reported for the selected filters.</p>
+        <div class="table-scroll">
+          <table class="data-table commission-table commission-table--wide">
+              <thead>
+              <tr id="commission-month-head"></tr>
+            </thead>
+            <tbody id="commission-month-body"></tbody>
+          </table>
         </div>
+      </section>
 
-        <table class="data-table" id="missing-table">
-          <thead>
-            <tr>
-              <th scope="col">Credit union</th>
-              <th scope="col">Product</th>
-              <th scope="col">Month</th>
-              <th scope="col" class="numeric">Revenue amount</th>
-              <th scope="col" class="numeric">Action</th>
-            </tr>
-          </thead>
-          <tbody id="missing-body"></tbody>
-        </table>
+      <section class="table-card commission-highlights-card">
+        <header class="table-header">
+          <h3 class="table-title">Automated report notes</h3>
+          <p class="table-description">Quick takeaways generated from the selected account and year filters.</p>
+        </header>
+        <div id="commission-highlights" class="commission-highlights"></div>
       </section>
     </section>
   </main>
 
-  <script type="module" src="app.js"></script>
+  <script type="module" src="commission-report.js"></script>
 </body>
 </html>
