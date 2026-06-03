@@ -1,0 +1,318 @@
+.layout--wide {
+  width: min(1800px, 98vw);
+}
+
+.commission-dashboard {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.commission-dashboard .panel__header {
+  margin-bottom: 0;
+}
+
+.commission-toolbar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 0.85rem;
+  width: min(520px, 100%);
+}
+
+.commission-kpis {
+  margin: 0;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+}
+
+.commission-kpis .insight-card {
+  border-top: 4px solid rgba(122, 30, 44, 0.55);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.96)),
+    var(--surface-card);
+}
+
+.insight-subtext {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.commission-report-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.commission-report-grid--charts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.commission-chart-card {
+  min-height: 100%;
+}
+
+.commission-chart-card--wide {
+  grid-column: 1 / -1;
+}
+
+.commission-line-chart {
+  min-height: 330px;
+}
+
+.commission-line-chart__svg {
+  width: 100%;
+  min-height: 310px;
+  display: block;
+}
+
+.commission-line-chart__svg text {
+  font-size: 0.72rem;
+  fill: rgba(15, 15, 15, 0.68);
+}
+
+.commission-bar-chart,
+.commission-share-chart {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.commission-bar-row {
+  display: grid;
+  grid-template-columns: minmax(112px, 0.8fr) minmax(120px, 1fr) auto;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.commission-bar-row__label {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.commission-bar-row__label strong {
+  font-size: 0.95rem;
+}
+
+.commission-bar-row__label span {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.commission-bar-row__track {
+  height: 13px;
+  background: rgba(17, 17, 17, 0.08);
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  overflow: hidden;
+}
+
+.commission-bar-row__track span {
+  display: block;
+  height: 100%;
+}
+
+.commission-bar-row__value {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.commission-share-stack {
+  display: flex;
+  width: 100%;
+  height: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  background: rgba(17, 17, 17, 0.06);
+}
+
+.commission-share-stack span {
+  min-width: 2px;
+}
+
+.commission-share-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.commission-share-item {
+  display: grid;
+  grid-template-columns: 12px minmax(90px, 1fr) auto auto;
+  gap: 0.55rem;
+  align-items: center;
+  color: var(--text-secondary);
+}
+
+.commission-share-item span {
+  width: 12px;
+  height: 12px;
+}
+
+.commission-share-item strong,
+.commission-share-item b {
+  color: var(--text-primary);
+}
+
+.commission-share-item em {
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+.commission-account-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 1rem;
+}
+
+.commission-account-card {
+  --account-color: #7a1e2c;
+  --account-color-soft: #f1d7dc;
+  display: grid;
+  gap: 1rem;
+  padding: 1.1rem;
+  border: 1px solid rgba(17, 17, 17, 0.16);
+  border-left: 6px solid var(--account-color);
+  background: linear-gradient(180deg, #ffffff, var(--account-color-soft));
+}
+
+.commission-account-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 0.85rem;
+}
+
+.commission-account-card header p,
+.commission-account-card dl,
+.commission-account-card dt,
+.commission-account-card dd {
+  margin: 0;
+}
+
+.commission-account-card header p {
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.commission-account-card header strong {
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.commission-account-card dl {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.commission-account-card dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.85rem;
+  border-top: 1px solid rgba(17, 17, 17, 0.12);
+  padding-top: 0.65rem;
+}
+
+.commission-account-card dt {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.commission-account-card dd {
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.commission-table td[data-tone='positive'] {
+  color: #0f7a55;
+  font-weight: 700;
+}
+
+.commission-table td[data-tone='negative'] {
+  color: #b42318;
+  font-weight: 700;
+}
+
+.commission-table tr[data-state='partial'] td {
+  background: rgba(201, 170, 62, 0.12);
+}
+
+.commission-table--year {
+  min-width: 1180px;
+}
+
+.commission-table--wide {
+  min-width: 1420px;
+}
+
+.commission-highlights {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.commission-highlights ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.65rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+@media (max-width: 800px) {
+  .layout,
+  .layout--wide {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.75rem;
+  }
+
+  .commission-dashboard,
+  .commission-chart-card,
+  .commission-account-card,
+  .table-card {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .commission-dashboard .panel__header--split {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .commission-toolbar {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .commission-toolbar,
+  .commission-report-grid,
+  .commission-report-grid--charts,
+  .commission-bar-row,
+  .commission-share-item {
+    grid-template-columns: 1fr;
+  }
+
+  .commission-chart-card--wide {
+    grid-column: auto;
+  }
+
+  .commission-bar-row__value,
+  .commission-account-card header strong,
+  .commission-account-card dd {
+    text-align: left;
+  }
+
+  .commission-account-card header,
+  .commission-account-card dl div {
+    flex-direction: column;
+  }
+
+  .commission-line-chart {
+    overflow-x: auto;
+  }
+
+  .commission-line-chart__svg {
+    min-width: 760px;
+  }
+}
