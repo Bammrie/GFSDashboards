@@ -6,17 +6,9 @@ const advisorStatus = document.getElementById('advisor-status');
 const advisorSend = document.getElementById('advisor-send');
 const advisorTest = document.getElementById('advisor-test');
 
-const DEFAULT_LOCAL_PROXY_BASE_URL = 'http://localhost:3000';
-const OLLAMA_PROXY_PATH = '/api/cu-loan-advisor/ollama';
+const OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
 const DEFAULT_OLLAMA_MODEL = 'llama3.1:8b';
-const TAGS_TIMEOUT_MS = 10_000;
-const GENERATE_TIMEOUT_MS = 95_000;
-const CU_LOAN_ADVISOR_SYSTEM_PROMPT = [
-  'You are CU Loan Advisor for Goodwine Financial Services.',
-  'Your goal is to help applicants and loan officers complete uploaded loan application questions accurately and clearly.',
-  'Ask for missing information one item at a time, keep answers concise, and format completed fields so they can be transferred into the loan application.',
-  'Do not invent facts, do not make final underwriting decisions, and do not provide legal, tax, or compliance advice.'
-].join(' ');
+const OLLAMA_TIMEOUT_MS = 30_000;
 
 const messages = [
   {
@@ -28,23 +20,9 @@ const messages = [
 
 let uploadedQuestions = '';
 
-function shouldUseSameOriginProxy() {
-  return ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname);
-}
-
-function defaultProxyBaseUrl() {
-  return shouldUseSameOriginProxy() ? '' : DEFAULT_LOCAL_PROXY_BASE_URL;
-}
-
-function proxyBaseUrl() {
-  return (window.localStorage.getItem('gfsOllamaProxyBaseUrl') || defaultProxyBaseUrl()).replace(/\/+$/, '');
-}
-
-function ollamaProxyUrl(endpoint) {
+function ollamaApiUrl(endpoint) {
   const cleanEndpoint = endpoint.replace(/^\/+/, '');
-  const path = `${OLLAMA_PROXY_PATH}/${cleanEndpoint}`;
-  const baseUrl = proxyBaseUrl();
-  return baseUrl ? `${baseUrl}${path}` : path;
+  return `${OLLAMA_BASE_URL}/api/${cleanEndpoint}`;
 }
 
 function setAdvisorStatus(text) {
@@ -79,34 +57,24 @@ function addMessage(role, content) {
   renderMessage(message);
 }
 
-function recentConversation() {
-  return messages
-    .filter((message) => message.role === 'user' || message.role === 'assistant')
-    .slice(-12);
+function formatOllamaError(error, method, url) {
+  const name = error?.name || 'Error';
+  const message = error?.message || String(error);
+  return `${name}: ${message} (${method} ${url})`;
 }
 
-function formatConversationForPrompt(conversation) {
-  return conversation
-    .map((message) => `${message.role === 'assistant' ? 'CU Loan Advisor' : 'User'}: ${message.content}`)
-    .join('\n\n');
-}
-
-function buildAdvisorPrompt(userContent, previousConversation) {
-  const conversationText = formatConversationForPrompt(previousConversation);
-
-  return [
-    conversationText ? `Recent conversation:\n${conversationText}` : '',
-    `Current user request:\n${userContent}`,
-    'Respond as CU Loan Advisor with the next useful answer or question.'
-  ]
-    .filter(Boolean)
-    .join('\n\n');
-}
-
-async function fetchAdvisorJson(endpoint, options = {}, timeoutMs = TAGS_TIMEOUT_MS) {
+async function fetchOllamaJson(endpoint, options = {}) {
   const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
-  const url = ollamaProxyUrl(endpoint);
+  const timeout = window.setTimeout(() => controller.abort(), OLLAMA_TIMEOUT_MS);
+  const url = ollamaApiUrl(endpoint);
+  const method = options.method || 'GET';
+
+  console.info('CU Loan Advisor Ollama request URL:', url);
+  console.info('CU Loan Advisor Ollama request options:', {
+    method,
+    headers: options.headers || {},
+    body: options.body || null
+  });
 
   try {
     const response = await fetch(url, {
@@ -125,16 +93,18 @@ async function fetchAdvisorJson(endpoint, options = {}, timeoutMs = TAGS_TIMEOUT
     }
 
     if (!response.ok) {
-      throw new Error(payload.error || `Proxy returned HTTP ${response.status}.`);
+      throw new Error(payload.error || `Ollama returned HTTP ${response.status}.`);
     }
 
     return payload;
   } catch (error) {
+    console.error('CU Loan Advisor full Ollama error:', error);
+
     if (error.name === 'AbortError') {
-      throw new Error(`Request timed out after ${Math.round(timeoutMs / 1000)} seconds.`);
+      throw new Error(`Request timed out after 30 seconds (${method} ${url})`);
     }
 
-    throw error;
+    throw new Error(formatOllamaError(error, method, url));
   } finally {
     window.clearTimeout(timeout);
   }
@@ -172,10 +142,13 @@ async function testOllamaConnection() {
   setAdvisorStatus('Testing Ollama...');
 
   try {
-    const payload = await fetchAdvisorJson('tags', {}, TAGS_TIMEOUT_MS);
+    const payload = await fetchOllamaJson('tags');
     const models = Array.isArray(payload.models) ? payload.models : [];
     const modelList = summarizeModels(models) || 'No models returned.';
-    const preferredStatus = payload.preferredModelAvailable
+    const preferredModelAvailable = models.some(
+      (model) => model?.name === DEFAULT_OLLAMA_MODEL || model?.model === DEFAULT_OLLAMA_MODEL
+    );
+    const preferredStatus = preferredModelAvailable
       ? `${DEFAULT_OLLAMA_MODEL} is available.`
       : `${DEFAULT_OLLAMA_MODEL} was not found.`;
 
@@ -183,7 +156,7 @@ async function testOllamaConnection() {
     addMessage('assistant', `Ollama connection OK. ${preferredStatus}\n\nAvailable models: ${modelList}`);
     setAdvisorStatus(`Ready (${DEFAULT_OLLAMA_MODEL})`);
   } catch (error) {
-    console.error('CU Loan Advisor Ollama test failed.', error);
+    console.error('CU Loan Advisor Ollama test failed:', error);
     addMessage('assistant', `Ollama connection failed: ${error.message}`);
     setAdvisorStatus('Connection issue');
   } finally {
@@ -203,34 +176,24 @@ async function sendAdvisorMessage(event) {
   const userContent = [uploadedQuestions, typedMessage].filter(Boolean).join('\n\n');
   const displayContent = typedMessage || 'Uploaded loan application questions.';
   uploadedQuestions = '';
-  const previousConversation = recentConversation();
 
   addMessage('user', displayContent);
   advisorInput.value = '';
   advisorInput.disabled = true;
   advisorSend.disabled = true;
   advisorTest.disabled = true;
-  setAdvisorStatus('Connecting to Ollama...');
+  setAdvisorStatus(`Thinking (${DEFAULT_OLLAMA_MODEL})...`);
 
   try {
-    setAdvisorStatus(`Thinking (${DEFAULT_OLLAMA_MODEL})...`);
-
-    const payload = await fetchAdvisorJson(
-      'generate',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: DEFAULT_OLLAMA_MODEL,
-          system: CU_LOAN_ADVISOR_SYSTEM_PROMPT,
-          prompt: buildAdvisorPrompt(userContent, previousConversation),
-          options: {
-            temperature: 0.2
-          }
-        })
-      },
-      GENERATE_TIMEOUT_MS
-    );
+    const payload = await fetchOllamaJson('generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: DEFAULT_OLLAMA_MODEL,
+        prompt: userContent,
+        stream: false
+      })
+    });
 
     if (!payload.response) {
       throw new Error('Ollama returned an empty response.');
@@ -239,7 +202,7 @@ async function sendAdvisorMessage(event) {
     addMessage('assistant', payload.response);
     setAdvisorStatus(`Ready (${payload.model || DEFAULT_OLLAMA_MODEL})`);
   } catch (error) {
-    console.error('CU Loan Advisor request failed.', error);
+    console.error('CU Loan Advisor chat failed:', error);
     addMessage('assistant', `Ollama connection failed: ${error.message}`);
     setAdvisorStatus('Connection issue');
   } finally {
