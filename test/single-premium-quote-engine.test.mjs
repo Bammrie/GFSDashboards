@@ -1,140 +1,166 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { demoRates } from '../single-premium-quote/src/data/demoRates.js';
 import {
-  DEFAULT_ADMIN_PARAMETERS,
-  calculateAnnuityFactor,
-  calculateAnnuityFactorPremium,
-  calculateFlatPremium,
+  FIXED_SCOPE,
+  PROTOTYPE_DISCLAIMER,
+  buildMonthlyAmortizationSchedule,
+  calculateGrossPayBase,
+  calculateGrossPaySinglePremium,
   calculateMonthlyPayment,
   calculateQuote
 } from '../single-premium-quote/quote-engine.js';
 
 const roundCurrency = (value) => Math.round((value + Number.EPSILON) * 100) / 100;
 
-test('calculates standard amortized monthly payment', () => {
-  const payment = calculateMonthlyPayment(25000, 7.5, 60);
-  assert.equal(payment, 500.95);
+test('fixed scope is monthly gross pay seven-day retro', () => {
+  assert.equal(FIXED_SCOPE.paymentFrequency, 'monthly');
+  assert.equal(FIXED_SCOPE.paymentsPerYear, 12);
+  assert.equal(FIXED_SCOPE.coverageBasis, 'grossPay');
+  assert.equal(FIXED_SCOPE.disabilityPlan, 'sevenDayRetro');
 });
 
-test('calculates zero-interest monthly payment', () => {
-  const payment = calculateMonthlyPayment(12000, 0, 48);
-  assert.equal(payment, 250);
+test('calculates standard monthly loan payment', () => {
+  assert.equal(calculateMonthlyPayment(25000, 7.5, 60), 500.95);
 });
 
-test('calculates annuity factor with monthly rate and term', () => {
-  const monthlyRate = 7.5 / 100 / 12;
-  const expected = (1 - Math.pow(1 + monthlyRate, -60)) / monthlyRate;
-  assert.equal(calculateAnnuityFactor(monthlyRate, 60).toFixed(6), expected.toFixed(6));
+test('builds monthly amortization schedule', () => {
+  const schedule = buildMonthlyAmortizationSchedule(10000, 9, 36);
+  assert.equal(schedule.periods, 36);
+  assert.equal(schedule.payments.length, 36);
+  assert.equal(schedule.monthlyPayment, calculateMonthlyPayment(10000, 9, 36));
+  assert.equal(schedule.periodicRate, 9 / 100 / 12);
 });
 
-test('annuity factor falls back to term when monthly rate is zero', () => {
-  assert.equal(calculateAnnuityFactor(0, 36), 36);
+test('gross pay base uses scheduled monthly payment stream', () => {
+  const schedule = buildMonthlyAmortizationSchedule(25000, 7.5, 60);
+  assert.equal(calculateGrossPayBase(schedule), roundCurrency(schedule.monthlyPayment * 60));
 });
 
-test('flat premium remains the simple comparison fallback', () => {
-  assert.equal(calculateFlatPremium(25000, 0.88, 60), 1320);
+test('gross pay premium uses exposure per thousand times demo rate', () => {
+  const premium = calculateGrossPaySinglePremium({
+    monthlyPayment: 500.95,
+    termMonths: 60,
+    rate: 0.5,
+    discountRateMonthly: 0,
+    applyDiscount: false
+  });
+
+  assert.equal(premium.grossPayExposure, 30057);
+  assert.equal(premium.premium, 15.03);
 });
 
-test('annuity factor premium uses present-value factor instead of flat term multiplier', () => {
-  const premium = calculateAnnuityFactorPremium(25000, 0.88, 7.5, 60);
-  const monthlyRate = 7.5 / 100 / 12;
-  const expected = roundCurrency((25000 / 1000) * 0.88 * calculateAnnuityFactor(monthlyRate, 60));
-  assert.equal(premium, expected);
-  assert.notEqual(premium, calculateFlatPremium(25000, 0.88, 60));
+test('smart demo applies demo discount factor to gross pay exposure', () => {
+  const undiscounted = calculateQuote({
+    state: 'MO',
+    loanAmount: 25000,
+    termMonths: 60,
+    annualApr: 7.5,
+    coverageType: 'life',
+    borrowerType: 'single',
+    premiumTreatment: 'financed',
+    calculationMethod: 'grossPay'
+  }, demoRates);
+  const smart = calculateQuote({
+    state: 'MO',
+    loanAmount: 25000,
+    termMonths: 60,
+    annualApr: 7.5,
+    coverageType: 'life',
+    borrowerType: 'single',
+    premiumTreatment: 'financed',
+    calculationMethod: 'smart'
+  }, demoRates);
+
+  assert.ok(smart.grossPayExposureUsed < undiscounted.grossPayExposureUsed);
+  assert.ok(smart.lifePremium < undiscounted.lifePremium);
 });
 
-test('calculates a full life and disability quote', () => {
+test('calculates Missouri life and disability financed quote', () => {
   const result = calculateQuote({
+    state: 'MO',
     loanAmount: 25000,
     termMonths: 60,
     annualApr: 7.5,
     coverageType: 'both',
-    coverageBasis: 'reducing',
     borrowerType: 'single',
-    calculationMethod: 'annuity',
-    lifeRate: 0.88,
-    disabilityRate: 2.12
-  });
+    premiumTreatment: 'financed',
+    calculationMethod: 'smart'
+  }, demoRates);
 
-  assert.equal(result.loanAmount, 25000);
-  assert.equal(result.termMonths, 60);
-  assert.equal(result.coverageType, 'both');
+  assert.equal(result.state, 'MO');
+  assert.equal(result.paymentFrequency, 'monthly');
+  assert.equal(result.coverageBasis, 'grossPay');
+  assert.equal(result.disabilityPlan, 'sevenDayRetro');
   assert.ok(result.lifePremium > 0);
   assert.ok(result.disabilityPremium > result.lifePremium);
   assert.equal(result.totalPremium, roundCurrency(result.lifePremium + result.disabilityPremium));
-  assert.equal(result.amountFinancedWithPremium, roundCurrency(25000 + result.totalPremium));
   assert.ok(result.monthlyPaymentWithPremium > result.monthlyPayment);
-  assert.ok(result.monthlyPaymentImpact > 0);
-  assert.ok(result.assumptions.some((assumption) => assumption.includes('annuity factor')));
+  assert.ok(result.warnings.includes(PROTOTYPE_DISCLAIMER));
+  assert.ok(result.warnings.some((warning) => warning.includes('7-Day Retro Disability')));
 });
 
-test('carrier placeholder returns annuity-shaped result and warning', () => {
-  const annuity = calculateQuote({
-    loanAmount: 10000,
-    termMonths: 36,
-    annualApr: 7.5,
-    coverageType: 'life',
-    calculationMethod: 'annuity',
-    lifeRate: 0.88,
-    disabilityRate: 2.12
-  });
-  const carrier = calculateQuote({
-    loanAmount: 10000,
-    termMonths: 36,
-    annualApr: 7.5,
-    coverageType: 'life',
-    calculationMethod: 'carrier',
-    lifeRate: 0.88,
-    disabilityRate: 2.12
-  });
-
-  assert.equal(carrier.totalPremium, annuity.totalPremium);
-  assert.ok(carrier.warnings.some((warning) => warning.includes('Carrier formula pending')));
-});
-
-test('non-blocking warnings are returned for long term and high loan amount', () => {
+test('separately paid premium does not change financed payment', () => {
   const result = calculateQuote({
-    loanAmount: 125000,
-    termMonths: 144,
-    annualApr: 7.5,
-    coverageType: 'life',
-    calculationMethod: 'annuity',
-    lifeRate: 0.88,
-    disabilityRate: 2.12
-  });
-
-  assert.equal(result.warnings.length, 2);
-  assert.ok(result.warnings.some((warning) => warning.includes('120 months')));
-  assert.ok(result.warnings.some((warning) => warning.includes('$100,000')));
-});
-
-test('admin joint borrower factor can adjust demo rates', () => {
-  const single = calculateQuote({
+    state: 'AR',
     loanAmount: 10000,
     termMonths: 36,
-    annualApr: 7.5,
+    annualApr: 9,
     coverageType: 'life',
     borrowerType: 'single',
-    calculationMethod: 'annuity',
-    lifeRate: 0.88,
-    disabilityRate: 2.12
-  });
-  const joint = calculateQuote(
-    {
-      loanAmount: 10000,
-      termMonths: 36,
-      annualApr: 7.5,
-      coverageType: 'life',
-      borrowerType: 'joint',
-      calculationMethod: 'annuity',
-      lifeRate: 0.88,
-      disabilityRate: 2.12
-    },
-    {
-      ...DEFAULT_ADMIN_PARAMETERS,
-      jointBorrowerRateFactor: 1.4
-    }
-  );
+    premiumTreatment: 'separate',
+    calculationMethod: 'grossPay'
+  }, demoRates);
 
-  assert.equal(joint.lifePremium, roundCurrency(single.lifePremium * 1.4));
+  assert.equal(result.amountFinancedWithPremium, result.loanAmount);
+  assert.equal(result.monthlyPaymentWithPremium, result.monthlyPayment);
+  assert.equal(result.monthlyPaymentImpact, 0);
+});
+
+test('carrier placeholder returns demo result and carrier warning', () => {
+  const carrier = calculateQuote({
+    state: 'AR',
+    loanAmount: 30000,
+    termMonths: 72,
+    annualApr: 7,
+    coverageType: 'both',
+    borrowerType: 'joint',
+    premiumTreatment: 'financed',
+    calculationMethod: 'carrier'
+  }, demoRates);
+
+  assert.ok(carrier.totalPremium > 0);
+  assert.ok(carrier.warnings.some((warning) => warning.includes('Carrier formula pending')));
+  assert.ok(carrier.warnings.some((warning) => warning.includes('Joint borrower rules pending')));
+});
+
+test('financed premium in insured balance warning is returned', () => {
+  const result = calculateQuote({
+    state: 'MO',
+    loanAmount: 18000,
+    termMonths: 48,
+    annualApr: 8.25,
+    coverageType: 'disability',
+    borrowerType: 'single',
+    premiumTreatment: 'financed',
+    includePremiumInInsuredBalance: true,
+    calculationMethod: 'smart'
+  }, demoRates);
+
+  assert.ok(result.warnings.some((warning) => warning.includes('recursive calculation')));
+});
+
+test('high amount warning matches carrier validation need', () => {
+  const result = calculateQuote({
+    state: 'MO',
+    loanAmount: 125000,
+    termMonths: 120,
+    annualApr: 8,
+    coverageType: 'both',
+    borrowerType: 'single',
+    premiumTreatment: 'financed',
+    calculationMethod: 'smart'
+  }, demoRates);
+
+  assert.ok(result.warnings.some((warning) => warning.includes('Loan amount exceeds demo threshold')));
 });

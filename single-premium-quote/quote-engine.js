@@ -1,48 +1,63 @@
+export const SUPPORTED_STATES = {
+  MO: 'Missouri',
+  AR: 'Arkansas'
+};
+
 export const COVERAGE_TYPES = {
-  life: 'Life Only',
-  disability: 'Disability Only',
+  life: 'Credit Life',
+  disability: 'Credit Disability',
   both: 'Life + Disability'
 };
 
-export const COVERAGE_BASIS_TYPES = {
-  reducing: 'Reducing Balance',
-  level: 'Level Balance'
+export const BORROWER_TYPES = {
+  single: 'Single Borrower',
+  joint: 'Joint Borrower'
 };
 
-export const BORROWER_TYPES = {
-  single: 'Single',
-  joint: 'Joint'
+export const PREMIUM_TREATMENTS = {
+  separate: 'Paid Up Front Separately',
+  financed: 'Financed Into Loan'
 };
 
 export const CALCULATION_METHODS = {
-  carrier: 'Carrier Formula Placeholder',
-  annuity: 'Annuity Factor Demo',
-  flat: 'Flat Rate Demo'
+  smart: 'Smart Demo Engine',
+  grossPay: 'Gross Pay Demo',
+  carrier: 'Carrier Formula Placeholder'
 };
 
-export const DEFAULT_ADMIN_PARAMETERS = {
-  defaultLifeRate: 0.88,
-  defaultDisabilityRate: 2.12,
-  defaultCoverageBasis: 'reducing',
-  defaultCalculationMethod: 'annuity',
-  jointBorrowerRateFactor: 1,
-  warningTermMonths: 120,
-  warningLoanAmount: 100000,
-  carrierFormulaStatus:
-    'Carrier formula pending. This result is for prototype structure only.'
+export const FIXED_SCOPE = {
+  paymentFrequency: 'monthly',
+  paymentsPerYear: 12,
+  termUnit: 'months',
+  paymentTiming: 'endOfPeriod',
+  coverageBasis: 'grossPay',
+  disabilityPlan: 'sevenDayRetro'
 };
 
 export const DEFAULT_QUOTE_INPUTS = {
+  state: 'MO',
   loanAmount: 25000,
   termMonths: 60,
   annualApr: 7.5,
   coverageType: 'both',
-  coverageBasis: 'reducing',
   borrowerType: 'single',
-  calculationMethod: 'annuity',
-  lifeRate: 0.88,
-  disabilityRate: 2.12
+  premiumTreatment: 'financed',
+  includePremiumInInsuredBalance: false,
+  activelyWorking: true,
+  hoursWorkedPerWeek: 30,
+  calculationMethod: 'smart'
 };
+
+export const DEFAULT_ENGINE_PARAMETERS = {
+  warningLoanAmount: 100000,
+  warningTermMonths: 120,
+  minimumDisabilityHoursPerWeek: 30,
+  carrierFormulaStatus:
+    'Carrier formula pending. This result is for prototype structure only.'
+};
+
+export const PROTOTYPE_DISCLAIMER =
+  'Prototype only. Configured for monthly loan payments, gross pay basis, 7-day retro Disability, Missouri and Arkansas. Final premium must be validated using CSO-approved formulas, rates, factor tables, rounding rules, eligibility rules, and sample test cases.';
 
 const toNumber = (value, fallback = 0) => {
   const numberValue = Number(value);
@@ -51,27 +66,71 @@ const toNumber = (value, fallback = 0) => {
 
 const roundCurrency = (value) => Math.round((toNumber(value) + Number.EPSILON) * 100) / 100;
 
-const formatRateFactor = (value) => toNumber(value, 1).toFixed(2);
+const roundFactor = (value) => Math.round((toNumber(value) + Number.EPSILON) * 1000000) / 1000000;
+
+export function coverageIncludesLife(coverageType) {
+  return coverageType === 'life' || coverageType === 'both';
+}
+
+export function coverageIncludesDisability(coverageType) {
+  return coverageType === 'disability' || coverageType === 'both';
+}
 
 export function calculateMonthlyPayment(loanAmount, annualApr, termMonths) {
   const principal = toNumber(loanAmount);
   const months = toNumber(termMonths);
-  const monthlyRate = toNumber(annualApr) / 100 / 12;
+  const periodicRate = toNumber(annualApr) / 100 / FIXED_SCOPE.paymentsPerYear;
 
   if (principal <= 0 || months <= 0) {
     return 0;
   }
 
-  if (monthlyRate === 0) {
+  if (periodicRate === 0) {
     return roundCurrency(principal / months);
   }
 
-  const payment = (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
-  return roundCurrency(payment);
+  return roundCurrency((principal * periodicRate) / (1 - Math.pow(1 + periodicRate, -months)));
 }
 
-export function calculateAnnuityFactor(monthlyRate, termMonths) {
-  const rate = toNumber(monthlyRate);
+export function buildMonthlyAmortizationSchedule(loanAmount, annualApr, termMonths) {
+  const principal = toNumber(loanAmount);
+  const months = Math.max(0, Math.floor(toNumber(termMonths)));
+  const periodicRate = toNumber(annualApr) / 100 / FIXED_SCOPE.paymentsPerYear;
+  const monthlyPayment = calculateMonthlyPayment(principal, annualApr, months);
+  let balance = principal;
+  const payments = [];
+
+  for (let period = 1; period <= months; period += 1) {
+    const interest = roundCurrency(balance * periodicRate);
+    const principalPaid = roundCurrency(Math.min(balance, monthlyPayment - interest));
+    balance = roundCurrency(Math.max(0, balance - principalPaid));
+    payments.push({
+      period,
+      payment: monthlyPayment,
+      interest,
+      principal: principalPaid,
+      endingBalance: balance
+    });
+  }
+
+  return {
+    monthlyPayment,
+    periodicRate,
+    periods: months,
+    payments
+  };
+}
+
+export function calculateGrossPayBase(schedule) {
+  // Gross Pay definition must be confirmed by carrier.
+  // This prototype uses the scheduled monthly payment stream as the gross pay basis.
+  const monthlyPayment = toNumber(schedule?.monthlyPayment);
+  const periods = toNumber(schedule?.periods);
+  return roundCurrency(monthlyPayment * periods);
+}
+
+function calculateDiscountFactor(discountRateMonthly, termMonths) {
+  const rate = toNumber(discountRateMonthly);
   const months = toNumber(termMonths);
 
   if (months <= 0) {
@@ -85,77 +144,66 @@ export function calculateAnnuityFactor(monthlyRate, termMonths) {
   return (1 - Math.pow(1 + rate, -months)) / rate;
 }
 
-export function calculateFlatPremium(
-  loanAmount,
-  ratePerThousand,
+export function calculateGrossPaySinglePremium({
+  monthlyPayment,
   termMonths,
-  borrowerRateFactor = 1
-) {
-  return roundCurrency(
-    (toNumber(loanAmount) / 1000) *
-      toNumber(ratePerThousand) *
-      toNumber(termMonths) *
-      toNumber(borrowerRateFactor, 1)
-  );
-}
+  rate,
+  rateUnit = 'perThousandGrossPay',
+  discountRateMonthly = 0,
+  applyDiscount = false
+}) {
+  const grossPayExposure = roundCurrency(toNumber(monthlyPayment) * toNumber(termMonths));
+  const discountFactor = calculateDiscountFactor(discountRateMonthly, termMonths);
+  const discountedGrossPayExposure = roundCurrency(toNumber(monthlyPayment) * discountFactor);
+  const exposureUsed = applyDiscount ? discountedGrossPayExposure : grossPayExposure;
+  const premium = roundCurrency((exposureUsed / 1000) * toNumber(rate));
 
-export function calculateAnnuityFactorPremium(
-  loanAmount,
-  ratePerThousand,
-  annualApr,
-  termMonths,
-  borrowerRateFactor = 1
-) {
-  const monthlyRate = toNumber(annualApr) / 100 / 12;
-  const annuityFactor = calculateAnnuityFactor(monthlyRate, termMonths);
-
-  return roundCurrency(
-    (toNumber(loanAmount) / 1000) *
-      toNumber(ratePerThousand) *
-      annuityFactor *
-      toNumber(borrowerRateFactor, 1)
-  );
-}
-
-function normalizeParameters(parameters = {}) {
   return {
-    ...DEFAULT_ADMIN_PARAMETERS,
-    ...parameters,
-    defaultLifeRate: toNumber(parameters.defaultLifeRate, DEFAULT_ADMIN_PARAMETERS.defaultLifeRate),
-    defaultDisabilityRate: toNumber(
-      parameters.defaultDisabilityRate,
-      DEFAULT_ADMIN_PARAMETERS.defaultDisabilityRate
-    ),
-    jointBorrowerRateFactor: toNumber(
-      parameters.jointBorrowerRateFactor,
-      DEFAULT_ADMIN_PARAMETERS.jointBorrowerRateFactor
-    ),
-    warningTermMonths: toNumber(
-      parameters.warningTermMonths,
-      DEFAULT_ADMIN_PARAMETERS.warningTermMonths
-    ),
-    warningLoanAmount: toNumber(
-      parameters.warningLoanAmount,
-      DEFAULT_ADMIN_PARAMETERS.warningLoanAmount
-    )
+    rateUnit,
+    grossPayExposure,
+    discountedGrossPayExposure,
+    exposureUsed,
+    discountFactor: roundFactor(discountFactor),
+    premium
   };
 }
 
-function normalizeQuoteInputs(inputs = {}, parameters = DEFAULT_ADMIN_PARAMETERS) {
-  const normalizedParameters = normalizeParameters(parameters);
-  return {
+function normalizeQuoteInputs(inputs = {}) {
+  const normalized = {
     ...DEFAULT_QUOTE_INPUTS,
-    coverageBasis: normalizedParameters.defaultCoverageBasis,
-    calculationMethod: normalizedParameters.defaultCalculationMethod,
-    lifeRate: normalizedParameters.defaultLifeRate,
-    disabilityRate: normalizedParameters.defaultDisabilityRate,
     ...inputs,
+    state: SUPPORTED_STATES[inputs.state] ? inputs.state : DEFAULT_QUOTE_INPUTS.state,
     loanAmount: toNumber(inputs.loanAmount, DEFAULT_QUOTE_INPUTS.loanAmount),
     termMonths: toNumber(inputs.termMonths, DEFAULT_QUOTE_INPUTS.termMonths),
     annualApr: toNumber(inputs.annualApr, DEFAULT_QUOTE_INPUTS.annualApr),
-    lifeRate: toNumber(inputs.lifeRate, normalizedParameters.defaultLifeRate),
-    disabilityRate: toNumber(inputs.disabilityRate, normalizedParameters.defaultDisabilityRate)
+    hoursWorkedPerWeek: toNumber(
+      inputs.hoursWorkedPerWeek,
+      DEFAULT_QUOTE_INPUTS.hoursWorkedPerWeek
+    ),
+    includePremiumInInsuredBalance:
+      inputs.premiumTreatment === 'financed' && Boolean(inputs.includePremiumInInsuredBalance),
+    activelyWorking:
+      typeof inputs.activelyWorking === 'boolean'
+        ? inputs.activelyWorking
+        : DEFAULT_QUOTE_INPUTS.activelyWorking,
+    calculationMethod: CALCULATION_METHODS[inputs.calculationMethod]
+      ? inputs.calculationMethod
+      : DEFAULT_QUOTE_INPUTS.calculationMethod
   };
+
+  if (!COVERAGE_TYPES[normalized.coverageType]) {
+    normalized.coverageType = DEFAULT_QUOTE_INPUTS.coverageType;
+  }
+
+  if (!BORROWER_TYPES[normalized.borrowerType]) {
+    normalized.borrowerType = DEFAULT_QUOTE_INPUTS.borrowerType;
+  }
+
+  if (!PREMIUM_TREATMENTS[normalized.premiumTreatment]) {
+    normalized.premiumTreatment = DEFAULT_QUOTE_INPUTS.premiumTreatment;
+  }
+
+  return normalized;
 }
 
 function validateInputs(inputs) {
@@ -170,43 +218,64 @@ function validateInputs(inputs) {
   }
 
   if (inputs.annualApr < 0) {
-    validationErrors.push('APR must be 0 or greater.');
+    validationErrors.push('APR / note rate must be 0 or greater.');
   }
 
-  if (inputs.lifeRate < 0 || inputs.disabilityRate < 0) {
-    validationErrors.push('Life and disability rates must be 0 or greater.');
+  if (inputs.hoursWorkedPerWeek < 0) {
+    validationErrors.push('Hours worked per week must be 0 or greater.');
   }
 
   return validationErrors;
 }
 
-function calculateCoveragePremium(inputs, parameters, ratePerThousand) {
-  const borrowerRateFactor =
-    inputs.borrowerType === 'joint' ? parameters.jointBorrowerRateFactor : 1;
+function stateRatesFor(rateSettings, state) {
+  return rateSettings?.[state] || {};
+}
 
-  if (inputs.calculationMethod === 'flat') {
-    return calculateFlatPremium(
-      inputs.loanAmount,
-      ratePerThousand,
-      inputs.termMonths,
-      borrowerRateFactor
+function buildWarnings(inputs, parameters) {
+  const warnings = [PROTOTYPE_DISCLAIMER];
+
+  if (coverageIncludesDisability(inputs.coverageType)) {
+    warnings.push('7-Day Retro Disability selected based on carrier guidance.');
+  }
+
+  warnings.push(`${SUPPORTED_STATES[inputs.state]} selected. Final state-specific rates pending.`);
+
+  if (inputs.borrowerType === 'joint') {
+    warnings.push('Joint borrower rules pending carrier confirmation.');
+  }
+
+  if (inputs.includePremiumInInsuredBalance) {
+    warnings.push(
+      'Carrier confirmation required. Including financed premium in insured indebtedness may require recursive calculation.'
     );
   }
 
-  // Carrier-approved reducing-balance formula goes here when provided by the CSO/carrier.
-  // The placeholder intentionally follows the annuity-factor demo shape so the UI contract is stable.
-  return calculateAnnuityFactorPremium(
-    inputs.loanAmount,
-    ratePerThousand,
-    inputs.annualApr,
-    inputs.termMonths,
-    borrowerRateFactor
-  );
+  if (inputs.loanAmount > parameters.warningLoanAmount) {
+    warnings.push('Loan amount exceeds demo threshold. Carrier maximum must be confirmed.');
+  }
+
+  if (inputs.termMonths > parameters.warningTermMonths) {
+    warnings.push('Loan term exceeds demo threshold. Carrier maximum term must be confirmed.');
+  }
+
+  if (
+    coverageIncludesDisability(inputs.coverageType) &&
+    (!inputs.activelyWorking || inputs.hoursWorkedPerWeek < parameters.minimumDisabilityHoursPerWeek)
+  ) {
+    warnings.push('Disability employment eligibility requirements pending carrier confirmation.');
+  }
+
+  if (inputs.calculationMethod === 'carrier') {
+    warnings.push(parameters.carrierFormulaStatus);
+  }
+
+  return warnings;
 }
 
-export function calculateQuote(inputs = {}, parameters = {}) {
-  const normalizedParameters = normalizeParameters(parameters);
-  const normalizedInputs = normalizeQuoteInputs(inputs, normalizedParameters);
+export function calculateQuote(inputs = {}, rateSettings = {}, parameters = {}) {
+  const normalizedInputs = normalizeQuoteInputs(inputs);
+  const normalizedParameters = { ...DEFAULT_ENGINE_PARAMETERS, ...parameters };
   const validationErrors = validateInputs(normalizedInputs);
 
   if (validationErrors.length) {
@@ -215,91 +284,78 @@ export function calculateQuote(inputs = {}, parameters = {}) {
     throw error;
   }
 
-  const monthlyPayment = calculateMonthlyPayment(
+  const rates = stateRatesFor(rateSettings, normalizedInputs.state);
+  const schedule = buildMonthlyAmortizationSchedule(
     normalizedInputs.loanAmount,
     normalizedInputs.annualApr,
     normalizedInputs.termMonths
   );
-  const shouldIncludeLife = ['life', 'both'].includes(normalizedInputs.coverageType);
-  const shouldIncludeDisability = ['disability', 'both'].includes(normalizedInputs.coverageType);
+  const grossPayBase = calculateGrossPayBase(schedule);
+  const applyDemoDiscount =
+    normalizedInputs.calculationMethod === 'smart' ||
+    normalizedInputs.calculationMethod === 'carrier';
 
-  const lifePremium = shouldIncludeLife
-    ? calculateCoveragePremium(normalizedInputs, normalizedParameters, normalizedInputs.lifeRate)
+  const lifePremiumDetail = calculateGrossPaySinglePremium({
+    monthlyPayment: schedule.monthlyPayment,
+    termMonths: normalizedInputs.termMonths,
+    rate: rates.lifeRatePerThousandGrossPay,
+    discountRateMonthly: rates.discountRateMonthly,
+    applyDiscount: applyDemoDiscount
+  });
+  const disabilityPremiumDetail = calculateGrossPaySinglePremium({
+    monthlyPayment: schedule.monthlyPayment,
+    termMonths: normalizedInputs.termMonths,
+    rate: rates.disabilitySevenDayRetroRatePerThousandGrossPay,
+    discountRateMonthly: rates.discountRateMonthly,
+    applyDiscount: applyDemoDiscount
+  });
+
+  const lifePremium = coverageIncludesLife(normalizedInputs.coverageType)
+    ? lifePremiumDetail.premium
     : 0;
-  const disabilityPremium = shouldIncludeDisability
-    ? calculateCoveragePremium(
-        normalizedInputs,
-        normalizedParameters,
-        normalizedInputs.disabilityRate
-      )
+  const disabilityPremium = coverageIncludesDisability(normalizedInputs.coverageType)
+    ? disabilityPremiumDetail.premium
     : 0;
   const totalPremium = roundCurrency(lifePremium + disabilityPremium);
-  const amountFinancedWithPremium = roundCurrency(normalizedInputs.loanAmount + totalPremium);
-  const monthlyPaymentWithPremium = calculateMonthlyPayment(
-    amountFinancedWithPremium,
-    normalizedInputs.annualApr,
-    normalizedInputs.termMonths
-  );
-  const monthlyPaymentImpact = roundCurrency(monthlyPaymentWithPremium - monthlyPayment);
-  const monthlyRate = normalizedInputs.annualApr / 100 / 12;
-  const annuityFactor = calculateAnnuityFactor(monthlyRate, normalizedInputs.termMonths);
+  const isFinanced = normalizedInputs.premiumTreatment === 'financed';
+  const amountFinancedWithPremium = isFinanced
+    ? roundCurrency(normalizedInputs.loanAmount + totalPremium)
+    : normalizedInputs.loanAmount;
+  const monthlyPaymentWithPremium = isFinanced
+    ? calculateMonthlyPayment(
+        amountFinancedWithPremium,
+        normalizedInputs.annualApr,
+        normalizedInputs.termMonths
+      )
+    : schedule.monthlyPayment;
+  const monthlyPaymentImpact = isFinanced
+    ? roundCurrency(monthlyPaymentWithPremium - schedule.monthlyPayment)
+    : 0;
 
   const assumptions = [
-    'Rates are treated as premium rates per $1,000 of covered loan amount.',
-    'Premiums are rounded to cents after each coverage calculation.',
-    `Borrower type is captured as ${BORROWER_TYPES[normalizedInputs.borrowerType] || normalizedInputs.borrowerType}. Joint factor ${formatRateFactor(
-      normalizedInputs.borrowerType === 'joint' ? normalizedParameters.jointBorrowerRateFactor : 1
-    )} is applied in demo calculations.`,
-    `Coverage basis is captured as ${
-      COVERAGE_BASIS_TYPES[normalizedInputs.coverageBasis] || normalizedInputs.coverageBasis
-    } for carrier review.`
+    'Payment frequency is locked to monthly.',
+    'Coverage basis is locked to Gross Pay.',
+    'Credit Disability is locked to 7-Day Retro.',
+    'States are limited to Missouri and Arkansas.',
+    'Prototype Gross Pay Demo uses scheduled monthly payment stream as the gross pay basis.',
+    applyDemoDiscount
+      ? 'Smart Demo Engine applies the demo monthly discount rate to the scheduled payment stream.'
+      : 'Gross Pay Demo uses undiscounted scheduled monthly payment exposure.',
+    'Carrier Formula Placeholder returns the demo gross-pay result until CSO-approved data is received.'
   ];
 
-  const warnings = [];
-
-  if (normalizedInputs.termMonths > normalizedParameters.warningTermMonths) {
-    warnings.push(`Loan term exceeds ${normalizedParameters.warningTermMonths} months.`);
-  }
-
-  if (normalizedInputs.loanAmount > normalizedParameters.warningLoanAmount) {
-    warnings.push(
-      `Loan amount exceeds $${normalizedParameters.warningLoanAmount.toLocaleString('en-US')}.`
-    );
-  }
-
-  if (normalizedInputs.calculationMethod === 'carrier') {
-    warnings.push(normalizedParameters.carrierFormulaStatus);
-    assumptions.push(
-      'Carrier Formula Placeholder currently returns the Annuity Factor Demo result until the approved formula is supplied.'
-    );
-  }
-
-  if (
-    normalizedInputs.calculationMethod === 'annuity' ||
-    normalizedInputs.calculationMethod === 'carrier'
-  ) {
-    assumptions.push(
-      `Monthly rate ${monthlyRate.toFixed(8)} and annuity factor ${annuityFactor.toFixed(
-        6
-      )} are used for the demo reducing-balance structure.`
-    );
-  }
-
-  if (normalizedInputs.calculationMethod === 'flat') {
-    assumptions.push(
-      'Flat Rate Demo uses Loan Amount / 1000 * Rate * Term and is included only as a comparison fallback.'
-    );
-  }
-
   return {
-    loanAmount: roundCurrency(normalizedInputs.loanAmount),
-    termMonths: normalizedInputs.termMonths,
-    annualApr: normalizedInputs.annualApr,
-    monthlyPayment,
-    coverageType: normalizedInputs.coverageType,
-    borrowerType: normalizedInputs.borrowerType,
-    coverageBasis: normalizedInputs.coverageBasis,
-    calculationMethod: normalizedInputs.calculationMethod,
+    ...normalizedInputs,
+    ...FIXED_SCOPE,
+    monthlyPayment: schedule.monthlyPayment,
+    periodicRate: schedule.periodicRate,
+    periods: schedule.periods,
+    grossPayBase,
+    grossPayExposureUsed: lifePremiumDetail.exposureUsed,
+    discountRateMonthly: toNumber(rates.discountRateMonthly),
+    discountFactor: lifePremiumDetail.discountFactor,
+    lifeRate: toNumber(rates.lifeRatePerThousandGrossPay),
+    disabilityRate: toNumber(rates.disabilitySevenDayRetroRatePerThousandGrossPay),
     lifePremium,
     disabilityPremium,
     totalPremium,
@@ -307,6 +363,6 @@ export function calculateQuote(inputs = {}, parameters = {}) {
     monthlyPaymentWithPremium,
     monthlyPaymentImpact,
     assumptions,
-    warnings
+    warnings: buildWarnings(normalizedInputs, normalizedParameters)
   };
 }
