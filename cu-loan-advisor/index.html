@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>CU Loan Advisor | GFS Dashboards</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./cu-loan-advisor.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">CU Loan Advisor</h1>
+        <p class="site-subtitle">Ollama-assisted loan application support.</p>
+      </div>
+      <nav class="header-actions" aria-label="Advisor navigation">
+        <a class="header-link" href="../index.html">Dashboard Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout advisor-layout">
+    <section class="panel advisor-panel" aria-labelledby="advisor-heading">
+      <header class="panel__header advisor-heading">
+        <div>
+          <h2 id="advisor-heading" class="panel__title">Loan Application Chat</h2>
+          <p class="panel__description">Ask the advisor to help answer loan application questions.</p>
+        </div>
+        <p id="advisor-status" class="advisor-status" role="status">Ready</p>
+      </header>
+
+      <div id="advisor-messages" class="advisor-messages" aria-live="polite"></div>
+
+      <form id="advisor-form" class="advisor-composer">
+        <label class="sr-only" for="advisor-input">Message</label>
+        <textarea id="advisor-input" rows="4" placeholder="Type or upload loan application questions..." required></textarea>
+        <div class="advisor-actions">
+          <label class="secondary-button advisor-upload">
+            Upload Questions
+            <input id="advisor-file" type="file" accept=".txt,.md,.json,.csv,text/plain,application/json,text/csv" />
+          </label>
+          <button id="advisor-send" class="primary-button" type="submit">Send</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="./cu-loan-advisor.js"></script>
+</body>
+</html>

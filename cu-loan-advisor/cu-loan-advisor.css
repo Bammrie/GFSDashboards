@@ -1,0 +1,130 @@
+.advisor-layout {
+  min-height: calc(100vh - 96px);
+  align-items: stretch;
+}
+
+.advisor-panel {
+  width: min(980px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: auto minmax(320px, 1fr) auto;
+  gap: 1rem;
+}
+
+.advisor-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.advisor-status {
+  margin: 0;
+  flex: 0 0 auto;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.advisor-messages {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+  min-height: 320px;
+  max-height: min(58vh, 620px);
+  overflow-y: auto;
+  padding: 1rem;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+}
+
+.advisor-message {
+  width: min(78ch, 88%);
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(15, 15, 15, 0.08);
+}
+
+.advisor-message--user {
+  justify-self: end;
+  background: rgba(122, 30, 44, 0.08);
+}
+
+.advisor-message__role {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.advisor-message__content {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.55;
+}
+
+.advisor-composer {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.advisor-composer textarea {
+  width: 100%;
+  min-height: 128px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--text-primary);
+  padding: 0.85rem 1rem;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.advisor-composer textarea:focus-visible {
+  outline: 2px solid rgba(122, 30, 44, 0.35);
+  outline-offset: 2px;
+}
+
+.advisor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.advisor-upload {
+  position: relative;
+  overflow: hidden;
+}
+
+.advisor-upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.advisor-composer button:disabled,
+.advisor-composer textarea:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+@media (max-width: 640px) {
+  .advisor-heading,
+  .advisor-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .advisor-message {
+    width: 100%;
+  }
+}
