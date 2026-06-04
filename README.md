@@ -76,3 +76,14 @@ npm test
 ```
 
 Current scenarios cover clear approval, hard decline, manual review, high-LTV counteroffer, high-PTI counteroffer, fraud review, missing data, thin credit with strong cash-flow, high credit with weak cash-flow, and old/high-mileage collateral.
+
+## CU Loan Advisor
+
+The landing page links to `cu-loan-advisor/`, a browser chat workspace that calls the user's local Ollama API at `http://localhost:11434/api/chat`. It reads installed models from `/api/tags` and falls back to `llama3.1` if model discovery is blocked.
+
+If the browser blocks the local request, configure Ollama to allow the dashboard origin. The local defaults can be overridden from the browser console if needed:
+
+```js
+localStorage.setItem('gfsOllamaBaseUrl', 'http://localhost:11434');
+localStorage.setItem('gfsOllamaModel', 'llama3.1');
+```
