@@ -7,7 +7,7 @@ const advisorSend = document.getElementById('advisor-send');
 const advisorTest = document.getElementById('advisor-test');
 
 const OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
-const DEFAULT_OLLAMA_MODEL = 'llama3.1:8b';
+const DEFAULT_OLLAMA_MODEL = 'cu-loan-advisor:latest';
 const OLLAMA_TIMEOUT_MS = 30_000;
 
 const messages = [
