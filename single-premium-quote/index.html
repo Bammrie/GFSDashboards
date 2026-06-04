@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Single Premium Quote Prototype | GFS Dashboards</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="sp-header">
+    <div class="sp-header__inner">
+      <a class="sp-back-link" href="../index.html">Back to GFS Dashboards</a>
+      <div class="sp-header__copy">
+        <p class="sp-kicker">Credit insurance prototype</p>
+        <h1>Single Premium Quote Prototype</h1>
+        <p>
+          Quote Credit Life and Credit Disability single premium coverage with a calculation engine structured for
+          carrier-approved reducing-balance formulas.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sp-screen-nav" aria-label="Single Premium Quote Prototype screens">
+    <button type="button" class="sp-screen-tab" data-screen-target="quote" aria-current="page">Quote</button>
+    <button type="button" class="sp-screen-tab" data-screen-target="results">Results</button>
+    <button type="button" class="sp-screen-tab" data-screen-target="formula">Formula</button>
+    <button type="button" class="sp-screen-tab" data-screen-target="cases">Test Cases</button>
+    <button type="button" class="sp-screen-tab" data-screen-target="admin">Admin</button>
+  </nav>
+
+  <main class="sp-shell">
+    <section class="sp-panel sp-screen" data-screen="quote" aria-labelledby="quote-input-heading">
+      <header class="sp-panel__header">
+        <p class="sp-kicker">Screen 1</p>
+        <h2 id="quote-input-heading">Quote Input</h2>
+        <p>Enter loan details and select the coverage structure to estimate the single premium.</p>
+      </header>
+
+      <form id="quote-form" class="sp-form" autocomplete="off">
+        <div class="sp-field-grid">
+          <label class="sp-field" for="loan-amount">
+            <span>Loan Amount</span>
+            <span class="sp-currency-field">
+              <span aria-hidden="true">$</span>
+              <input id="loan-amount" name="loanAmount" type="number" inputmode="decimal" min="0.01" step="0.01" required />
+            </span>
+          </label>
+
+          <label class="sp-field" for="term-months">
+            <span>Loan Term</span>
+            <input id="term-months" name="termMonths" type="number" inputmode="numeric" min="1" step="1" required />
+            <small>Months</small>
+          </label>
+
+          <label class="sp-field" for="annual-apr">
+            <span>Loan APR</span>
+            <input id="annual-apr" name="annualApr" type="number" inputmode="decimal" min="0" step="0.01" required />
+            <small>Required for amortization and annuity-factor demos.</small>
+          </label>
+
+          <label class="sp-field" for="coverage-type">
+            <span>Coverage Type</span>
+            <select id="coverage-type" name="coverageType">
+              <option value="life">Life Only</option>
+              <option value="disability">Disability Only</option>
+              <option value="both">Life + Disability</option>
+            </select>
+          </label>
+
+          <label class="sp-field" for="coverage-basis">
+            <span>
+              Coverage Basis
+              <span class="sp-info" title="Reducing Balance means the insurance exposure follows the declining loan balance over time.">i</span>
+            </span>
+            <select id="coverage-basis" name="coverageBasis">
+              <option value="reducing">Reducing Balance</option>
+              <option value="level">Level Balance</option>
+            </select>
+          </label>
+
+          <label class="sp-field" for="borrower-type">
+            <span>Borrower Type</span>
+            <select id="borrower-type" name="borrowerType">
+              <option value="single">Single</option>
+              <option value="joint">Joint</option>
+            </select>
+          </label>
+
+          <label class="sp-field" for="calculation-method">
+            <span>
+              Calculation Method
+              <span class="sp-info" title="Annuity Factor Demo uses a present value factor so reducing-balance formulas can be plugged in later.">i</span>
+            </span>
+            <select id="calculation-method" name="calculationMethod">
+              <option value="carrier">Carrier Formula Placeholder</option>
+              <option value="annuity">Annuity Factor Demo</option>
+              <option value="flat">Flat Rate Demo</option>
+            </select>
+          </label>
+
+          <label class="sp-field" for="life-rate">
+            <span>Life Rate per $1,000</span>
+            <input id="life-rate" name="lifeRate" type="number" inputmode="decimal" min="0" step="0.01" required />
+          </label>
+
+          <label class="sp-field" for="disability-rate">
+            <span>Disability Rate per $1,000</span>
+            <input id="disability-rate" name="disabilityRate" type="number" inputmode="decimal" min="0" step="0.01" required />
+          </label>
+        </div>
+
+        <div class="sp-note-row">
+          <p>
+            <span class="sp-info" title="Single Premium means the insurance premium is calculated up front and may be financed into the loan.">i</span>
+            Single premium is estimated up front and can be compared against the financed payment impact.
+          </p>
+        </div>
+
+        <div id="quote-errors" class="sp-alert sp-alert--error" hidden></div>
+
+        <div class="sp-actions">
+          <button type="submit" class="sp-button sp-button--primary">Calculate Quote</button>
+          <button type="button" class="sp-button sp-button--secondary" id="quote-reset-defaults">Reset Inputs</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="sp-panel sp-screen" data-screen="results" aria-labelledby="quote-results-heading" hidden>
+      <header class="sp-panel__header">
+        <p class="sp-kicker">Screen 2</p>
+        <h2 id="quote-results-heading">Quote Results</h2>
+        <p id="results-intro">Calculate a quote to view the premium result.</p>
+      </header>
+
+      <div id="empty-results" class="sp-empty">
+        <p>No quote has been calculated yet.</p>
+        <button type="button" class="sp-button sp-button--primary" data-screen-target="quote">Start Quote</button>
+      </div>
+
+      <div id="results-content" hidden>
+        <div class="sp-result-total">
+          <span>Total Single Premium</span>
+          <strong id="result-total-premium">$0.00</strong>
+          <small id="result-method-label">Annuity Factor Demo</small>
+        </div>
+
+        <dl class="sp-summary-grid" id="result-summary"></dl>
+
+        <div class="sp-payment-comparison">
+          <div>
+            <span>Payment Without Premium</span>
+            <strong id="result-payment-before">$0.00</strong>
+          </div>
+          <div>
+            <span>Amount Financed With Premium</span>
+            <strong id="result-financed-amount">$0.00</strong>
+          </div>
+          <div>
+            <span>Payment With Premium Financed</span>
+            <strong id="result-payment-after">$0.00</strong>
+          </div>
+          <div>
+            <span>Monthly Payment Impact</span>
+            <strong id="result-payment-impact">$0.00</strong>
+          </div>
+        </div>
+
+        <div id="result-warnings" class="sp-alert sp-alert--warning" hidden></div>
+
+        <p class="sp-disclaimer">
+          This is a prototype quote for demonstration only. Final premium must be validated against the
+          carrier-approved formula, rate tables, eligibility rules, and test cases.
+        </p>
+
+        <div class="sp-actions">
+          <button type="button" class="sp-button sp-button--primary" id="copy-summary">Copy Quote Summary</button>
+          <button type="button" class="sp-button sp-button--secondary" id="reset-quote">Reset Quote</button>
+          <button type="button" class="sp-button sp-button--secondary" data-screen-target="formula">View Formula Assumptions</button>
+        </div>
+
+        <p id="copy-status" class="sp-status" role="status"></p>
+      </div>
+    </section>
+
+    <section class="sp-panel sp-screen" data-screen="formula" aria-labelledby="formula-heading" hidden>
+      <header class="sp-panel__header">
+        <p class="sp-kicker">Screen 3</p>
+        <h2 id="formula-heading">Formula / Assumptions</h2>
+        <p>This screen separates the loan officer flow from the calculation logic that the carrier must validate.</p>
+      </header>
+
+      <div class="sp-assumption-section">
+        <h3>Prototype Purpose</h3>
+        <p>
+          This prototype is designed to demonstrate the loan officer quote flow and calculation structure. The final
+          production calculator should use the carrier-approved single premium formula, discount/annuity factor, rate
+          tables, rounding rules, and eligibility rules.
+        </p>
+      </div>
+
+      <div class="sp-assumption-section">
+        <h3>Supported Calculation Modes</h3>
+
+        <h4>A. Carrier Formula Placeholder</h4>
+        <p>
+          This mode is reserved for the exact CSO/carrier formula once provided. The app is structured so the approved
+          formula can replace the demo formula without changing the user interface.
+        </p>
+
+        <h4>B. Annuity Factor Demo</h4>
+        <div class="sp-formula">AF = (1 - (1 + i)^(-n)) / i</div>
+        <ul class="sp-list">
+          <li>i = monthly interest rate</li>
+          <li>n = loan term in months</li>
+        </ul>
+        <p>
+          The annuity factor is used as a present value factor for a stream of monthly balances/payments. It is included
+          because single premium credit insurance on reducing-balance loans may require discounting or factoring instead
+          of a simple flat term multiplier.
+        </p>
+
+        <h4>C. Flat Rate Demo</h4>
+        <div class="sp-formula">Premium = Loan Amount / 1000 &times; Rate &times; Term</div>
+        <p>
+          This is included only for comparison and quick testing. It should not be assumed to be the final
+          carrier-approved single premium method.
+        </p>
+      </div>
+
+      <div class="sp-assumption-section">
+        <h3>Current Quote Assumptions</h3>
+        <ul class="sp-list" id="current-assumptions">
+          <li>No quote has been calculated yet.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="sp-panel sp-screen" data-screen="cases" aria-labelledby="test-cases-heading" hidden>
+      <header class="sp-panel__header">
+        <p class="sp-kicker">Screen 4</p>
+        <h2 id="test-cases-heading">Sample Test Cases</h2>
+        <p>Demo cases use the current admin parameters and the Annuity Factor Demo method.</p>
+      </header>
+
+      <div class="sp-table-wrap">
+        <table class="sp-table">
+          <thead>
+            <tr>
+              <th scope="col">Inputs</th>
+              <th scope="col">Selected Coverage</th>
+              <th scope="col">Calculation Method</th>
+              <th scope="col">Result</th>
+            </tr>
+          </thead>
+          <tbody id="test-case-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="sp-panel sp-screen" data-screen="admin" aria-labelledby="admin-heading" hidden>
+      <header class="sp-panel__header">
+        <p class="sp-kicker">Admin</p>
+        <h2 id="admin-heading">Parameter Setup</h2>
+        <p>Set prototype defaults for rates, warnings, borrower factors, and the carrier formula status note.</p>
+      </header>
+
+      <form id="admin-form" class="sp-form" autocomplete="off">
+        <div class="sp-field-grid">
+          <label class="sp-field" for="admin-life-rate">
+            <span>Default Life Rate per $1,000</span>
+            <input id="admin-life-rate" name="defaultLifeRate" type="number" min="0" step="0.01" inputmode="decimal" />
+          </label>
+
+          <label class="sp-field" for="admin-disability-rate">
+            <span>Default Disability Rate per $1,000</span>
+            <input id="admin-disability-rate" name="defaultDisabilityRate" type="number" min="0" step="0.01" inputmode="decimal" />
+          </label>
+
+          <label class="sp-field" for="admin-calculation-method">
+            <span>Default Calculation Method</span>
+            <select id="admin-calculation-method" name="defaultCalculationMethod">
+              <option value="carrier">Carrier Formula Placeholder</option>
+              <option value="annuity">Annuity Factor Demo</option>
+              <option value="flat">Flat Rate Demo</option>
+            </select>
+          </label>
+
+          <label class="sp-field" for="admin-coverage-basis">
+            <span>Default Coverage Basis</span>
+            <select id="admin-coverage-basis" name="defaultCoverageBasis">
+              <option value="reducing">Reducing Balance</option>
+              <option value="level">Level Balance</option>
+            </select>
+          </label>
+
+          <label class="sp-field" for="admin-joint-factor">
+            <span>Joint Borrower Rate Factor</span>
+            <input id="admin-joint-factor" name="jointBorrowerRateFactor" type="number" min="0" step="0.01" inputmode="decimal" />
+          </label>
+
+          <label class="sp-field" for="admin-term-warning">
+            <span>Term Warning Threshold</span>
+            <input id="admin-term-warning" name="warningTermMonths" type="number" min="1" step="1" inputmode="numeric" />
+            <small>Warnings do not block calculation.</small>
+          </label>
+
+          <label class="sp-field" for="admin-loan-warning">
+            <span>Loan Amount Warning Threshold</span>
+            <span class="sp-currency-field">
+              <span aria-hidden="true">$</span>
+              <input id="admin-loan-warning" name="warningLoanAmount" type="number" min="0" step="1000" inputmode="decimal" />
+            </span>
+          </label>
+        </div>
+
+        <label class="sp-field" for="admin-carrier-note">
+          <span>Carrier Formula Status Note</span>
+          <textarea id="admin-carrier-note" name="carrierFormulaStatus" rows="3"></textarea>
+        </label>
+
+        <div class="sp-actions">
+          <button type="submit" class="sp-button sp-button--primary">Save Parameters</button>
+          <button type="button" class="sp-button sp-button--secondary" id="admin-reset">Restore Demo Defaults</button>
+        </div>
+        <p id="admin-status" class="sp-status" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    window.localStorage.setItem('gfsWorkspace', 'quotes');
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
