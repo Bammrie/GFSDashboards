@@ -1,16 +1,20 @@
+import { demoRates as defaultDemoRates } from './src/data/demoRates.js';
 import {
   BORROWER_TYPES,
   CALCULATION_METHODS,
-  COVERAGE_BASIS_TYPES,
   COVERAGE_TYPES,
-  DEFAULT_ADMIN_PARAMETERS,
   DEFAULT_QUOTE_INPUTS,
-  calculateQuote
+  PREMIUM_TREATMENTS,
+  PROTOTYPE_DISCLAIMER,
+  SUPPORTED_STATES,
+  calculateQuote,
+  coverageIncludesDisability
 } from './quote-engine.js';
 
-const ADMIN_STORAGE_KEY = 'singlePremiumQuoteAdminParameters';
-const LATEST_QUOTE_STORAGE_KEY = 'singlePremiumQuoteLatestQuote';
-const SCREEN_NAMES = ['quote', 'results', 'formula', 'cases', 'admin'];
+const RATE_STORAGE_KEY = 'premiumQuoteProDemoRates';
+const LATEST_QUOTE_STORAGE_KEY = 'premiumQuoteProLatestQuote';
+const SAVED_QUOTES_STORAGE_KEY = 'premiumQuoteProSavedQuotes';
+const SCREEN_NAMES = ['quote', 'results', 'formula', 'cases', 'validation'];
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -24,24 +28,68 @@ const percentFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2
 });
 
-const SAMPLE_TEST_CASES = [
+const TEST_CASES = [
   {
-    loanAmount: 10000,
-    termMonths: 36,
-    annualApr: 7.5,
-    coverageType: 'life'
+    name: 'Missouri Auto Loan - Life + Disability',
+    inputs: {
+      state: 'MO',
+      loanAmount: 25000,
+      termMonths: 60,
+      annualApr: 7.5,
+      coverageType: 'both',
+      borrowerType: 'single',
+      premiumTreatment: 'financed'
+    }
   },
   {
-    loanAmount: 25000,
-    termMonths: 60,
-    annualApr: 7.5,
-    coverageType: 'both'
+    name: 'Arkansas Personal Loan - Life Only',
+    inputs: {
+      state: 'AR',
+      loanAmount: 10000,
+      termMonths: 36,
+      annualApr: 9,
+      coverageType: 'life',
+      borrowerType: 'single',
+      premiumTreatment: 'separate'
+    }
   },
   {
-    loanAmount: 50000,
-    termMonths: 72,
-    annualApr: 8,
-    coverageType: 'disability'
+    name: 'Missouri Disability Only',
+    inputs: {
+      state: 'MO',
+      loanAmount: 18000,
+      termMonths: 48,
+      annualApr: 8.25,
+      coverageType: 'disability',
+      borrowerType: 'single',
+      premiumTreatment: 'financed'
+    }
+  },
+  {
+    name: 'Arkansas Joint Borrower Warning',
+    inputs: {
+      state: 'AR',
+      loanAmount: 30000,
+      termMonths: 72,
+      annualApr: 7,
+      coverageType: 'both',
+      borrowerType: 'joint',
+      premiumTreatment: 'financed'
+    },
+    expectedWarning: 'Joint borrower rules pending carrier confirmation.'
+  },
+  {
+    name: 'High Amount Warning',
+    inputs: {
+      state: 'MO',
+      loanAmount: 125000,
+      termMonths: 120,
+      annualApr: 8,
+      coverageType: 'both',
+      borrowerType: 'single',
+      premiumTreatment: 'financed'
+    },
+    expectedWarning: 'Loan amount exceeds demo threshold. Carrier maximum must be confirmed.'
   }
 ];
 
@@ -52,29 +100,50 @@ const elements = {
   quoteForm: document.getElementById('quote-form'),
   quoteErrors: document.getElementById('quote-errors'),
   quoteResetDefaults: document.getElementById('quote-reset-defaults'),
+  state: document.getElementById('state'),
+  coverageType: document.getElementById('coverage-type'),
+  borrowerType: document.getElementById('borrower-type'),
+  premiumTreatment: document.getElementById('premium-treatment'),
+  includePremiumInInsuredBalance: document.getElementById('include-premium-insured-balance'),
+  insuredBalanceField: document.getElementById('insured-balance-field'),
+  insuredBalanceWarning: document.getElementById('insured-balance-warning'),
+  disabilityEmployment: document.getElementById('disability-employment'),
+  jointWarning: document.getElementById('joint-warning'),
+  rateState: document.getElementById('rate-state'),
+  rateLife: document.getElementById('rate-life'),
+  rateDisability: document.getElementById('rate-disability'),
+  rateDiscount: document.getElementById('rate-discount'),
+  rateStatus: document.getElementById('rate-status'),
+  saveRates: document.getElementById('save-rates'),
+  resetRates: document.getElementById('reset-rates'),
   emptyResults: document.getElementById('empty-results'),
   resultsContent: document.getElementById('results-content'),
   resultsIntro: document.getElementById('results-intro'),
   resultTotalPremium: document.getElementById('result-total-premium'),
-  resultMethodLabel: document.getElementById('result-method-label'),
+  resultLifePremium: document.getElementById('result-life-premium'),
+  resultDisabilityPremium: document.getElementById('result-disability-premium'),
+  resultState: document.getElementById('result-state'),
+  resultCoverage: document.getElementById('result-coverage'),
+  resultDisabilityBadge: document.getElementById('result-disability-badge'),
   resultSummary: document.getElementById('result-summary'),
-  resultPaymentBefore: document.getElementById('result-payment-before'),
-  resultFinancedAmount: document.getElementById('result-financed-amount'),
-  resultPaymentAfter: document.getElementById('result-payment-after'),
-  resultPaymentImpact: document.getElementById('result-payment-impact'),
+  resultBadges: document.getElementById('result-badges'),
   resultWarnings: document.getElementById('result-warnings'),
   copySummary: document.getElementById('copy-summary'),
+  saveQuote: document.getElementById('save-quote'),
   resetQuote: document.getElementById('reset-quote'),
   copyStatus: document.getElementById('copy-status'),
-  currentAssumptions: document.getElementById('current-assumptions'),
-  testCaseBody: document.getElementById('test-case-body'),
-  adminForm: document.getElementById('admin-form'),
-  adminReset: document.getElementById('admin-reset'),
-  adminStatus: document.getElementById('admin-status')
+  savedQuotesList: document.getElementById('saved-quotes-list'),
+  clearSavedQuotes: document.getElementById('clear-saved-quotes'),
+  testCaseBody: document.getElementById('test-case-body')
 };
 
-let adminParameters = loadAdminParameters();
+let demoRates = loadDemoRates();
 let latestQuote = loadLatestQuote();
+let savedQuotes = loadSavedQuotes();
+
+function cloneRates(rates) {
+  return JSON.parse(JSON.stringify(rates));
+}
 
 function formatCurrency(value) {
   return currencyFormatter.format(Number(value) || 0);
@@ -119,10 +188,10 @@ function removeStorageItem(key) {
   }
 }
 
-function loadAdminParameters() {
-  const stored = getStorageItem(ADMIN_STORAGE_KEY);
+function loadDemoRates() {
+  const stored = getStorageItem(RATE_STORAGE_KEY);
   return {
-    ...DEFAULT_ADMIN_PARAMETERS,
+    ...cloneRates(defaultDemoRates),
     ...(stored && typeof stored === 'object' ? stored : {})
   };
 }
@@ -132,14 +201,9 @@ function loadLatestQuote() {
   return stored && stored.result && stored.inputs ? stored : null;
 }
 
-function quoteDefaultsFromParameters() {
-  return {
-    ...DEFAULT_QUOTE_INPUTS,
-    lifeRate: adminParameters.defaultLifeRate,
-    disabilityRate: adminParameters.defaultDisabilityRate,
-    coverageBasis: adminParameters.defaultCoverageBasis,
-    calculationMethod: adminParameters.defaultCalculationMethod
-  };
+function loadSavedQuotes() {
+  const stored = getStorageItem(SAVED_QUOTES_STORAGE_KEY);
+  return Array.isArray(stored) ? stored : [];
 }
 
 function getFieldValue(form, name) {
@@ -160,57 +224,47 @@ function setFieldValue(form, name, value) {
 
 function readQuoteForm() {
   return {
+    state: getFieldValue(elements.quoteForm, 'state'),
     loanAmount: getNumericFieldValue(elements.quoteForm, 'loanAmount'),
     termMonths: getNumericFieldValue(elements.quoteForm, 'termMonths'),
     annualApr: getNumericFieldValue(elements.quoteForm, 'annualApr'),
     coverageType: getFieldValue(elements.quoteForm, 'coverageType'),
-    coverageBasis: getFieldValue(elements.quoteForm, 'coverageBasis'),
     borrowerType: getFieldValue(elements.quoteForm, 'borrowerType'),
-    calculationMethod: getFieldValue(elements.quoteForm, 'calculationMethod'),
-    lifeRate: getNumericFieldValue(elements.quoteForm, 'lifeRate'),
-    disabilityRate: getNumericFieldValue(elements.quoteForm, 'disabilityRate')
+    premiumTreatment: getFieldValue(elements.quoteForm, 'premiumTreatment'),
+    includePremiumInInsuredBalance:
+      getFieldValue(elements.quoteForm, 'includePremiumInInsuredBalance') === 'yes',
+    activelyWorking: getFieldValue(elements.quoteForm, 'activelyWorking') === 'yes',
+    hoursWorkedPerWeek: getNumericFieldValue(elements.quoteForm, 'hoursWorkedPerWeek'),
+    calculationMethod: getFieldValue(elements.quoteForm, 'calculationMethod')
   };
 }
 
-function hydrateQuoteForm(inputs) {
-  const values = { ...quoteDefaultsFromParameters(), ...inputs };
+function hydrateQuoteForm(inputs = {}) {
+  const values = { ...DEFAULT_QUOTE_INPUTS, ...inputs };
+  setFieldValue(elements.quoteForm, 'state', values.state);
   setFieldValue(elements.quoteForm, 'loanAmount', values.loanAmount);
   setFieldValue(elements.quoteForm, 'termMonths', values.termMonths);
   setFieldValue(elements.quoteForm, 'annualApr', values.annualApr);
   setFieldValue(elements.quoteForm, 'coverageType', values.coverageType);
-  setFieldValue(elements.quoteForm, 'coverageBasis', values.coverageBasis);
   setFieldValue(elements.quoteForm, 'borrowerType', values.borrowerType);
+  setFieldValue(elements.quoteForm, 'premiumTreatment', values.premiumTreatment);
+  setFieldValue(
+    elements.quoteForm,
+    'includePremiumInInsuredBalance',
+    values.includePremiumInInsuredBalance ? 'yes' : 'no'
+  );
+  setFieldValue(elements.quoteForm, 'activelyWorking', values.activelyWorking ? 'yes' : 'no');
+  setFieldValue(elements.quoteForm, 'hoursWorkedPerWeek', values.hoursWorkedPerWeek);
   setFieldValue(elements.quoteForm, 'calculationMethod', values.calculationMethod);
-  setFieldValue(elements.quoteForm, 'lifeRate', values.lifeRate);
-  setFieldValue(elements.quoteForm, 'disabilityRate', values.disabilityRate);
-}
-
-function readAdminForm() {
-  return {
-    defaultLifeRate: getNumericFieldValue(elements.adminForm, 'defaultLifeRate'),
-    defaultDisabilityRate: getNumericFieldValue(elements.adminForm, 'defaultDisabilityRate'),
-    defaultCalculationMethod: getFieldValue(elements.adminForm, 'defaultCalculationMethod'),
-    defaultCoverageBasis: getFieldValue(elements.adminForm, 'defaultCoverageBasis'),
-    jointBorrowerRateFactor: getNumericFieldValue(elements.adminForm, 'jointBorrowerRateFactor'),
-    warningTermMonths: getNumericFieldValue(elements.adminForm, 'warningTermMonths'),
-    warningLoanAmount: getNumericFieldValue(elements.adminForm, 'warningLoanAmount'),
-    carrierFormulaStatus: getFieldValue(elements.adminForm, 'carrierFormulaStatus').trim()
-  };
-}
-
-function hydrateAdminForm(parameters) {
-  setFieldValue(elements.adminForm, 'defaultLifeRate', parameters.defaultLifeRate);
-  setFieldValue(elements.adminForm, 'defaultDisabilityRate', parameters.defaultDisabilityRate);
-  setFieldValue(elements.adminForm, 'defaultCalculationMethod', parameters.defaultCalculationMethod);
-  setFieldValue(elements.adminForm, 'defaultCoverageBasis', parameters.defaultCoverageBasis);
-  setFieldValue(elements.adminForm, 'jointBorrowerRateFactor', parameters.jointBorrowerRateFactor);
-  setFieldValue(elements.adminForm, 'warningTermMonths', parameters.warningTermMonths);
-  setFieldValue(elements.adminForm, 'warningLoanAmount', parameters.warningLoanAmount);
-  setFieldValue(elements.adminForm, 'carrierFormulaStatus', parameters.carrierFormulaStatus);
+  updateConditionalFields();
 }
 
 function validateQuoteInputs(inputs) {
   const errors = [];
+
+  if (!SUPPORTED_STATES[inputs.state]) {
+    errors.push('State must be Missouri or Arkansas.');
+  }
 
   if (inputs.loanAmount <= 0) {
     errors.push('Loan amount must be greater than 0.');
@@ -221,37 +275,11 @@ function validateQuoteInputs(inputs) {
   }
 
   if (inputs.annualApr < 0) {
-    errors.push('APR must be 0 or greater.');
+    errors.push('APR / note rate must be 0 or greater.');
   }
 
-  if (inputs.lifeRate < 0 || inputs.disabilityRate < 0) {
-    errors.push('Life and disability rates must be 0 or greater.');
-  }
-
-  return errors;
-}
-
-function validateAdminParameters(parameters) {
-  const errors = [];
-
-  if (parameters.defaultLifeRate < 0 || parameters.defaultDisabilityRate < 0) {
-    errors.push('Default rates must be 0 or greater.');
-  }
-
-  if (parameters.jointBorrowerRateFactor < 0) {
-    errors.push('Joint borrower rate factor must be 0 or greater.');
-  }
-
-  if (parameters.warningTermMonths <= 0) {
-    errors.push('Term warning threshold must be greater than 0.');
-  }
-
-  if (parameters.warningLoanAmount < 0) {
-    errors.push('Loan amount warning threshold must be 0 or greater.');
-  }
-
-  if (!parameters.carrierFormulaStatus) {
-    errors.push('Carrier formula status note is required.');
+  if (inputs.hoursWorkedPerWeek < 0) {
+    errors.push('Hours worked per week must be 0 or greater.');
   }
 
   return errors;
@@ -299,18 +327,99 @@ function screenFromHash() {
   return SCREEN_NAMES.includes(hash) ? hash : 'quote';
 }
 
+function updateConditionalFields() {
+  const coverageType = elements.coverageType.value;
+  const premiumTreatment = elements.premiumTreatment.value;
+  const borrowerType = elements.borrowerType.value;
+  const includePremium = elements.includePremiumInInsuredBalance.value === 'yes';
+  const hasDisability = coverageIncludesDisability(coverageType);
+
+  elements.disabilityEmployment.hidden = !hasDisability;
+  elements.resultDisabilityBadge.hidden = latestQuote
+    ? !coverageIncludesDisability(latestQuote.result.coverageType)
+    : !hasDisability;
+  elements.insuredBalanceField.hidden = premiumTreatment !== 'financed';
+  elements.insuredBalanceWarning.hidden = premiumTreatment !== 'financed' || !includePremium;
+  elements.jointWarning.hidden = borrowerType !== 'joint';
+}
+
+function hydrateRateFields(state = elements.rateState.value || 'MO') {
+  const rates = demoRates[state] || defaultDemoRates[state];
+  elements.rateState.value = state;
+  elements.rateLife.value = rates.lifeRatePerThousandGrossPay;
+  elements.rateDisability.value = rates.disabilitySevenDayRetroRatePerThousandGrossPay;
+  elements.rateDiscount.value = rates.discountRateMonthly;
+}
+
+function saveRateFields() {
+  const state = elements.rateState.value;
+  const nextRates = {
+    lifeRatePerThousandGrossPay: Number(elements.rateLife.value),
+    disabilitySevenDayRetroRatePerThousandGrossPay: Number(elements.rateDisability.value),
+    discountRateMonthly: Number(elements.rateDiscount.value)
+  };
+
+  if (
+    nextRates.lifeRatePerThousandGrossPay < 0 ||
+    nextRates.disabilitySevenDayRetroRatePerThousandGrossPay < 0 ||
+    nextRates.discountRateMonthly < 0
+  ) {
+    setStatus(elements.rateStatus, 'Demo rates must be 0 or greater.', true);
+    return;
+  }
+
+  demoRates = {
+    ...demoRates,
+    [state]: nextRates
+  };
+  setStorageItem(RATE_STORAGE_KEY, demoRates);
+  renderTestCases();
+  setStatus(elements.rateStatus, `${SUPPORTED_STATES[state]} demo rates saved.`);
+}
+
+function resetRateFields() {
+  demoRates = cloneRates(defaultDemoRates);
+  setStorageItem(RATE_STORAGE_KEY, demoRates);
+  hydrateRateFields(elements.rateState.value);
+  renderTestCases();
+  setStatus(elements.rateStatus, 'Demo rates restored.');
+}
+
+function badge(label) {
+  return `<span class="sp-badge">${escapeHtml(label)}</span>`;
+}
+
+function renderResultBadges(result) {
+  const badges = [
+    result.state,
+    'Monthly Payments',
+    'Gross Pay',
+    coverageIncludesDisability(result.coverageType) ? '7-Day Retro' : null,
+    'Demo Formula',
+    'Carrier Validation Pending'
+  ].filter(Boolean);
+
+  elements.resultBadges.innerHTML = badges.map(badge).join('');
+}
+
 function renderSummaryGrid(result) {
   const rows = [
-    ['Loan amount', formatCurrency(result.loanAmount)],
-    ['Term', `${result.termMonths} months`],
+    ['Loan Amount', formatCurrency(result.loanAmount)],
+    ['Term in Months', `${result.termMonths} months`],
     ['APR', formatPercent(result.annualApr)],
-    ['Coverage selected', COVERAGE_TYPES[result.coverageType] || result.coverageType],
-    ['Coverage basis', COVERAGE_BASIS_TYPES[result.coverageBasis] || result.coverageBasis],
-    ['Borrower type', BORROWER_TYPES[result.borrowerType] || result.borrowerType],
-    ['Calculation method used', CALCULATION_METHODS[result.calculationMethod] || result.calculationMethod],
-    ['Life premium', formatCurrency(result.lifePremium)],
-    ['Disability premium', formatCurrency(result.disabilityPremium)]
+    ['Estimated Monthly Payment', formatCurrency(result.monthlyPayment)],
+    ['Premium Treatment', PREMIUM_TREATMENTS[result.premiumTreatment]],
+    ['Gross Pay Exposure', formatCurrency(result.grossPayBase)],
+    ['Calculation Method', CALCULATION_METHODS[result.calculationMethod]]
   ];
+
+  if (result.premiumTreatment === 'financed') {
+    rows.push(
+      ['Amount Financed With Premium', formatCurrency(result.amountFinancedWithPremium)],
+      ['Estimated Payment With Premium', formatCurrency(result.monthlyPaymentWithPremium)],
+      ['Estimated Monthly Payment Impact', formatCurrency(result.monthlyPaymentImpact)]
+    );
+  }
 
   elements.resultSummary.innerHTML = rows
     .map(
@@ -328,37 +437,29 @@ function renderWarnings(result) {
   showErrorList(elements.resultWarnings, result.warnings || []);
 }
 
-function renderAssumptions(result) {
-  const assumptions = result?.assumptions?.length
-    ? result.assumptions
-    : ['No quote has been calculated yet.'];
-  elements.currentAssumptions.innerHTML = assumptions
-    .map((assumption) => `<li>${escapeHtml(assumption)}</li>`)
-    .join('');
-}
-
 function renderResults() {
   if (!latestQuote) {
     elements.emptyResults.hidden = false;
     elements.resultsContent.hidden = true;
     elements.resultsIntro.textContent = 'Calculate a quote to view the premium result.';
-    renderAssumptions(null);
+    renderSavedQuotes();
     return;
   }
 
   const { result } = latestQuote;
   elements.emptyResults.hidden = true;
   elements.resultsContent.hidden = false;
-  elements.resultsIntro.textContent = 'Review the estimated premium and financed payment impact.';
+  elements.resultsIntro.textContent = 'Review the focused monthly gross-pay result.';
   elements.resultTotalPremium.textContent = formatCurrency(result.totalPremium);
-  elements.resultMethodLabel.textContent = CALCULATION_METHODS[result.calculationMethod] || result.calculationMethod;
-  elements.resultPaymentBefore.textContent = formatCurrency(result.monthlyPayment);
-  elements.resultFinancedAmount.textContent = formatCurrency(result.amountFinancedWithPremium);
-  elements.resultPaymentAfter.textContent = formatCurrency(result.monthlyPaymentWithPremium);
-  elements.resultPaymentImpact.textContent = formatCurrency(result.monthlyPaymentImpact);
+  elements.resultLifePremium.textContent = formatCurrency(result.lifePremium);
+  elements.resultDisabilityPremium.textContent = formatCurrency(result.disabilityPremium);
+  elements.resultState.textContent = `${result.state} - ${SUPPORTED_STATES[result.state]}`;
+  elements.resultCoverage.textContent = COVERAGE_TYPES[result.coverageType];
+  elements.resultDisabilityBadge.hidden = !coverageIncludesDisability(result.coverageType);
   renderSummaryGrid(result);
+  renderResultBadges(result);
   renderWarnings(result);
-  renderAssumptions(result);
+  renderSavedQuotes();
 }
 
 function saveLatestQuote(inputs, result) {
@@ -371,10 +472,11 @@ function saveLatestQuote(inputs, result) {
 }
 
 function calculateAndRenderQuote(inputs) {
-  const result = calculateQuote(inputs, adminParameters);
+  const result = calculateQuote(inputs, demoRates);
   saveLatestQuote(inputs, result);
   renderResults();
   renderTestCases();
+  updateConditionalFields();
   setScreen('results');
 }
 
@@ -384,25 +486,37 @@ function quoteSummaryText() {
   }
 
   const { result } = latestQuote;
+  const lines = [
+    'PremiumQuote Pro',
+    'Monthly Single Premium Credit Insurance Quote Prototype',
+    '',
+    `State: ${SUPPORTED_STATES[result.state]} (${result.state})`,
+    `Loan Amount: ${formatCurrency(result.loanAmount)}`,
+    `Term: ${result.termMonths} months`,
+    `APR / Note Rate: ${formatPercent(result.annualApr)}`,
+    `Coverage: ${COVERAGE_TYPES[result.coverageType]}`,
+    `Borrower Type: ${BORROWER_TYPES[result.borrowerType]}`,
+    `Premium Treatment: ${PREMIUM_TREATMENTS[result.premiumTreatment]}`,
+    'Payment Frequency: Monthly only',
+    'Coverage Basis: Gross Pay',
+    coverageIncludesDisability(result.coverageType) ? 'Disability: 7-Day Retro' : null,
+    '',
+    `Life Premium: ${formatCurrency(result.lifePremium)}`,
+    `Disability Premium: ${formatCurrency(result.disabilityPremium)}`,
+    `Total Single Premium: ${formatCurrency(result.totalPremium)}`,
+    '',
+    `Estimated Monthly Payment: ${formatCurrency(result.monthlyPayment)}`,
+    result.premiumTreatment === 'financed'
+      ? `Estimated Payment With Premium Financed: ${formatCurrency(result.monthlyPaymentWithPremium)}`
+      : null,
+    result.premiumTreatment === 'financed'
+      ? `Estimated Monthly Impact: ${formatCurrency(result.monthlyPaymentImpact)}`
+      : null,
+    '',
+    PROTOTYPE_DISCLAIMER
+  ].filter((line) => line !== null);
 
-  return `Single Premium Quote Prototype
-
-Loan Amount: ${formatCurrency(result.loanAmount)}
-Term: ${result.termMonths} months
-APR: ${formatPercent(result.annualApr)}
-Coverage: ${COVERAGE_TYPES[result.coverageType] || result.coverageType}
-Calculation Method: ${CALCULATION_METHODS[result.calculationMethod] || result.calculationMethod}
-
-Life Premium: ${formatCurrency(result.lifePremium)}
-Disability Premium: ${formatCurrency(result.disabilityPremium)}
-Total Single Premium: ${formatCurrency(result.totalPremium)}
-
-Estimated Monthly Payment Without Premium: ${formatCurrency(result.monthlyPayment)}
-Estimated Monthly Payment With Premium Financed: ${formatCurrency(result.monthlyPaymentWithPremium)}
-Estimated Monthly Impact: ${formatCurrency(result.monthlyPaymentImpact)}
-
-Prototype disclaimer:
-This is a demonstration quote only. Final premium must be validated using the carrier-approved formula, rate tables, rounding rules, eligibility rules, and test cases.`;
+  return lines.join('\n');
 }
 
 async function copyQuoteSummary() {
@@ -434,39 +548,92 @@ async function copyQuoteSummary() {
   }
 }
 
-function renderTestCases() {
-  elements.testCaseBody.innerHTML = SAMPLE_TEST_CASES.map((testCase) => {
-    const inputs = {
-      ...quoteDefaultsFromParameters(),
-      ...testCase,
-      coverageBasis: 'reducing',
-      borrowerType: 'single',
-      calculationMethod: 'annuity'
-    };
-    const result = calculateQuote(inputs, adminParameters);
+function saveCurrentQuoteCard() {
+  if (!latestQuote) {
+    setStatus(elements.copyStatus, 'Calculate a quote before saving.', true);
+    return;
+  }
 
-    return `
-      <tr>
-        <td>
-          <strong>${formatCurrency(inputs.loanAmount)}</strong><br />
-          ${inputs.termMonths} months<br />
-          ${formatPercent(inputs.annualApr)} APR
-        </td>
-        <td>${COVERAGE_TYPES[inputs.coverageType]}</td>
-        <td>${CALCULATION_METHODS[inputs.calculationMethod]}</td>
-        <td><strong>${formatCurrency(result.totalPremium)}</strong></td>
-      </tr>
-    `;
-  }).join('');
+  const nextSavedQuote = {
+    id: `quote-${Date.now()}`,
+    savedAt: new Date().toISOString(),
+    result: latestQuote.result
+  };
+  savedQuotes = [nextSavedQuote, ...savedQuotes].slice(0, 12);
+  setStorageItem(SAVED_QUOTES_STORAGE_KEY, savedQuotes);
+  renderSavedQuotes();
+  setStatus(elements.copyStatus, 'Quote card saved.');
+}
+
+function renderSavedQuotes() {
+  if (!elements.savedQuotesList) {
+    return;
+  }
+
+  if (!savedQuotes.length) {
+    elements.savedQuotesList.innerHTML = '<p class="sp-empty-note">No saved quote cards yet.</p>';
+    return;
+  }
+
+  elements.savedQuotesList.innerHTML = savedQuotes
+    .map(({ result }) => {
+      const hasDisability = coverageIncludesDisability(result.coverageType);
+      return `
+        <article class="sp-saved-card">
+          <div>
+            <span class="sp-badge">${escapeHtml(result.state)}</span>
+            <span class="sp-badge">Gross Pay</span>
+            ${hasDisability ? '<span class="sp-badge">7-Day Retro</span>' : ''}
+          </div>
+          <h4>${escapeHtml(COVERAGE_TYPES[result.coverageType])}</h4>
+          <p>${formatCurrency(result.loanAmount)} - ${result.termMonths} months</p>
+          <strong>${formatCurrency(result.totalPremium)}</strong>
+          <small>Demo formula status: Carrier Formula Pending</small>
+        </article>
+      `;
+    })
+    .join('');
 }
 
 function resetQuoteState() {
   latestQuote = null;
   removeStorageItem(LATEST_QUOTE_STORAGE_KEY);
-  hydrateQuoteForm(quoteDefaultsFromParameters());
+  hydrateQuoteForm(DEFAULT_QUOTE_INPUTS);
   renderResults();
   setStatus(elements.copyStatus, '');
   setScreen('quote');
+}
+
+function renderTestCases() {
+  elements.testCaseBody.innerHTML = TEST_CASES.map((testCase) => {
+    const inputs = {
+      ...DEFAULT_QUOTE_INPUTS,
+      ...testCase.inputs,
+      calculationMethod: 'smart'
+    };
+    const result = calculateQuote(inputs, demoRates);
+    const expectedWarning = testCase.expectedWarning
+      ? `<br /><small>Expected warning: ${escapeHtml(testCase.expectedWarning)}</small>`
+      : '';
+
+    return `
+      <tr>
+        <td><strong>${escapeHtml(testCase.name)}</strong>${expectedWarning}</td>
+        <td>
+          ${result.state} - ${formatCurrency(result.loanAmount)}<br />
+          ${result.termMonths} months<br />
+          ${formatPercent(result.annualApr)} APR
+        </td>
+        <td>
+          ${escapeHtml(COVERAGE_TYPES[result.coverageType])}<br />
+          ${escapeHtml(BORROWER_TYPES[result.borrowerType])}<br />
+          Gross Pay${coverageIncludesDisability(result.coverageType) ? '<br />7-Day Retro' : ''}
+        </td>
+        <td>${escapeHtml(PREMIUM_TREATMENTS[result.premiumTreatment])}</td>
+        <td><strong>${formatCurrency(result.totalPremium)}</strong></td>
+      </tr>
+    `;
+  }).join('');
 }
 
 function initializeEvents() {
@@ -479,6 +646,19 @@ function initializeEvents() {
   window.addEventListener('hashchange', () => {
     setScreen(screenFromHash(), false);
   });
+
+  [
+    elements.coverageType,
+    elements.borrowerType,
+    elements.premiumTreatment,
+    elements.includePremiumInInsuredBalance
+  ].forEach((element) => {
+    element.addEventListener('change', updateConditionalFields);
+  });
+
+  elements.rateState.addEventListener('change', () => hydrateRateFields(elements.rateState.value));
+  elements.saveRates.addEventListener('click', saveRateFields);
+  elements.resetRates.addEventListener('click', resetRateFields);
 
   elements.quoteForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -494,57 +674,27 @@ function initializeEvents() {
   });
 
   elements.quoteResetDefaults.addEventListener('click', () => {
-    hydrateQuoteForm(quoteDefaultsFromParameters());
+    hydrateQuoteForm(DEFAULT_QUOTE_INPUTS);
     showErrorList(elements.quoteErrors, []);
   });
 
   elements.copySummary.addEventListener('click', copyQuoteSummary);
-
+  elements.saveQuote.addEventListener('click', saveCurrentQuoteCard);
   elements.resetQuote.addEventListener('click', resetQuoteState);
-
-  elements.adminForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const nextParameters = readAdminForm();
-    const errors = validateAdminParameters(nextParameters);
-
-    if (errors.length) {
-      setStatus(elements.adminStatus, errors.join(' '), true);
-      return;
-    }
-
-    adminParameters = {
-      ...DEFAULT_ADMIN_PARAMETERS,
-      ...nextParameters
-    };
-    setStorageItem(ADMIN_STORAGE_KEY, adminParameters);
-    hydrateAdminForm(adminParameters);
-    hydrateQuoteForm({
-      ...readQuoteForm(),
-      lifeRate: adminParameters.defaultLifeRate,
-      disabilityRate: adminParameters.defaultDisabilityRate,
-      coverageBasis: adminParameters.defaultCoverageBasis,
-      calculationMethod: adminParameters.defaultCalculationMethod
-    });
-    renderTestCases();
-    setStatus(elements.adminStatus, 'Parameters saved and applied to quote defaults.');
-  });
-
-  elements.adminReset.addEventListener('click', () => {
-    adminParameters = { ...DEFAULT_ADMIN_PARAMETERS };
-    setStorageItem(ADMIN_STORAGE_KEY, adminParameters);
-    hydrateAdminForm(adminParameters);
-    hydrateQuoteForm(quoteDefaultsFromParameters());
-    renderTestCases();
-    setStatus(elements.adminStatus, 'Demo defaults restored.');
+  elements.clearSavedQuotes.addEventListener('click', () => {
+    savedQuotes = [];
+    setStorageItem(SAVED_QUOTES_STORAGE_KEY, savedQuotes);
+    renderSavedQuotes();
   });
 }
 
 function initialize() {
-  hydrateAdminForm(adminParameters);
-  hydrateQuoteForm(latestQuote?.inputs || quoteDefaultsFromParameters());
+  hydrateRateFields('MO');
+  hydrateQuoteForm(latestQuote?.inputs || DEFAULT_QUOTE_INPUTS);
   renderResults();
   renderTestCases();
   initializeEvents();
+  updateConditionalFields();
   setScreen(screenFromHash(), false);
 }
 

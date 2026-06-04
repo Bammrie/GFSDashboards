@@ -4,42 +4,53 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Single Premium Quote Prototype | GFS Dashboards</title>
+  <title>PremiumQuote Pro | GFS Dashboards</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="sp-header">
+    <div class="sp-status-ribbon">Configured Scope: Monthly &bull; Gross Pay &bull; 7-Day Retro &bull; MO/AR</div>
     <div class="sp-header__inner">
       <a class="sp-back-link" href="../index.html">Back to GFS Dashboards</a>
       <div class="sp-header__copy">
-        <p class="sp-kicker">Credit insurance prototype</p>
-        <h1>Single Premium Quote Prototype</h1>
-        <p>
-          Quote Credit Life and Credit Disability single premium coverage with a calculation engine structured for
-          carrier-approved reducing-balance formulas.
-        </p>
+        <p class="sp-kicker">Carrier-guided prototype</p>
+        <h1>PremiumQuote Pro</h1>
+        <p class="sp-subtitle">Monthly Single Premium Credit Insurance Quote Prototype</p>
+        <p class="sp-positioning">Built for monthly gross-pay single premium quoting in MO and AR.</p>
+      </div>
+      <div class="sp-carrier-banner">
+        Prototype configured for monthly payments, gross pay, 7-day retro Disability, Missouri and Arkansas. Final
+        rates and formulas pending carrier validation.
       </div>
     </div>
   </header>
 
-  <nav class="sp-screen-nav" aria-label="Single Premium Quote Prototype screens">
+  <nav class="sp-screen-nav" aria-label="PremiumQuote Pro screens">
     <button type="button" class="sp-screen-tab" data-screen-target="quote" aria-current="page">Quote</button>
     <button type="button" class="sp-screen-tab" data-screen-target="results">Results</button>
-    <button type="button" class="sp-screen-tab" data-screen-target="formula">Formula</button>
+    <button type="button" class="sp-screen-tab" data-screen-target="formula">Formula Lab</button>
     <button type="button" class="sp-screen-tab" data-screen-target="cases">Test Cases</button>
-    <button type="button" class="sp-screen-tab" data-screen-target="admin">Admin</button>
+    <button type="button" class="sp-screen-tab" data-screen-target="validation">Validation</button>
   </nav>
 
   <main class="sp-shell">
     <section class="sp-panel sp-screen" data-screen="quote" aria-labelledby="quote-input-heading">
       <header class="sp-panel__header">
-        <p class="sp-kicker">Screen 1</p>
-        <h2 id="quote-input-heading">Quote Input</h2>
-        <p>Enter loan details and select the coverage structure to estimate the single premium.</p>
+        <p class="sp-kicker">Quote Builder</p>
+        <h2 id="quote-input-heading">Monthly Gross-Pay Quote</h2>
+        <p>Only the carrier-requested MO/AR monthly gross-pay 7-day-retro scope is enabled.</p>
       </header>
 
       <form id="quote-form" class="sp-form" autocomplete="off">
         <div class="sp-field-grid">
+          <label class="sp-field" for="state">
+            <span>State</span>
+            <select id="state" name="state" required>
+              <option value="MO">Missouri</option>
+              <option value="AR">Arkansas</option>
+            </select>
+          </label>
+
           <label class="sp-field" for="loan-amount">
             <span>Loan Amount</span>
             <span class="sp-currency-field">
@@ -49,74 +60,146 @@
           </label>
 
           <label class="sp-field" for="term-months">
-            <span>Loan Term</span>
+            <span>Loan Term in Months</span>
             <input id="term-months" name="termMonths" type="number" inputmode="numeric" min="1" step="1" required />
-            <small>Months</small>
           </label>
 
           <label class="sp-field" for="annual-apr">
-            <span>Loan APR</span>
+            <span>APR / Note Rate</span>
             <input id="annual-apr" name="annualApr" type="number" inputmode="decimal" min="0" step="0.01" required />
-            <small>Required for amortization and annuity-factor demos.</small>
+            <small>Used for monthly payment and gross pay schedule estimates. Final formula pending carrier validation.</small>
           </label>
 
           <label class="sp-field" for="coverage-type">
             <span>Coverage Type</span>
             <select id="coverage-type" name="coverageType">
-              <option value="life">Life Only</option>
-              <option value="disability">Disability Only</option>
+              <option value="life">Credit Life</option>
+              <option value="disability">Credit Disability</option>
               <option value="both">Life + Disability</option>
-            </select>
-          </label>
-
-          <label class="sp-field" for="coverage-basis">
-            <span>
-              Coverage Basis
-              <span class="sp-info" title="Reducing Balance means the insurance exposure follows the declining loan balance over time.">i</span>
-            </span>
-            <select id="coverage-basis" name="coverageBasis">
-              <option value="reducing">Reducing Balance</option>
-              <option value="level">Level Balance</option>
             </select>
           </label>
 
           <label class="sp-field" for="borrower-type">
             <span>Borrower Type</span>
             <select id="borrower-type" name="borrowerType">
-              <option value="single">Single</option>
-              <option value="joint">Joint</option>
+              <option value="single">Single Borrower</option>
+              <option value="joint">Joint Borrower - pending carrier confirmation</option>
+            </select>
+          </label>
+
+          <label class="sp-field" for="premium-treatment">
+            <span>Premium Treatment</span>
+            <select id="premium-treatment" name="premiumTreatment">
+              <option value="separate">Paid Up Front Separately</option>
+              <option value="financed">Financed Into Loan</option>
             </select>
           </label>
 
           <label class="sp-field" for="calculation-method">
-            <span>
-              Calculation Method
-              <span class="sp-info" title="Annuity Factor Demo uses a present value factor so reducing-balance formulas can be plugged in later.">i</span>
-            </span>
+            <span>Calculation Method</span>
             <select id="calculation-method" name="calculationMethod">
+              <option value="smart">Smart Demo Engine</option>
+              <option value="grossPay">Gross Pay Demo</option>
               <option value="carrier">Carrier Formula Placeholder</option>
-              <option value="annuity">Annuity Factor Demo</option>
-              <option value="flat">Flat Rate Demo</option>
             </select>
           </label>
-
-          <label class="sp-field" for="life-rate">
-            <span>Life Rate per $1,000</span>
-            <input id="life-rate" name="lifeRate" type="number" inputmode="decimal" min="0" step="0.01" required />
-          </label>
-
-          <label class="sp-field" for="disability-rate">
-            <span>Disability Rate per $1,000</span>
-            <input id="disability-rate" name="disabilityRate" type="number" inputmode="decimal" min="0" step="0.01" required />
-          </label>
         </div>
 
-        <div class="sp-note-row">
-          <p>
-            <span class="sp-info" title="Single Premium means the insurance premium is calculated up front and may be financed into the loan.">i</span>
-            Single premium is estimated up front and can be compared against the financed payment impact.
+        <div id="joint-warning" class="sp-alert sp-alert--warning" hidden>
+          Joint borrower calculation rules pending carrier confirmation.
+        </div>
+
+        <div id="insured-balance-field" class="sp-inline-panel">
+          <label class="sp-field" for="include-premium-insured-balance">
+            <span>Include Financed Premium in Insured Balance?</span>
+            <select id="include-premium-insured-balance" name="includePremiumInInsuredBalance">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </label>
+          <p id="insured-balance-warning" class="sp-warning-text" hidden>
+            Carrier confirmation required. Including financed premium in insured indebtedness may require recursive calculation.
           </p>
         </div>
+
+        <fieldset id="disability-employment" class="sp-fieldset">
+          <legend>Disability Employment Check</legend>
+          <div class="sp-field-grid sp-field-grid--compact">
+            <label class="sp-field" for="actively-working">
+              <span>Borrower Actively Working?</span>
+              <select id="actively-working" name="activelyWorking">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </label>
+
+            <label class="sp-field" for="hours-worked">
+              <span>Hours Worked Per Week</span>
+              <input id="hours-worked" name="hoursWorkedPerWeek" type="number" min="0" step="1" inputmode="numeric" />
+            </label>
+          </div>
+          <p class="sp-fieldset-note">7-Day Retro Disability selected by carrier guidance.</p>
+        </fieldset>
+
+        <section class="sp-scope-panel" aria-labelledby="prototype-scope-heading">
+          <header>
+            <p class="sp-kicker">Locked Assumptions</p>
+            <h3 id="prototype-scope-heading">Prototype Scope</h3>
+          </header>
+          <div class="sp-assumption-cards">
+            <article class="sp-assumption-card">
+              <span>Payment Frequency</span>
+              <strong>Monthly Only</strong>
+            </article>
+            <article class="sp-assumption-card">
+              <span>Coverage Basis</span>
+              <strong>Gross Pay</strong>
+            </article>
+            <article class="sp-assumption-card">
+              <span>Disability Plan</span>
+              <strong>7-Day Retro</strong>
+            </article>
+            <article class="sp-assumption-card">
+              <span>Supported States</span>
+              <strong>Missouri and Arkansas</strong>
+            </article>
+            <article class="sp-assumption-card">
+              <span>Formula Status</span>
+              <strong>Carrier formula pending</strong>
+            </article>
+          </div>
+        </section>
+
+        <details class="sp-rate-settings">
+          <summary>Prototype Rate Settings</summary>
+          <p>Demo placeholders only. Replace with CSO-provided Missouri and Arkansas rates once received.</p>
+          <div class="sp-field-grid">
+            <label class="sp-field" for="rate-state">
+              <span>State</span>
+              <select id="rate-state" name="rateState">
+                <option value="MO">Missouri</option>
+                <option value="AR">Arkansas</option>
+              </select>
+            </label>
+            <label class="sp-field" for="rate-life">
+              <span>Life Rate Demo</span>
+              <input id="rate-life" name="rateLife" type="number" min="0" step="0.01" inputmode="decimal" />
+            </label>
+            <label class="sp-field" for="rate-disability">
+              <span>Disability 7-Day Retro Rate Demo</span>
+              <input id="rate-disability" name="rateDisability" type="number" min="0" step="0.01" inputmode="decimal" />
+            </label>
+            <label class="sp-field" for="rate-discount">
+              <span>Discount Rate Demo</span>
+              <input id="rate-discount" name="rateDiscount" type="number" min="0" step="0.0001" inputmode="decimal" />
+            </label>
+          </div>
+          <div class="sp-actions">
+            <button type="button" class="sp-button sp-button--secondary" id="save-rates">Save Demo Rates</button>
+            <button type="button" class="sp-button sp-button--secondary" id="reset-rates">Restore Demo Rates</button>
+          </div>
+          <p id="rate-status" class="sp-status" role="status"></p>
+        </details>
 
         <div id="quote-errors" class="sp-alert sp-alert--error" hidden></div>
 
@@ -129,8 +212,8 @@
 
     <section class="sp-panel sp-screen" data-screen="results" aria-labelledby="quote-results-heading" hidden>
       <header class="sp-panel__header">
-        <p class="sp-kicker">Screen 2</p>
-        <h2 id="quote-results-heading">Quote Results</h2>
+        <p class="sp-kicker">Quote Results</p>
+        <h2 id="quote-results-heading">Carrier-Scoped Result</h2>
         <p id="results-intro">Calculate a quote to view the premium result.</p>
       </header>
 
@@ -140,117 +223,126 @@
       </div>
 
       <div id="results-content" hidden>
-        <div class="sp-result-total">
-          <span>Total Single Premium</span>
-          <strong id="result-total-premium">$0.00</strong>
-          <small id="result-method-label">Annuity Factor Demo</small>
-        </div>
-
-        <dl class="sp-summary-grid" id="result-summary"></dl>
-
-        <div class="sp-payment-comparison">
+        <div class="sp-result-hero">
           <div>
-            <span>Payment Without Premium</span>
-            <strong id="result-payment-before">$0.00</strong>
+            <span>Total Single Premium</span>
+            <strong id="result-total-premium">$0.00</strong>
           </div>
-          <div>
-            <span>Amount Financed With Premium</span>
-            <strong id="result-financed-amount">$0.00</strong>
-          </div>
-          <div>
-            <span>Payment With Premium Financed</span>
-            <strong id="result-payment-after">$0.00</strong>
-          </div>
-          <div>
-            <span>Monthly Payment Impact</span>
-            <strong id="result-payment-impact">$0.00</strong>
+          <dl class="sp-hero-breakdown">
+            <div><dt>Life Premium</dt><dd id="result-life-premium">$0.00</dd></div>
+            <div><dt>Disability Premium</dt><dd id="result-disability-premium">$0.00</dd></div>
+            <div><dt>State</dt><dd id="result-state">MO</dd></div>
+            <div><dt>Coverage</dt><dd id="result-coverage">Life + Disability</dd></div>
+          </dl>
+          <div class="sp-badge-row">
+            <span class="sp-badge">Gross Pay Basis</span>
+            <span class="sp-badge">Monthly Payments Only</span>
+            <span class="sp-badge" id="result-disability-badge">7-Day Retro Disability</span>
           </div>
         </div>
 
-        <div id="result-warnings" class="sp-alert sp-alert--warning" hidden></div>
+        <section class="sp-result-section" aria-labelledby="loan-details-heading">
+          <h3 id="loan-details-heading">Loan Details</h3>
+          <dl class="sp-summary-grid" id="result-summary"></dl>
+        </section>
+
+        <section class="sp-result-section" aria-labelledby="assumption-badges-heading">
+          <h3 id="assumption-badges-heading">Assumption Badges</h3>
+          <div class="sp-badge-row" id="result-badges"></div>
+        </section>
+
+        <div id="result-warnings" class="sp-alert sp-alert--warning"></div>
 
         <p class="sp-disclaimer">
-          This is a prototype quote for demonstration only. Final premium must be validated against the
-          carrier-approved formula, rate tables, eligibility rules, and test cases.
+          Prototype only. Configured for monthly loan payments, gross pay basis, 7-day retro Disability, Missouri and
+          Arkansas. Final premium must be validated using CSO-approved formulas, rates, factor tables, rounding rules,
+          eligibility rules, and sample test cases.
         </p>
 
         <div class="sp-actions">
           <button type="button" class="sp-button sp-button--primary" id="copy-summary">Copy Quote Summary</button>
+          <button type="button" class="sp-button sp-button--secondary" id="save-quote">Save Quote Card</button>
           <button type="button" class="sp-button sp-button--secondary" id="reset-quote">Reset Quote</button>
-          <button type="button" class="sp-button sp-button--secondary" data-screen-target="formula">View Formula Assumptions</button>
+          <button type="button" class="sp-button sp-button--secondary" data-screen-target="formula">Gross Pay Formula Lab</button>
         </div>
 
         <p id="copy-status" class="sp-status" role="status"></p>
+
+        <section class="sp-result-section" aria-labelledby="saved-quotes-heading">
+          <div class="sp-section-header">
+            <h3 id="saved-quotes-heading">Saved Quote Cards</h3>
+            <button type="button" class="sp-text-button" id="clear-saved-quotes">Clear Saved</button>
+          </div>
+          <div id="saved-quotes-list" class="sp-saved-quotes"></div>
+        </section>
       </div>
     </section>
 
     <section class="sp-panel sp-screen" data-screen="formula" aria-labelledby="formula-heading" hidden>
       <header class="sp-panel__header">
-        <p class="sp-kicker">Screen 3</p>
-        <h2 id="formula-heading">Formula / Assumptions</h2>
-        <p>This screen separates the loan officer flow from the calculation logic that the carrier must validate.</p>
+        <p class="sp-kicker">Gross Pay Formula Lab</p>
+        <h2 id="formula-heading">Gross Pay Formula Lab</h2>
+        <p>Focused explanation of the current monthly gross-pay prototype math.</p>
       </header>
 
       <div class="sp-assumption-section">
-        <h3>Prototype Purpose</h3>
+        <h3>Current Prototype Scope</h3>
         <p>
-          This prototype is designed to demonstrate the loan officer quote flow and calculation structure. The final
-          production calculator should use the carrier-approved single premium formula, discount/annuity factor, rate
-          tables, rounding rules, and eligibility rules.
+          This prototype is currently configured for monthly loan payments, gross pay basis, 7-day retro Disability, and
+          Missouri/Arkansas state selection based on carrier guidance.
         </p>
       </div>
 
       <div class="sp-assumption-section">
-        <h3>Supported Calculation Modes</h3>
-
-        <h4>A. Carrier Formula Placeholder</h4>
+        <h3>Gross Pay Basis</h3>
         <p>
-          This mode is reserved for the exact CSO/carrier formula once provided. The app is structured so the approved
-          formula can replace the demo formula without changing the user interface.
+          Gross Pay generally means the calculation may be tied to the scheduled payment stream rather than only the
+          declining net principal balance. The exact CSO definition of gross pay must be confirmed before production.
         </p>
+        <div class="sp-formula">Estimated Monthly Payment x Number of Monthly Payments = Gross Pay Exposure</div>
+        <div class="sp-formula">Gross Pay Exposure / 1,000 x Demo Rate = Prototype Single Premium</div>
+      </div>
 
-        <h4>B. Annuity Factor Demo</h4>
-        <div class="sp-formula">AF = (1 - (1 + i)^(-n)) / i</div>
-        <ul class="sp-list">
-          <li>i = monthly interest rate</li>
-          <li>n = loan term in months</li>
-        </ul>
+      <div class="sp-assumption-section">
+        <h3>Monthly Payments Only</h3>
         <p>
-          The annuity factor is used as a present value factor for a stream of monthly balances/payments. It is included
-          because single premium credit insurance on reducing-balance loans may require discounting or factoring instead
-          of a simple flat term multiplier.
-        </p>
-
-        <h4>C. Flat Rate Demo</h4>
-        <div class="sp-formula">Premium = Loan Amount / 1000 &times; Rate &times; Term</div>
-        <p>
-          This is included only for comparison and quick testing. It should not be assumed to be the final
-          carrier-approved single premium method.
+          Only monthly loan payments are enabled in this prototype. Annual, quarterly, semi-monthly, biweekly, and weekly
+          frequencies are intentionally excluded for now.
         </p>
       </div>
 
       <div class="sp-assumption-section">
-        <h3>Current Quote Assumptions</h3>
-        <ul class="sp-list" id="current-assumptions">
-          <li>No quote has been calculated yet.</li>
-        </ul>
+        <h3>7-Day Retro Disability</h3>
+        <p>
+          Credit Disability is currently locked to 7-Day Retro based on carrier guidance. Other waiting periods are
+          excluded from this prototype.
+        </p>
+      </div>
+
+      <div class="sp-assumption-section">
+        <h3>Carrier Formula Placeholder</h3>
+        <p>
+          Once CSO provides Missouri and Arkansas rate information, exact formula rules, factor tables, and test cases,
+          the demo calculation can be replaced inside the quote engine without changing the loan officer interface.
+        </p>
       </div>
     </section>
 
     <section class="sp-panel sp-screen" data-screen="cases" aria-labelledby="test-cases-heading" hidden>
       <header class="sp-panel__header">
-        <p class="sp-kicker">Screen 4</p>
-        <h2 id="test-cases-heading">Sample Test Cases</h2>
-        <p>Demo cases use the current admin parameters and the Annuity Factor Demo method.</p>
+        <p class="sp-kicker">MO/AR Test Cases</p>
+        <h2 id="test-cases-heading">Monthly Gross-Pay Test Cases</h2>
+        <p>Only Missouri and Arkansas monthly gross-pay scenarios are shown.</p>
       </header>
 
       <div class="sp-table-wrap">
         <table class="sp-table">
           <thead>
             <tr>
+              <th scope="col">Scenario</th>
               <th scope="col">Inputs</th>
-              <th scope="col">Selected Coverage</th>
-              <th scope="col">Calculation Method</th>
+              <th scope="col">Coverage</th>
+              <th scope="col">Treatment</th>
               <th scope="col">Result</th>
             </tr>
           </thead>
@@ -259,73 +351,36 @@
       </div>
     </section>
 
-    <section class="sp-panel sp-screen" data-screen="admin" aria-labelledby="admin-heading" hidden>
+    <section class="sp-panel sp-screen" data-screen="validation" aria-labelledby="validation-heading" hidden>
       <header class="sp-panel__header">
-        <p class="sp-kicker">Admin</p>
-        <h2 id="admin-heading">Parameter Setup</h2>
-        <p>Set prototype defaults for rates, warnings, borrower factors, and the carrier formula status note.</p>
+        <p class="sp-kicker">Carrier Validation</p>
+        <h2 id="validation-heading">Rachelle / CSO Data Checklist</h2>
+        <p>Focused list of what is still needed for the narrowed monthly gross-pay MO/AR build.</p>
       </header>
 
-      <form id="admin-form" class="sp-form" autocomplete="off">
-        <div class="sp-field-grid">
-          <label class="sp-field" for="admin-life-rate">
-            <span>Default Life Rate per $1,000</span>
-            <input id="admin-life-rate" name="defaultLifeRate" type="number" min="0" step="0.01" inputmode="decimal" />
-          </label>
+      <ol class="sp-checklist">
+        <li>Missouri Credit Life gross pay rate/formula</li>
+        <li>Missouri 7-Day Retro Disability gross pay rate/formula</li>
+        <li>Arkansas Credit Life gross pay rate/formula</li>
+        <li>Arkansas 7-Day Retro Disability gross pay rate/formula</li>
+        <li>Exact definition of gross pay</li>
+        <li>Whether premium is paid separately, financed, or both</li>
+        <li>If financed, whether premium is included in insured indebtedness</li>
+        <li>Single vs joint borrower calculation rules</li>
+        <li>Maximum loan amount</li>
+        <li>Maximum term</li>
+        <li>Maximum issue age</li>
+        <li>Maximum age at maturity</li>
+        <li>Disability employment eligibility requirements</li>
+        <li>Maximum monthly disability benefit</li>
+        <li>Rounding rules</li>
+        <li>5 to 10 sample quote test cases for MO and AR</li>
+      </ol>
 
-          <label class="sp-field" for="admin-disability-rate">
-            <span>Default Disability Rate per $1,000</span>
-            <input id="admin-disability-rate" name="defaultDisabilityRate" type="number" min="0" step="0.01" inputmode="decimal" />
-          </label>
-
-          <label class="sp-field" for="admin-calculation-method">
-            <span>Default Calculation Method</span>
-            <select id="admin-calculation-method" name="defaultCalculationMethod">
-              <option value="carrier">Carrier Formula Placeholder</option>
-              <option value="annuity">Annuity Factor Demo</option>
-              <option value="flat">Flat Rate Demo</option>
-            </select>
-          </label>
-
-          <label class="sp-field" for="admin-coverage-basis">
-            <span>Default Coverage Basis</span>
-            <select id="admin-coverage-basis" name="defaultCoverageBasis">
-              <option value="reducing">Reducing Balance</option>
-              <option value="level">Level Balance</option>
-            </select>
-          </label>
-
-          <label class="sp-field" for="admin-joint-factor">
-            <span>Joint Borrower Rate Factor</span>
-            <input id="admin-joint-factor" name="jointBorrowerRateFactor" type="number" min="0" step="0.01" inputmode="decimal" />
-          </label>
-
-          <label class="sp-field" for="admin-term-warning">
-            <span>Term Warning Threshold</span>
-            <input id="admin-term-warning" name="warningTermMonths" type="number" min="1" step="1" inputmode="numeric" />
-            <small>Warnings do not block calculation.</small>
-          </label>
-
-          <label class="sp-field" for="admin-loan-warning">
-            <span>Loan Amount Warning Threshold</span>
-            <span class="sp-currency-field">
-              <span aria-hidden="true">$</span>
-              <input id="admin-loan-warning" name="warningLoanAmount" type="number" min="0" step="1000" inputmode="decimal" />
-            </span>
-          </label>
-        </div>
-
-        <label class="sp-field" for="admin-carrier-note">
-          <span>Carrier Formula Status Note</span>
-          <textarea id="admin-carrier-note" name="carrierFormulaStatus" rows="3"></textarea>
-        </label>
-
-        <div class="sp-actions">
-          <button type="submit" class="sp-button sp-button--primary">Save Parameters</button>
-          <button type="button" class="sp-button sp-button--secondary" id="admin-reset">Restore Demo Defaults</button>
-        </div>
-        <p id="admin-status" class="sp-status" role="status"></p>
-      </form>
+      <p class="sp-future-note">
+        Future expansion only: non-monthly frequencies and other balance bases can be revisited after the carrier
+        confirms the current monthly gross-pay MO/AR scope.
+      </p>
     </section>
   </main>
 
