@@ -81,4 +81,4 @@ Current scenarios cover clear approval, hard decline, manual review, high-LTV co
 
 The landing page links to `cu-loan-advisor/`, a browser chat workspace that calls the user's local Ollama API directly at `http://127.0.0.1:11434/api/*`.
 
-The advisor uses the local `cu-loan-advisor:latest` Ollama model, created from `llama3.1:8b` with the CU Loan Advisor behavior guide, through `POST /api/generate`. It includes a `Test Ollama Connection` button that calls `GET /api/tags` and lists available models. Ollama must allow browser requests from the dashboard origin.
+The advisor uses the local `cu-loan-advisor:latest` Ollama model, created with the CU Loan Advisor behavior guide, through `POST /api/generate`. It includes a `Test Ollama Connection` button that calls `GET /api/tags` and lists available models. Ollama must allow browser requests from the dashboard origin.

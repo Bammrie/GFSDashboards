@@ -7,7 +7,7 @@ const advisorSend = document.getElementById('advisor-send');
 const advisorTest = document.getElementById('advisor-test');
 
 const OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
-const DEFAULT_OLLAMA_MODEL = 'cu-loan-advisor:latest';
+const OLLAMA_MODEL = 'cu-loan-advisor:latest';
 const OLLAMA_TIMEOUT_MS = 30_000;
 
 const messages = [
@@ -146,15 +146,15 @@ async function testOllamaConnection() {
     const models = Array.isArray(payload.models) ? payload.models : [];
     const modelList = summarizeModels(models) || 'No models returned.';
     const preferredModelAvailable = models.some(
-      (model) => model?.name === DEFAULT_OLLAMA_MODEL || model?.model === DEFAULT_OLLAMA_MODEL
+      (model) => model?.name === OLLAMA_MODEL || model?.model === OLLAMA_MODEL
     );
     const preferredStatus = preferredModelAvailable
-      ? `${DEFAULT_OLLAMA_MODEL} is available.`
-      : `${DEFAULT_OLLAMA_MODEL} was not found.`;
+      ? `${OLLAMA_MODEL} is available.`
+      : `${OLLAMA_MODEL} was not found.`;
 
     console.info('CU Loan Advisor Ollama models:', payload);
     addMessage('assistant', `Ollama connection OK. ${preferredStatus}\n\nAvailable models: ${modelList}`);
-    setAdvisorStatus(`Ready (${DEFAULT_OLLAMA_MODEL})`);
+    setAdvisorStatus(`Ready (${OLLAMA_MODEL})`);
   } catch (error) {
     console.error('CU Loan Advisor Ollama test failed:', error);
     addMessage('assistant', `Ollama connection failed: ${error.message}`);
@@ -182,14 +182,14 @@ async function sendAdvisorMessage(event) {
   advisorInput.disabled = true;
   advisorSend.disabled = true;
   advisorTest.disabled = true;
-  setAdvisorStatus(`Thinking (${DEFAULT_OLLAMA_MODEL})...`);
+  setAdvisorStatus(`Thinking (${OLLAMA_MODEL})...`);
 
   try {
     const payload = await fetchOllamaJson('generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: DEFAULT_OLLAMA_MODEL,
+        model: OLLAMA_MODEL,
         prompt: userContent,
         stream: false
       })
@@ -200,7 +200,7 @@ async function sendAdvisorMessage(event) {
     }
 
     addMessage('assistant', payload.response);
-    setAdvisorStatus(`Ready (${payload.model || DEFAULT_OLLAMA_MODEL})`);
+    setAdvisorStatus(`Ready (${payload.model || OLLAMA_MODEL})`);
   } catch (error) {
     console.error('CU Loan Advisor chat failed:', error);
     addMessage('assistant', `Ollama connection failed: ${error.message}`);
@@ -216,4 +216,5 @@ async function sendAdvisorMessage(event) {
 advisorFile.addEventListener('change', (event) => readUploadedQuestions(event.target.files?.[0]));
 advisorTest.addEventListener('click', testOllamaConnection);
 advisorForm.addEventListener('submit', sendAdvisorMessage);
+setAdvisorStatus(`Ready (${OLLAMA_MODEL})`);
 renderMessages();
