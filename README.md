@@ -83,6 +83,8 @@ The landing page links to `cu-loan-advisor/`, a browser chat workspace that rout
 
 The advisor uses `llama3.1:8b` through `POST /api/generate` and includes a `Test Ollama Connection` button that proxies `GET /api/tags` and lists available models. When using the live dashboard with Ollama running on this computer, also run the GFS backend locally with `npm start` so the live page can call `http://localhost:3000`.
 
+The backend defaults to `http://localhost:11434` for Ollama. Set `CU_LOAN_ADVISOR_OLLAMA_URL` before startup only if Ollama is listening somewhere else.
+
 If the local backend runs on a different port, override the proxy base URL from the browser console:
 
 ```js
