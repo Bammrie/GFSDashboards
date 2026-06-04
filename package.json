@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node cu-loan-advisor/start-with-ollama-proxy.mjs",
+    "start": "node server.mjs",
     "test": "node --test"
   },
   "dependencies": {
