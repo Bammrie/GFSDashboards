@@ -68,6 +68,27 @@ button {
   font-weight: 850;
 }
 
+.sp-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.sp-logo-mark {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffffff 0%, #dceeff 100%);
+  color: var(--sp-blue-950);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+  font-weight: 950;
+}
+
 .sp-header h1 {
   margin: 0;
   font-size: 1.32rem;
@@ -93,7 +114,7 @@ button {
   top: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1px;
   background: var(--sp-gray-200);
   border-bottom: 1px solid var(--sp-gray-200);
@@ -544,6 +565,13 @@ button {
   gap: 12px;
 }
 
+.sp-profile-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
 .sp-saved-card {
   display: grid;
   gap: 8px;
@@ -567,32 +595,6 @@ button {
 .sp-saved-card strong {
   color: var(--sp-blue-950);
   font-size: 1.2rem;
-}
-
-.sp-assumption-section {
-  padding-top: 15px;
-  border-top: 1px solid var(--sp-gray-200);
-}
-
-.sp-assumption-section:first-of-type {
-  padding-top: 0;
-  border-top: 0;
-}
-
-.sp-assumption-section + .sp-assumption-section {
-  margin-top: 16px;
-}
-
-.sp-formula {
-  margin: 10px 0;
-  padding: 11px;
-  border-radius: 6px;
-  background: #eef4f8;
-  border: 1px solid var(--sp-gray-200);
-  color: var(--sp-blue-950);
-  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
-  font-weight: 850;
-  overflow-wrap: anywhere;
 }
 
 .sp-table-wrap {
@@ -633,22 +635,6 @@ button {
 
 .sp-table tr:last-child td {
   border-bottom: 0;
-}
-
-.sp-case-status {
-  display: inline-flex;
-  margin-top: 5px;
-  padding: 3px 7px;
-  border-radius: 999px;
-  background: #e7f6ed;
-  color: var(--sp-green);
-  font-size: 0.75rem;
-  font-weight: 900;
-}
-
-.sp-case-status--pending {
-  background: #fff7e6;
-  color: var(--sp-amber);
 }
 
 .sp-checkbox,
