@@ -4,32 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>PremiumQuote Pro | GFS Dashboards</title>
+  <title>Example Bank | Payment Protection Quote</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="sp-header">
     <div class="sp-header__inner">
       <a class="sp-back-link" href="../index.html">Back</a>
-      <div>
-        <p class="sp-kicker">CSO gross-pay prototype</p>
-        <h1>PremiumQuote Pro</h1>
-        <p>Monthly, weekly, and biweekly gross-pay single premium quotes for Missouri and Arkansas.</p>
+      <div class="sp-brand">
+        <span class="sp-logo-mark" aria-hidden="true">EB</span>
+        <div>
+          <p class="sp-kicker">Example Bank</p>
+          <h1>Payment Protection Quote</h1>
+          <p>Loan officer credit insurance estimates for eligible Missouri and Arkansas loans.</p>
+        </div>
       </div>
-      <div class="sp-header-badges" aria-label="Configured scope">
-        <span class="sp-badge sp-badge--light">Gross Pay</span>
-        <span class="sp-badge sp-badge--light">Always Financed</span>
+      <div class="sp-header-badges" aria-label="Product highlights">
+        <span class="sp-badge sp-badge--light">Payment Protection</span>
+        <span class="sp-badge sp-badge--light">Financed</span>
         <span class="sp-badge sp-badge--light">MO / AR</span>
       </div>
     </div>
   </header>
 
-  <nav class="sp-screen-nav" aria-label="PremiumQuote Pro screens">
+  <nav class="sp-screen-nav" aria-label="Example Bank quote screens">
     <button type="button" class="sp-screen-tab" data-screen-target="quote" aria-current="page">Quote</button>
     <button type="button" class="sp-screen-tab" data-screen-target="results">Results</button>
-    <button type="button" class="sp-screen-tab" data-screen-target="formula">Formula</button>
-    <button type="button" class="sp-screen-tab" data-screen-target="cases">Test Cases</button>
-    <button type="button" class="sp-screen-tab" data-screen-target="settings">Settings</button>
+    <button type="button" class="sp-screen-tab" data-screen-target="settings">Admin</button>
   </nav>
 
   <main class="sp-shell">
@@ -37,7 +38,7 @@
       <header class="sp-panel__header sp-panel__header--compact">
         <div>
           <p class="sp-kicker">Quote Builder</p>
-          <h2 id="quote-heading">CSO Gross-Pay Quote</h2>
+          <h2 id="quote-heading">Credit Insurance Quote</h2>
         </div>
         <span class="sp-state-pill" id="active-state-pill">MO</span>
       </header>
@@ -138,16 +139,15 @@
         <div id="quote-errors" class="sp-alert sp-alert--error" hidden></div>
 
         <details class="sp-scope-panel">
-          <summary>Carrier Scope</summary>
+          <summary>Coverage Details</summary>
           <div class="sp-badge-row">
-            <span class="sp-badge">Gross Pay</span>
-            <span class="sp-badge">Single Premium Always Financed</span>
-            <span class="sp-badge">Premium Included in Insured Balance</span>
+            <span class="sp-badge">Single Premium</span>
+            <span class="sp-badge">Financed With Loan</span>
             <span class="sp-badge">MO/AR Supported</span>
             <span class="sp-badge">Monthly/Weekly/Biweekly Supported</span>
             <span class="sp-badge">7-Day Retro Disability Default</span>
           </div>
-          <p>Annual, quarterly, semi-monthly, and Texas formula sets are not enabled in this prototype.</p>
+          <p>Some states, loan products, and payment schedules may be unavailable based on program setup.</p>
         </details>
 
         <div class="sp-actions sp-actions--sticky">
@@ -160,8 +160,8 @@
     <section class="sp-panel sp-screen" data-screen="results" aria-labelledby="results-heading" hidden>
       <header class="sp-panel__header">
         <p class="sp-kicker">Quote Results</p>
-        <h2 id="results-heading">Gross-Pay Disclosure Summary</h2>
-        <p id="results-intro">Calculate a quote to view CSO-aligned results.</p>
+        <h2 id="results-heading">Quote Summary</h2>
+        <p id="results-intro">Calculate a quote to view results.</p>
       </header>
 
       <div id="empty-results" class="sp-empty">
@@ -202,10 +202,6 @@
         <div id="result-warnings" class="sp-warning-stack"></div>
 
         <p class="sp-disclaimer">This is an estimate and may vary from final closing loan figures.</p>
-        <p class="sp-footer-note">
-          Prototype configured from CSO-provided gross-pay formulas and MO/AR rate schedules. Final production use
-          should be validated against carrier test cases and state-approved configuration.
-        </p>
 
         <div class="sp-actions">
           <button type="button" class="sp-button sp-button--primary" id="share-quote">Share Quote</button>
@@ -225,49 +221,11 @@
       </div>
     </section>
 
-    <section class="sp-panel sp-screen" data-screen="formula" aria-labelledby="formula-heading" hidden>
-      <header class="sp-panel__header">
-        <p class="sp-kicker">Formula</p>
-        <h2 id="formula-heading">CSO Gross Pay Formula</h2>
-        <p>Gross indebtedness is represented as Total of Payments. Premium is financed and included in the insured balance.</p>
-      </header>
-      <div class="sp-assumption-section">
-        <h3>Active Method</h3>
-        <p>Carrier Gross Pay / Gross Indebtedness. Net method remains visible in Settings only as pending carrier configuration.</p>
-      </div>
-      <div class="sp-formula">L = Loan Amount + Loan Fee</div>
-      <div class="sp-formula">M = CEILING(Number of Payments / Payments Per Year x 12)</div>
-      <div class="sp-formula">AF = (1 - (1 + i)^(-n)) / i</div>
-      <div class="sp-formula">Premium = protected payment x CSO coefficient</div>
-      <p class="sp-footer-note">Texas is not supported because it requires a separate formula set.</p>
-    </section>
-
-    <section class="sp-panel sp-screen" data-screen="cases" aria-labelledby="cases-heading" hidden>
-      <header class="sp-panel__header">
-        <p class="sp-kicker">Regression Cases</p>
-        <h2 id="cases-heading">CSO Test Cases</h2>
-        <p>Active cases use provided 7-Day Retro MO/AR data. Pending MO A&amp;H references need the 14-Retro table.</p>
-      </header>
-      <div class="sp-table-wrap">
-        <table class="sp-table">
-          <thead>
-            <tr>
-              <th>Case</th>
-              <th>Inputs</th>
-              <th>Expected</th>
-              <th>Prototype Result</th>
-            </tr>
-          </thead>
-          <tbody id="test-case-body"></tbody>
-        </table>
-      </div>
-    </section>
-
     <section class="sp-panel sp-screen" data-screen="settings" aria-labelledby="settings-heading" hidden>
       <header class="sp-panel__header">
-        <p class="sp-kicker">Settings</p>
-        <h2 id="settings-heading">Prototype Configuration</h2>
-        <p>LocalStorage-backed setup for authorized states, rates, coverage limits, and state-specific options.</p>
+        <p class="sp-kicker">Admin</p>
+        <h2 id="settings-heading">Program Settings</h2>
+        <p>Local setup for authorized states, coverage limits, and product availability.</p>
       </header>
 
       <form id="settings-form" class="sp-form">
@@ -286,18 +244,11 @@
         </section>
 
         <section class="sp-config-card">
-          <h3>Default Calculation Method</h3>
-          <label class="sp-radio"><input type="radio" name="calculationMethod" value="gross" checked /> Gross</label>
-          <label class="sp-radio sp-disabled"><input type="radio" name="calculationMethod" value="net" disabled /> Net - pending carrier formula</label>
-        </section>
-
-        <section class="sp-config-card">
           <div class="sp-section-header">
-            <h3>Rates</h3>
-            <label class="sp-checkbox"><input type="checkbox" id="rate-edit-mode" /> Edit Prototype Rates</label>
+            <h3>Pricing Profiles</h3>
           </div>
           <div id="settings-rates"></div>
-          <button type="button" class="sp-button sp-button--secondary" id="restore-rates">Restore CSO Defaults</button>
+          <button type="button" class="sp-button sp-button--secondary" id="restore-rates">Restore Bank Defaults</button>
         </section>
 
         <section class="sp-config-card">
@@ -308,11 +259,10 @@
         <section class="sp-config-card">
           <h3>Disability Waiting Period</h3>
           <label class="sp-checkbox"><input type="checkbox" checked disabled /> 7-Day Retroactive enabled</label>
-          <p class="sp-footer-note">Schema is ready for 14-Day, 30-Day, elimination, and other future options.</p>
         </section>
 
         <section class="sp-config-card sp-alert sp-alert--warning">
-          Texas is not supported in this prototype because it uses different formulas.
+          Texas is not available in this version.
         </section>
 
         <div class="sp-actions">

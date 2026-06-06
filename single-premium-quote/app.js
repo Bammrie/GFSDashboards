@@ -10,7 +10,6 @@ import {
 } from './quote-engine.js';
 import { UNSUPPORTED_LOAN_TYPE_WARNING } from './src/data/csoLimits.js';
 import { CSO_RATE_CONFIG } from './src/data/csoRates.js';
-import { CSO_TEST_CASES } from './src/data/csoTestCases.js';
 import {
   loadUserSettings,
   restoreDefaultSettings,
@@ -21,7 +20,7 @@ import {
 
 const LATEST_QUOTE_STORAGE_KEY = 'premiumQuoteProCsoLatestQuote';
 const SAVED_QUOTES_STORAGE_KEY = 'premiumQuoteProCsoSavedQuotes';
-const SCREEN_NAMES = ['quote', 'results', 'formula', 'cases', 'settings'];
+const SCREEN_NAMES = ['quote', 'results', 'settings'];
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -70,11 +69,9 @@ const elements = {
   copyStatus: document.getElementById('copy-status'),
   savedQuotesList: document.getElementById('saved-quotes-list'),
   clearSavedQuotes: document.getElementById('clear-saved-quotes'),
-  testCaseBody: document.getElementById('test-case-body'),
   settingsForm: document.getElementById('settings-form'),
   settingsRates: document.getElementById('settings-rates'),
   settingsLimits: document.getElementById('settings-limits'),
-  rateEditMode: document.getElementById('rate-edit-mode'),
   restoreRates: document.getElementById('restore-rates'),
   restoreSettings: document.getElementById('restore-settings'),
   settingsStatus: document.getElementById('settings-status'),
@@ -322,7 +319,7 @@ function renderCoverageSummary(result) {
   if (coverageIncludesLife(result.coverageType)) {
     cards.push(`
       <article class="sp-coverage-card">
-        <h4>${result.borrowerType === 'joint' ? 'Joint' : 'Single'} Gross Life Coverage</h4>
+        <h4>${result.borrowerType === 'joint' ? 'Joint' : 'Single'} Life Coverage</h4>
         <dl>
           ${detailRow('Premium', formatCurrency(result.lifePremium))}
           ${detailRow('Term', `${result.equivalentCoverageMonths} months`)}
@@ -334,7 +331,7 @@ function renderCoverageSummary(result) {
   if (coverageIncludesDisability(result.coverageType)) {
     cards.push(`
       <article class="sp-coverage-card">
-        <h4>Single 7-Day Retro Gross A&H Coverage</h4>
+        <h4>7-Day Retro Disability Coverage</h4>
         <dl>
           ${detailRow('Premium', formatCurrency(result.disabilityPremium))}
           ${detailRow('Term', `${result.equivalentCoverageMonths} months`)}
@@ -373,14 +370,14 @@ function renderResults() {
   if (!latestQuote) {
     elements.emptyResults.hidden = false;
     elements.resultsContent.hidden = true;
-    elements.resultsIntro.textContent = 'Calculate a quote to view CSO-aligned results.';
+    elements.resultsIntro.textContent = 'Calculate a quote to view results.';
     renderSavedQuotes();
     return;
   }
   const { result } = latestQuote;
   elements.emptyResults.hidden = true;
   elements.resultsContent.hidden = false;
-  elements.resultsIntro.textContent = 'Review the CSO gross-pay estimate.';
+  elements.resultsIntro.textContent = 'Review the payment protection estimate.';
   elements.resultTotalPremium.textContent = formatCurrency(result.totalPremium);
   elements.resultLifePremium.textContent = formatCurrency(result.lifePremium);
   elements.resultDisabilityPremium.textContent = formatCurrency(result.disabilityPremium);
@@ -407,7 +404,6 @@ function calculateAndRenderQuote(inputs) {
   saveLastSelectedState(result.state);
   saveLatestQuote(inputs, result);
   renderResults();
-  renderTestCases();
   setScreen('results');
 }
 
@@ -415,10 +411,10 @@ function quoteSummaryText(short = false) {
   if (!latestQuote) return '';
   const { result } = latestQuote;
   if (short) {
-    return `PremiumQuote Pro estimate: ${result.state} ${COVERAGE_TYPES[result.coverageType]}, total premium ${formatCurrency(result.totalPremium)}, regular payment ${formatCurrency(result.regularPayment)}. This is an estimate and may vary from final closing loan figures.`;
+    return `Example Bank estimate: ${result.state} ${COVERAGE_TYPES[result.coverageType]}, total premium ${formatCurrency(result.totalPremium)}, regular payment ${formatCurrency(result.regularPayment)}. This is an estimate and may vary from final closing loan figures.`;
   }
   return [
-    'PremiumQuote Pro',
+    'Example Bank',
     'Single Premium Credit Insurance Quote',
     '',
     `State: ${result.state} - ${result.stateName}`,
@@ -477,7 +473,7 @@ function renderSavedQuotes() {
       <article class="sp-saved-card">
         <div class="sp-badge-row">
           <span class="sp-badge">${escapeHtml(result.state)}</span>
-          <span class="sp-badge">Gross Pay</span>
+          <span class="sp-badge">Payment Protection</span>
           <span class="sp-badge">Financed</span>
           ${coverageIncludesDisability(result.coverageType) ? '<span class="sp-badge">7-Day Retro</span>' : ''}
         </div>
@@ -498,67 +494,30 @@ function resetQuoteState() {
   setScreen('quote');
 }
 
-function renderTestCases() {
-  elements.testCaseBody.innerHTML = CSO_TEST_CASES.map((testCase) => {
-    const result = calculateQuote(testCase.inputs, settings.rateConfig, { limits: settings.limits });
-    const pending = testCase.status === 'pending';
-    const expectedLines = Object.entries(testCase.expected)
-      .map(([key, value]) => `${key}: ${formatCurrency(value)}`)
-      .join('<br />');
-    const resultLines = [
-      `Amount financed: ${formatCurrency(result.amountFinanced)}`,
-      `Finance charge: ${formatCurrency(result.financeCharge)}`,
-      `Total payments: ${formatCurrency(result.totalPayments)}`,
-      `Life premium: ${formatCurrency(result.lifePremium)}`,
-      `Disability premium: ${formatCurrency(result.disabilityPremium)}`,
-      `Total premium: ${formatCurrency(result.totalPremium)}`
-    ].join('<br />');
-    return `
-      <tr>
-        <td><strong>${escapeHtml(testCase.id)}</strong><br />${escapeHtml(testCase.name)}<br /><span class="sp-case-status ${pending ? 'sp-case-status--pending' : ''}">${pending ? 'Pending reference' : 'Active'}</span>${pending ? `<br /><small>${escapeHtml(testCase.pendingReason)}</small>` : ''}</td>
-        <td>${testCase.inputs.state} - ${formatCurrency(testCase.inputs.loanAmount)}<br />Fee ${formatCurrency(testCase.inputs.loanFee)}<br />${formatPercent(testCase.inputs.interestRate)} Interest Rate<br />${testCase.inputs.numberOfPayments} monthly payments</td>
-        <td>${expectedLines}</td>
-        <td>${resultLines}</td>
-      </tr>
-    `;
-  }).join('');
-}
-
 function renderSettings() {
   elements.settingsForm.querySelectorAll('input[name="authorizedStates"]').forEach((input) => {
     input.checked = settings.authorizedStates.includes(input.value);
   });
   elements.defaultStateMode.value = settings.defaultStateMode;
-  elements.rateEditMode.checked = settings.rateEditMode;
   renderSettingsRates();
   renderSettingsLimits();
 }
 
 function renderSettingsRates() {
-  const editable = elements.rateEditMode.checked;
   elements.settingsRates.innerHTML = Object.entries(settings.rateConfig)
     .map(([state, config]) => `
       <section class="sp-rate-card">
         <h4>${state} - ${escapeHtml(config.stateName)}</h4>
-        <div class="sp-table-wrap">
-          <table class="sp-table sp-table--compact">
-            <thead><tr><th>Rate</th><th>Value</th></tr></thead>
-            <tbody>
-              ${rateInputRow(state, 'Single life decreasing', 'life-single', config.lifeRatesPer100PerYear.singleDecreasing, editable)}
-              ${rateInputRow(state, 'Joint life decreasing', 'life-joint', config.lifeRatesPer100PerYear.jointDecreasing, editable)}
-              ${rateInputRow(state, '7-Day Retro A&H month 36', 'dis-36', config.disabilityRatesPer100.sevenDayRetro[36], editable)}
-              ${rateInputRow(state, '7-Day Retro A&H month 60', 'dis-60', config.disabilityRatesPer100.sevenDayRetro[60], editable)}
-              ${rateInputRow(state, '7-Day Retro A&H month 120', 'dis-120', config.disabilityRatesPer100.sevenDayRetro[120], editable)}
-            </tbody>
-          </table>
+        <div class="sp-profile-summary">
+          <span class="sp-badge">Life</span>
+          <span class="sp-badge">Joint Life</span>
+          <span class="sp-badge">7-Day Retro Disability</span>
+          <span class="sp-badge">Active</span>
         </div>
+        <p class="sp-footer-note">Pricing values are loaded from the active bank profile and are not displayed in the public quote interface.</p>
       </section>
     `)
     .join('');
-}
-
-function rateInputRow(state, label, key, value, editable) {
-  return `<tr><td>${escapeHtml(label)}</td><td>${editable ? `<input class="sp-inline-input" data-rate-state="${state}" data-rate-key="${key}" type="number" min="0" step="0.01" value="${value}" />` : escapeHtml(value)}</td></tr>`;
 }
 
 function renderSettingsLimits() {
@@ -587,19 +546,8 @@ function readSettingsForm() {
   const nextSettings = {
     ...settings,
     authorizedStates: authorizedStates.length ? authorizedStates : ['MO'],
-    defaultStateMode: elements.defaultStateMode.value,
-    rateEditMode: elements.rateEditMode.checked
+    defaultStateMode: elements.defaultStateMode.value
   };
-  elements.settingsRates.querySelectorAll('[data-rate-state]').forEach((input) => {
-    const state = input.dataset.rateState;
-    const key = input.dataset.rateKey;
-    const value = Number(input.value);
-    if (key === 'life-single') nextSettings.rateConfig[state].lifeRatesPer100PerYear.singleDecreasing = value;
-    if (key === 'life-joint') nextSettings.rateConfig[state].lifeRatesPer100PerYear.jointDecreasing = value;
-    if (key === 'dis-36') nextSettings.rateConfig[state].disabilityRatesPer100.sevenDayRetro[36] = value;
-    if (key === 'dis-60') nextSettings.rateConfig[state].disabilityRatesPer100.sevenDayRetro[60] = value;
-    if (key === 'dis-120') nextSettings.rateConfig[state].disabilityRatesPer100.sevenDayRetro[120] = value;
-  });
   return nextSettings;
 }
 
@@ -632,7 +580,7 @@ async function webShareQuote() {
   }
   try {
     await navigator.share({
-      title: 'Single Premium Credit Insurance Quote',
+      title: 'Example Bank Payment Protection Quote',
       text: quoteSummaryText()
     });
     setStatus(elements.shareStatus, 'Quote shared.');
@@ -682,31 +630,24 @@ function initializeEvents() {
     setStorageItem(SAVED_QUOTES_STORAGE_KEY, savedQuotes);
     renderSavedQuotes();
   });
-  elements.rateEditMode.addEventListener('change', () => {
-    settings.rateEditMode = elements.rateEditMode.checked;
-    renderSettingsRates();
-  });
   elements.settingsForm.addEventListener('submit', (event) => {
     event.preventDefault();
     settings = readSettingsForm();
     saveUserSettings(settings);
     hydrateQuoteForm({ ...readQuoteForm(), state: resolveDefaultState(settings) });
     renderSettings();
-    renderTestCases();
     setStatus(elements.settingsStatus, 'Settings saved.');
   });
   elements.restoreRates.addEventListener('click', () => {
     settings.rateConfig = JSON.parse(JSON.stringify(CSO_RATE_CONFIG));
     saveUserSettings(settings);
     renderSettings();
-    renderTestCases();
-    setStatus(elements.settingsStatus, 'CSO rate defaults restored.');
+    setStatus(elements.settingsStatus, 'Bank defaults restored.');
   });
   elements.restoreSettings.addEventListener('click', () => {
     settings = restoreDefaultSettings();
     hydrateQuoteForm(defaultInputs());
     renderSettings();
-    renderTestCases();
     setStatus(elements.settingsStatus, 'All settings restored.');
   });
 }
@@ -714,7 +655,6 @@ function initializeEvents() {
 function initialize() {
   hydrateQuoteForm(latestQuote?.inputs || defaultInputs());
   renderResults();
-  renderTestCases();
   renderSettings();
   initializeEvents();
   setScreen(screenFromHash(), false);
