@@ -4,29 +4,30 @@ const advisorInput = document.getElementById('advisor-input');
 const advisorFile = document.getElementById('advisor-file');
 const advisorStatus = document.getElementById('advisor-status');
 const advisorSend = document.getElementById('advisor-send');
-const advisorTest = document.getElementById('advisor-test');
+const advisorPromptButtons = document.querySelectorAll('[data-prompt]');
 
-const OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
-const OLLAMA_MODEL = 'cu-loan-advisor:latest';
-const OLLAMA_TIMEOUT_MS = 30_000;
+const ADVISOR_CHAT_ENDPOINT = '/api/advisor/chat';
+const ADVISOR_MODEL_LABEL = 'cu-loan-advisor:latest';
+const ADVISOR_TIMEOUT_MS = 30_000;
+const ADVISOR_UNAVAILABLE_MESSAGE = 'The AI advisor is temporarily unavailable. Please try again.';
 
 const messages = [
   {
     role: 'assistant',
     content:
-      'Ready. Upload loan application questions or ask what needs to be filled out next.'
+      'I can help complete the Consumer Loan Application. To start, how much would you like to borrow, and what is the money for?'
   }
 ];
 
-let uploadedQuestions = '';
-
-function ollamaApiUrl(endpoint) {
-  const cleanEndpoint = endpoint.replace(/^\/+/, '');
-  return `${OLLAMA_BASE_URL}/api/${cleanEndpoint}`;
-}
+let uploadedNotes = '';
 
 function setAdvisorStatus(text) {
   advisorStatus.textContent = text;
+}
+
+function resizeAdvisorInput() {
+  advisorInput.style.height = 'auto';
+  advisorInput.style.height = `${Math.min(advisorInput.scrollHeight, 152)}px`;
 }
 
 function renderMessage(message) {
@@ -57,27 +58,12 @@ function addMessage(role, content) {
   renderMessage(message);
 }
 
-function formatOllamaError(error, method, url) {
-  const name = error?.name || 'Error';
-  const message = error?.message || String(error);
-  return `${name}: ${message} (${method} ${url})`;
-}
-
-async function fetchOllamaJson(endpoint, options = {}) {
+async function fetchAdvisorJson(endpoint, options = {}) {
   const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), OLLAMA_TIMEOUT_MS);
-  const url = ollamaApiUrl(endpoint);
-  const method = options.method || 'GET';
-
-  console.info('CU Loan Advisor Ollama request URL:', url);
-  console.info('CU Loan Advisor Ollama request options:', {
-    method,
-    headers: options.headers || {},
-    body: options.body || null
-  });
+  const timeout = window.setTimeout(() => controller.abort(), ADVISOR_TIMEOUT_MS);
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch(endpoint, {
       ...options,
       signal: controller.signal
     });
@@ -93,24 +79,19 @@ async function fetchOllamaJson(endpoint, options = {}) {
     }
 
     if (!response.ok) {
-      throw new Error(payload.error || `Ollama returned HTTP ${response.status}.`);
+      throw new Error(payload.error || ADVISOR_UNAVAILABLE_MESSAGE);
     }
 
     return payload;
   } catch (error) {
-    console.error('CU Loan Advisor full Ollama error:', error);
-
-    if (error.name === 'AbortError') {
-      throw new Error(`Request timed out after 30 seconds (${method} ${url})`);
-    }
-
-    throw new Error(formatOllamaError(error, method, url));
+    console.error('CU Loan Advisor request failed:', error);
+    throw new Error(ADVISOR_UNAVAILABLE_MESSAGE);
   } finally {
     window.clearTimeout(timeout);
   }
 }
 
-async function readUploadedQuestions(file) {
+async function readUploadedNotes(file) {
   if (!file) return;
   if (file.size > 1024 * 1024) {
     setAdvisorStatus('Upload is limited to 1 MB text files.');
@@ -120,7 +101,7 @@ async function readUploadedQuestions(file) {
 
   try {
     const text = await file.text();
-    uploadedQuestions = `Uploaded loan application questions from ${file.name}:\n\n${text.trim()}`;
+    uploadedNotes = `Uploaded session notes from ${file.name}:\n\n${text.trim()}`;
     setAdvisorStatus(`${file.name} loaded`);
   } catch (error) {
     console.error(error);
@@ -130,91 +111,75 @@ async function readUploadedQuestions(file) {
   }
 }
 
-function summarizeModels(models) {
-  return models
-    .map((model) => model?.name || model?.model)
-    .filter(Boolean)
-    .join(', ');
-}
+function buildAdvisorMessages(currentUserContent) {
+  return messages.map((message, index) => {
+    const isCurrentUserMessage = index === messages.length - 1 && message.role === 'user';
 
-async function testOllamaConnection() {
-  advisorTest.disabled = true;
-  setAdvisorStatus('Testing Ollama...');
-
-  try {
-    const payload = await fetchOllamaJson('tags');
-    const models = Array.isArray(payload.models) ? payload.models : [];
-    const modelList = summarizeModels(models) || 'No models returned.';
-    const preferredModelAvailable = models.some(
-      (model) => model?.name === OLLAMA_MODEL || model?.model === OLLAMA_MODEL
-    );
-    const preferredStatus = preferredModelAvailable
-      ? `${OLLAMA_MODEL} is available.`
-      : `${OLLAMA_MODEL} was not found.`;
-
-    console.info('CU Loan Advisor Ollama models:', payload);
-    addMessage('assistant', `Ollama connection OK. ${preferredStatus}\n\nAvailable models: ${modelList}`);
-    setAdvisorStatus(`Ready (${OLLAMA_MODEL})`);
-  } catch (error) {
-    console.error('CU Loan Advisor Ollama test failed:', error);
-    addMessage('assistant', `Ollama connection failed: ${error.message}`);
-    setAdvisorStatus('Connection issue');
-  } finally {
-    advisorTest.disabled = false;
-  }
+    return {
+      role: message.role,
+      content: isCurrentUserMessage ? currentUserContent : message.content
+    };
+  });
 }
 
 async function sendAdvisorMessage(event) {
   event.preventDefault();
 
   const typedMessage = advisorInput.value.trim();
-  if (!typedMessage && !uploadedQuestions) {
-    setAdvisorStatus('Enter a message or upload questions first.');
+  if (!typedMessage && !uploadedNotes) {
+    setAdvisorStatus('Enter a message or upload notes first.');
     return;
   }
 
-  const userContent = [uploadedQuestions, typedMessage].filter(Boolean).join('\n\n');
-  const displayContent = typedMessage || 'Uploaded loan application questions.';
-  uploadedQuestions = '';
+  const userContent = [uploadedNotes, typedMessage].filter(Boolean).join('\n\n');
+  const displayContent = typedMessage || 'Uploaded session notes.';
+  uploadedNotes = '';
 
   addMessage('user', displayContent);
   advisorInput.value = '';
+  resizeAdvisorInput();
   advisorInput.disabled = true;
   advisorSend.disabled = true;
-  advisorTest.disabled = true;
-  setAdvisorStatus(`Thinking (${OLLAMA_MODEL})...`);
+  setAdvisorStatus(`Thinking (${ADVISOR_MODEL_LABEL})...`);
 
   try {
-    const payload = await fetchOllamaJson('generate', {
+    const payload = await fetchAdvisorJson(ADVISOR_CHAT_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: OLLAMA_MODEL,
-        prompt: userContent,
-        stream: false
+        messages: buildAdvisorMessages(userContent)
       })
     });
 
-    if (!payload.response) {
-      throw new Error('Ollama returned an empty response.');
+    const assistantContent = payload.message?.content;
+
+    if (!assistantContent) {
+      throw new Error(ADVISOR_UNAVAILABLE_MESSAGE);
     }
 
-    addMessage('assistant', payload.response);
-    setAdvisorStatus(`Ready (${payload.model || OLLAMA_MODEL})`);
+    addMessage('assistant', assistantContent);
+    setAdvisorStatus(`Ready (${payload.model || ADVISOR_MODEL_LABEL})`);
   } catch (error) {
     console.error('CU Loan Advisor chat failed:', error);
-    addMessage('assistant', `Ollama connection failed: ${error.message}`);
+    addMessage('assistant', ADVISOR_UNAVAILABLE_MESSAGE);
     setAdvisorStatus('Connection issue');
   } finally {
     advisorInput.disabled = false;
     advisorSend.disabled = false;
-    advisorTest.disabled = false;
     advisorInput.focus();
   }
 }
 
-advisorFile.addEventListener('change', (event) => readUploadedQuestions(event.target.files?.[0]));
-advisorTest.addEventListener('click', testOllamaConnection);
+advisorFile.addEventListener('change', (event) => readUploadedNotes(event.target.files?.[0]));
+advisorInput.addEventListener('input', resizeAdvisorInput);
+advisorPromptButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    advisorInput.value = button.dataset.prompt || '';
+    resizeAdvisorInput();
+    advisorInput.focus();
+  });
+});
 advisorForm.addEventListener('submit', sendAdvisorMessage);
-setAdvisorStatus(`Ready (${OLLAMA_MODEL})`);
+setAdvisorStatus(`Ready (${ADVISOR_MODEL_LABEL})`);
 renderMessages();
+resizeAdvisorInput();
