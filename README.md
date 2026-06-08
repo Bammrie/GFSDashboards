@@ -79,6 +79,17 @@ Current scenarios cover clear approval, hard decline, manual review, high-LTV co
 
 ## CU Loan Advisor
 
-The landing page links to `cu-loan-advisor/`, a browser chat workspace that calls the user's local Ollama API directly at `http://127.0.0.1:11434/api/*`.
+The landing page links to `cu-loan-advisor/`, a browser chat workspace for the local `cu-loan-advisor:latest` Ollama model.
 
-The advisor uses the local `cu-loan-advisor:latest` Ollama model, created with the CU Loan Advisor behavior guide, through `POST /api/generate`. It includes a `Test Ollama Connection` button that calls `GET /api/tags` and lists available models. Ollama must allow browser requests from the dashboard origin.
+Browsers never call Ollama directly. The advisor page calls the same-origin dashboard backend route:
+
+- `POST /api/advisor/chat`
+
+The dashboard backend calls Ollama using:
+
+```bash
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=cu-loan-advisor:latest
+```
+
+For company-wide access, publish the dashboard/backend URL, not the Ollama URL. The backend must be able to reach `OLLAMA_BASE_URL`; that means running the dashboard on the same computer/server as Ollama, using a private tunnel from the hosted backend to the Ollama computer, or moving Ollama to a reachable server. Do not expose Ollama port `11434` directly to the public internet.
