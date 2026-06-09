@@ -81,7 +81,7 @@ Applicant Declarations:
 Loan Protection Questions:
 - Whether borrower wants remaining balance cancellation/payoff if they pass away or become critically ill
 - Whether borrower wants payment protection if hurt and unable to work
-- Treat these as optional protections. Do not present them as required products.
+- Treat these as optional protection questions. Do not present them as required products.
 
 Cosigner / Joint Owner:
 - Whether borrower wants to add a joint owner or co-signer
