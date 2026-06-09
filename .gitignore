@@ -1,3 +1,5 @@
 node_modules/
 .env
 data/
+self-host/Caddyfile.local
+self-host/*.log
