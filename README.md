@@ -93,6 +93,14 @@ OLLAMA_BASE_URL=http://127.0.0.1:11434
 OLLAMA_MODEL=cu-loan-advisor:latest
 ```
 
+The advisor starts with a structured loan intake screen for loan type and amount, then asks for the borrower's primary address before moving into chat. Address autocomplete is proxied through the dashboard backend so the Geoapify key is not exposed to browsers:
+
+```bash
+GEOAPIFY_API_KEY=your_geoapify_key
+```
+
+If the key is missing or Geoapify is unavailable, borrowers can still enter the address manually; that address is marked as unverified in the application context.
+
 For company-wide access, publish the dashboard/backend URL, not the Ollama URL. The backend must be able to reach `OLLAMA_BASE_URL`; that means running the dashboard on the same computer/server as Ollama, using a private tunnel from the hosted backend to the Ollama computer, or moving Ollama to a reachable server. Do not expose Ollama port `11434` directly to the public internet.
 
 ## Self-Hosting CU Loan Advisor
