@@ -1,0 +1,17 @@
+{
+  # Change this to the email that should receive certificate renewal notices.
+  email admin@goodwinefinancialservices.com
+}
+
+# Replace this host with the credit union dashboard DNS name.
+cu-loan.goodwinefinancialservices.com {
+  encode zstd gzip
+
+  header {
+    X-Content-Type-Options nosniff
+    Referrer-Policy strict-origin-when-cross-origin
+    -Server
+  }
+
+  reverse_proxy 127.0.0.1:5192
+}
