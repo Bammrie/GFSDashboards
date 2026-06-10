@@ -67,6 +67,15 @@
             <small>Financed loan fee included in amount financed before insurance.</small>
           </label>
 
+          <label class="sp-field" for="prepaid-fees">
+            <span>Prepaid Fees</span>
+            <span class="sp-currency-field">
+              <span aria-hidden="true">$</span>
+              <input id="prepaid-fees" name="prepaidFees" type="number" inputmode="decimal" min="0" step="0.01" required />
+            </span>
+            <small>Paid outside the financed balance; included in the estimated APR.</small>
+          </label>
+
           <label class="sp-field" for="interest-rate">
             <span>Interest Rate</span>
             <input id="interest-rate" name="interestRate" type="number" inputmode="decimal" min="0" step="0.01" required />

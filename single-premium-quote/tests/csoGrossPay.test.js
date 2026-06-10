@@ -66,3 +66,46 @@ test('high protected amount returns partial maximum coverage warning without blo
     )
   );
 });
+
+test('prepaid fees affect finance charge and estimated APR without changing financed insurance balance', () => {
+  const baseInputs = CSO_TEST_CASES.find((fixture) => fixture.id === 'AR-5').inputs;
+  const withoutPrepaidFees = calculateCsoGrossPayQuote(baseInputs);
+  const withPrepaidFees = calculateCsoGrossPayQuote({
+    ...baseInputs,
+    prepaidFees: 250
+  });
+
+  assertClose(
+    withPrepaidFees.amountFinanced,
+    withoutPrepaidFees.amountFinanced,
+    0.011,
+    'amountFinanced',
+    'PREPAID-1'
+  );
+  assertClose(
+    withPrepaidFees.totalPayments,
+    withoutPrepaidFees.totalPayments,
+    0.011,
+    'totalPayments',
+    'PREPAID-1'
+  );
+  assertClose(withPrepaidFees.prepaidFinanceCharge, 250, 0.011, 'prepaidFinanceCharge', 'PREPAID-1');
+  assertClose(
+    withPrepaidFees.financeCharge,
+    withoutPrepaidFees.financeCharge + 250,
+    0.011,
+    'financeCharge',
+    'PREPAID-1'
+  );
+  assertClose(
+    withPrepaidFees.amountFinancedForApr,
+    withPrepaidFees.amountFinanced - 250,
+    0.011,
+    'amountFinancedForApr',
+    'PREPAID-1'
+  );
+  assert.ok(
+    withPrepaidFees.estimatedApr > withoutPrepaidFees.estimatedApr,
+    `PREPAID-1 estimatedApr should increase when prepaid fees are present. Expected above ${withoutPrepaidFees.estimatedApr}, received ${withPrepaidFees.estimatedApr}`
+  );
+});

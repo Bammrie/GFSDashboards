@@ -187,6 +187,7 @@ function hydrateQuoteForm(inputs = {}) {
   setFieldValue(elements.quoteForm, 'state', values.state);
   setFieldValue(elements.quoteForm, 'loanAmount', values.loanAmount);
   setFieldValue(elements.quoteForm, 'loanFee', values.loanFee);
+  setFieldValue(elements.quoteForm, 'prepaidFees', values.prepaidFees ?? 0);
   setFieldValue(elements.quoteForm, 'interestRate', values.interestRate ?? values.annualApr);
   setFieldValue(elements.quoteForm, 'numberOfPayments', values.numberOfPayments ?? values.termMonths);
   setFieldValue(elements.quoteForm, 'paymentFrequency', values.paymentFrequency);
@@ -205,6 +206,7 @@ function readQuoteForm() {
     state: getFieldValue(elements.quoteForm, 'state'),
     loanAmount: getNumericFieldValue(elements.quoteForm, 'loanAmount'),
     loanFee: getNumericFieldValue(elements.quoteForm, 'loanFee'),
+    prepaidFees: getNumericFieldValue(elements.quoteForm, 'prepaidFees'),
     interestRate: getNumericFieldValue(elements.quoteForm, 'interestRate'),
     numberOfPayments: getNumericFieldValue(elements.quoteForm, 'numberOfPayments'),
     paymentFrequency: getFieldValue(elements.quoteForm, 'paymentFrequency'),
@@ -227,6 +229,7 @@ function validateQuoteInputs(inputs) {
   if (!settings.authorizedStates.includes(inputs.state)) errors.push('State is not authorized in Settings.');
   if (inputs.loanAmount <= 0) errors.push('Loan amount must be greater than 0.');
   if (inputs.loanFee < 0) errors.push('Loan fee must be 0 or greater.');
+  if (inputs.prepaidFees < 0) errors.push('Prepaid fees must be 0 or greater.');
   if (inputs.interestRate < 0) errors.push('Interest Rate must be 0 or greater.');
   if (inputs.numberOfPayments <= 0) errors.push('Number of payments must be greater than 0.');
   if (inputs.daysToFirstPayment < 0) errors.push('Days to first payment must be 0 or greater.');
@@ -300,10 +303,13 @@ function renderFinanceSummary(result) {
   const rows = [
     ['Loan Amount', formatCurrency(result.loanAmount)],
     ['Loan Fee', formatCurrency(result.loanFee)],
+    ['Prepaid Fees', formatCurrency(result.prepaidFees)],
     ['Principal before insurance', formatCurrency(result.baseAmountFinancedBeforeInsurance)],
     ['Total Premium', formatCurrency(result.totalPremium)],
     ['Amount Financed', formatCurrency(result.amountFinanced)],
+    ['APR Amount Financed', formatCurrency(result.amountFinancedForApr)],
     ['Finance Charge', formatCurrency(result.financeCharge)],
+    ['Estimated APR', formatPercent(result.estimatedApr)],
     ['Total of Payments', formatCurrency(result.totalPayments)],
     ['Interest Rate', formatPercent(result.interestRate)],
     ['Number of Payments', `${result.numberOfPayments}`],
@@ -420,7 +426,9 @@ function quoteSummaryText(short = false) {
     `State: ${result.state} - ${result.stateName}`,
     `Loan Amount: ${formatCurrency(result.loanAmount)}`,
     `Loan Fee: ${formatCurrency(result.loanFee)}`,
+    `Prepaid Fees: ${formatCurrency(result.prepaidFees)}`,
     `Interest Rate: ${formatPercent(result.interestRate)}`,
+    `Estimated APR: ${formatPercent(result.estimatedApr)}`,
     `Number of Payments: ${result.numberOfPayments}`,
     `Payment Frequency: ${result.paymentFrequencyLabel}`,
     `Coverage: ${COVERAGE_TYPES[result.coverageType]}`,
@@ -430,6 +438,7 @@ function quoteSummaryText(short = false) {
     `Disability Premium: ${formatCurrency(result.disabilityPremium)}`,
     `Total Premium: ${formatCurrency(result.totalPremium)}`,
     `Amount Financed: ${formatCurrency(result.amountFinanced)}`,
+    `Finance Charge: ${formatCurrency(result.financeCharge)}`,
     `Regular Payment: ${formatCurrency(result.regularPayment)}`,
     `Final Payment: ${formatCurrency(result.finalPayment)}`,
     `Total of Payments: ${formatCurrency(result.totalPayments)}`,
@@ -478,7 +487,7 @@ function renderSavedQuotes() {
           ${coverageIncludesDisability(result.coverageType) ? '<span class="sp-badge">7-Day Retro</span>' : ''}
         </div>
         <h4>${escapeHtml(COVERAGE_TYPES[result.coverageType])}</h4>
-        <p>${formatCurrency(result.loanAmount)} + ${formatCurrency(result.loanFee)} fee - ${result.numberOfPayments} ${escapeHtml(result.paymentFrequencyLabel)} payments</p>
+        <p>${formatCurrency(result.loanAmount)} + ${formatCurrency(result.loanFee)} fee${result.prepaidFees ? ` + ${formatCurrency(result.prepaidFees)} prepaid` : ''} - ${result.numberOfPayments} ${escapeHtml(result.paymentFrequencyLabel)} payments</p>
         <strong>${formatCurrency(result.totalPremium)}</strong>
       </article>
     `)
