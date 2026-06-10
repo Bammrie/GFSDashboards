@@ -1,6 +1,6 @@
 import { CSO_LIMITS, PARTIAL_COVERAGE_WARNINGS, UNSUPPORTED_LOAN_TYPE_WARNING } from '../data/csoLimits.js';
 import { CSO_RATE_CONFIG } from '../data/csoRates.js';
-import { calculateRoundedPaymentSchedule, roundCurrency } from './paymentSchedule.js';
+import { calculateEstimatedApr, calculateRoundedPaymentSchedule, roundCurrency } from './paymentSchedule.js';
 
 export const PAYMENT_FREQUENCIES = {
   monthly: { label: 'Monthly', paymentsPerYear: 12, periodDays: 30, defaultDaysToFirstPayment: 30 },
@@ -32,6 +32,7 @@ export const DEFAULT_GROSS_PAY_INPUTS = {
   state: 'MO',
   loanAmount: 25000,
   loanFee: 150,
+  prepaidFees: 0,
   interestRate: 7.5,
   numberOfPayments: 60,
   paymentFrequency: 'monthly',
@@ -94,6 +95,7 @@ function normalizeInputs(inputs = {}) {
     state,
     loanAmount: toNumber(merged.loanAmount, DEFAULT_GROSS_PAY_INPUTS.loanAmount),
     loanFee: toNumber(merged.loanFee, DEFAULT_GROSS_PAY_INPUTS.loanFee),
+    prepaidFees: toNumber(merged.prepaidFees, DEFAULT_GROSS_PAY_INPUTS.prepaidFees),
     interestRate: toNumber(merged.interestRate ?? merged.annualApr, DEFAULT_GROSS_PAY_INPUTS.interestRate),
     numberOfPayments: Math.max(1, Math.floor(toNumber(merged.numberOfPayments ?? merged.termMonths, 60))),
     paymentFrequency: frequency,
@@ -183,6 +185,7 @@ export function calculateCsoGrossPayQuote(inputs = {}, options = {}) {
     blockingWarnings.push(UNSUPPORTED_LOAN_TYPE_WARNING);
   }
 
+  const prepaidFees = Math.max(0, normalized.prepaidFees);
   const baseAmountFinancedBeforeInsurance = normalized.loanAmount + normalized.loanFee;
   const originalEquivalentCoverageMonths = equivalentCoverageMonths(
     normalized.numberOfPayments,
@@ -271,6 +274,19 @@ export function calculateCsoGrossPayQuote(inputs = {}, options = {}) {
     grossFactor: factor.grossFactor,
     numberOfPayments: normalized.numberOfPayments
   });
+  const interestFinanceCharge = schedule.financeCharge;
+  const prepaidFinanceCharge = roundCurrency(prepaidFees);
+  const financeCharge = roundCurrency(interestFinanceCharge + prepaidFinanceCharge);
+  const amountFinancedForApr = roundCurrency(Math.max(0, amountFinanced - prepaidFinanceCharge));
+  const estimatedApr = calculateEstimatedApr({
+    amountFinancedForApr,
+    regularPayment: schedule.regularPayment,
+    finalPayment: schedule.finalPayment,
+    numberOfPayments: normalized.numberOfPayments,
+    paymentsPerYear: frequency.paymentsPerYear,
+    daysToFirstPayment: normalized.daysToFirstPayment,
+    periodDays: frequency.periodDays
+  });
   const costPerPeriod = roundCurrency(schedule.regularPayment - noInsuranceSchedule.regularPayment);
   const costPerDay = roundCurrency(totalPremium / Math.max(1, protectedTermMonths * 30));
   const originalLifeAmountOfCoverage = includeLife ? roundCurrency(protectedLifePayment * normalized.numberOfPayments) : 0;
@@ -285,6 +301,7 @@ export function calculateCsoGrossPayQuote(inputs = {}, options = {}) {
     stateName: stateRates.stateName,
     loanAmount: roundCurrency(normalized.loanAmount),
     loanFee: roundCurrency(normalized.loanFee),
+    prepaidFees: prepaidFinanceCharge,
     baseAmountFinancedBeforeInsurance: roundCurrency(baseAmountFinancedBeforeInsurance),
     interestRate: normalized.interestRate,
     numberOfPayments: normalized.numberOfPayments,
@@ -306,7 +323,11 @@ export function calculateCsoGrossPayQuote(inputs = {}, options = {}) {
     disabilityPremium,
     totalPremium,
     amountFinanced,
-    financeCharge: schedule.financeCharge,
+    amountFinancedForApr,
+    interestFinanceCharge,
+    prepaidFinanceCharge,
+    financeCharge,
+    estimatedApr,
     totalPayments: schedule.totalPayments,
     regularPayment: schedule.regularPayment,
     finalPayment: schedule.finalPayment,
