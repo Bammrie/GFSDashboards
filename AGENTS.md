@@ -1,3 +1,4 @@
+2026-06-20: Added the Potential New Client Overview landing entry and standalone research page seeded with Alliant Credit Union NCUA March 2026 loan/indirect-loan data, map coordinates, modeled opportunity, and Sales Navigator relationship research for the first recurring prospect pass.
 2026-02-20: Increased the Year End Review PDF header logo render bounds and aligned title offset to actual rendered width so the top-left branding prints at a readable size without crowding header text.
 2026-02-20: Expanded the Account Workspace Training Log into an after-visit update workflow with required visit-date + Brady/Blake/Royce selection and per-account totals showing how many visits/updates each teammate has logged.
 2026-02-19: Added an Account Workspace Training Log panel so teams can save full encounter reports, what changed, and follow-up work needed per credit union using new /api/account-training-log load/save endpoints and persisted account training-log storage.
