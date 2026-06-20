@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Potential New Client Overview | GFS Dashboards</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <style>
+    .client-overview-page .layout {
+      width: min(1800px, 98vw);
+    }
+
+    .client-overview-hero {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .client-overview-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.75fr) minmax(0, 1.5fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .client-overview-stack {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .client-prospect-list {
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .client-prospect-button {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.85rem;
+      text-align: left;
+      border: 1px solid var(--border);
+      background: var(--surface-card);
+      color: var(--text-primary);
+      padding: 0.8rem 0.9rem;
+      cursor: pointer;
+    }
+
+    .client-prospect-button[aria-pressed='true'] {
+      border-color: rgba(122, 30, 44, 0.75);
+      background: rgba(122, 30, 44, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(122, 30, 44, 0.18);
+    }
+
+    .client-prospect-button strong,
+    .client-prospect-button small {
+      display: block;
+    }
+
+    .client-prospect-button small {
+      margin-top: 0.25rem;
+      color: var(--text-secondary);
+      font-size: 0.84rem;
+    }
+
+    .client-prospect-button__amount {
+      white-space: nowrap;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .client-detail-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .client-status-pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(122, 30, 44, 0.5);
+      background: rgba(122, 30, 44, 0.1);
+      color: var(--accent);
+      font-weight: 700;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.84rem;
+    }
+
+    .client-map-canvas {
+      height: 460px;
+      min-height: 360px;
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #eef1f4;
+    }
+
+    .client-address-box {
+      display: grid;
+      gap: 0.35rem;
+      margin-top: 0.8rem;
+      padding: 0.8rem 0.9rem;
+      border: 1px solid var(--border);
+      background: var(--surface-card);
+    }
+
+    .client-address-box p {
+      margin: 0;
+    }
+
+    .client-table-section {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .client-table-section .table-scroll {
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .client-table-section .data-table {
+      min-width: 920px;
+    }
+
+    .client-inline-summary {
+      border: 1px dashed rgba(122, 30, 44, 0.45);
+      background: rgba(122, 30, 44, 0.08);
+      color: var(--text-secondary);
+      padding: 0.85rem 1rem;
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .client-chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+    }
+
+    .client-chip {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      background: var(--surface-card);
+      padding: 0.25rem 0.55rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .client-source-list,
+    .client-quality-list,
+    .client-note-list {
+      display: grid;
+      gap: 0.55rem;
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .client-source-list li {
+      padding-left: 0.1rem;
+    }
+
+    .client-source-list a {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .client-source-list span {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 0.84rem;
+    }
+
+    .client-metric-card .metric-card__value {
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 980px) {
+      .client-overview-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="client-overview-page">
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Potential New Client Overview</h1>
+        <p class="site-subtitle">NCUA call-report research, loan mix, indirect exposure, map location, and relationship signals.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <div class="header-group" aria-label="Main">
+          <span class="header-group__label">Main</span>
+          <div class="header-group__links">
+            <a href="index.html" class="header-link">Dashboard Home</a>
+            <a href="accounts.html" class="header-link">Accounts</a>
+            <a href="map.html" class="header-link">Map</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel client-overview-hero" aria-labelledby="overview-heading">
+      <header class="panel__header">
+        <h2 id="overview-heading" class="panel__title">Research queue</h2>
+        <p id="research-meta" class="panel__description"></p>
+      </header>
+      <div id="overview-metrics" class="metric-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="client-overview-grid" aria-label="Potential client detail">
+      <aside class="panel" aria-labelledby="prospect-list-heading">
+        <header class="panel__header">
+          <h2 id="prospect-list-heading" class="panel__title">Credit unions</h2>
+          <p class="panel__description">Each research run should add one more credit union to this queue.</p>
+        </header>
+        <div id="prospect-list" class="client-prospect-list"></div>
+      </aside>
+
+      <section class="client-overview-stack">
+        <section class="panel" aria-labelledby="selected-prospect-name">
+          <header class="panel__header client-detail-header">
+            <div>
+              <h2 id="selected-prospect-name" class="panel__title"></h2>
+              <p id="selected-prospect-summary" class="panel__description"></p>
+            </div>
+            <span id="selected-prospect-status" class="client-status-pill"></span>
+          </header>
+          <div id="selected-metrics" class="metric-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="map-heading">
+          <header class="panel__header">
+            <h2 id="map-heading" class="panel__title">Main office map</h2>
+            <p class="panel__description">NCUA main office address plotted with OpenStreetMap coordinates.</p>
+          </header>
+          <div id="prospect-map" class="client-map-canvas" role="application" aria-label="Potential client office map"></div>
+          <div class="client-address-box">
+            <p><strong id="selected-office-address"></strong></p>
+            <p id="selected-geocode-note" class="panel__description"></p>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <section class="panel client-table-section" aria-labelledby="loan-data-heading">
+      <header class="panel__header">
+        <h2 id="loan-data-heading" class="panel__title">Loan data</h2>
+        <p class="panel__description">Schedule A, Section 1 loan and lease categories from the latest captured NCUA call report.</p>
+      </header>
+      <div class="table-scroll">
+        <table class="data-table" aria-describedby="loan-data-heading">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Account</th>
+              <th scope="col" class="numeric">Rate</th>
+              <th scope="col" class="numeric">Count</th>
+              <th scope="col" class="numeric">Balance</th>
+              <th scope="col">GFS fit</th>
+            </tr>
+          </thead>
+          <tbody id="loan-category-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel client-table-section" aria-labelledby="indirect-data-heading">
+      <header class="panel__header">
+        <h2 id="indirect-data-heading" class="panel__title">Indirect loan data</h2>
+        <p id="indirect-summary" class="client-inline-summary"></p>
+      </header>
+      <div class="table-scroll">
+        <table class="data-table" aria-describedby="indirect-data-heading">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col" class="numeric">Count</th>
+              <th scope="col" class="numeric">Balance</th>
+              <th scope="col">Account codes</th>
+              <th scope="col">Source</th>
+            </tr>
+          </thead>
+          <tbody id="indirect-loan-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="opportunity-heading">
+      <header class="panel__header">
+        <h2 id="opportunity-heading" class="panel__title">Modeled opportunity</h2>
+        <p class="panel__description">Initial model using the prospect opportunity heuristics documented in AGENTS.md.</p>
+      </header>
+      <div id="opportunity-metrics" class="metric-grid"></div>
+      <ul id="opportunity-notes" class="client-note-list"></ul>
+    </section>
+
+    <section class="panel client-table-section" aria-labelledby="relationship-heading">
+      <header class="panel__header">
+        <h2 id="relationship-heading" class="panel__title">Relationship research</h2>
+        <p id="relationship-summary" class="panel__description"></p>
+      </header>
+      <div class="table-scroll">
+        <table class="data-table" aria-describedby="relationship-heading">
+          <thead>
+            <tr>
+              <th scope="col">Lead</th>
+              <th scope="col">Title</th>
+              <th scope="col">Location</th>
+              <th scope="col">Tenure</th>
+              <th scope="col">Signal</th>
+            </tr>
+          </thead>
+          <tbody id="relationship-body"></tbody>
+        </table>
+      </div>
+      <section aria-labelledby="additional-names-heading">
+        <h3 id="additional-names-heading" class="list-title">Additional visible names</h3>
+        <div id="additional-relationship-names" class="client-chip-list"></div>
+      </section>
+    </section>
+
+    <section class="client-overview-grid" aria-label="Research sources and quality notes">
+      <section class="panel" aria-labelledby="sources-heading">
+        <header class="panel__header">
+          <h2 id="sources-heading" class="panel__title">Sources</h2>
+          <p class="panel__description">Public NCUA endpoints, map geocode, and the Sales Navigator snapshot used for this first pass.</p>
+        </header>
+        <ul id="source-list" class="client-source-list"></ul>
+      </section>
+
+      <section class="panel" aria-labelledby="quality-heading">
+        <header class="panel__header">
+          <h2 id="quality-heading" class="panel__title">Data quality notes</h2>
+          <p class="panel__description">Items to refine as the research loop matures.</p>
+        </header>
+        <ul id="quality-list" class="client-quality-list"></ul>
+      </section>
+    </section>
+  </main>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="potential-new-client-data.js"></script>
+  <script type="module" src="potential-new-client-overview.js"></script>
+</body>
+</html>
