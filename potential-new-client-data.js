@@ -657,14 +657,68 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         ]
       },
       relationshipResearch: {
-        capturedAt: '2026-06-20T16:58:00-05:00',
-        source: 'LinkedIn Sales Navigator attempted in Chrome; session redirected to LinkedIn Sales Navigator login before visible leads loaded',
+        capturedAt: '2026-06-20T17:03:00-05:00',
+        source: 'LinkedIn Sales Navigator visible search results in authenticated Chrome session',
         searchUrl: 'https://www.linkedin.com/sales/search/people?keywords=Lake%20Michigan%20Credit%20Union',
-        resultSummary: 'No visible professional leads captured because the Chrome Sales Navigator session was not authenticated at capture time.',
-        visibleLeads: [],
-        additionalVisibleNames: []
-      },
-      sources: [
+        resultSummary: '2.5K+ keyword results; page 1 of 100 visible during capture.',
+        visibleLeads: [
+          {
+            name: 'Meg Dunn',
+            title: 'Vice President Mortgage Production',
+            company: 'Lake Michigan Credit Union',
+            location: 'Grand Rapids Metropolitan Area',
+            tenure: '16 years 3 months in role and company',
+            signal: 'Mortgage production leader; 2nd degree with 7 mutual connections'
+          },
+          {
+            name: 'Alexander Clayson',
+            title: 'Retail Regional Director',
+            company: 'Lake Michigan Credit Union',
+            location: 'Grand Rapids, Michigan, United States',
+            tenure: '19 years 10 months in role and company',
+            signal: 'Retail channel leader; 2nd degree with 12 mutual connections and 2 recent posts'
+          },
+          {
+            name: 'Beth Baird, CCMP, PMP',
+            title: 'VP of Business Enablement',
+            company: 'Lake Michigan Credit Union',
+            location: 'Grand Rapids Metropolitan Area',
+            tenure: '8 years 7 months in role; 11 years 7 months in company',
+            signal: 'Business enablement and mortgage operations leader; 2nd degree with 4 mutual connections'
+          },
+          {
+            name: 'Maria Labie',
+            title: 'Mortgage Market Manager',
+            company: 'Lake Michigan Credit Union',
+            location: 'Detroit Metropolitan Area',
+            tenure: '2 months in role and company',
+            signal: 'Mortgage market contact; 2nd degree with 2 mutual connections and 1 recent post'
+          }
+        ],
+        additionalVisibleNames: [
+          'Jayne Malinowski',
+          'Emil Izrailov',
+          'Emrah Sero',
+          'Jason Sager',
+          'Marty Peltier',
+          'Nicholas Simatos',
+          'Jason Sasena, CMB',
+          'Nicholas Groulx',
+          'Steve Kik, AMP',
+          'Brent Green, CMB',
+          'Bill Lantzy',
+          'Corbin Buttleman',
+          'Ryba, Jason',
+          'Alex Lutke',
+          'Patrick Rokosz',
+          'Teresa Walker',
+          'Scott Wiggins',
+          'Carrie Kozak',
+          'Jim Thelen',
+          'Dan McLean',
+          'Kate McDougall, AMP, CMB'
+        ]
+      },      sources: [
         {
           label: 'NCUA Research a Credit Union',
           url: 'https://mapping.ncua.gov/ResearchCreditUnion',
