@@ -70,10 +70,45 @@
       font-size: 0.84rem;
     }
 
+    .client-prospect-button__meta {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.35rem;
+      min-width: 7.5rem;
+    }
+
     .client-prospect-button__amount {
       white-space: nowrap;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
+    }
+
+    .client-connection-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text-secondary);
+      padding: 0.15rem 0.45rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .client-connection-badge--accepted {
+      border-color: rgba(46, 125, 50, 0.45);
+      background: rgba(46, 125, 50, 0.12);
+      color: #2e7d32;
+    }
+
+    .client-connection-badge--pending {
+      border-color: rgba(122, 30, 44, 0.28);
+      background: rgba(122, 30, 44, 0.08);
+      color: var(--accent);
     }
 
     .client-detail-header {
@@ -154,6 +189,46 @@
       padding: 0.25rem 0.55rem;
       font-size: 0.84rem;
       font-weight: 600;
+    }
+
+    .client-connection-list {
+      display: grid;
+      gap: 0.55rem;
+      margin: 0.85rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .client-connection-list li {
+      display: grid;
+      gap: 0.2rem;
+      border: 1px solid var(--border);
+      background: var(--surface-card);
+      padding: 0.65rem 0.75rem;
+    }
+
+    .client-connection-list strong {
+      color: var(--text-primary);
+    }
+
+    .client-connection-list span {
+      color: var(--text-secondary);
+      font-size: 0.86rem;
+      line-height: 1.35;
+    }
+
+    .client-connection-status {
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .client-connection-status--accepted {
+      color: #2e7d32;
+    }
+
+    .client-connection-status--pending,
+    .client-connection-status--requested {
+      color: var(--accent);
     }
 
     .client-source-list,
@@ -323,6 +398,7 @@
               <th scope="col">Location</th>
               <th scope="col">Tenure</th>
               <th scope="col">Signal</th>
+              <th scope="col">Connection</th>
             </tr>
           </thead>
           <tbody id="relationship-body"></tbody>
@@ -331,6 +407,11 @@
       <section aria-labelledby="additional-names-heading">
         <h3 id="additional-names-heading" class="list-title">Additional visible names</h3>
         <div id="additional-relationship-names" class="client-chip-list"></div>
+      </section>
+      <section aria-labelledby="connection-requests-heading">
+        <h3 id="connection-requests-heading" class="list-title">LinkedIn connection tracking</h3>
+        <p id="connection-tracking-summary" class="panel__description"></p>
+        <ul id="connection-request-list" class="client-connection-list"></ul>
       </section>
     </section>
 
