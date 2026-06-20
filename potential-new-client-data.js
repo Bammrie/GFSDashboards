@@ -1,11 +1,26 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  updatedAt: '2026-06-20T18:04:00-05:00',
+  updatedAt: '2026-06-20T18:15:00-05:00',
   cadenceMinutes: 10,
   latestPublicNcuaCycleDate: '2026-03-31',
+  connectionTracking: {
+    targetTitles: [
+      'VP of Lending',
+      'VP of Consumer Lending',
+      'Consumer Lending Executive',
+      'Lending Executive',
+      'CEO',
+      'President',
+      'President & CEO'
+    ],
+    linkedInConnectionsMonitorUrl: 'https://www.linkedin.com/mynetwork/invite-connect/connections/',
+    requestStoragePath: 'prospect.relationshipResearch.connectionRequests',
+    requestPolicy: 'Send no-note LinkedIn connection requests only to verified current-company lending or executive leads surfaced by Sales Navigator, then reconcile accepted requests from the LinkedIn connections page.'
+  },
   notes: [
     'First seed record pulled from NCUA Research a Credit Union and the March 31, 2026 call report.',
     'Loan values are call-report balances unless a field is marked as derived.',
-    'LinkedIn Sales Navigator data is a visible search snapshot from the authenticated Chrome session and should remain internal research.'
+    'LinkedIn Sales Navigator data is a visible search snapshot from the authenticated Chrome session and should remain internal research.',
+    'Connection requests are tracked under relationshipResearch.connectionRequests and accepted requests are reconciled from the LinkedIn connections page when visible.'
   ],
   prospects: [
     {
