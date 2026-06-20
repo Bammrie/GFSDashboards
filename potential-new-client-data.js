@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  updatedAt: '2026-06-20T17:22:00-05:00',
+  updatedAt: '2026-06-20T17:32:00-05:00',
   cadenceMinutes: 10,
   latestPublicNcuaCycleDate: '2026-03-31',
   notes: [
@@ -1532,6 +1532,383 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         'PDF text extraction matched Schedule A loan lines, indirect loan totals, delinquency, charge-off/recovery, real estate, commercial, loan sale/participation, and unfunded commitment sections.',
         'OpenStreetMap returned address-level coordinates for 8945 Cal Center Drive but did not return a named Golden 1 POI.',
         'Sales Navigator relationship research could not be captured because the authenticated search page repeatedly timed out the Chrome automation session before a readable result snapshot was available.'
+      ]
+    },
+    {
+      id: 'schoolsfirst-24212-2026-03-31',
+      name: 'SchoolsFirst Federal Credit Union',
+      charterNumber: '24212',
+      priority: 'High',
+      status: 'Recurring research captured',
+      summary:
+        'Large California FCU with a $22.33B loan book, $5.86B in new/used vehicle loans, and $2.49B in reported indirect loans including $2.48B indirect vehicle exposure.',
+      profile: {
+        ncuaName: 'SCHOOLSFIRST',
+        type: 'FCU',
+        status: 'Active',
+        charterState: 'California',
+        charterYear: 1985,
+        fieldOfMembership: 'Educational',
+        lowIncomeDesignation: 'No',
+        fhlbMember: 'Yes',
+        region: '8 - ONES',
+        peerGroup: '6 - $500,000,000 and greater',
+        assets: 36737428874,
+        members: 1568368,
+        ceo: 'Bill Cheney',
+        website: 'https://www.schoolsfirstfcu.org',
+        phone: '800-462-8328',
+        mainOffice: {
+          street: '15332 Newport Ave',
+          city: 'Tustin',
+          state: 'CA',
+          zip: '92780',
+          county: 'Orange',
+          country: 'United States',
+          latitude: 33.7218624,
+          longitude: -117.8348357,
+          geocodePrecision: 'Address-level OpenStreetMap building match for the NCUA main-office address'
+        }
+      },
+      callReport: {
+        cycleDate: '2026-03-31',
+        reportLabel: 'March 2026 NCUA 5300 Call Report',
+        totals: {
+          loansHeldForSale: 10041218,
+          totalLoansAndLeases: { count: 1135119, amount: 22331794817 },
+          allowanceForCreditLossesLoansAndLeases: 225866571,
+          accruedInterestOnLoansAndLeases: 82930268,
+          loansGrantedYtd: { count: 94322, amount: 2157300944 }
+        },
+        loanCategories: [
+          {
+            label: 'Unsecured Credit Card Loans',
+            accountAmountCode: '396',
+            interestRate: 13.25,
+            count: 380613,
+            amount: 1433072763,
+            productFit: 'Credit insurance/debt protection - unsecured consumer'
+          },
+          {
+            label: 'Payday Alternative Loans (PALs I and PALs II)',
+            accountAmountCode: '397A',
+            interestRate: 0,
+            count: 0,
+            amount: 0,
+            productFit: 'Not material in this call report'
+          },
+          {
+            label: 'Non-Federally Guaranteed Student Loans',
+            accountAmountCode: '698A',
+            interestRate: 0,
+            count: 0,
+            amount: 0,
+            productFit: 'Not material in this call report'
+          },
+          {
+            label: 'All Other Unsecured Loans/Lines of Credit',
+            accountAmountCode: '397',
+            interestRate: 14.49,
+            count: 396894,
+            amount: 2386205367,
+            productFit: 'Credit insurance/debt protection - unsecured consumer'
+          },
+          {
+            label: 'New Vehicle Loans',
+            accountAmountCode: '385',
+            interestRate: 4.74,
+            count: 96494,
+            amount: 2507899828,
+            productFit: 'VSC, GAP, credit insurance, debt protection'
+          },
+          {
+            label: 'Used Vehicle Loans',
+            accountAmountCode: '370',
+            interestRate: 5.44,
+            count: 198282,
+            amount: 3350174323,
+            productFit: 'VSC, GAP, credit insurance, debt protection'
+          },
+          {
+            label: 'Leases Receivable',
+            accountAmountCode: '002',
+            interestRate: 0,
+            count: 0,
+            amount: 0,
+            productFit: 'Not material in this call report'
+          },
+          {
+            label: 'All Other Secured Non-Real Estate Loans/Lines of Credit',
+            accountAmountCode: '698C',
+            interestRate: 6.47,
+            count: 525,
+            amount: 7069997,
+            productFit: 'Collateral and consumer protection review'
+          },
+          {
+            label: 'First Lien 1- to 4-Family Residential Property Loans/Lines',
+            accountAmountCode: '703A',
+            interestRate: 5.5,
+            count: 28031,
+            amount: 9346406767,
+            productFit: 'Mortgage credit insurance review'
+          },
+          {
+            label: 'Junior Lien 1- to 4-Family Residential Property Loans/Lines',
+            accountAmountCode: '386A',
+            interestRate: 6.25,
+            count: 34212,
+            amount: 3027300782,
+            productFit: 'Home-equity credit protection review'
+          },
+          {
+            label: 'All Other Non-Commercial Real Estate Loans/Lines',
+            accountAmountCode: '386B',
+            interestRate: 0,
+            count: 0,
+            amount: 0,
+            productFit: 'Not material in this call report'
+          },
+          {
+            label: 'Commercial Real Estate Secured Loans/Lines',
+            accountAmountCode: '718A5',
+            interestRate: 5.92,
+            count: 66,
+            amount: 273609227,
+            productFit: 'Commercial participation concentration review'
+          },
+          {
+            label: 'Commercial Loans/Lines Not Secured by Real Estate',
+            accountAmountCode: '400P',
+            interestRate: 0,
+            count: 2,
+            amount: 55763,
+            productFit: 'Not material in this call report'
+          }
+        ],
+        chargeOffAndRecoveryYtd: [
+          { label: 'Unsecured Credit Card Loans', chargeOffs: 25120754, recoveries: 3356220 },
+          { label: 'Payday Alternative Loans (PALs I and PALs II)', chargeOffs: 0, recoveries: 0 },
+          { label: 'Non-Federally Guaranteed Student Loans', chargeOffs: 0, recoveries: 0 },
+          { label: 'All Other Unsecured Loans/Lines of Credit', chargeOffs: 31006308, recoveries: 3040687 },
+          { label: 'New Vehicle Loans', chargeOffs: 3335461, recoveries: 649943 },
+          { label: 'Used Vehicle Loans', chargeOffs: 10472973, recoveries: 2178231 },
+          { label: 'Leases Receivable', chargeOffs: 0, recoveries: 0 },
+          { label: 'All Other Secured Non-Real Estate Loans/Lines of Credit', chargeOffs: 0, recoveries: 20 },
+          { label: 'First Lien Residential Property Loans/Lines of Credit', chargeOffs: 0, recoveries: 0 },
+          { label: 'Junior Lien Residential Property Loans/Lines of Credit', chargeOffs: 0, recoveries: 75723 },
+          { label: 'All Other Non-Commercial Real Estate Loans/Lines of Credit', chargeOffs: 0, recoveries: 0 },
+          { label: 'Commercial Loans', chargeOffs: 0, recoveries: 0 },
+          { label: 'Total Loans and Leases', chargeOffs: 69935496, recoveries: 9300824 },
+          { label: 'Participation Loans Purchased', chargeOffs: 1105043, recoveries: 352397 },
+          { label: 'Indirect Loans', chargeOffs: 6565572, recoveries: 1409555 },
+          { label: 'Whole/Partial Purchased Loans', chargeOffs: 0, recoveries: 0 }
+        ],
+        delinquency: {
+          totalDelinquent30To59Amount: 145330430,
+          totalDelinquent60Plus: { count: 17582, amount: 198434206 },
+          participationLoansPurchasedDelinquentAmount: 596868,
+          indirectDelinquentAmount: 18844542,
+          wholeOrPartialPurchasedLoansDelinquentAmount: 0,
+          nonCommercialNonAccrualAmount: 137414657,
+          commercialNonAccrualAmount: 0,
+          bankruptcyClaimsOutstanding: 59278886,
+          borrowerDifficultyModifiedLoans: { count: 2154, amount: 45598569 },
+          borrowerDifficultyModifiedLoansNotInCompliance: { count: 1523, amount: 34280833 }
+        },
+        indirectLoans: [
+          {
+            label: 'New and Used Vehicle Loans',
+            count: 110768,
+            amount: 2479230141,
+            countAccountCode: 'IN0001',
+            amountAccountCode: 'IN0002',
+            source: 'Schedule A, Section 5'
+          },
+          {
+            label: 'First Lien and Junior Lien Residential Loans',
+            count: 0,
+            amount: 0,
+            countAccountCode: 'IN0003',
+            amountAccountCode: 'IN0004',
+            source: 'Schedule A, Section 5'
+          },
+          {
+            label: 'Commercial Loans',
+            count: 0,
+            amount: 0,
+            countAccountCode: 'IN0005',
+            amountAccountCode: 'IN0006',
+            source: 'Schedule A, Section 5'
+          },
+          {
+            label: 'All Other Loans',
+            count: 1092,
+            amount: 6258677,
+            countAccountCode: 'IN0007',
+            amountAccountCode: 'IN0008',
+            source: 'Schedule A, Section 5'
+          }
+        ],
+        indirectTotals: {
+          count: 111860,
+          amount: 2485488818,
+          countAccountCode: '617A',
+          amountAccountCode: '618A',
+          delinquentAmount: 18844542,
+          delinquentAmountAccountCode: '041E',
+          chargeOffsYtd: 6565572,
+          chargeOffsAccountCode: '550E',
+          recoveriesYtd: 1409555,
+          recoveriesAccountCode: '551E'
+        },
+        derivedMetrics: {
+          nonCommercialLoanBalance: 22058129827,
+          autoLoanBalance: 5858074151,
+          autoLoanCount: 294776,
+          directAutoLoanBalance: 3378844010,
+          directAutoLoanCount: 184008,
+          directAutoCalculation:
+            'New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.',
+          indirectShareOfLoanBook: 0.1112982113,
+          indirectVehicleShareOfAutoBalance: 0.4232159029
+        },
+        realEstateDetails: {
+          firstLienBalance: 9346406767,
+          firstLienGrantedYtd: 493697793,
+          juniorLienBalance: 3027300782,
+          juniorLienGrantedYtd: 391075937,
+          allOtherNonCommercialRealEstateBalance: 0,
+          allOtherNonCommercialRealEstateGrantedYtd: 0,
+          totalNonCommercialRealEstate: { count: 62243, amount: 12373707549, grantedYtd: 884773730 },
+          constructionBalance: 0,
+          repricesOrMaturesWithinFiveYears: 3623608504,
+          interestOnlyPaymentOptionFirstLien: { count: 2394, amount: 214242195, grantedYtd: 59516000 }
+        },
+        commercialDetails: {
+          constructionAndDevelopmentMembers: { count: 0, amount: 0, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          securedByFarmlandMembers: { count: 0, amount: 0, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          multifamilyMembers: { count: 0, amount: 0, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          ownerOccupiedNonFarmNonResidentialMembers: { count: 0, amount: 0, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          nonOwnerOccupiedNonFarmNonResidentialMembers: { count: 0, amount: 0, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          totalCommercialRealEstateSecuredMembers: { count: 0, amount: 0, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          commercialAndIndustrialMembers: { count: 0, amount: 0, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          unsecuredCommercialMembers: { count: 0, amount: 0, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          unsecuredRevolvingCommercialMembers: { count: 2, amount: 55763, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          commercialMemberLoans: { count: 2, amount: 55763, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          nonmemberConstructionAndDevelopment: { count: 2, amount: 6416896 },
+          nonmemberMultifamily: { count: 21, amount: 88063621 },
+          nonmemberOwnerOccupiedNonFarmNonResidential: { count: 4, amount: 3606339 },
+          nonmemberNonOwnerOccupiedNonFarmNonResidential: { count: 39, amount: 175522371, grantedYtdCount: 1, grantedYtdAmount: 4900000 },
+          totalCommercialRealEstateSecuredNonmembers: { count: 66, amount: 273609227, grantedYtdCount: 1, grantedYtdAmount: 4900000 },
+          totalCommercialNonmemberLoans: { count: 66, amount: 273609227, grantedYtdCount: 1, grantedYtdAmount: 4900000 },
+          totalCommercialLoans: { count: 68, amount: 273664990 },
+          outstandingAgriculturalRelatedLoans: { count: 0, amount: 0 },
+          commercialRealEstateRepricesOrMaturesWithinFiveYears: 213406838,
+          commercialParticipationsSoldServicingRetained: { count: 0, amount: 0 },
+          commercialLoansSoldServicingRetained: { count: 0, amount: 0 },
+          totalMemberBusinessLoansNet: 100000,
+          commercialUnfundedCommitments: 6582488
+        },
+        purchasedAndSoldLoans: {
+          purchasedFromOtherFinancialInstitutionsYtd: { count: 0, amount: 0 },
+          purchasedFromOtherFinancialInstitutionsOutstanding: { count: 0, amount: 0 },
+          purchasedFromOtherSourcesYtd: { count: 0, amount: 0 },
+          purchasedFromOtherSourcesOutstanding: { count: 0, amount: 0 },
+          loansSoldYtd: { count: 84, amount: 33271883 },
+          firstMortgageLoansSoldSecondaryMarketYtd: { count: 84, amount: 33271883 },
+          realEstateLoansSoldServicingRetained: { ytdCount: 84, ytdAmount: 33271883, outstandingCount: 6305, outstandingAmount: 1443260902 },
+          allOtherLoansSoldServicingRetained: { ytdCount: 0, ytdAmount: 0, outstandingCount: 0, outstandingAmount: 0 },
+          loanParticipations: {
+            vehicleNonCommercial: { purchasedYtd: 37798418, purchasedOutstanding: 0, soldYtd: 0, soldOutstanding: 0 },
+            oneToFourFamilyResidential: { purchasedYtd: 2212268, purchasedOutstanding: 0, soldYtd: 0, soldOutstanding: 0 },
+            commercialExcludingConstructionAndDevelopment: { purchasedYtd: 267192331, purchasedOutstanding: 4900000, soldYtd: 0, soldOutstanding: 0 },
+            commercialConstructionAndDevelopment: { purchasedYtd: 6416896, purchasedOutstanding: 0, soldYtd: 0, soldOutstanding: 0 },
+            allOther: { purchasedYtd: 6594736, purchasedOutstanding: 0, soldYtd: 0, soldOutstanding: 0 },
+            total: { purchasedYtd: 320214649, purchasedOutstanding: 4900000, soldYtd: 0, soldOutstanding: 0 }
+          }
+        },
+        unfundedCommitments: {
+          commercialLoans: 6582488,
+          revolvingOpenEndSecuredByResidentialProperty: 2346533632,
+          creditCardLines: 3364999409,
+          unsecuredShareDraftLinesOfCredit: 335177,
+          unusedOverdraftProtectionProgram: 141838735,
+          otherUnfundedCommitments: 38630530,
+          totalNonCommercialLoans: 5892337483,
+          totalAllLoanTypes: 5898919971,
+          unconditionallyCancelableAllLoanTypes: 3365043646,
+          conditionallyCancelableCommercialLoans: 6538251,
+          consumerLoansSecuredAndRealEstate: 2346533632,
+          consumerLoansUnsecured: 180804442,
+          totalConditionallyCancelable: 2533876325,
+          consumerLoansTransferredWithLimitedRecourse: 3159291
+        }
+      },
+      modeledOpportunity: {
+        assumptions: {
+          creditLifeRatePerThousand: 1,
+          creditDisabilityRatePerThousand: 2.25,
+          debtProtectionIuiRatePerThousand: 1.4,
+          creditAndDebtProtectionPenetration: 0.38,
+          vscPenetration: 0.4,
+          vscGfsMarginPerContract: 400,
+          gapPenetration: 0.7,
+          gapGfsMarginPerContract: 50,
+          directAutoAverageTermMonths: 24
+        },
+        modeledMonthlyCreditLifePremium: 8382089.33,
+        modeledMonthlyCreditDisabilityPremium: 18859701,
+        modeledMonthlyDebtProtectionIuiPremium: 11734925.07,
+        modeledMonthlyDirectAutoOriginations: 7667,
+        modeledMonthlyVscGfsIncome: 1226720,
+        modeledMonthlyGapGfsIncome: 268345,
+        notes: [
+          'Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.',
+          'VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle counts.',
+          'SchoolsFirst has a large absolute direct-auto estimate even after removing reported indirect vehicle loans.'
+        ]
+      },
+      relationshipResearch: {
+        capturedAt: '2026-06-20T17:32:00-05:00',
+        source: 'LinkedIn Sales Navigator attempted in authenticated Chrome session; page snapshot timed out before visible leads could be read',
+        searchUrl: 'https://www.linkedin.com/sales/search/people?keywords=SchoolsFirst%20Federal%20Credit%20Union',
+        resultSummary: 'No visible professional leads captured because the SchoolsFirst Sales Navigator search page repeatedly timed out and reset the Chrome automation session before a readable result snapshot was available.',
+        visibleLeads: [],
+        additionalVisibleNames: []
+      },
+      sources: [
+        {
+          label: 'NCUA Research a Credit Union',
+          url: 'https://mapping.ncua.gov/ResearchCreditUnion',
+          capturedAt: '2026-06-20'
+        },
+        {
+          label: 'NCUA credit union details API for charter 24212',
+          url: 'https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/24212',
+          capturedAt: '2026-06-20'
+        },
+        {
+          label: 'NCUA March 2026 call report download endpoint',
+          url: 'https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/24212?isCorpCU=false&cycleDate=03/31/2026',
+          capturedAt: '2026-06-20'
+        },
+        {
+          label: 'OpenStreetMap Nominatim geocode for main office address',
+          url: 'https://nominatim.openstreetmap.org/search?format=json&q=15332%20Newport%20Ave%2C%20Tustin%2C%20CA%2092780',
+          capturedAt: '2026-06-20'
+        },
+        {
+          label: 'LinkedIn Sales Navigator people search attempt',
+          url: 'https://www.linkedin.com/sales/search/people?keywords=SchoolsFirst%20Federal%20Credit%20Union',
+          capturedAt: '2026-06-20'
+        }
+      ],
+      dataQuality: [
+        'NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.',
+        'PDF text extraction matched Schedule A loan categories, indirect loan totals, delinquency, charge-off/recovery, real estate, commercial, loan sale/participation, and unfunded commitment sections.',
+        'OpenStreetMap returned an address-level building match for 15332 Newport Ave; a separate named SchoolsFirst POI was nearby at 15432 Newport Ave, so the NCUA address coordinates were retained.',
+        'Sales Navigator relationship research could not be captured because the authenticated SchoolsFirst search page repeatedly timed out the Chrome automation session before a readable result snapshot was available.'
       ]
     }
   ]
