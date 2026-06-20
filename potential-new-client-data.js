@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  updatedAt: '2026-06-20T17:32:00-05:00',
+  updatedAt: '2026-06-20T17:45:00-05:00',
   cadenceMinutes: 10,
   latestPublicNcuaCycleDate: '2026-03-31',
   notes: [
@@ -1909,6 +1909,445 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         'PDF text extraction matched Schedule A loan categories, indirect loan totals, delinquency, charge-off/recovery, real estate, commercial, loan sale/participation, and unfunded commitment sections.',
         'OpenStreetMap returned an address-level building match for 15332 Newport Ave; a separate named SchoolsFirst POI was nearby at 15432 Newport Ave, so the NCUA address coordinates were retained.',
         'Sales Navigator relationship research could not be captured because the authenticated SchoolsFirst search page repeatedly timed out the Chrome automation session before a readable result snapshot was available.'
+      ]
+    },
+    {
+      id: 'mountain-america-24692-2026-03-31',
+      name: 'Mountain America Credit Union',
+      charterNumber: '24692',
+      priority: 'High',
+      status: 'Recurring research captured',
+      summary:
+        'Large Utah-based FCU with an $18.44B loan book, $6.22B in new/used vehicle loans, and $4.30B in reported indirect loans including $3.24B indirect vehicle exposure.',
+      profile: {
+        ncuaName: 'MOUNTAIN AMERICA',
+        type: 'FCU',
+        status: 'Active',
+        charterState: 'Utah',
+        charterYear: 1936,
+        fieldOfMembership: 'Multiple common bond - other',
+        lowIncomeDesignation: 'Yes',
+        fhlbMember: 'Yes',
+        region: '8 - ONES',
+        peerGroup: '6 - $500,000,000 and greater',
+        assets: 22659231635,
+        members: 1433256,
+        ceo: 'Sterling W Nielsen',
+        website: 'http://www.macu.com',
+        phone: '801-325-6220',
+        mainOffice: {
+          street: '9800 S Monroe St',
+          city: 'Sandy',
+          state: 'UT',
+          zip: '84070',
+          county: 'Salt Lake',
+          country: 'United States',
+          latitude: 40.5725681,
+          longitude: -111.8991369,
+          geocodePrecision: 'OpenStreetMap bank/POI match for 9800 South Monroe Street; exact NCUA abbreviation query returned only a road segment'
+        }
+      },
+      callReport: {
+        cycleDate: '2026-03-31',
+        reportLabel: 'March 2026 NCUA 5300 Call Report',
+        totals: {
+          loansHeldForSale: 22796726,
+          totalLoansAndLeases: { count: 1065348, amount: 18439836531 },
+          allowanceForCreditLossesLoansAndLeases: 294538822,
+          accruedInterestOnLoansAndLeases: 86553535,
+          loansGrantedYtd: { count: 130115, amount: 1959366802 },
+          paydayAlternativeLoansGrantedYtd: { count: 8335, amount: 7943726 }
+        },
+        loanCategories: [
+          {
+            label: 'Unsecured Credit Card Loans',
+            accountAmountCode: '396',
+            interestRate: 11.49,
+            count: 458124,
+            amount: 1086270745,
+            productFit: 'Credit insurance/debt protection - unsecured consumer'
+          },
+          {
+            label: 'Payday Alternative Loans (PALs I and PALs II)',
+            accountAmountCode: '397A',
+            interestRate: 28,
+            count: 16287,
+            amount: 10710580,
+            productFit: 'Small-dollar consumer loan review'
+          },
+          {
+            label: 'Non-Federally Guaranteed Student Loans',
+            accountAmountCode: '698A',
+            interestRate: 8,
+            count: 1819,
+            amount: 12400250,
+            productFit: 'Consumer loan review'
+          },
+          {
+            label: 'All Other Unsecured Loans/Lines of Credit',
+            accountAmountCode: '397',
+            interestRate: 13.24,
+            count: 128594,
+            amount: 827979385,
+            productFit: 'Credit insurance/debt protection - unsecured consumer'
+          },
+          {
+            label: 'New Vehicle Loans',
+            accountAmountCode: '385',
+            interestRate: 5.49,
+            count: 21502,
+            amount: 736938702,
+            productFit: 'VSC, GAP, credit insurance, debt protection'
+          },
+          {
+            label: 'Used Vehicle Loans',
+            accountAmountCode: '370',
+            interestRate: 5.49,
+            count: 308334,
+            amount: 5487881076,
+            productFit: 'VSC, GAP, credit insurance, debt protection'
+          },
+          {
+            label: 'Leases Receivable',
+            accountAmountCode: '002',
+            interestRate: 0,
+            count: 0,
+            amount: 0,
+            productFit: 'Not material in this call report'
+          },
+          {
+            label: 'All Other Secured Non-Real Estate Loans/Lines of Credit',
+            accountAmountCode: '698C',
+            interestRate: 7.74,
+            count: 64805,
+            amount: 1454271609,
+            productFit: 'Collateral and consumer protection review'
+          },
+          {
+            label: 'First Lien 1- to 4-Family Residential Property Loans/Lines',
+            accountAmountCode: '703A',
+            interestRate: 6.12,
+            count: 19948,
+            amount: 3972474412,
+            productFit: 'Mortgage credit insurance review'
+          },
+          {
+            label: 'Junior Lien 1- to 4-Family Residential Property Loans/Lines',
+            accountAmountCode: '386A',
+            interestRate: 7.24,
+            count: 39039,
+            amount: 2359916424,
+            productFit: 'Home-equity credit protection review'
+          },
+          {
+            label: 'All Other Non-Commercial Real Estate Loans/Lines',
+            accountAmountCode: '386B',
+            interestRate: 6.23,
+            count: 13,
+            amount: 336164,
+            productFit: 'Not material in this call report'
+          },
+          {
+            label: 'Commercial Real Estate Secured Loans/Lines',
+            accountAmountCode: '718A5',
+            interestRate: 6.23,
+            count: 1612,
+            amount: 2310799055,
+            productFit: 'Commercial concentration and participation review'
+          },
+          {
+            label: 'Commercial Loans/Lines Not Secured by Real Estate',
+            accountAmountCode: '400P',
+            interestRate: 6.49,
+            count: 5271,
+            amount: 179858129,
+            productFit: 'Commercial member business loan review'
+          }
+        ],
+        governmentGuaranteedLoans: {
+          nonCommercialSba: { count: 305, balance: 50784157, guaranteedPortion: 35683231 },
+          nonCommercialPppIncludedInSba: { count: 5, balance: 2563267 },
+          nonCommercialOtherGovernmentGuaranteed: { count: 247, balance: 53086322, guaranteedPortion: 44992450 },
+          commercialSba: { count: 767, balance: 553523252, guaranteedPortion: 194827742 },
+          commercialOtherGovernmentGuaranteed: { count: 1, balance: 973900, guaranteedPortion: 779120 }
+        },
+        chargeOffAndRecoveryYtd: [
+          { label: 'Unsecured Credit Card Loans', chargeOffs: 16106377, recoveries: 1253529 },
+          { label: 'Payday Alternative Loans (PALs I and PALs II)', chargeOffs: 544392, recoveries: 117527 },
+          { label: 'Non-Federally Guaranteed Student Loans', chargeOffs: 98349, recoveries: 43872 },
+          { label: 'All Other Unsecured Loans/Lines of Credit', chargeOffs: 16973060, recoveries: 2882977 },
+          { label: 'New Vehicle Loans', chargeOffs: 1770511, recoveries: 643427 },
+          { label: 'Used Vehicle Loans', chargeOffs: 31260485, recoveries: 7983520 },
+          { label: 'Leases Receivable', chargeOffs: 0, recoveries: 0 },
+          { label: 'All Other Secured Non-Real Estate Loans/Lines of Credit', chargeOffs: 5776931, recoveries: 1529966 },
+          { label: 'First Lien Residential Property Loans/Lines of Credit', chargeOffs: 73810, recoveries: 0 },
+          { label: 'Junior Lien Residential Property Loans/Lines of Credit', chargeOffs: 639085, recoveries: 20051 },
+          { label: 'All Other Non-Commercial Real Estate Loans/Lines of Credit', chargeOffs: 0, recoveries: 2901 },
+          { label: 'Construction and Development Commercial Loans', chargeOffs: 0, recoveries: 0 },
+          { label: 'Commercial and Industrial Loans', chargeOffs: 432181, recoveries: 98503 },
+          { label: 'Unsecured Commercial Loans', chargeOffs: 14456, recoveries: 0 },
+          { label: 'Unsecured Revolving Commercial Lines', chargeOffs: 268083, recoveries: 2135 },
+          { label: 'Total Loans and Leases', chargeOffs: 73957720, recoveries: 14578408 },
+          { label: 'Participation Loans Purchased', chargeOffs: 153802, recoveries: 26655 },
+          { label: 'Indirect Loans', chargeOffs: 20163571, recoveries: 5789966 },
+          { label: 'Whole/Partial Purchased Loans', chargeOffs: 0, recoveries: 0 }
+        ],
+        delinquency: {
+          totalDelinquent30To59Amount: 306606903,
+          totalDelinquent60Plus: { count: 14049, amount: 190106412 },
+          participationLoansPurchasedDelinquentAmount: 0,
+          indirectDelinquentAmount: 42739853,
+          wholeOrPartialPurchasedLoansDelinquentAmount: 2850822,
+          nonCommercialNonAccrualAmount: 128292364,
+          commercialNonAccrualAmount: 9777343,
+          bankruptcyClaimsOutstanding: 43269263,
+          borrowerDifficultyModifiedLoans: { count: 1019, amount: 29931024 },
+          borrowerDifficultyModifiedLoansNotInCompliance: { count: 200, amount: 11906227 }
+        },
+        indirectLoans: [
+          {
+            label: 'New and Used Vehicle Loans',
+            count: 139270,
+            amount: 3236781264,
+            countAccountCode: 'IN0001',
+            amountAccountCode: 'IN0002',
+            source: 'Schedule A, Section 5'
+          },
+          {
+            label: 'First Lien and Junior Lien Residential Loans',
+            count: 0,
+            amount: 0,
+            countAccountCode: 'IN0003',
+            amountAccountCode: 'IN0004',
+            source: 'Schedule A, Section 5'
+          },
+          {
+            label: 'Commercial Loans',
+            count: 0,
+            amount: 0,
+            countAccountCode: 'IN0005',
+            amountAccountCode: 'IN0006',
+            source: 'Schedule A, Section 5'
+          },
+          {
+            label: 'All Other Loans',
+            count: 43738,
+            amount: 1061399799,
+            countAccountCode: 'IN0007',
+            amountAccountCode: 'IN0008',
+            source: 'Schedule A, Section 5'
+          }
+        ],
+        indirectTotals: {
+          count: 183008,
+          amount: 4298181063,
+          countAccountCode: '617A',
+          amountAccountCode: '618A',
+          delinquentAmount: 42739853,
+          delinquentAmountAccountCode: '041E',
+          chargeOffsYtd: 20163571,
+          chargeOffsAccountCode: '550E',
+          recoveriesYtd: 5789966,
+          recoveriesAccountCode: '551E'
+        },
+        derivedMetrics: {
+          nonCommercialLoanBalance: 15949179347,
+          autoLoanBalance: 6224819778,
+          autoLoanCount: 329836,
+          directAutoLoanBalance: 2988038514,
+          directAutoLoanCount: 190566,
+          directAutoCalculation:
+            'New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.',
+          indirectShareOfLoanBook: 0.2330921457,
+          indirectVehicleShareOfAutoBalance: 0.5199799158
+        },
+        otherLoanInformation: {
+          loansToOfficials: { count: 92, amount: 8654319 },
+          fcuInterestRateCeiling: { amountOver15Percent: 626749176, weightedAverageRateOver15Percent: 16.64 },
+          purchasedCreditImpairedLoans: { contractualBalanceOutstanding: 0, reportedAsLoans: 0 },
+          purchasedFinancialAssetsWithCreditDeterioration: { purchasePrice: 0, nonCreditDiscountOrPremium: 0, unpaidPrincipalBalanceOrParValue: 0, acquirersAclAtAcquisitionDate: 0 }
+        },
+        realEstateDetails: {
+          firstLienBalance: 3972474412,
+          firstLienGrantedYtd: 298552741,
+          juniorLienBalance: 2359916424,
+          juniorLienGrantedYtd: 154121921,
+          allOtherNonCommercialRealEstateBalance: 336164,
+          allOtherNonCommercialRealEstateGrantedYtd: 0,
+          totalNonCommercialRealEstate: { count: 59000, amount: 6332727000, grantedYtd: 452674662 },
+          constructionBalance: 82469261,
+          repricesOrMaturesWithinFiveYears: 2468288014,
+          interestOnlyPaymentOptionFirstLien: { count: 4975, amount: 387688422, grantedYtd: 24409235 }
+        },
+        commercialDetails: {
+          constructionAndDevelopmentMembers: { count: 31, amount: 122604002, grantedYtdCount: 11, grantedYtdAmount: 36091316 },
+          securedByFarmlandMembers: { count: 0, amount: 0, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          multifamilyMembers: { count: 217, amount: 362088679, grantedYtdCount: 4, grantedYtdAmount: 2526000 },
+          ownerOccupiedNonFarmNonResidentialMembers: { count: 758, amount: 780288746, grantedYtdCount: 25, grantedYtdAmount: 41352284 },
+          nonOwnerOccupiedNonFarmNonResidentialMembers: { count: 606, amount: 1045817628, grantedYtdCount: 12, grantedYtdAmount: 95346000 },
+          totalCommercialRealEstateSecuredMembers: { count: 1612, amount: 2310799055, grantedYtdCount: 52, grantedYtdAmount: 175315600 },
+          commercialAndIndustrialMembers: { count: 3337, amount: 153453225, grantedYtdCount: 469, grantedYtdAmount: 23008923 },
+          unsecuredCommercialMembers: { count: 69, amount: 133137, grantedYtdCount: 55, grantedYtdAmount: 12698 },
+          unsecuredRevolvingCommercialMembers: { count: 1865, amount: 26271767, grantedYtdCount: 11, grantedYtdAmount: 475000 },
+          commercialMemberLoans: { count: 6883, amount: 2490657184, grantedYtdCount: 587, grantedYtdAmount: 198812221 },
+          totalCommercialNonmemberLoans: { count: 0, amount: 0, grantedYtdCount: 0, grantedYtdAmount: 0 },
+          totalCommercialLoans: { count: 6883, amount: 2490657184 },
+          outstandingAgriculturalRelatedLoans: { count: 0, amount: 0 },
+          commercialRealEstateRepricesOrMaturesWithinFiveYears: 531789807,
+          commercialParticipationsSoldServicingRetained: { count: 22, amount: 96783740 },
+          commercialLoansSoldServicingRetained: { count: 0, amount: 0 },
+          commercialLoansSoldNoRetainedServicingYtd: { count: 0, amount: 0 },
+          totalMemberBusinessLoansNet: 2456314020,
+          commercialUnfundedCommitments: 164174073
+        },
+        purchasedAndSoldLoans: {
+          purchasedFromOtherFinancialInstitutionsYtd: { count: 0, amount: 0 },
+          purchasedFromOtherFinancialInstitutionsOutstanding: { count: 1074, amount: 409236405 },
+          purchasedFromOtherSourcesYtd: { count: 0, amount: 0 },
+          purchasedFromOtherSourcesOutstanding: { count: 0, amount: 0 },
+          loansSoldYtd: { count: 406, amount: 143658526 },
+          firstMortgageLoansSoldSecondaryMarketYtd: { count: 406, amount: 143658526 },
+          loansTransferredWithLimitedRecourseQualifyingForSalesAccounting: { count: 0, amount: 0 },
+          realEstateLoansSoldServicingRetained: { ytdCount: 31, ytdAmount: 8166768, outstandingCount: 9342, outstandingAmount: 1451483465 },
+          allOtherLoansSoldServicingRetained: { ytdCount: 0, ytdAmount: 0, outstandingCount: 0, outstandingAmount: 0 },
+          loanParticipations: {
+            vehicleNonCommercial: { purchasedYtd: 0, purchasedOutstanding: 0, soldYtd: 6795071, soldOutstanding: 0 },
+            nonFederallyGuaranteedStudent: { purchasedYtd: 0, purchasedOutstanding: 0, soldYtd: 0, soldOutstanding: 0 },
+            oneToFourFamilyResidential: { purchasedYtd: 0, purchasedOutstanding: 0, soldYtd: 58290234, soldOutstanding: 31952075 },
+            commercialExcludingConstructionAndDevelopment: { purchasedYtd: 0, purchasedOutstanding: 0, soldYtd: 89190485, soldOutstanding: 0 },
+            commercialConstructionAndDevelopment: { purchasedYtd: 0, purchasedOutstanding: 0, soldYtd: 0, soldOutstanding: 0 },
+            allOther: { purchasedYtd: 0, purchasedOutstanding: 0, soldYtd: 1107330, soldOutstanding: 0 },
+            total: { purchasedYtd: 0, purchasedOutstanding: 0, soldYtd: 155383120, soldOutstanding: 31952075 }
+          }
+        },
+        unfundedCommitments: {
+          commercialLoans: 164174073,
+          revolvingOpenEndSecuredByResidentialProperty: 2125270028,
+          creditCardLines: 2506050531,
+          unsecuredShareDraftLinesOfCredit: 6119279,
+          unusedOverdraftProtectionProgram: 439406656,
+          otherUnfundedCommitments: 3121804,
+          totalNonCommercialLoans: 5079968298,
+          totalAllLoanTypes: 5244142371,
+          unconditionallyCancelableAllLoanTypes: 2951576467,
+          conditionallyCancelableCommercialLoans: 164174073,
+          consumerLoansSecuredAndRealEstate: 2127410198,
+          consumerLoansUnsecured: 981633,
+          totalConditionallyCancelable: 2292565904,
+          commercialLoansTransferredWithLimitedRecourse: 0,
+          consumerLoansTransferredWithLimitedRecourse: 0,
+          totalLoansTransferredWithLimitedRecourse: 0,
+          loansTransferredFhlbMpf: 0
+        }
+      },
+      modeledOpportunity: {
+        assumptions: {
+          creditLifeRatePerThousand: 1,
+          creditDisabilityRatePerThousand: 2.25,
+          debtProtectionIuiRatePerThousand: 1.4,
+          creditAndDebtProtectionPenetration: 0.38,
+          vscPenetration: 0.4,
+          vscGfsMarginPerContract: 400,
+          gapPenetration: 0.7,
+          gapGfsMarginPerContract: 50,
+          directAutoAverageTermMonths: 24
+        },
+        modeledMonthlyCreditLifePremium: 6060688.15,
+        modeledMonthlyCreditDisabilityPremium: 13636548.34,
+        modeledMonthlyDebtProtectionIuiPremium: 8484963.41,
+        modeledMonthlyDirectAutoOriginations: 7940.25,
+        modeledMonthlyVscGfsIncome: 1270440,
+        modeledMonthlyGapGfsIncome: 277908.75,
+        notes: [
+          'Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.',
+          'VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle counts.',
+          'Mountain America has a large used-auto book and still leaves a high direct-auto estimate after removing reported indirect vehicle loans.'
+        ]
+      },
+      relationshipResearch: {
+        capturedAt: '2026-06-20T17:45:00-05:00',
+        source: 'Visible LinkedIn Sales Navigator search results in the authenticated Chrome session; no messages, saves, or profile actions performed',
+        searchUrl: 'https://www.linkedin.com/sales/search/people?keywords=Mountain%20America%20Credit%20Union',
+        resultSummary: 'Sales Navigator showed 5K+ people results for Mountain America Credit Union. Visible first-screen leads included government affairs, technology, and direct consumer lending contacts.',
+        visibleLeads: [
+          {
+            name: 'Suzanne Oliver',
+            title: 'VP Government Affairs, Mountain America Credit Union',
+            location: 'Sandy, Utah, United States',
+            tenure: '38 years 5 months in role; 38 years 5 months in company',
+            signal: '2nd degree connection; 7 mutual connections'
+          },
+          {
+            name: 'Kelly Albiston',
+            title: 'EVP / Chief Technology Officer, Mountain America Credit Union',
+            location: 'Salt Lake City Metropolitan Area',
+            tenure: '1 year 4 months in role; 13 years 1 month in company',
+            signal: '2nd degree connection; LinkedIn premium member; prior visible role SVP Digital Product / CTO'
+          },
+          {
+            name: 'Jonathan Brouse',
+            title: 'Vice President Direct Consumer Lending, Mountain America Credit Union',
+            location: 'Sandy, Utah, United States',
+            tenure: '3 years 2 months in role; 14 years 8 months in company',
+            signal: '2nd degree connection; LinkedIn premium member; 21 mutual connections; directly relevant consumer lending title'
+          }
+        ],
+        additionalVisibleNames: [
+          'Blake Terry',
+          'Michael Griffiths',
+          'Sterling Nielsen',
+          'Chad Witcher',
+          'Kristin Patterson',
+          'Brad Clegg',
+          'Amy Moser',
+          'Nathan Anderson',
+          'Joseph Weinberg',
+          'Jeff Chandler',
+          'Michael S.',
+          'Jason Rogers',
+          'Josh Davies',
+          'James H.',
+          'David Hillyard',
+          'Jeremy Kartchner',
+          'Chad Curtis',
+          'Andres Pinilla',
+          'Tim Toy',
+          'Brandon Eberhard',
+          'Eric Rollins'
+        ]
+      },
+      sources: [
+        {
+          label: 'NCUA Research a Credit Union',
+          url: 'https://mapping.ncua.gov/ResearchCreditUnion',
+          capturedAt: '2026-06-20'
+        },
+        {
+          label: 'NCUA credit union details API for charter 24692',
+          url: 'https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/24692',
+          capturedAt: '2026-06-20'
+        },
+        {
+          label: 'NCUA March 2026 call report download endpoint',
+          url: 'https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/24692?isCorpCU=false&cycleDate=03/31/2026',
+          capturedAt: '2026-06-20'
+        },
+        {
+          label: 'OpenStreetMap Nominatim geocode for main office address',
+          url: 'https://nominatim.openstreetmap.org/search?format=json&q=9800%20South%20Monroe%20Street%20Sandy%20Utah',
+          capturedAt: '2026-06-20'
+        },
+        {
+          label: 'LinkedIn Sales Navigator people search snapshot',
+          url: 'https://www.linkedin.com/sales/search/people?keywords=Mountain%20America%20Credit%20Union',
+          capturedAt: '2026-06-20'
+        }
+      ],
+      dataQuality: [
+        'NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.',
+        'PDF text extraction matched Schedule A loan categories, government-guaranteed loan lines, indirect loan totals, delinquency, charge-off/recovery, other loan information, real estate, commercial, loan sale/participation, and unfunded commitment sections.',
+        'OpenStreetMap exact NCUA abbreviation query returned a Monroe Street road segment; a second expanded-address query returned a bank/POI match at 9800 Monroe Street named Mountain American Credit Union, so that coordinate was used with the typo noted.',
+        'Sales Navigator relationship research was limited to visible first-screen result text from the authenticated Chrome session; no messages, saves, list changes, or profile navigation were performed.'
       ]
     }
   ]
