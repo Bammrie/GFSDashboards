@@ -1,3 +1,4 @@
+2026-06-21: Added Consumers Credit Union to the Potential New Client Overview recurring research data with March 2026 NCUA loan and indirect-vehicle-loan balances, Lake Forest Census geocode, modeled opportunity, visible LinkedIn CEO and Chief Lending & Experience Officer research, and Sean Rathjen / Dave Valentine LinkedIn confirmation-required blocker notes.
 2026-06-21: Added Redstone Federal Credit Union to the Potential New Client Overview recurring research data with March 2026 NCUA loan and indirect-loan balances, Huntsville Census geocode, modeled opportunity, visible LinkedIn President/CEO and Chief Lending Officer research, and Joe Newberry / Ericka Gorman LinkedIn not-requested or already-connected notes.
 2026-06-21: Added GreenState Credit Union to the Potential New Client Overview recurring research data with March 2026 NCUA loan and indirect-vehicle-loan balances, North Liberty Census geocode, modeled opportunity, visible LinkedIn President/CEO and Chief Lending Officer research, and Vic Israni / Ryan Doehrmann LinkedIn confirmation-required blocker notes.
 2026-06-21: Added Global Credit Union to the Potential New Client Overview recurring research data with March 2026 NCUA loan and indirect-loan balances, Anchorage Census geocode, modeled opportunity, visible LinkedIn President/CEO and Chief Lending Officer research, and Geoff Lundfelt / Patrick Cosgrove LinkedIn confirmation-required blocker notes.
@@ -168,7 +169,7 @@ when CoastLife CU is present. 2028-08-24: Added classification controls
 in the Accounts directory so each credit union can be marked as a 
 prospect or a full account, persisting the choice in the API. 
 2028-08-25: Grouped the Income Streams page by credit union and added a 
-filter dropdown so teams can focus on a single account’s streams. 
+filter dropdown so teams can focus on a single account?s streams. 
 2025-11-21: Split Accounts into a directory landing page and a dedicated 
 workspace page so the overview stays separate from account detail work. 
 2025-11-21: Reordered the site navigation to lead with Accounts and 
@@ -364,52 +365,52 @@ Keep the following formulas and terminology consistent everywhere the data platf
 ### Monthly Outstanding Balance (MOB)
 * **Beginning balance (B<sub>m</sub>)**: outstanding principal at the start of month *m*.
 * **Principal reduction (P<sub>m</sub>)**: total principal paid during month *m*.
-* **Ending balance (E<sub>m</sub>)**: B<sub>m</sub> − P<sub>m</sub>.
-* **Average MOB (\bar{B}<sub>m</sub>)**: (B<sub>m</sub> + E<sub>m</sub>) ÷ 2. Use \bar{B}<sub>m</sub> whenever the rate is quoted “per $100 of outstanding balance per month.”
+* **Ending balance (E<sub>m</sub>)**: B<sub>m</sub> ? P<sub>m</sub>.
+* **Average MOB (\bar{B}<sub>m</sub>)**: (B<sub>m</sub> + E<sub>m</sub>) ? 2. Use \bar{B}<sub>m</sub> whenever the rate is quoted ?per $100 of outstanding balance per month.?
 
 
 ### MOB rate component tracking
 Whenever a Monthly Outstanding Balance rate is recorded (credit life, disability, or debt protection), capture all three parts separately:
-* **CLP rate** – the carrier-provided base cost per $1,000 of outstanding balance.
-* **GFS mark-up** – the Goodwine Financial Services commission added to the CLP rate.
-* **Credit union mark-up** – the partner's income share layered on top of the GFS mark-up.
+* **CLP rate** ? the carrier-provided base cost per $1,000 of outstanding balance.
+* **GFS mark-up** ? the Goodwine Financial Services commission added to the CLP rate.
+* **Credit union mark-up** ? the partner's income share layered on top of the GFS mark-up.
 Store and report on each slice so premium remittance can be reconciled to its destination at month end.
 
 ### Credit Insurance (Life & Disability)
 * Premium rate inputs are stored as *per $100 MOB* values. For a given month *m* and coverage type *c* (Single Life, Joint Life, etc.):
-  * **Monthly premium** = (\bar{B}<sub>m</sub> ÷ 100) × rate<sub>c</sub>.
+  * **Monthly premium** = (\bar{B}<sub>m</sub> ? 100) ? rate<sub>c</sub>.
   * **Earned premium** = sum of the monthly premiums over the reporting window.
-* **Penetration** for coverage *c* = (# of loans with coverage *c*) ÷ (total # of eligible loans).
-* **Coverage ratio (Life)** = insured MOB ÷ total MOB (same month & population).
+* **Penetration** for coverage *c* = (# of loans with coverage *c*) ? (total # of eligible loans).
+* **Coverage ratio (Life)** = insured MOB ? total MOB (same month & population).
 * Disability payouts rely on the covered monthly payment. Track the scheduled monthly payment (principal + interest) per loan to support claim analytics.
 
-### Debt Protection (Packages A–C)
+### Debt Protection (Packages A?C)
 * Packages use blended life/disability benefits. Each package has its own rate<sub>p</sub> (per $100 MOB).
 * For loan *i* in month *m* with package *p*:
-  * **Monthly charge** = (\bar{B}<sub>m,i</sub> ÷ 100) × rate<sub>p</sub>.
+  * **Monthly charge** = (\bar{B}<sub>m,i</sub> ? 100) ? rate<sub>p</sub>.
 * Penetration and coverage ratio mirror the credit insurance definitions, but are tracked separately per package.
 
 ### Prospect opportunity heuristics (credit insurance & debt protection)
 * When modeling **Credit Life**, **Credit Disability**, or **Debt Protection / IUI** performance for call-report prospects:
-  * **Monthly full-coverage premium** = (total consumer loans ÷ $1,000) × rate, where Life = $1.00, Disability = $2.25, IUI = $1.40 per $1,000.
+  * **Monthly full-coverage premium** = (total consumer loans ? $1,000) ? rate, where Life = $1.00, Disability = $2.25, IUI = $1.40 per $1,000.
   * **Modeled penetration** = 38%. Multiply the full-coverage premium by 0.38 to estimate the monthly remittance the credit union would see.
   * Current tables focus on the credit union share; GFS income is set to zero until markup guidance is provided.
 * **Vehicle Service Contracts (VSC)** and **GAP** opportunities are estimated from direct auto production:
-  * **Direct auto loans outstanding** = (new auto count + used auto count) − indirect auto count (never below zero).
-  * **Monthly direct originations** = direct auto loans outstanding ÷ 24 (average term).
+  * **Direct auto loans outstanding** = (new auto count + used auto count) ? indirect auto count (never below zero).
+  * **Monthly direct originations** = direct auto loans outstanding ? 24 (average term).
   * Apply 40% penetration with a $400 GFS margin for VSC and 70% penetration with a $50 GFS margin for GAP to forecast income.
   * Credit union income inputs remain zero until partner markups are defined.
 
 ### Ancillary products
-* **GAP** – Treat as a per-loan flat premium. Store the amount sold (flat fee) and financed amount. Penetration = # GAP contracts ÷ # eligible auto loans. Loss ratio = claims paid ÷ GAP premium.
-* **VSC** – Service contracts typically have tiered pricing. Store contract price, term, and vehicle mileage to support future analytics. Penetration = # VSC contracts ÷ # eligible vehicle loans.
-* **Collateral Protection Insurance (CPI)** – Capture force-placed premium billed per loan and any cancellations. Coverage ratio = CPI loans ÷ total secured loans.
-* **Fidelity Bond** – Track coverage limit, annual premium, and effective dates for reporting. Penetration measured at institution level (bond in force vs. total partners).
+* **GAP** ? Treat as a per-loan flat premium. Store the amount sold (flat fee) and financed amount. Penetration = # GAP contracts ? # eligible auto loans. Loss ratio = claims paid ? GAP premium.
+* **VSC** ? Service contracts typically have tiered pricing. Store contract price, term, and vehicle mileage to support future analytics. Penetration = # VSC contracts ? # eligible vehicle loans.
+* **Collateral Protection Insurance (CPI)** ? Capture force-placed premium billed per loan and any cancellations. Coverage ratio = CPI loans ? total secured loans.
+* **Fidelity Bond** ? Track coverage limit, annual premium, and effective dates for reporting. Penetration measured at institution level (bond in force vs. total partners).
 
 ### Common metrics
-* **Attachment rate (per product)** = insured loan count ÷ total loans (filtered by eligibility rules).
-* **Premium per loan** = total premium ÷ insured loan count.
-* **Claims ratio** = claims paid ÷ earned premium (when claim data is available).
+* **Attachment rate (per product)** = insured loan count ? total loans (filtered by eligibility rules).
+* **Premium per loan** = total premium ? insured loan count.
+* **Claims ratio** = claims paid ? earned premium (when claim data is available).
 
 Document or extend new features so they reuse these formulas without re-defining them.
 ---

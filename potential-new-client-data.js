@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T01:34:19-05:00",
+  "updatedAt": "2026-06-21T01:50:01-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -18030,6 +18030,987 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Census geocoder returned an exact address match for 220 Wynn Dr, Huntsville, AL 35893; coordinates were used for map display.",
         "NCUA, Redstone/public pages, public web search, Sales Navigator, and regular LinkedIn visibly verified Joe Newberry as Redstone President/CEO and Ericka Gorman as Senior Vice President/CLO. No connection request was sent because Joe showed Message rather than Connect and Ericka was already first-degree.",
         "Connections monitor refresh showed no accepted match for tracked request targets in the recently-added visible list."
+      ]
+    },
+    {
+      "id": "consumers-68588-2026-03-31",
+      "name": "Consumers Credit Union",
+      "charterNumber": "68588",
+      "priority": "High",
+      "status": "Recurring research captured",
+      "summary": "Large Illinois FISCU with a $3.10B loan book, $1.60B in new/used vehicle balances, and $1.10B in reported indirect loans, including $1.04B of indirect vehicle loans.",
+      "profile": {
+        "ncuaName": "CONSUMERS",
+        "type": "FISCU",
+        "status": "Active",
+        "charterState": "Illinois",
+        "region": "3 - Western",
+        "peerGroup": "6 - $500,000,000 and greater",
+        "fieldOfMembership": "Non-Federal Credit Union",
+        "lowIncomeDesignation": "No",
+        "fhlbMember": "Yes",
+        "assets": 4571029391,
+        "members": 282016,
+        "ceo": "Sean Rathjen",
+        "website": "http://www.myconsumers.org",
+        "phone": "847-623-3636",
+        "mainOffice": {
+          "addressLine1": "300 N Field Dr",
+          "city": "Lake Forest",
+          "state": "IL",
+          "postalCode": "60045-2513",
+          "county": "Lake",
+          "latitude": 42.246790576043,
+          "longitude": -87.897906383237,
+          "geocodeSource": "U.S. Census Geocoder",
+          "geocodePrecision": "Exact address match",
+          "geocodeMatchedAddress": "300 N FIELD DR, LAKE FOREST, IL, 60045"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "NCUA Call Report for March 31, 2026",
+        "totals": {
+          "loansHeldForSale": 1565150,
+          "totalLoansAndLeases": {
+            "count": 192128,
+            "amount": 3095963453
+          },
+          "allowanceForCreditLossesLoansAndLeases": 44005571,
+          "accruedInterestOnLoansAndLeases": 10297521,
+          "loansGrantedYtd": {
+            "count": 6395,
+            "amount": 248374750
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 50049927,
+          "creditLossExpenseLoansAndLeasesYtd": 8352441,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 236690,
+          "loanServicingExpenseYtd": 4398110
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "accountAmountCode": "396",
+            "interestRate": 13.2,
+            "count": 51559,
+            "amount": 110242485,
+            "productFit": "Material credit-card balance and 51,559 accounts for credit/debt protection review"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "accountAmountCode": "397A",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported PAL exposure in the March 2026 schedule"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "accountAmountCode": "698A",
+            "interestRate": 0,
+            "count": 185,
+            "amount": 4131799,
+            "productFit": "Small student-loan balance relative to overall consumer book"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "accountAmountCode": "397",
+            "interestRate": 11.24,
+            "count": 8272,
+            "amount": 46858668,
+            "productFit": "Unsecured consumer balance supports debt-protection discussion"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "accountAmountCode": "385",
+            "interestRate": 6.24,
+            "count": 25862,
+            "amount": 342573063,
+            "productFit": "Large new-auto balance for VSC/GAP workflow review"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "accountAmountCode": "370",
+            "interestRate": 6.74,
+            "count": 91218,
+            "amount": 1255243556,
+            "productFit": "Largest consumer category; used-auto exposure is central to the prospect fit"
+          },
+          {
+            "label": "Leases Receivable",
+            "accountAmountCode": "002",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported lease receivable exposure"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "698C",
+            "interestRate": 6.74,
+            "count": 3422,
+            "amount": 37228416,
+            "productFit": "Additional secured consumer balance for ancillary product review"
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "703A",
+            "interestRate": 6.5,
+            "count": 3829,
+            "amount": 631650454,
+            "productFit": "Meaningful mortgage book, primarily separate from auto/consumer-lending opportunity"
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386A",
+            "interestRate": 4.74,
+            "count": 6998,
+            "amount": 325985376,
+            "productFit": "Junior-lien/home-equity balance may inform broader member protection conversations"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386B",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported all-other non-commercial real estate loans"
+          },
+          {
+            "label": "Commercial Loans Secured by Real Estate",
+            "accountAmountCode": "718A5",
+            "interestRate": 6.25,
+            "count": 336,
+            "amount": 340901867,
+            "productFit": "Commercial real estate is not the primary GFS consumer-insurance target but helps size the institution"
+          },
+          {
+            "label": "Commercial Loans Not Secured by Real Estate",
+            "accountAmountCode": "400P",
+            "interestRate": 13.95,
+            "count": 447,
+            "amount": 1147769,
+            "productFit": "Minimal non-real-estate commercial balance"
+          }
+        ],
+        "governmentGuaranteedLoans": {
+          "nonCommercialSba": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedBalance": 0
+          },
+          "pppIncluded": {
+            "count": 0,
+            "balance": 0
+          },
+          "nonCommercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedBalance": 0
+          },
+          "commercialSba": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedBalance": 0
+          },
+          "commercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedBalance": 0
+          }
+        },
+        "chargeOffAndRecoveryYtd": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "chargeOffs": 1895602,
+            "recoveries": 154977
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "chargeOffs": 674089,
+            "recoveries": 92191
+          },
+          {
+            "label": "New Vehicle Loans",
+            "chargeOffs": 884472,
+            "recoveries": 266374
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "chargeOffs": 5503590,
+            "recoveries": 1512549
+          },
+          {
+            "label": "Leases Receivable",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "chargeOffs": 367097,
+            "recoveries": 121019
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 6386
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Construction and Development Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Farmland Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Multifamily Property Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Owner Occupied Non-Farm Non-Residential Property Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Non-Owner Occupied Non-Farm Non-Residential Property Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Agricultural Production and Other Loans to Farmers Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial and Industrial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Revolving Commercial Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Total Loans and Leases",
+            "chargeOffs": 9324850,
+            "recoveries": 2153496
+          },
+          {
+            "label": "Participation Loans Purchased",
+            "chargeOffs": 7928,
+            "recoveries": 0
+          },
+          {
+            "label": "Indirect Loans",
+            "chargeOffs": 4761108,
+            "recoveries": 1550954
+          },
+          {
+            "label": "Whole or Partial Purchased Loans",
+            "chargeOffs": 104314,
+            "recoveries": 0
+          }
+        ],
+        "delinquency": {
+          "totalDelinquent30To59DaysAmount": 37755373,
+          "totalDelinquent60DaysOrMore": {
+            "count": 2419,
+            "amount": 28110891
+          },
+          "participationLoansPurchasedDelinquentAmount": 31327,
+          "indirectLoansDelinquentAmount": 11076686,
+          "wholeOrPartialPurchasedLoansDelinquentAmount": 834176,
+          "nonCommercialLoansNonAccrualAmount": 17669542,
+          "commercialLoansNonAccrualAmount": 0,
+          "bankruptcyClaimsOutstandingAmount": 9041913,
+          "borrowerDifficultyModifiedLoans": {
+            "count": 58,
+            "amount": 5517605,
+            "notInComplianceCount": 0,
+            "notInComplianceAmount": 0
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 90106,
+            "amount": 1037432296,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "Residential Real Estate Loans",
+            "count": 124,
+            "amount": 59561783,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 465,
+            "amount": 5778610,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 90695,
+          "amount": 1102772689,
+          "delinquentAmount": 11076686,
+          "chargeOffsYtd": 4761108,
+          "recoveriesYtd": 1550954
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 2753913817,
+          "autoLoanBalance": 1597816619,
+          "autoLoanCount": 117080,
+          "directAutoLoanBalance": 560384323,
+          "directAutoLoanCount": 26974,
+          "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+          "indirectShareOfLoanBook": 0.35619693376270617,
+          "indirectVehicleShareOfAutoBalance": 0.6492812026509532
+        },
+        "otherLoanInformation": {
+          "loansToOfficials": {
+            "count": 69,
+            "amount": 2853288
+          },
+          "fcuInterestRateCeilingLoansOver15Percent": {
+            "amount": 0,
+            "weightedAverageInterestRate": null
+          },
+          "purchasedCreditImpairedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedCreditDeterioratedLoans": {
+            "count": 0,
+            "amount": 0
+          }
+        },
+        "realEstateDetails": {
+          "firstLienBalance": 631650454,
+          "firstLienGrantedYtd": 38967521,
+          "firstLienBreakdown": {
+            "fixedOver15Years": {
+              "count": 829,
+              "amount": 168052334,
+              "grantedYtdAmount": 13918843
+            },
+            "fixed15YearsOrLess": {
+              "count": 2098,
+              "amount": 167173283,
+              "grantedYtdAmount": 8101203
+            },
+            "balloonHybridOver5Years": {
+              "count": 4,
+              "amount": 407561,
+              "grantedYtdAmount": 0
+            },
+            "balloonHybrid5YearsOrLess": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "adjustableRate": {
+              "count": 898,
+              "amount": 296017276,
+              "grantedYtdAmount": 16947475
+            }
+          },
+          "juniorLienBalance": 325985376,
+          "juniorLienGrantedYtd": 20172740,
+          "juniorLienBreakdown": {
+            "closedEndFixedRate": {
+              "count": 1146,
+              "amount": 46820365,
+              "grantedYtdAmount": 3479966
+            },
+            "closedEndAdjustableRate": {
+              "count": 3,
+              "amount": 1470441,
+              "grantedYtdAmount": 0
+            },
+            "openEndFixedRate": {
+              "count": 116,
+              "amount": 2605929,
+              "grantedYtdAmount": 0
+            },
+            "openEndAdjustableRate": {
+              "count": 5733,
+              "amount": 275088641,
+              "grantedYtdAmount": 16692774
+            }
+          },
+          "allOtherNonCommercialRealEstateBalance": 0,
+          "allOtherNonCommercialRealEstateGrantedYtd": 0,
+          "allOtherNonCommercialRealEstateBreakdown": {
+            "closedEndFixedRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "closedEndAdjustableRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndFixedRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndAdjustableRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalNonCommercialRealEstate": {
+            "count": 10827,
+            "amount": 957635830,
+            "grantedYtdAmount": 59140261
+          },
+          "constructionBalance": 0,
+          "repricesOrMaturesWithinFiveYears": 330932122,
+          "interestOnlyPaymentOptionFirstLien": {
+            "count": 4095,
+            "amount": 191018997,
+            "grantedYtdAmount": 15632247
+          }
+        },
+        "commercialDetails": {
+          "memberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 220,
+              "amount": 209233163,
+              "grantedYtdCount": 9,
+              "grantedYtdAmount": 16734135
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 46,
+              "amount": 26504480,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 1000000
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 66,
+              "amount": 93399458,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 332,
+              "amount": 329137101,
+              "grantedYtdCount": 10,
+              "grantedYtdAmount": 17734135
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 54,
+              "amount": 223990,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialMemberLoans": {
+              "count": 386,
+              "amount": 329361091,
+              "grantedYtdCount": 10,
+              "grantedYtdAmount": 17734135
+            }
+          },
+          "nonMemberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 1,
+              "amount": 10000000,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 10000000
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 2,
+              "amount": 1758619,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 1,
+              "amount": 6147,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 4,
+              "amount": 11764766,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 10000000
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 393,
+              "amount": 923779,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialNonMemberLoans": {
+              "count": 397,
+              "amount": 12688545,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 10000000
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 783,
+            "amount": 342049636
+          },
+          "outstandingAgriculturalRelatedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialRealEstateRepricesOrMaturesWithinFiveYears": 302181444,
+          "commercialParticipationsSoldServicingRetained": {
+            "count": 9,
+            "amount": 25203604
+          },
+          "commercialLoansSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldNoRetainedServicingYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "totalMemberBusinessLoansNet": 354805972,
+          "commercialUnfundedCommitments": 14039682
+        },
+        "purchasedAndSoldLoans": {
+          "purchasedFromOtherFinancialInstitutionsYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherFinancialInstitutionsOutstanding": {
+            "count": 1308,
+            "amount": 71378226
+          },
+          "purchasedFromOtherSourcesYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesOutstanding": {
+            "count": 1983,
+            "amount": 29393261
+          },
+          "loansSoldYtd": {
+            "count": 58,
+            "amount": 12670643
+          },
+          "firstMortgageLoansSoldSecondaryMarketYtd": {
+            "count": 58,
+            "amount": 12670643
+          },
+          "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+            "count": 0,
+            "amount": 0
+          },
+          "realEstateLoansSoldServicingRetained": {
+            "ytdCount": 58,
+            "ytdAmount": 12670643,
+            "outstandingCount": 4209,
+            "outstandingAmount": 580773176
+          },
+          "allOtherLoansSoldServicingRetained": {
+            "ytdCount": 0,
+            "ytdAmount": 0,
+            "outstandingCount": 2429,
+            "outstandingAmount": 71827658
+          },
+          "loanParticipations": {
+            "vehicleNonCommercial": {
+              "purchasedYtd": 21793700,
+              "purchasedOutstanding": 0,
+              "soldYtd": 1177848,
+              "soldOutstandingServicingRetained": 0
+            },
+            "student": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "oneToFourFamilyResidential": {
+              "purchasedYtd": 22911200,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "commercialExcludingConstructionDevelopment": {
+              "purchasedYtd": 11764766,
+              "purchasedOutstanding": 10000000,
+              "soldYtd": 18085397,
+              "soldOutstandingServicingRetained": 0
+            },
+            "commercialConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "allOther": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "total": {
+              "purchasedYtd": 56469666,
+              "purchasedOutstanding": 10000000,
+              "soldYtd": 19263245,
+              "soldOutstandingServicingRetained": 0
+            }
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 14039682,
+          "revolvingOpenEndSecuredByResidentialProperty": 292253328,
+          "creditCardLines": 852383765,
+          "unsecuredShareDraftLinesOfCredit": 628682,
+          "unusedOverdraftProtectionProgram": 143558757,
+          "otherUnfundedCommitments": 0,
+          "totalNonCommercialLoans": 1288824532,
+          "totalAllLoanTypes": 1302864214,
+          "unconditionallyCancelableAllLoanTypes": 0,
+          "conditionallyCancelableCommercialLoans": 14039682,
+          "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 292253328,
+          "conditionallyCancelableConsumerLoansUnsecured": 996571204,
+          "totalConditionallyCancelable": 1302864214,
+          "commercialLoansTransferredWithLimitedRecourse": 0,
+          "consumerLoansTransferredWithLimitedRecourse": 0,
+          "totalLoansTransferredWithLimitedRecourse": 0,
+          "loansTransferredFhlbMpf": 97048340,
+          "financialStandbyLettersOfCredit": 113532300,
+          "forwardAgreementsNotDerivativeContracts": 0,
+          "soldCreditProtectionTotal": 0,
+          "offBalanceSheetSecuritizationExposures": 0,
+          "securitiesBorrowingOrLendingTransactions": 0,
+          "offBalanceSheetRepurchaseExposure": 0,
+          "allOtherOffBalanceSheetCommitments": 0
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 1,
+          "creditDisabilityRatePerThousand": 2.25,
+          "debtProtectionIuiRatePerThousand": 1.4,
+          "creditAndDebtProtectionPenetration": 0.38,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 1046487.25,
+        "modeledMonthlyCreditDisabilityPremium": 2354596.31,
+        "modeledMonthlyDebtProtectionIuiPremium": 1465082.15,
+        "modeledMonthlyDirectAutoOriginations": 1123.92,
+        "modeledMonthlyVscGfsIncome": 179826.67,
+        "modeledMonthlyGapGfsIncome": 39337.08,
+        "notes": [
+          "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+          "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+          "Consumers reports 64.93% of auto balances as indirect vehicle loans and 35.62% of total loans as indirect, making indirect-channel strategy central to outreach."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T01:50:01-05:00",
+        "source": "Google/web public search, LinkedIn Sales Navigator visible search page, regular LinkedIn profile verification in the authenticated Chrome session; no messages, saves, profile edits, or connection requests were made.",
+        "searchUrl": "https://www.linkedin.com/sales/search/people?keywords=Consumers%20Credit%20Union%20Illinois%20Sean%20Rathjen%20Dave%20Valentine%20Chief%20Lending%20Experience%20Officer",
+        "resultSummary": "Public search, NCUA details, Consumers public pages, and regular LinkedIn visibly verified Sean Rathjen as CEO at Consumers Credit Union and Dave Valentine as Chief Lending & Experience Officer at Consumers Credit Union. Sales Navigator loaded but returned 0 lead cards for the exact keyword query. Both regular LinkedIn profiles showed visible Connect actions; connection requests were not sent in this unattended heartbeat and are recorded as confirmation_required.",
+        "visibleLeads": [
+          {
+            "name": "Sean Rathjen",
+            "title": "CEO at Consumers Credit Union",
+            "company": "Consumers Credit Union",
+            "location": "McHenry, Illinois, United States",
+            "tenure": null,
+            "signal": "NCUA details list Sean Rathjen as CEO; Consumers public CEO message and regular LinkedIn visibly verified CEO at Consumers Credit Union.",
+            "titleMatched": "CEO",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Consumers%20Credit%20Union%20Illinois%20Sean%20Rathjen%20Dave%20Valentine%20Chief%20Lending%20Experience%20Officer",
+            "profileUrl": "https://www.linkedin.com/in/sean-rathjen-9b987615/",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "blocker": "Visible Connect action found, but the unattended heartbeat did not send a LinkedIn invitation without an action-time confirmation."
+          },
+          {
+            "name": "Dave Valentine",
+            "title": "Chief Lending & Experience Officer at Consumers Credit Union",
+            "company": "Consumers Credit Union",
+            "location": "Lake Forest, Illinois, United States",
+            "tenure": null,
+            "signal": "Regular LinkedIn visibly verified current Chief Lending & Experience Officer at Consumers Credit Union; public search surfaced the same LinkedIn profile title.",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Consumers%20Credit%20Union%20Illinois%20Sean%20Rathjen%20Dave%20Valentine%20Chief%20Lending%20Experience%20Officer",
+            "profileUrl": "https://www.linkedin.com/in/davevalentinepublic/",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "blocker": "Visible Connect action found, but the unattended heartbeat did not send a LinkedIn invitation without an action-time confirmation."
+          }
+        ],
+        "additionalVisibleNames": [
+          "Sales Navigator loaded in the authenticated session but returned 0 lead cards for the exact Consumers keyword query used in this pass.",
+          "Sean Rathjen profile recommendations visibly surfaced Cheryl Kubas, Dan Nerroth, Sergio Rodriguez, and Hannah Brucato as Consumers-adjacent profiles; they were not target-title matches for this outreach pass.",
+          "Dave Valentine profile activity included a Consumers Credit Union Vice President, Marketing job post; it was not a VP Lending target and no action was taken."
+        ],
+        "connectionRequests": [
+          {
+            "name": "Sean Rathjen",
+            "title": "CEO at Consumers Credit Union",
+            "company": "Consumers Credit Union",
+            "titleMatched": "CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/sean-rathjen-9b987615/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Sean%20Rathjen%20Consumers%20Credit%20Union",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Consumers%20Credit%20Union%20Illinois%20Sean%20Rathjen%20Dave%20Valentine%20Chief%20Lending%20Experience%20Officer",
+            "blocker": "Visible Connect action found on verified current-company CEO profile, but no connection request was sent during the unattended heartbeat.",
+            "note": "Regular LinkedIn profile showed Sean Rathjen as a 2nd-degree CEO at Consumers Credit Union with a Connect action."
+          },
+          {
+            "name": "Dave Valentine",
+            "title": "Chief Lending & Experience Officer at Consumers Credit Union",
+            "company": "Consumers Credit Union",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/davevalentinepublic/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Dave%20Valentine%20Consumers%20Credit%20Union",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Consumers%20Credit%20Union%20Illinois%20Sean%20Rathjen%20Dave%20Valentine%20Chief%20Lending%20Experience%20Officer",
+            "blocker": "Visible Connect action found on verified current-company lending executive profile, but no connection request was sent during the unattended heartbeat.",
+            "note": "Regular LinkedIn profile showed Dave Valentine as a 2nd-degree Chief Lending & Experience Officer at Consumers Credit Union with a Connect action."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T01:50:01-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor",
+              "company": "Veridian Credit Union",
+              "connectedOn": "2026-06-19"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations",
+              "company": "Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "company": null,
+              "connectedOn": "2026-06-14"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "company": null,
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller",
+              "company": "Heartland Credit Union",
+              "connectedOn": "2026-06-06"
+            },
+            {
+              "name": "Steve O'Donnell, MBA, CCE",
+              "title": "President/CEO",
+              "company": null,
+              "connectedOn": "2026-05-17"
+            },
+            {
+              "name": "Mike Gutshall",
+              "title": "President & CEO",
+              "company": "Heritage Valley FCU",
+              "connectedOn": "2026-04-22"
+            },
+            {
+              "name": "Holly Augustine",
+              "title": "Director of Operations",
+              "company": "Colorado Credit Union",
+              "connectedOn": "2026-04-10"
+            }
+          ],
+          "note": "Connections monitor was refreshed. The visible recently-added list did not show Sean Rathjen or Dave Valentine as accepted connections."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA name search API for Consumers",
+          "url": "https://mapping.ncua.gov/api/Search/GetNameSearch",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API for charter 68588",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/68588",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report download endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/68588?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder for main office address",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=300%20N%20Field%20Dr%20Lake%20Forest%20IL%2060045-2513&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Consumers CEO message identifying Sean Rathjen as CEO",
+          "url": "https://www.myconsumers.org/message-from-ceo",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Consumers Credit Union press release identifying Sean Rathjen as Chief Executive Officer",
+          "url": "https://www.myconsumers.org/support/press-releases/press-release-details/consumers-credit-union-awarded--great-place-to-work--certification-for-3rd-year-in-a-row",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn public/search snippet for Sean Rathjen",
+          "url": "https://www.linkedin.com/in/sean-rathjen-9b987615/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn public/search snippet for Dave Valentine",
+          "url": "https://www.linkedin.com/in/davevalentinepublic/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn Sales Navigator exact keyword search",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=Consumers%20Credit%20Union%20Illinois%20Sean%20Rathjen%20Dave%20Valentine%20Chief%20Lending%20Experience%20Officer",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified CONSUMERS charter 68588 as an active Illinois FISCU with March 2026 as the latest available call report cycle.",
+        "NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.",
+        "PDF text extraction captured Statement of Financial Condition loan totals, Statement of Income loan income/expense lines, Schedule A Sections 1 through 8, indirect-loan detail, loan purchase/sale and participation schedules, and Schedule C unfunded commitments.",
+        "Schedule A loan category rows sum exactly to the reported $3,095,963,453 total loans and leases.",
+        "Schedule A Section 5 reported $1.10B in total indirect loans, including $1.04B in new/used vehicle indirect loans, $59.56M in residential real estate indirect loans, and $5.78M in all-other indirect loans.",
+        "Census geocoder returned an exact address match for 300 N Field Dr, Lake Forest, IL 60045; coordinates were used for map display.",
+        "NCUA, Consumers public pages, public web search, Sales Navigator, and regular LinkedIn visibly verified Sean Rathjen as CEO and Dave Valentine as Chief Lending & Experience Officer. Both showed Connect actions, but no connection request was sent during the unattended heartbeat; both are marked confirmation_required.",
+        "Connections monitor refresh showed no accepted match for Sean Rathjen or Dave Valentine in the recently-added visible list."
       ]
     }
   ]
