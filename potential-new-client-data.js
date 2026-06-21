@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  updatedAt: '2026-06-20T23:36:59-05:00',
+  updatedAt: '2026-06-20T23:46:59-05:00',
   cadenceMinutes: 10,
   latestPublicNcuaCycleDate: '2026-03-31',
   connectionTracking: {
@@ -7449,6 +7449,985 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
             "Census geocoder returned an exact address match for 820 Follin Ln SE, Vienna, VA 22180.",
             "Sales Navigator visibly verified Dietrich Kuhlmann as President & CEO and Aaron Aggerwal as Chief Lending Officer at Navy Federal Credit Union. Regular LinkedIn verified Dietrich but only showed Follow; Aaron regular search timed out. No connection request was sent.",
             "Connections monitor refresh showed no accepted match for David Gorman, Mark Sekula, Kevin Johnson, Dietrich Kuhlmann, or Aaron Aggerwal."
+        ]
+    },
+    {
+        "id": "wright-patt-66328-2026-03-31",
+        "name": "Wright-Patt Credit Union, Inc.",
+        "charterNumber": "66328",
+        "priority": "High",
+        "status": "Main-branch research captured",
+        "summary": "Ohio FISCU with a $6.73B loan book, $1.97B in new/used vehicle loans, and $1.71B in indirect loans, including $1.58B of indirect new/used vehicle loans.",
+        "profile": {
+            "ncuaName": "WRIGHT-PATT CREDIT UNION, INC.",
+            "type": "FISCU",
+            "status": "Active",
+            "charterState": "Ohio",
+            "region": "2 - Southern",
+            "peerGroup": "6 - $500,000,000 and greater",
+            "fieldOfMembership": "Non-Federal Credit Union",
+            "lowIncomeDesignation": "Yes",
+            "assets": 9610864170,
+            "members": 525908,
+            "ceo": "Timothy Mislansky",
+            "website": "https://www.wpcu.coop",
+            "phone": "937-912-7000",
+            "mainOffice": {
+                "street": "3560 Pentagon Blvd",
+                "city": "Beavercreek",
+                "state": "OH",
+                "zip": "45431",
+                "county": "Greene",
+                "country": "United States",
+                "latitude": 39.772555202272,
+                "longitude": -84.065427062323,
+                "geocodePrecision": "Exact address match from U.S. Census geocoder"
+            }
+        },
+        "callReport": {
+            "cycleDate": "2026-03-31",
+            "reportLabel": "March 2026 NCUA 5300 Call Report",
+            "totals": {
+                "loansHeldForSale": 26013660,
+                "totalLoansAndLeases": {
+                    "count": 330640,
+                    "amount": 6727710726
+                },
+                "allowanceForCreditLossesLoansAndLeases": 129156652,
+                "accruedInterestOnLoansAndLeases": 26561595,
+                "loansGrantedYtd": {
+                    "count": 26917,
+                    "amount": 670927075
+                },
+                "paydayAlternativeLoansGrantedYtd": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "interestOnLoansAndLeasesYtd": 106765871,
+                "creditLossExpenseLoansAndLeasesYtd": 22270352,
+                "gainLossOnSalesOfLoansAndLeasesYtd": -1028725,
+                "loanServicingExpenseYtd": 5283196
+            },
+            "loanCategories": [
+                {
+                    "label": "Unsecured Credit Card Loans",
+                    "accountAmountCode": "396",
+                    "interestRate": 15.75,
+                    "count": 93847,
+                    "amount": 251715309,
+                    "productFit": "Credit insurance/debt protection - unsecured consumer"
+                },
+                {
+                    "label": "Payday Alternative Loans",
+                    "accountAmountCode": "397A",
+                    "interestRate": 0,
+                    "count": 0,
+                    "amount": 0,
+                    "productFit": "No reported PAL exposure; FISCU so FCU-only PAL fields are blank"
+                },
+                {
+                    "label": "Non-Federally Guaranteed Student Loans",
+                    "accountAmountCode": "698A",
+                    "interestRate": 9.01,
+                    "count": 2454,
+                    "amount": 61175071,
+                    "productFit": "Private student loan protection context"
+                },
+                {
+                    "label": "All Other Unsecured Loans/Lines of Credit",
+                    "accountAmountCode": "397",
+                    "interestRate": 17,
+                    "count": 72071,
+                    "amount": 252685272,
+                    "productFit": "Credit insurance/debt protection - unsecured consumer"
+                },
+                {
+                    "label": "New Vehicle Loans",
+                    "accountAmountCode": "385",
+                    "interestRate": 5.99,
+                    "count": 20039,
+                    "amount": 447395434,
+                    "productFit": "Direct/indirect auto, VSC, GAP, debt protection"
+                },
+                {
+                    "label": "Used Vehicle Loans",
+                    "accountAmountCode": "370",
+                    "interestRate": 6.49,
+                    "count": 98747,
+                    "amount": 1517778389,
+                    "productFit": "Direct/indirect auto, VSC, GAP, debt protection"
+                },
+                {
+                    "label": "Leases Receivable",
+                    "accountAmountCode": "002",
+                    "interestRate": 0,
+                    "count": 0,
+                    "amount": 0,
+                    "productFit": "No reported lease exposure"
+                },
+                {
+                    "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "698C",
+                    "interestRate": 7.29,
+                    "count": 10338,
+                    "amount": 219983979,
+                    "productFit": "Debt protection and secured consumer ancillary products"
+                },
+                {
+                    "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "703A",
+                    "interestRate": 2.75,
+                    "count": 15648,
+                    "amount": 2413256899,
+                    "productFit": "Mortgage protection / debt protection conversation"
+                },
+                {
+                    "label": "Total Other Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "386A",
+                    "interestRate": 6.75,
+                    "count": 15556,
+                    "amount": 611640619,
+                    "productFit": "Home equity debt protection conversation"
+                },
+                {
+                    "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "386B",
+                    "interestRate": 4.75,
+                    "count": 38,
+                    "amount": 965124,
+                    "productFit": "Small non-commercial real estate exposure"
+                },
+                {
+                    "label": "Commercial Loans/Lines of Credit Real Estate Secured",
+                    "accountAmountCode": "718A5",
+                    "interestRate": 4.5,
+                    "count": 410,
+                    "amount": 879128650,
+                    "productFit": "Commercial portfolio context"
+                },
+                {
+                    "label": "Commercial Loans/Lines of Credit Not Real Estate Secured",
+                    "accountAmountCode": "400P",
+                    "interestRate": 15.75,
+                    "count": 1492,
+                    "amount": 71985980,
+                    "productFit": "Commercial portfolio context"
+                }
+            ],
+            "governmentGuaranteedLoans": {
+                "nonCommercialSba": {
+                    "count": 1,
+                    "balance": 24368,
+                    "guaranteedPortion": 0
+                },
+                "pppIncluded": {
+                    "count": 0,
+                    "balance": 0
+                },
+                "nonCommercialOtherGovernmentGuaranteed": {
+                    "count": 60,
+                    "balance": 7079576,
+                    "guaranteedPortion": 7079576
+                },
+                "commercialSba": {
+                    "count": 30,
+                    "balance": 28867246,
+                    "guaranteedPortion": 13785537
+                },
+                "commercialOtherGovernmentGuaranteed": {
+                    "count": 0,
+                    "balance": 0,
+                    "guaranteedPortion": 0
+                }
+            },
+            "chargeOffAndRecoveryYtd": [
+                {
+                    "label": "Unsecured Credit Card Loans",
+                    "chargeOffs": 4572300,
+                    "recoveries": 377957
+                },
+                {
+                    "label": "Payday Alternative Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Non-Federally Guaranteed Student Loans",
+                    "chargeOffs": 17354,
+                    "recoveries": 6757
+                },
+                {
+                    "label": "All Other Unsecured Loans/Lines of Credit",
+                    "chargeOffs": 3024218,
+                    "recoveries": 379431
+                },
+                {
+                    "label": "New Vehicle Loans",
+                    "chargeOffs": 748114,
+                    "recoveries": 181338
+                },
+                {
+                    "label": "Used Vehicle Loans",
+                    "chargeOffs": 7115361,
+                    "recoveries": 897088
+                },
+                {
+                    "label": "Leases Receivable",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 417716,
+                    "recoveries": 11886
+                },
+                {
+                    "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 0,
+                    "recoveries": 73405
+                },
+                {
+                    "label": "Total Other Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 541718,
+                    "recoveries": 45820
+                },
+                {
+                    "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Construction and Development Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Secured by Farmland",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Secured by Multifamily Residential Properties",
+                    "chargeOffs": 0,
+                    "recoveries": 1573
+                },
+                {
+                    "label": "Owner Occupied, Non-Farm Non-Residential Property",
+                    "chargeOffs": 2288849,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Non-Owner Occupied, Non-Farm Non-Residential Property",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Loans to Finance Agricultural Production and Other Loans to Farmers",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Commercial and Industrial Loans",
+                    "chargeOffs": 3790105,
+                    "recoveries": 300
+                },
+                {
+                    "label": "Unsecured Commercial Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Unsecured Revolving Commercial Lines of Credit",
+                    "chargeOffs": 325492,
+                    "recoveries": 15993
+                },
+                {
+                    "label": "Total Loans and Leases",
+                    "chargeOffs": 22841227,
+                    "recoveries": 1991548
+                },
+                {
+                    "label": "Participation Loans Purchased",
+                    "chargeOffs": 225567,
+                    "recoveries": 18560
+                },
+                {
+                    "label": "Indirect Loans",
+                    "chargeOffs": 7022836,
+                    "recoveries": 950399
+                },
+                {
+                    "label": "Whole/Partial Purchased Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                }
+            ],
+            "delinquency": {
+                "totalDelinquent30To59Amount": 109371342,
+                "totalDelinquent60Plus": {
+                    "count": 5386,
+                    "amount": 77855968
+                },
+                "participationLoansPurchasedDelinquentAmount": 260980,
+                "indirectDelinquentAmount": 17942357,
+                "wholeOrPartialPurchasedLoansDelinquentAmount": 0,
+                "nonCommercialNonAccrualAmount": 39944719,
+                "commercialNonAccrualAmount": 19627589,
+                "bankruptcyClaimsOutstanding": 15383342,
+                "borrowerDifficultyModifiedLoans": {
+                    "count": 651,
+                    "amount": 13423049,
+                    "notInComplianceCount": 196,
+                    "notInComplianceAmount": 8270499
+                }
+            },
+            "indirectLoans": [
+                {
+                    "label": "New and Used Vehicle Loans",
+                    "count": 90969,
+                    "amount": 1580236997,
+                    "countAccountCode": "IN0001",
+                    "amountAccountCode": "IN0002"
+                },
+                {
+                    "label": "Residential Real Estate Loans",
+                    "count": 0,
+                    "amount": 0,
+                    "countAccountCode": "IN0003",
+                    "amountAccountCode": "IN0004"
+                },
+                {
+                    "label": "Commercial Loans",
+                    "count": 0,
+                    "amount": 0,
+                    "countAccountCode": "IN0005",
+                    "amountAccountCode": "IN0006"
+                },
+                {
+                    "label": "All Other Loans",
+                    "count": 11014,
+                    "amount": 126523017,
+                    "countAccountCode": "IN0007",
+                    "amountAccountCode": "IN0008"
+                }
+            ],
+            "indirectTotals": {
+                "count": 101983,
+                "amount": 1706760014,
+                "countAccountCode": "617A",
+                "amountAccountCode": "618A",
+                "delinquentAmount": 17942357,
+                "delinquentAmountAccountCode": "041E",
+                "chargeOffsYtd": 7022836,
+                "chargeOffsAccountCode": "550E",
+                "recoveriesYtd": 950399,
+                "recoveriesAccountCode": "551E"
+            },
+            "derivedMetrics": {
+                "nonCommercialLoanBalance": 5776596096,
+                "autoLoanBalance": 1965173823,
+                "autoLoanCount": 118786,
+                "directAutoLoanBalance": 384936826,
+                "directAutoLoanCount": 27817,
+                "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+                "indirectShareOfLoanBook": 0.2536910524,
+                "indirectVehicleShareOfAutoBalance": 0.8041207238
+            },
+            "otherLoanInformation": {
+                "loansToOfficials": {
+                    "count": 50,
+                    "amount": 77063222
+                },
+                "fcuInterestRateCeiling": {
+                    "loansOver15PercentAmount": null,
+                    "weightedAverageInterestRate": null,
+                    "note": "FISCU; FCU-only interest-rate-ceiling fields were blank in the call report."
+                },
+                "purchasedCreditImpairedLoans": {
+                    "contractualBalance": 0,
+                    "recordedInvestment": 0
+                },
+                "purchasedCreditDeterioratedLoans": {
+                    "count": 0,
+                    "amount": 0,
+                    "aclBalance": 0,
+                    "carryingAmountBeforeAllowance": 0,
+                    "unpaidPrincipalBalance": 0
+                }
+            },
+            "realEstateDetails": {
+                "firstLienBalance": 2413256899,
+                "firstLienGrantedYtd": 241129894,
+                "firstLienBreakdown": {
+                    "fixedOver15Years": {
+                        "count": 8344,
+                        "amount": 1036680025,
+                        "grantedYtd": 103390704
+                    },
+                    "fixed15YearsOrLess": {
+                        "count": 3969,
+                        "amount": 272653318,
+                        "grantedYtd": 11139651
+                    },
+                    "balloonHybridOver5Years": {
+                        "count": 14,
+                        "amount": 608170962,
+                        "grantedYtd": 0
+                    },
+                    "balloonHybrid5YearsOrLess": {
+                        "count": 2716,
+                        "amount": 10082993,
+                        "grantedYtd": 0
+                    },
+                    "adjustableRate": {
+                        "count": 1911,
+                        "amount": 485669601,
+                        "grantedYtd": 126599539
+                    }
+                },
+                "juniorLienBalance": 611640620,
+                "juniorLienGrantedYtd": 45964221,
+                "juniorLienBreakdown": {
+                    "closedEndFixed": {
+                        "count": 3260,
+                        "amount": 135601299,
+                        "grantedYtd": 11604945
+                    },
+                    "closedEndAdjustable": {
+                        "count": 1,
+                        "amount": 110742,
+                        "grantedYtd": 113010
+                    },
+                    "openEndFixed": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtd": 0
+                    },
+                    "openEndAdjustable": {
+                        "count": 12295,
+                        "amount": 475928579,
+                        "grantedYtd": 34246266
+                    }
+                },
+                "allOtherNonCommercialRealEstateBalance": 965124,
+                "allOtherNonCommercialRealEstateGrantedYtd": 0,
+                "allOtherNonCommercialRealEstateBreakdown": {
+                    "closedEndFixed": {
+                        "count": 35,
+                        "amount": 884888,
+                        "grantedYtd": 0
+                    },
+                    "closedEndAdjustable": {
+                        "count": 3,
+                        "amount": 80236,
+                        "grantedYtd": 0
+                    },
+                    "openEndFixed": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtd": 0
+                    },
+                    "openEndAdjustable": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtd": 0
+                    }
+                },
+                "totalNonCommercialRealEstate": {
+                    "count": 32548,
+                    "amount": 3025862643,
+                    "grantedYtd": 287094115
+                },
+                "constructionBalance": 11985706,
+                "repricesOrMaturesWithinFiveYears": 1005292192,
+                "interestOnlyPaymentOptionFirstLien": {
+                    "count": 48,
+                    "amount": 11985706,
+                    "grantedYtd": 5754526
+                }
+            },
+            "commercialDetails": {
+                "memberLoans": {
+                    "constructionAndDevelopment": {
+                        "count": 9,
+                        "amount": 57539476,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "securedByFarmland": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "multifamily": {
+                        "count": 20,
+                        "amount": 99455107,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "ownerOccupiedNonFarmNonResidential": {
+                        "count": 274,
+                        "amount": 520667645,
+                        "grantedYtdCount": 7,
+                        "grantedYtdAmount": 2590769
+                    },
+                    "nonOwnerOccupiedNonFarmNonResidential": {
+                        "count": 92,
+                        "amount": 190158387,
+                        "grantedYtdCount": 2,
+                        "grantedYtdAmount": 2060087
+                    },
+                    "totalCommercialRealEstateSecured": {
+                        "count": 395,
+                        "amount": 867820615,
+                        "grantedYtdCount": 9,
+                        "grantedYtdAmount": 4650856
+                    },
+                    "agriculturalProduction": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "commercialAndIndustrial": {
+                        "count": 169,
+                        "amount": 33759213,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "unsecuredCommercial": {
+                        "count": 24,
+                        "amount": 3323786,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "unsecuredRevolvingCommercialLines": {
+                        "count": 1299,
+                        "amount": 34902980,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "totalCommercialMemberLoans": {
+                        "count": 1887,
+                        "amount": 939806594,
+                        "grantedYtdCount": 9,
+                        "grantedYtdAmount": 4650856
+                    }
+                },
+                "nonMemberLoans": {
+                    "constructionAndDevelopment": {
+                        "count": 3,
+                        "amount": 4158729,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "securedByFarmland": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "multifamily": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "ownerOccupiedNonFarmNonResidential": {
+                        "count": 4,
+                        "amount": 1239935,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "nonOwnerOccupiedNonFarmNonResidential": {
+                        "count": 8,
+                        "amount": 5909372,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "totalCommercialRealEstateSecured": {
+                        "count": 15,
+                        "amount": 11308036,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "agriculturalProduction": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "commercialAndIndustrial": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "unsecuredCommercial": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "unsecuredRevolvingCommercialLines": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "totalCommercialNonMemberLoans": {
+                        "count": 15,
+                        "amount": 11308036,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    }
+                },
+                "totalCommercialLoans": {
+                    "count": 1902,
+                    "amount": 951114630
+                },
+                "outstandingAgriculturalRelatedLoans": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "commercialRealEstateRepricesOrMaturesWithinFiveYears": 743748402,
+                "commercialParticipationsSoldServicingRetained": {
+                    "count": 27,
+                    "amount": 164224499
+                },
+                "commercialLoansSoldServicingRetained": {
+                    "count": 1,
+                    "amount": 238500
+                },
+                "commercialLoansSoldNoRetainedServicingYtd": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "totalMemberBusinessLoansNet": 1057564883,
+                "commercialUnfundedCommitments": 125840957
+            },
+            "purchasedAndSoldLoans": {
+                "purchasedFromOtherFinancialInstitutionsYtd": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "purchasedFromOtherFinancialInstitutionsOutstanding": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "purchasedFromOtherSourcesYtd": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "purchasedFromOtherSourcesOutstanding": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "loansSoldYtd": {
+                    "count": 11536,
+                    "amount": 238511068
+                },
+                "firstMortgageLoansSoldSecondaryMarketYtd": {
+                    "count": 200,
+                    "amount": 38504532
+                },
+                "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "realEstateLoansSoldServicingRetained": {
+                    "ytdCount": 200,
+                    "ytdAmount": 38504532,
+                    "outstandingCount": 33600,
+                    "outstandingAmount": 3590686680
+                },
+                "allOtherLoansSoldServicingRetained": {
+                    "ytdCount": 11336,
+                    "ytdAmount": 200006536,
+                    "outstandingCount": 10741,
+                    "outstandingAmount": 179705877
+                },
+                "loanParticipations": [
+                    {
+                        "label": "Vehicle Loans, Non-Commercial",
+                        "purchasedYtd": 36482221,
+                        "purchasedOutstanding": 20310543,
+                        "soldYtd": 185924,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Student Loans, Non-Commercial",
+                        "purchasedYtd": 0,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "1- to 4-Family Residential Property, Non-Commercial",
+                        "purchasedYtd": 0,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Commercial Loans, Excluding Commercial Construction and Development",
+                        "purchasedYtd": 7149306,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 155548035,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Commercial Construction and Development Loans",
+                        "purchasedYtd": 4158729,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 25162776,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "All Other Loans",
+                        "purchasedYtd": 138307,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Total Participation Loans",
+                        "purchasedYtd": 47928563,
+                        "purchasedOutstanding": 20310543,
+                        "soldYtd": 180896735,
+                        "soldOutstanding": 0
+                    }
+                ]
+            },
+            "unfundedCommitments": {
+                "commercialLoans": 125840957,
+                "revolvingOpenEndSecuredByResidentialProperty": 335466936,
+                "creditCardLines": 439649324,
+                "unsecuredShareDraftLinesOfCredit": 37167044,
+                "unusedOverdraftProtectionProgram": 93722931,
+                "otherUnfundedCommitments": 236464364,
+                "totalNonCommercialLoans": 1142470599,
+                "totalAllLoanTypes": 1268311556,
+                "unconditionallyCancelableAllLoanTypes": 886616041,
+                "conditionallyCancelableCommercialLoans": 46228579,
+                "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 335466936,
+                "conditionallyCancelableConsumerLoansUnsecured": 0,
+                "totalConditionallyCancelable": 381695515,
+                "commercialLoansTransferredWithLimitedRecourse": 0,
+                "consumerLoansTransferredWithLimitedRecourse": 0,
+                "totalLoansTransferredWithLimitedRecourse": 0,
+                "loansTransferredFhlbMpf": 0,
+                "financialStandbyLettersOfCredit": 2400882,
+                "forwardAgreementsNotDerivativeContracts": 0,
+                "soldCreditProtectionTotal": 0,
+                "offBalanceSheetSecuritizationExposures": 0,
+                "securitiesBorrowingOrLendingTransactions": 0,
+                "offBalanceSheetRepurchaseExposure": 205000000,
+                "allOtherOffBalanceSheetCommitments": 0
+            }
+        },
+        "modeledOpportunity": {
+            "assumptions": {
+                "creditLifeRatePerThousand": 1,
+                "creditDisabilityRatePerThousand": 2.25,
+                "debtProtectionIuiRatePerThousand": 1.4,
+                "creditAndDebtProtectionPenetration": 0.38,
+                "vscPenetration": 0.4,
+                "vscGfsMarginPerContract": 400,
+                "gapPenetration": 0.7,
+                "gapGfsMarginPerContract": 50,
+                "directAutoAverageTermMonths": 24
+            },
+            "modeledMonthlyCreditLifePremium": 2195106.52,
+            "modeledMonthlyCreditDisabilityPremium": 4938989.66,
+            "modeledMonthlyDebtProtectionIuiPremium": 3073149.12,
+            "modeledMonthlyDirectAutoOriginations": 1159.04,
+            "modeledMonthlyVscGfsIncome": 185446.67,
+            "modeledMonthlyGapGfsIncome": 40566.46,
+            "notes": [
+                "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+                "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+                "Wright-Patt reports $1.58B in indirect new/used vehicle loans, about 80.41% of its reported auto loan balance."
+            ]
+        },
+        "relationshipResearch": {
+            "capturedAt": "2026-06-20T23:46:59-05:00",
+            "source": "LinkedIn Sales Navigator visible search results plus regular LinkedIn people search in the authenticated Chrome session; no messages, saves, profile edits, or new connection requests were made.",
+            "searchUrl": "https://www.linkedin.com/sales/search/people?keywords=Wright-Patt%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "resultSummary": "Sales Navigator returned 25 broad results and visibly verified Tim Mislansky as President/CEO at Wright-Patt Credit Union. Regular LinkedIn search verified Tim Mislansky and showed the invitation status as Pending. A narrower lending search surfaced no clearly current Wright-Patt VP of Lending or consumer-lending executive; Lindsay Runk was visible as a past Wright-Patt Director of Consumer Lending but is currently at Suncoast.",
+            "visibleLeads": [
+                {
+                    "name": "Tim Mislansky",
+                    "title": "President/CEO",
+                    "company": "Wright-Patt Credit Union",
+                    "location": "Dayton Metropolitan Area",
+                    "tenure": "4 years 6 months in role; 25 years 3 months in company",
+                    "signal": "NCUA details list Timothy Mislansky as CEO; Sales Navigator and regular LinkedIn both visibly verified President/CEO at Wright-Patt Credit Union.",
+                    "titleMatched": "President/CEO",
+                    "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAFCIskBSo0us5-jdIUZwIXAaT9c0nJGmWM,NAME_SEARCH,jPQz",
+                    "profileUrl": "https://www.linkedin.com/in/tim-mislansky-3750a17/",
+                    "requestedAt": null,
+                    "status": "already_pending",
+                    "blocker": "Regular LinkedIn search showed Pending; no new invite was sent or withdrawn."
+                },
+                {
+                    "name": "Daniel Smith",
+                    "title": "Chief Financial Officer",
+                    "company": "Wright-Patt Credit Union",
+                    "location": "Cincinnati Metropolitan Area",
+                    "tenure": "8 years in role/company",
+                    "signal": "Sales Navigator narrower lending search showed current Wright-Patt CFO with financial executive background.",
+                    "titleMatched": "No lending/CEO/president title match.",
+                    "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAEGUowBAj9DjJYEto9nweeS0yKZXn7-J2M,NAME_SEARCH,MR-n",
+                    "profileUrl": null,
+                    "requestedAt": null,
+                    "status": "not_requested",
+                    "blocker": "Current title did not verify as VP of Lending, VP of Consumer Lending, CEO, President, or current lending executive."
+                },
+                {
+                    "name": "Lindsay Runk, CUDE",
+                    "title": "Vice President of Service Center Operations",
+                    "company": "Suncoast Credit Union",
+                    "location": "Greater Tampa Bay Area",
+                    "tenure": "2 years 1 month in current role/company",
+                    "signal": "Sales Navigator visible experience showed past Director of Consumer Lending at Wright-Patt Credit Union from 2018 to 2019.",
+                    "titleMatched": "Past Wright-Patt consumer-lending role only; current company is Suncoast.",
+                    "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAmDGO8Bjnv82BQlk6iPbMyJwxo1FfW9OsI,NAME_SEARCH,gTBy",
+                    "profileUrl": null,
+                    "requestedAt": null,
+                    "status": "not_requested",
+                    "blocker": "Current company/title did not verify as a current Wright-Patt lending executive."
+                }
+            ],
+            "additionalVisibleNames": [
+                "Darrick Weeks - President/CEO at Purdue Federal Credit Union; appeared because of broad query terms, not current Wright-Patt",
+                "Josh Mers - visible Sales Navigator result after top Wright-Patt/related leads; title not captured in viewport",
+                "Jeff Carpenter - visible Sales Navigator result after top Wright-Patt/related leads; title not captured in viewport",
+                "Joel Huxley - visible as VP, Payments at Bank-Fund Staff Federal Credit Union; not current Wright-Patt",
+                "Jen Ogden, CIA, CAMS, CCUIA - visible Sales Navigator result after top Wright-Patt/related leads; title not captured in viewport"
+            ],
+            "connectionRequests": [
+                {
+                    "name": "Tim Mislansky",
+                    "title": "President/CEO",
+                    "company": "Wright-Patt Credit Union",
+                    "titleMatched": "President/CEO",
+                    "requestedAt": null,
+                    "status": "already_pending",
+                    "acceptedAt": null,
+                    "profileUrl": "https://www.linkedin.com/in/tim-mislansky-3750a17/",
+                    "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Tim%20Mislansky%20Wright-Patt%20Credit%20Union&origin=GLOBAL_SEARCH_HEADER",
+                    "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAFCIskBSo0us5-jdIUZwIXAaT9c0nJGmWM,NAME_SEARCH,jPQz",
+                    "blocker": "LinkedIn already showed Pending; no new no-note invite was possible or sent in this run.",
+                    "note": "Verified target title/company and existing pending status."
+                }
+            ],
+            "connectionMonitor": {
+                "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+                "checkedAt": "2026-06-20T23:46:59-05:00",
+                "acceptedRequestMatches": [],
+                "visibleExistingCreditUnionConnections": [
+                    {
+                        "name": "Brandon Leonard",
+                        "title": "Consumer Lending Relations Advisor",
+                        "company": "Veridian Credit Union",
+                        "connectedOn": "2026-06-19"
+                    },
+                    {
+                        "name": "Amy White",
+                        "title": "VP of Retail Branch Operations",
+                        "company": "Heartland Credit Union - Kansas",
+                        "connectedOn": "2026-06-16"
+                    },
+                    {
+                        "name": "Eric Burgoon",
+                        "title": "Senior Lending Executive",
+                        "company": null,
+                        "connectedOn": "2026-06-14"
+                    },
+                    {
+                        "name": "Rachel Murphy",
+                        "title": "VP of Consumer Lending",
+                        "company": null,
+                        "connectedOn": "2026-06-12"
+                    },
+                    {
+                        "name": "Jennifer Walker",
+                        "title": "Controller",
+                        "company": "Heartland Credit Union",
+                        "connectedOn": "2026-06-06"
+                    },
+                    {
+                        "name": "Steve O'Donnell, MBA, CCE",
+                        "title": "President/CEO",
+                        "company": null,
+                        "connectedOn": "2026-05-17"
+                    }
+                ],
+                "note": "Connections monitor was refreshed. The visible accepted-connections list did not show David Gorman, Mark Sekula, Kevin Johnson, Dietrich Kuhlmann, Aaron Aggerwal, or Tim Mislansky as newly accepted, so no request was marked accepted."
+            }
+        },
+        "sources": [
+            {
+                "label": "NCUA Research a Credit Union",
+                "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "NCUA name search API for Wright-Patt",
+                "url": "https://mapping.ncua.gov/api/Search/GetNameSearch",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "NCUA credit union details API for charter 66328",
+                "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/66328",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "NCUA March 2026 call report download endpoint",
+                "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/66328?isCorpCU=false&cycleDate=03/31/2026",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "U.S. Census geocoder confirmation for main office address",
+                "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=3560%20Pentagon%20Blvd%20Beavercreek%20OH%2045431&benchmark=Public_AR_Current&format=json",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "LinkedIn Sales Navigator people search for Wright-Patt executive and lending leads",
+                "url": "https://www.linkedin.com/sales/search/people?keywords=Wright-Patt%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "LinkedIn Sales Navigator narrower lending search for Wright-Patt",
+                "url": "https://www.linkedin.com/sales/search/people?keywords=Wright-Patt%20Credit%20Union%20Chief%20Lending%20Officer%20VP%20Consumer%20Lending",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "Regular LinkedIn people search verifying Tim Mislansky pending status",
+                "url": "https://www.linkedin.com/search/results/people/?keywords=Tim%20Mislansky%20Wright-Patt%20Credit%20Union&origin=GLOBAL_SEARCH_HEADER",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "LinkedIn profile verified for Tim Mislansky",
+                "url": "https://www.linkedin.com/in/tim-mislansky-3750a17/",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "LinkedIn connections monitor refreshed",
+                "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+                "capturedAt": "2026-06-20"
+            }
+        ],
+        "dataQuality": [
+            "NCUA details API identified WRIGHT-PATT CREDIT UNION, INC. charter 66328 as an active Ohio FISCU with March 2026 as the latest available call report cycle.",
+            "NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.",
+            "PDF text extraction captured Schedule A Section 1 loan categories, government-guaranteed loan lines, delinquency, charge-off/recovery, indirect loan totals, other loan information, real estate, commercial, loan sale/participation, and Schedule C unfunded commitment schedules.",
+            "Schedule A Section 5 reported $1.71B in total indirect loans, including $1.58B in indirect new/used vehicle loans and $126.52M in all-other indirect loans.",
+            "Census geocoder returned an exact address match for 3560 Pentagon Blvd, Beavercreek, OH 45431.",
+            "Sales Navigator visibly verified Tim Mislansky as President/CEO at Wright-Patt Credit Union; regular LinkedIn showed Pending, so no new connection request was sent. A current VP Lending/consumer-lending executive was not clearly visible in the sampled Sales Navigator results.",
+            "Connections monitor refresh showed no accepted match for David Gorman, Mark Sekula, Kevin Johnson, Dietrich Kuhlmann, Aaron Aggerwal, or Tim Mislansky."
         ]
     }
   ]
