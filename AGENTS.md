@@ -488,4 +488,5 @@ quotes.
 2026-06-21: Added NASA Federal Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, Census map coordinates, indirect auto/residential exposure, and read-only LinkedIn relationship research.
 2026-06-21: Added CEFCU (Citizens Equity First Credit Union) to Potential New Client Overview with March 2026 NCUA loan schedules, Census map coordinates, high indirect-auto exposure, and read-only LinkedIn relationship research.
 2026-06-21: Added Gesa Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, Census map coordinates, high indirect-auto exposure, and read-only LinkedIn relationship research.
+2026-06-21: Added Texas Trust Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, Census map coordinates, indirect auto/lease exposure, and read-only LinkedIn relationship research.
 
