@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  updatedAt: '2026-06-20T20:17:11-05:00',
+  updatedAt: '2026-06-20T20:27:12-05:00',
   cadenceMinutes: 10,
   latestPublicNcuaCycleDate: '2026-03-31',
   connectionTracking: {
@@ -5571,6 +5571,891 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
             "OpenStreetMap returned a named RBFCU building/address match at 1 IKEA-RBFCU Parkway; Census geocoder returned no match for this private road address.",
             "Sales Navigator and regular LinkedIn showed Mark Sekula as a verified RBFCU CEO/President target. No connection request was sent because browser-use confirmation policy requires action-time confirmation before creating a third-party LinkedIn invite.",
             "Connections monitor refresh showed no accepted match for the existing David Gorman request and no visible accepted RBFCU connection."
+        ]
+    },
+    {
+        "id": "suncoast-68645-2026-03-31",
+        "name": "Suncoast Credit Union",
+        "charterNumber": "68645",
+        "priority": "High",
+        "status": "Research captured; CEO LinkedIn target pending action-time confirmation",
+        "summary": "Large Florida FISCU with a $16.01B loan book, $7.08B in new/used vehicle loans, and $4.74B in reported indirect loans as of the March 31, 2026 NCUA call report.",
+        "profile": {
+            "ncuaName": "SUNCOAST",
+            "type": "FISCU",
+            "status": "Active",
+            "charterState": "Florida",
+            "region": "8 - ONES",
+            "fieldOfMembership": "Non-Federal Credit Union",
+            "peerGroup": "6 - $500,000,000 and greater",
+            "assets": 20537574922,
+            "members": 1389633,
+            "ceo": "Kevin D Johnson",
+            "website": "https://www.suncoast.com",
+            "phone": "813-621-7511",
+            "mainOffice": {
+                "street": "6536 E Hillsborough Ave",
+                "city": "Tampa",
+                "state": "FL",
+                "zip": "33610",
+                "county": "Hillsborough",
+                "country": "United States",
+                "latitude": 27.99633019942,
+                "longitude": -82.381472732618,
+                "geocodePrecision": "U.S. Census geocoder matched the 6536 E Hillsborough Ave address range; OpenStreetMap returned road-level matches only"
+            }
+        },
+        "callReport": {
+            "cycleDate": "2026-03-31",
+            "reportLabel": "March 2026 Call Report",
+            "totals": {
+                "loansHeldForSale": 21153742,
+                "totalLoansAndLeases": {
+                    "count": 819733,
+                    "amount": 16012678238
+                },
+                "allowanceForCreditLossesLoansAndLeases": 278522555,
+                "accruedInterestOnLoansAndLeases": 57980117,
+                "loansGrantedYtd": {
+                    "count": 49283,
+                    "amount": 1517925231
+                },
+                "paydayAlternativeLoansGrantedYtd": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "interestOnLoansAndLeasesYtd": 255937671,
+                "creditLossExpenseLoansAndLeasesYtd": 60940762,
+                "gainLossOnSalesOfLoansAndLeasesYtd": 21038,
+                "loanServicingExpenseYtd": 5502755
+            },
+            "loanCategories": [
+                {
+                    "label": "Unsecured Credit Card Loans",
+                    "accountAmountCode": "396",
+                    "interestRate": 17,
+                    "count": 270713,
+                    "amount": 1038186541,
+                    "productFit": "Credit insurance/debt protection - unsecured consumer"
+                },
+                {
+                    "label": "Payday Alternative Loans",
+                    "accountAmountCode": "397A",
+                    "interestRate": 0,
+                    "count": 0,
+                    "amount": 0,
+                    "productFit": "No reported PAL exposure; FISCU so FCU-only PAL fields are blank"
+                },
+                {
+                    "label": "Non-Federally Guaranteed Student Loans",
+                    "accountAmountCode": "698A",
+                    "interestRate": 7,
+                    "count": 194,
+                    "amount": 3694079,
+                    "productFit": "Small private student loan exposure"
+                },
+                {
+                    "label": "All Other Unsecured Loans/Lines of Credit",
+                    "accountAmountCode": "397",
+                    "interestRate": 11.75,
+                    "count": 169439,
+                    "amount": 843551122,
+                    "productFit": "Credit insurance/debt protection - unsecured consumer"
+                },
+                {
+                    "label": "New Vehicle Loans",
+                    "accountAmountCode": "385",
+                    "interestRate": 6,
+                    "count": 70490,
+                    "amount": 2316759566,
+                    "productFit": "Direct/indirect auto, VSC, GAP, debt protection"
+                },
+                {
+                    "label": "Used Vehicle Loans",
+                    "accountAmountCode": "370",
+                    "interestRate": 6.5,
+                    "count": 228721,
+                    "amount": 4761706799,
+                    "productFit": "Direct/indirect auto, VSC, GAP, debt protection"
+                },
+                {
+                    "label": "Leases Receivable",
+                    "accountAmountCode": "002",
+                    "interestRate": 0,
+                    "count": 0,
+                    "amount": 0,
+                    "productFit": "No reported lease exposure"
+                },
+                {
+                    "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "698C",
+                    "interestRate": 8.5,
+                    "count": 29758,
+                    "amount": 522013227,
+                    "productFit": "Debt protection and secured consumer ancillary products"
+                },
+                {
+                    "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "703A",
+                    "interestRate": 6.63,
+                    "count": 31145,
+                    "amount": 4861693965,
+                    "productFit": "Mortgage protection / debt protection conversation"
+                },
+                {
+                    "label": "Total Other Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "386A",
+                    "interestRate": 6.75,
+                    "count": 18489,
+                    "amount": 962582500,
+                    "productFit": "Home equity debt protection conversation"
+                },
+                {
+                    "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "386B",
+                    "interestRate": 10.5,
+                    "count": 10,
+                    "amount": 225416,
+                    "productFit": "Small non-commercial real estate exposure"
+                },
+                {
+                    "label": "Commercial Loans/Lines of Credit Real Estate Secured",
+                    "accountAmountCode": "718A5",
+                    "interestRate": 5.35,
+                    "count": 261,
+                    "amount": 634177795,
+                    "productFit": "Commercial portfolio context"
+                },
+                {
+                    "label": "Commercial Loans/Lines of Credit Not Real Estate Secured",
+                    "accountAmountCode": "400P",
+                    "interestRate": 5.75,
+                    "count": 513,
+                    "amount": 68087228,
+                    "productFit": "Commercial portfolio context"
+                }
+            ],
+            "governmentGuaranteedLoans": {
+                "nonCommercialSba": {
+                    "count": 10,
+                    "balance": 486428,
+                    "guaranteedPortion": 372564
+                },
+                "pppIncluded": {
+                    "count": 5,
+                    "balance": 1165
+                },
+                "nonCommercialOtherGovernmentGuaranteed": {
+                    "count": 0,
+                    "balance": 0,
+                    "guaranteedPortion": 0
+                },
+                "commercialSba": {
+                    "count": 5,
+                    "balance": 5184781,
+                    "guaranteedPortion": 3996657
+                },
+                "commercialOtherGovernmentGuaranteed": {
+                    "count": 0,
+                    "balance": 0,
+                    "guaranteedPortion": 0
+                }
+            },
+            "chargeOffAndRecoveryYtd": [
+                {
+                    "label": "Unsecured Credit Card Loans",
+                    "chargeOffs": 20629885,
+                    "recoveries": 3119387
+                },
+                {
+                    "label": "Payday Alternative Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Non-Federally Guaranteed Student Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "All Other Unsecured Loans/Lines of Credit",
+                    "chargeOffs": 19989205,
+                    "recoveries": 2456856
+                },
+                {
+                    "label": "New Vehicle Loans",
+                    "chargeOffs": 6411441,
+                    "recoveries": 687620
+                },
+                {
+                    "label": "Used Vehicle Loans",
+                    "chargeOffs": 16391486,
+                    "recoveries": 1686864
+                },
+                {
+                    "label": "Leases Receivable",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 1433949,
+                    "recoveries": 189455
+                },
+                {
+                    "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Total Other Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 1802,
+                    "recoveries": 168
+                },
+                {
+                    "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Construction and Development Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Secured by Farmland",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Secured by Multifamily Residential Properties",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Owner Occupied, Non-Farm Non-Residential Property",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Non-Owner Occupied, Non-Farm Non-Residential Property",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Commercial and Industrial Loans",
+                    "chargeOffs": 78241,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Unsecured Commercial Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Unsecured Revolving Commercial Lines of Credit",
+                    "chargeOffs": 0,
+                    "recoveries": 10817
+                },
+                {
+                    "label": "Total Loans and Leases",
+                    "chargeOffs": 64936009,
+                    "recoveries": 8151167
+                },
+                {
+                    "label": "Participation Loans Purchased",
+                    "chargeOffs": 6474,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Indirect Loans",
+                    "chargeOffs": 16863236,
+                    "recoveries": 1789073
+                },
+                {
+                    "label": "Whole/Partial Purchased Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                }
+            ],
+            "delinquency": {
+                "totalDelinquent30To59Amount": 244624621,
+                "totalDelinquent60Plus": {
+                    "count": 13305,
+                    "amount": 136875699
+                },
+                "participationLoansPurchasedDelinquentAmount": 395,
+                "indirectDelinquentAmount": 28108767,
+                "wholeOrPartialPurchasedLoansDelinquentAmount": 257575,
+                "nonCommercialNonAccrualAmount": 82806902,
+                "commercialNonAccrualAmount": 762706,
+                "bankruptcyClaimsOutstanding": 31915137,
+                "borrowerDifficultyModifiedLoans": {
+                    "count": 4920,
+                    "amount": 94371063,
+                    "notInComplianceCount": 942,
+                    "notInComplianceAmount": 21041406
+                }
+            },
+            "indirectLoans": [
+                {
+                    "label": "New and Used Vehicle Loans",
+                    "count": 167732,
+                    "amount": 4684361215,
+                    "countAccountCode": "IN0001",
+                    "amountAccountCode": "IN0002"
+                },
+                {
+                    "label": "Residential Real Estate Loans",
+                    "count": 0,
+                    "amount": 0,
+                    "countAccountCode": "IN0003",
+                    "amountAccountCode": "IN0004"
+                },
+                {
+                    "label": "Commercial Loans",
+                    "count": 0,
+                    "amount": 0,
+                    "countAccountCode": "IN0005",
+                    "amountAccountCode": "IN0006"
+                },
+                {
+                    "label": "All Other Loans",
+                    "count": 6816,
+                    "amount": 52045851,
+                    "countAccountCode": "IN0007",
+                    "amountAccountCode": "IN0008"
+                }
+            ],
+            "indirectTotals": {
+                "count": 174548,
+                "amount": 4736407066,
+                "countAccountCode": "617A",
+                "amountAccountCode": "618A",
+                "delinquentAmount": 28108767,
+                "delinquentAmountAccountCode": "041E",
+                "chargeOffsYtd": 16863236,
+                "chargeOffsAccountCode": "550E",
+                "recoveriesYtd": 1789073,
+                "recoveriesAccountCode": "551E"
+            },
+            "derivedMetrics": {
+                "nonCommercialLoanBalance": 15310413215,
+                "autoLoanBalance": 7078466365,
+                "autoLoanCount": 299211,
+                "directAutoLoanBalance": 2394105150,
+                "directAutoLoanCount": 131479,
+                "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+                "indirectShareOfLoanBook": 0.2957910598,
+                "indirectVehicleShareOfAutoBalance": 0.6617762907
+            },
+            "otherLoanInformation": {
+                "loansToOfficials": {
+                    "count": 42,
+                    "amount": 3717015
+                },
+                "fcuInterestRateCeiling": {
+                    "loansOver15PercentAmount": null,
+                    "weightedAverageInterestRate": null,
+                    "note": "FISCU; FCU-only interest-rate-ceiling fields were blank in the call report."
+                },
+                "purchasedCreditImpairedLoans": {
+                    "contractualBalance": 0,
+                    "recordedInvestment": 0
+                },
+                "purchasedCreditDeterioratedLoans": {
+                    "count": 0,
+                    "amount": 0,
+                    "aclBalance": 0,
+                    "carryingAmountBeforeAllowance": 0,
+                    "unpaidPrincipalBalance": 0
+                }
+            },
+            "realEstateDetails": {
+                "firstLienBalance": 4861693967,
+                "firstLienGrantedYtd": 220642670,
+                "juniorLienBalance": 962582500,
+                "juniorLienGrantedYtd": 82730100,
+                "allOtherNonCommercialRealEstateBalance": 225416,
+                "allOtherNonCommercialRealEstateGrantedYtd": 0,
+                "totalNonCommercialRealEstate": {
+                    "count": 49644,
+                    "amount": 5824501883,
+                    "grantedYtd": 303372770
+                },
+                "constructionBalance": 0,
+                "repricesOrMaturesWithinFiveYears": 2042451457,
+                "interestOnlyPaymentOptionFirstLien": {
+                    "count": 0,
+                    "amount": 0,
+                    "grantedYtd": 0
+                }
+            },
+            "commercialDetails": {
+                "memberLoans": {
+                    "constructionAndDevelopment": {
+                        "count": 8,
+                        "amount": 30087235,
+                        "grantedYtdCount": 3,
+                        "grantedYtdAmount": 35623964
+                    },
+                    "securedByFarmland": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "multifamily": {
+                        "count": 8,
+                        "amount": 5932641,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "ownerOccupiedNonFarmNonResidential": {
+                        "count": 148,
+                        "amount": 212104484,
+                        "grantedYtdCount": 15,
+                        "grantedYtdAmount": 59662500
+                    },
+                    "nonOwnerOccupiedNonFarmNonResidential": {
+                        "count": 89,
+                        "amount": 328594766,
+                        "grantedYtdCount": 9,
+                        "grantedYtdAmount": 33935472
+                    },
+                    "totalCommercialRealEstateSecured": {
+                        "count": 253,
+                        "amount": 576719126,
+                        "grantedYtdCount": 27,
+                        "grantedYtdAmount": 129221936
+                    },
+                    "agriculturalProduction": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "commercialAndIndustrial": {
+                        "count": 424,
+                        "amount": 54776429,
+                        "grantedYtdCount": 50,
+                        "grantedYtdAmount": 11627471
+                    },
+                    "unsecuredCommercial": {
+                        "count": 56,
+                        "amount": 12644178,
+                        "grantedYtdCount": 9,
+                        "grantedYtdAmount": 142978
+                    },
+                    "unsecuredRevolvingCommercialLines": {
+                        "count": 33,
+                        "amount": 666621,
+                        "grantedYtdCount": 4,
+                        "grantedYtdAmount": 322500
+                    },
+                    "totalCommercialMemberLoans": {
+                        "count": 766,
+                        "amount": 644806354,
+                        "grantedYtdCount": 90,
+                        "grantedYtdAmount": 141314885
+                    }
+                },
+                "nonMemberLoans": {
+                    "constructionAndDevelopment": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "securedByFarmland": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "multifamily": {
+                        "count": 3,
+                        "amount": 24734453,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "ownerOccupiedNonFarmNonResidential": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "nonOwnerOccupiedNonFarmNonResidential": {
+                        "count": 5,
+                        "amount": 32724216,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "totalCommercialRealEstateSecured": {
+                        "count": 8,
+                        "amount": 57458669,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "agriculturalProduction": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "commercialAndIndustrial": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "unsecuredCommercial": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "unsecuredRevolvingCommercialLines": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "totalCommercialNonMemberLoans": {
+                        "count": 8,
+                        "amount": 57458669,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    }
+                },
+                "totalCommercialLoans": {
+                    "count": 774,
+                    "amount": 702265023
+                },
+                "outstandingAgriculturalRelatedLoans": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "commercialRealEstateRepricesOrMaturesWithinFiveYears": 465439628,
+                "commercialParticipationsSoldServicingRetained": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "commercialLoansSoldServicingRetained": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "commercialLoansSoldNoRetainedServicingYtd": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "totalMemberBusinessLoansNet": 708518358,
+                "commercialUnfundedCommitments": 70904694
+            },
+            "purchasedAndSoldLoans": {
+                "purchasedFromOtherFinancialInstitutionsYtd": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "purchasedFromOtherFinancialInstitutionsOutstanding": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "purchasedFromOtherSourcesYtd": {
+                    "count": 403,
+                    "amount": 22840221
+                },
+                "purchasedFromOtherSourcesOutstanding": {
+                    "count": 2622,
+                    "amount": 106930679
+                },
+                "loansSoldYtd": {
+                    "count": 6,
+                    "amount": 694450
+                },
+                "firstMortgageLoansSoldSecondaryMarketYtd": {
+                    "count": 6,
+                    "amount": 694450
+                },
+                "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "realEstateLoansSoldServicingRetained": {
+                    "ytdCount": 6,
+                    "ytdAmount": 694450,
+                    "outstandingCount": 1433,
+                    "outstandingAmount": 166876125
+                },
+                "allOtherLoansSoldServicingRetained": {
+                    "ytdCount": 0,
+                    "ytdAmount": 0,
+                    "outstandingCount": 0,
+                    "outstandingAmount": 0
+                },
+                "loanParticipations": [
+                    {
+                        "label": "Vehicle Loans, Non-Commercial",
+                        "purchasedYtd": 395,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Student Loans, Non-Commercial",
+                        "purchasedYtd": 0,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "1- to 4-Family Residential Property, Non-Commercial",
+                        "purchasedYtd": 17131948,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Commercial Loans, Excluding Commercial Construction and Development",
+                        "purchasedYtd": 57458669,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Commercial Construction and Development Loans",
+                        "purchasedYtd": 0,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "All Other Loans",
+                        "purchasedYtd": 0,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Total Participation Loans",
+                        "purchasedYtd": 74591012,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    }
+                ]
+            },
+            "unfundedCommitments": {
+                "commercialLoans": 70904694,
+                "revolvingOpenEndSecuredByResidentialProperty": 509885220,
+                "creditCardLines": 2448251300,
+                "unsecuredShareDraftLinesOfCredit": 173360572,
+                "unusedOverdraftProtectionProgram": 1075240048,
+                "otherUnfundedCommitments": 549721,
+                "totalNonCommercialLoans": 4207286861,
+                "totalAllLoanTypes": 4278191555,
+                "unconditionallyCancelableAllLoanTypes": 3696752118,
+                "conditionallyCancelableCommercialLoans": 70454229,
+                "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 510434941,
+                "conditionallyCancelableConsumerLoansUnsecured": 550267,
+                "totalConditionallyCancelable": 581439437,
+                "commercialLoansTransferredWithLimitedRecourse": 0,
+                "consumerLoansTransferredWithLimitedRecourse": 0,
+                "totalLoansTransferredWithLimitedRecourse": 0,
+                "loansTransferredFhlbMpf": 0,
+                "financialStandbyLettersOfCredit": 58260,
+                "forwardAgreementsNotDerivativeContracts": 0
+            }
+        },
+        "modeledOpportunity": {
+            "assumptions": {
+                "creditLifeRatePerThousand": 1,
+                "creditDisabilityRatePerThousand": 2.25,
+                "debtProtectionIuiRatePerThousand": 1.4,
+                "creditAndDebtProtectionPenetration": 0.38,
+                "vscPenetration": 0.4,
+                "vscGfsMarginPerContract": 400,
+                "gapPenetration": 0.7,
+                "gapGfsMarginPerContract": 50,
+                "directAutoAverageTermMonths": 24
+            },
+            "modeledMonthlyCreditLifePremium": 5817957.02,
+            "modeledMonthlyCreditDisabilityPremium": 13090403.3,
+            "modeledMonthlyDebtProtectionIuiPremium": 8145139.83,
+            "modeledMonthlyDirectAutoOriginations": 5478.29,
+            "modeledMonthlyVscGfsIncome": 876526.67,
+            "modeledMonthlyGapGfsIncome": 191740.21,
+            "notes": [
+                "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+                "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+                "Suncoast reports $4.68B in indirect new/used vehicle loans, about 66.18% of its reported auto loan balance."
+            ]
+        },
+        "relationshipResearch": {
+            "capturedAt": "2026-06-20T20:27:12-05:00",
+            "source": "LinkedIn Sales Navigator visible search results plus regular LinkedIn people search in the authenticated Chrome session; no messages, saves, or profile edits were made.",
+            "searchUrl": "https://www.linkedin.com/sales/search/people?keywords=Suncoast%20Credit%20Union%20consumer%20lending%20VP",
+            "resultSummary": "Sales Navigator found current-company Suncoast senior leaders, including Melva McKay-Bass, Senior Vice President of Business Development, with visible consumer-lending experience in the summary. Exact Sales Navigator search for Kevin D Johnson Suncoast Credit Union CEO returned zero leads, but regular LinkedIn search verified Kevin Johnson as President/CEO at Suncoast Credit Union with a visible Connect action. No connection request was sent because browser-use policy requires action-time confirmation before creating a LinkedIn invite.",
+            "visibleLeads": [
+                {
+                    "name": "Kevin Johnson",
+                    "title": "President/CEO at Suncoast Credit Union",
+                    "company": "Suncoast Credit Union",
+                    "location": "Tampa, Florida, United States",
+                    "tenure": null,
+                    "signal": "NCUA details list Kevin D Johnson as CEO; regular LinkedIn people search returned Kevin Johnson, President/CEO at Suncoast Credit Union, 2nd-degree connection, with a visible Connect action.",
+                    "titleMatched": "CEO / President",
+                    "salesNavigatorUrl": null,
+                    "profileUrl": "https://www.linkedin.com/in/kevin-johnson-0b59027/",
+                    "requestedAt": null,
+                    "status": "confirmation_required",
+                    "blocker": "Verified target, but no-note connection request was not sent because browser-use policy requires action-time confirmation for third-party LinkedIn invites."
+                },
+                {
+                    "name": "Melva McKay-Bass",
+                    "title": "Senior Vice President of Business Development",
+                    "company": "Suncoast Credit Union",
+                    "location": "Tampa, Florida, United States",
+                    "tenure": "26 years 5 months in role/company",
+                    "signal": "Sales Navigator visible summary described experience in commercial and consumer lending, banking, risk management, and credit analysis; 22 mutual connections.",
+                    "titleMatched": "Senior VP with consumer-lending adjacency in profile summary; current title is business development rather than lending/CEO/President.",
+                    "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAKg8j4BgffxMPOvsE6KRzTaBbTHNexRW14,NAME_SEARCH,YWiG?_ntb=LRlKGrVhSqauaGbJ3yHSiQ%3D%3D",
+                    "profileUrl": null,
+                    "requestedAt": null,
+                    "status": "not_requested",
+                    "blocker": "Current title did not verify as VP of Lending, VP of Consumer Lending, CEO, President, or a current lending-executive title."
+                },
+                {
+                    "name": "Lindsay Runk, CUDE",
+                    "title": "Vice President of Service Center Operations",
+                    "company": "Suncoast Credit Union",
+                    "location": "Greater Tampa Bay Area",
+                    "tenure": "2 years 1 month in role/company",
+                    "signal": "Sales Navigator visible experience showed past Director of Consumer Lending at Wright-Patt Credit Union; 13 mutual connections and 1 recent post.",
+                    "titleMatched": "Current VP is operations/service center; consumer lending role is historical at another credit union.",
+                    "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAmDGO8Bjnv82BQlk6iPbMyJwxo1FfW9OsI,NAME_SEARCH,gTBy?_ntb=LRlKGrVhSqauaGbJ3yHSiQ%3D%3D",
+                    "profileUrl": null,
+                    "requestedAt": null,
+                    "status": "not_requested",
+                    "blocker": "Current company/title did not verify as a current Suncoast lending executive."
+                }
+            ],
+            "additionalVisibleNames": [
+                "Darlene Johnson - Executive Vice President/Chief Strategy and Transformation Officer at Suncoast Credit Union",
+                "Lisa Johnson - Intelligent Automations Enablement Manager at Suncoast Credit Union",
+                "Dawn Johnson - Mortgage Lending Specialist at Suncoast Federal Credit Union",
+                "Kevin T. - past Business Relationship Officer / Commercial Lender at Suncoast Credit Union"
+            ],
+            "connectionRequests": [
+                {
+                    "name": "Kevin Johnson",
+                    "title": "President/CEO at Suncoast Credit Union",
+                    "company": "Suncoast Credit Union",
+                    "titleMatched": "CEO / President",
+                    "requestedAt": null,
+                    "status": "confirmation_required",
+                    "acceptedAt": null,
+                    "profileUrl": "https://www.linkedin.com/in/kevin-johnson-0b59027/",
+                    "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Kevin%20D%20Johnson%20Suncoast%20Credit%20Union&origin=GLOBAL_SEARCH_HEADER",
+                    "salesNavigatorUrl": null,
+                    "blocker": "Action-time confirmation required before sending a third-party LinkedIn connection request.",
+                    "note": "Regular LinkedIn search result was an exact match: Kevin Johnson, President/CEO at Suncoast Credit Union, 2nd-degree connection, with a visible Connect action. No invite was sent."
+                }
+            ],
+            "connectionMonitor": {
+                "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+                "checkedAt": "2026-06-20T20:27:12-05:00",
+                "acceptedRequestMatches": [],
+                "visibleExistingCreditUnionConnections": [
+                    {
+                        "name": "Brandon Leonard",
+                        "title": "Consumer Lending Relations Advisor",
+                        "company": "Veridian Credit Union",
+                        "connectedOn": "2026-06-19"
+                    },
+                    {
+                        "name": "Amy White",
+                        "title": "VP of Retail Branch Operations",
+                        "company": "Heartland Credit Union - Kansas",
+                        "connectedOn": "2026-06-16"
+                    },
+                    {
+                        "name": "Rachel Murphy",
+                        "title": "VP of Consumer Lending",
+                        "company": null,
+                        "connectedOn": "2026-06-12"
+                    },
+                    {
+                        "name": "Jennifer Walker",
+                        "title": "Controller",
+                        "company": "Heartland Credit Union",
+                        "connectedOn": "2026-06-06"
+                    },
+                    {
+                        "name": "Steve O'Donnell, MBA, CCE",
+                        "title": "President/CEO",
+                        "company": null,
+                        "connectedOn": "2026-05-17"
+                    }
+                ],
+                "note": "Connections monitor was refreshed. The visible accepted-connections list did not show David Gorman, Mark Sekula, or any Suncoast CEO match, so no prior request was marked accepted."
+            }
+        },
+        "sources": [
+            {
+                "label": "NCUA Research a Credit Union",
+                "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "NCUA credit union details API for charter 68645",
+                "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/68645",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "NCUA March 2026 call report download endpoint",
+                "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/68645?isCorpCU=false&cycleDate=03/31/2026",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "U.S. Census geocoder confirmation for main office address range",
+                "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=6536%20E%20Hillsborough%20Ave%20Tampa%20FL%2033610&benchmark=Public_AR_Current&format=json",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "OpenStreetMap Nominatim geocode attempt for main office address",
+                "url": "https://nominatim.openstreetmap.org/search?format=json&q=6536%20E%20Hillsborough%20Ave%20Tampa%20FL%2033610",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "LinkedIn Sales Navigator people search for Suncoast executive and lending leads",
+                "url": "https://www.linkedin.com/sales/search/people?keywords=Suncoast%20Credit%20Union%20consumer%20lending%20VP",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "Regular LinkedIn people search verifying Kevin Johnson profile",
+                "url": "https://www.linkedin.com/search/results/people/?keywords=Kevin%20D%20Johnson%20Suncoast%20Credit%20Union&origin=GLOBAL_SEARCH_HEADER",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "LinkedIn profile verified for pending action-time confirmation",
+                "url": "https://www.linkedin.com/in/kevin-johnson-0b59027/",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "LinkedIn connections monitor refreshed",
+                "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+                "capturedAt": "2026-06-20"
+            }
+        ],
+        "dataQuality": [
+            "NCUA details API identified SUNCOAST charter 68645 as an active Florida FISCU with March 2026 as the latest available call report cycle.",
+            "NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.",
+            "PDF text extraction captured Schedule A Section 1 loan categories, government-guaranteed loan lines, delinquency, charge-off/recovery, indirect loan totals, other loan information, real estate, commercial, loan sale/participation, and unfunded commitment schedules.",
+            "Schedule A Section 1 and Section 7 differ by $2 on first-lien residential balance; loan category values use Section 1 while real estate detail uses Section 7 values.",
+            "Census geocoder returned an address-range match for 6536 E Hillsborough Ave; OpenStreetMap returned road-level results, so Census coordinates are used.",
+            "Sales Navigator did not return the NCUA-listed CEO in an exact CEO search, but regular LinkedIn search visibly verified Kevin Johnson as President/CEO at Suncoast Credit Union. No connection request was sent because browser-use confirmation policy requires action-time confirmation before creating a LinkedIn invite.",
+            "Connections monitor refresh showed no accepted match for David Gorman, Mark Sekula, or Suncoast Kevin Johnson."
         ]
     }
   ]
