@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T00:47:13-05:00",
+  "updatedAt": "2026-06-21T01:05:37-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -13974,6 +13974,1018 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Sales Navigator visible top results included past-ICCU or current-other-credit-union leaders; those were excluded from connection requests because current company did not verify as Idaho Central Credit Union.",
         "NCUA and regular LinkedIn visibly verified Brenda Worrell as Idaho Central CEO; regular LinkedIn visibly verified Edward F. Tierney as Idaho Central Chief Lending Officer. Visible Connect actions were not clicked because action-time confirmation is required for third-party LinkedIn invites.",
         "Connections monitor refresh showed no accepted match for prior tracked request targets or the newly verified Idaho Central leads in the recently-added visible list."
+      ]
+    },
+    {
+      "id": "desert-financial-68713-2026-03-31",
+      "name": "Desert Financial Credit Union",
+      "charterNumber": "68713",
+      "priority": "High",
+      "status": "Recurring research captured",
+      "summary": "Large Arizona FISCU with a $5.17B loan book, $1.54B in new/used vehicle balances, and $1.14B in reported indirect vehicle loans.",
+      "profile": {
+        "ncuaName": "DESERT FINANCIAL",
+        "type": "FISCU",
+        "status": "Active",
+        "charterState": "Arizona",
+        "region": "3 - Western",
+        "peerGroup": "6 - $500,000,000 and greater",
+        "fieldOfMembership": "Non-Federal Credit Union",
+        "lowIncomeDesignation": "No",
+        "assets": 9791191351,
+        "members": 511369,
+        "ceo": "Jeffrey D Meshey",
+        "website": "https://www.desertfinancial.com",
+        "phone": "602-433-7000",
+        "mainOffice": {
+          "addressLine1": "148 N 48th St",
+          "city": "Phoenix",
+          "state": "AZ",
+          "postalCode": "85034",
+          "county": "Maricopa",
+          "latitude": 33.449221811894,
+          "longitude": -111.978483512898,
+          "geocodeSource": "U.S. Census Geocoder",
+          "geocodePrecision": "Exact address match",
+          "geocodeMatchedAddress": "148 N 48TH ST, PHOENIX, AZ, 85034"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "March 31, 2026 NCUA 5300 Call Report",
+        "totals": {
+          "loansHeldForSale": 2993868,
+          "totalLoansAndLeases": {
+            "count": 148943,
+            "amount": 5170195915
+          },
+          "allowanceForCreditLossesLoansAndLeases": 46751961,
+          "accruedInterestOnLoansAndLeases": 17209662,
+          "loansGrantedYtd": {
+            "count": 11416,
+            "amount": 632696370
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 79595832,
+          "creditLossExpenseLoansAndLeasesYtd": 6232686,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 954671,
+          "loanServicingExpenseYtd": 292214
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "accountAmountCode": "396",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported credit card loan exposure"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "accountAmountCode": "397A",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No PAL exposure reported; FISCU so FCU-only PAL fields are blank"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "accountAmountCode": "698A",
+            "interestRate": 13.5,
+            "count": 54,
+            "amount": 1322717,
+            "productFit": "Private student lending protection adjacency"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "accountAmountCode": "397",
+            "interestRate": 14.02,
+            "count": 36444,
+            "amount": 98449814,
+            "productFit": "Debt protection / unsecured consumer lending"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "accountAmountCode": "385",
+            "interestRate": 7.92,
+            "count": 17988,
+            "amount": 481331233,
+            "productFit": "Auto VSC/GAP/credit protection; significant indirect exposure after Section 5 adjustment"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "accountAmountCode": "370",
+            "interestRate": 7.99,
+            "count": 52444,
+            "amount": 1063353933,
+            "productFit": "Auto VSC/GAP/credit protection; significant indirect exposure after Section 5 adjustment"
+          },
+          {
+            "label": "Leases Receivable",
+            "accountAmountCode": "002",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No lease exposure reported"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "698C",
+            "interestRate": 11.3,
+            "count": 947,
+            "amount": 21220765,
+            "productFit": "Secured consumer protection adjacency"
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "703A",
+            "interestRate": 5.47,
+            "count": 2544,
+            "amount": 595419969,
+            "productFit": "Mortgage protection / home-equity adjacency"
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386A",
+            "interestRate": 6.46,
+            "count": 37662,
+            "amount": 2032119415,
+            "productFit": "HELOC/junior-lien protection adjacency"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386B",
+            "interestRate": 5.75,
+            "count": 2,
+            "amount": 45373,
+            "productFit": "Small other non-commercial real estate exposure"
+          },
+          {
+            "label": "Commercial Loans/Lines of Credit Real Estate Secured",
+            "accountAmountCode": "718A5",
+            "interestRate": 6.01,
+            "count": 654,
+            "amount": 856070583,
+            "productFit": "Commercial lending; generally outside consumer protection focus"
+          },
+          {
+            "label": "Commercial Loans/Lines of Credit Not Real Estate Secured",
+            "accountAmountCode": "400P",
+            "interestRate": 7.2,
+            "count": 204,
+            "amount": 20862113,
+            "productFit": "Commercial lending; generally outside consumer protection focus"
+          }
+        ],
+        "governmentGuaranteedLoans": {
+          "nonCommercialSba": {
+            "count": 1,
+            "balance": 13909,
+            "guaranteedPortion": 0
+          },
+          "pppIncluded": {
+            "count": 1,
+            "balance": 13909
+          },
+          "nonCommercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          },
+          "commercialSba": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          },
+          "commercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          }
+        },
+        "chargeOffAndRecoveryYtd": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "chargeOffs": 749962,
+            "recoveries": 12819
+          },
+          {
+            "label": "New Vehicle Loans",
+            "chargeOffs": 1436538,
+            "recoveries": 243202
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "chargeOffs": 2601643,
+            "recoveries": 515006
+          },
+          {
+            "label": "Leases Receivable",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 44
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 428444
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 13318
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "chargeOffs": 235,
+            "recoveries": 0
+          },
+          {
+            "label": "Construction and Development Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Farmland",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Multifamily Residential Properties",
+            "chargeOffs": 0,
+            "recoveries": 87178
+          },
+          {
+            "label": "Owner Occupied, Non-Farm Non-Residential Property",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Owner Occupied, Non-Farm Non-Residential Property",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Loans to Finance Agricultural Production and Other Loans to Farmers",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial and Industrial Loans",
+            "chargeOffs": 16692,
+            "recoveries": 300
+          },
+          {
+            "label": "Unsecured Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Revolving Commercial Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Total Loans and Leases",
+            "chargeOffs": 4805070,
+            "recoveries": 1300311
+          },
+          {
+            "label": "Participation Loans Purchased",
+            "chargeOffs": 445817,
+            "recoveries": 364
+          },
+          {
+            "label": "Indirect Loans",
+            "chargeOffs": 3320061,
+            "recoveries": 642450
+          },
+          {
+            "label": "Whole/Partial Purchased Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          }
+        ],
+        "delinquency": {
+          "totalDelinquent30To59Amount": 38044531,
+          "totalDelinquent60Plus": {
+            "count": 454,
+            "amount": 19546285
+          },
+          "participationLoansPurchasedDelinquentAmount": 1580648,
+          "indirectDelinquentAmount": 3307030,
+          "wholeOrPartialPurchasedLoansDelinquentAmount": 0,
+          "nonCommercialNonAccrualAmount": 10040793,
+          "commercialNonAccrualAmount": 1178489,
+          "bankruptcyClaimsOutstanding": 10757448,
+          "borrowerDifficultyModifiedLoans": {
+            "count": 3,
+            "amount": 88403,
+            "notInComplianceCount": 0,
+            "notInComplianceAmount": 0
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 47814,
+            "amount": 1135504804,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "Residential Real Estate Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 47814,
+          "amount": 1135504804,
+          "delinquentAmount": 3307030,
+          "chargeOffsYtd": 3320061,
+          "recoveriesYtd": 642450
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 4293263219,
+          "autoLoanBalance": 1544685166,
+          "autoLoanCount": 70432,
+          "directAutoLoanBalance": 409180362,
+          "directAutoLoanCount": 22618,
+          "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+          "indirectShareOfLoanBook": 0.21962510176947522,
+          "indirectVehicleShareOfAutoBalance": 0.7351043623604009
+        },
+        "otherLoanInformation": {
+          "loansToOfficials": {
+            "count": 33,
+            "amount": 7209175
+          },
+          "fcuInterestRateCeiling": {
+            "loansOver15PercentAmount": null,
+            "weightedAverageInterestRate": null,
+            "note": "FISCU; FCU-only interest-rate-ceiling fields were blank in the call report."
+          },
+          "purchasedCreditImpairedLoans": {
+            "contractualBalance": 0,
+            "recordedInvestment": 0
+          },
+          "purchasedCreditDeterioratedLoans": {
+            "count": 0,
+            "amount": 0,
+            "aclBalance": 0,
+            "carryingAmountBeforeAllowance": 0,
+            "unpaidPrincipalBalance": 0
+          }
+        },
+        "realEstateDetails": {
+          "firstLienBalance": 595419969,
+          "firstLienGrantedYtd": 82110042,
+          "firstLienBreakdown": {
+            "fixedOver15Years": {
+              "count": 1668,
+              "amount": 383672580,
+              "grantedYtd": 41427032
+            },
+            "fixed15YearsOrLess": {
+              "count": 466,
+              "amount": 46171346,
+              "grantedYtd": 3202450
+            },
+            "balloonHybridOver5Years": {
+              "count": 257,
+              "amount": 114168591,
+              "grantedYtd": 26245714
+            },
+            "balloonHybrid5YearsOrLess": {
+              "count": 147,
+              "amount": 50254189,
+              "grantedYtd": 11234846
+            },
+            "adjustableRate": {
+              "count": 6,
+              "amount": 1153263,
+              "grantedYtd": 0
+            }
+          },
+          "juniorLienBalance": 2032119415,
+          "juniorLienGrantedYtd": 298349076,
+          "juniorLienBreakdown": {
+            "closedEndFixed": {
+              "count": 162,
+              "amount": 3723599,
+              "grantedYtd": 0
+            },
+            "closedEndAdjustable": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndFixed": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndAdjustable": {
+              "count": 37500,
+              "amount": 2028395816,
+              "grantedYtd": 298349076
+            }
+          },
+          "allOtherNonCommercialRealEstateBalance": 45373,
+          "allOtherNonCommercialRealEstateGrantedYtd": 0,
+          "allOtherNonCommercialRealEstateBreakdown": {
+            "closedEndFixed": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "closedEndAdjustable": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndFixed": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndAdjustable": {
+              "count": 2,
+              "amount": 45373,
+              "grantedYtd": 0
+            }
+          },
+          "totalNonCommercialRealEstate": {
+            "count": 40208,
+            "amount": 2627584757,
+            "grantedYtd": 380459118
+          },
+          "constructionBalance": 0,
+          "repricesOrMaturesWithinFiveYears": 1991636121,
+          "interestOnlyPaymentOptionFirstLien": {
+            "count": 1,
+            "amount": 11530,
+            "grantedYtd": 0
+          }
+        },
+        "commercialDetails": {
+          "memberLoans": {
+            "constructionAndDevelopment": {
+              "count": 4,
+              "amount": 3115629,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 50,
+              "amount": 57730183,
+              "grantedYtdCount": 4,
+              "grantedYtdAmount": 8182480
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 165,
+              "amount": 122624733,
+              "grantedYtdCount": 6,
+              "grantedYtdAmount": 11362236
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 434,
+              "amount": 671843320,
+              "grantedYtdCount": 10,
+              "grantedYtdAmount": 14897770
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 653,
+              "amount": 855313865,
+              "grantedYtdCount": 20,
+              "grantedYtdAmount": 34442486
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 170,
+              "amount": 18467372,
+              "grantedYtdCount": 18,
+              "grantedYtdAmount": 3098530
+            },
+            "unsecuredCommercial": {
+              "count": 3,
+              "amount": 160418,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 88894
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 31,
+              "amount": 2234323,
+              "grantedYtdCount": 6,
+              "grantedYtdAmount": 465000
+            },
+            "totalCommercialMemberLoans": {
+              "count": 857,
+              "amount": 876175978,
+              "grantedYtdCount": 45,
+              "grantedYtdAmount": 38094910
+            }
+          },
+          "nonMemberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 1,
+              "amount": 756718,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 1,
+              "amount": 756718,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialNonMemberLoans": {
+              "count": 1,
+              "amount": 756718,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 858,
+            "amount": 876932696
+          },
+          "outstandingAgriculturalRelatedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialRealEstateRepricesOrMaturesWithinFiveYears": 538641433,
+          "commercialParticipationsSoldServicingRetained": {
+            "count": 8,
+            "amount": 12941004
+          },
+          "commercialLoansSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldNoRetainedServicingYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "totalMemberBusinessLoansNet": 915407985,
+          "commercialUnfundedCommitments": 42521681
+        },
+        "purchasedAndSoldLoans": {
+          "purchasedFromOtherFinancialInstitutionsYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherFinancialInstitutionsOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "loansSoldYtd": {
+            "count": 133,
+            "amount": 37593827
+          },
+          "firstMortgageLoansSoldSecondaryMarketYtd": {
+            "count": 133,
+            "amount": 37593827
+          },
+          "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+            "count": 0,
+            "amount": 0
+          },
+          "realEstateLoansSoldServicingRetained": {
+            "ytdCount": 121,
+            "ytdAmount": 33217905,
+            "outstandingCount": 10591,
+            "outstandingAmount": 1628609134
+          },
+          "allOtherLoansSoldServicingRetained": {
+            "ytdCount": 0,
+            "ytdAmount": 0,
+            "outstandingCount": 0,
+            "outstandingAmount": 0
+          },
+          "loanParticipations": {
+            "vehicleNonCommercial": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "nonFederallyGuaranteedStudent": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "oneToFourFamilyResidential": {
+              "purchasedYtd": 27787988,
+              "purchasedOutstanding": 0,
+              "soldYtd": 4912253,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "commercialExcludingConstructionDevelopment": {
+              "purchasedYtd": 756718,
+              "purchasedOutstanding": 0,
+              "soldYtd": 17901273,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "commercialConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "allOther": {
+              "purchasedYtd": 34871553,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "total": {
+              "purchasedYtd": 63416259,
+              "purchasedOutstanding": 0,
+              "soldYtd": 22813526,
+              "soldOutstandingRetainedBalance": 0
+            }
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 42521681,
+          "revolvingOpenEndSecuredByResidentialProperty": 2090324763,
+          "creditCardLines": 0,
+          "unsecuredShareDraftLinesOfCredit": 76947415,
+          "unusedOverdraftProtectionProgram": 2378040,
+          "otherUnfundedCommitments": 0,
+          "totalNonCommercialLoans": 2169650218,
+          "totalAllLoanTypes": 2212171899,
+          "unconditionallyCancelableAllLoanTypes": 0,
+          "conditionallyCancelableCommercialLoans": 42521681,
+          "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 2090324763,
+          "conditionallyCancelableConsumerLoansUnsecured": 79325455,
+          "totalConditionallyCancelable": 2212171899,
+          "commercialLoansTransferredWithLimitedRecourse": 0,
+          "consumerLoansTransferredWithLimitedRecourse": 0,
+          "totalLoansTransferredWithLimitedRecourse": 0,
+          "loansTransferredFhlbMpf": 0,
+          "financialStandbyLettersOfCredit": 0,
+          "forwardAgreementsNotDerivativeContracts": 0,
+          "soldCreditProtectionTotal": 0,
+          "offBalanceSheetSecuritizationExposures": 0,
+          "securitiesBorrowingOrLendingTransactions": 0,
+          "offBalanceSheetRepurchaseExposure": 0,
+          "allOtherOffBalanceSheetCommitments": 0
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 1,
+          "creditDisabilityRatePerThousand": 2.25,
+          "debtProtectionIuiRatePerThousand": 1.4,
+          "creditAndDebtProtectionPenetration": 0.38,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 1631440.02,
+        "modeledMonthlyCreditDisabilityPremium": 3670740.05,
+        "modeledMonthlyDebtProtectionIuiPremium": 2284016.03,
+        "modeledMonthlyDirectAutoOriginations": 942.42,
+        "modeledMonthlyVscGfsIncome": 150787.2,
+        "modeledMonthlyGapGfsIncome": 32984.7,
+        "notes": [
+          "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+          "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+          "Desert Financial reports 73.51% of auto balances as indirect vehicle loans, so indirect-channel product fit is a major prospect signal."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T01:05:37-05:00",
+        "source": "LinkedIn Sales Navigator visible search results plus regular LinkedIn profile verification in the authenticated Chrome session; no messages, saves, profile edits, or connection requests were made.",
+        "searchUrl": "https://www.linkedin.com/sales/search/people?keywords=Desert%20Financial%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+        "resultSummary": "Sales Navigator returned 31 broad Desert Financial keyword results. Jeff Meshey was the top exact current-company executive result and regular LinkedIn verified President and CEO at Desert Financial Credit Union with a visible Connect action. Public search and regular LinkedIn verified Andrea Mosher as Chief Lending Officer, SVP, at Desert Financial Credit Union with a visible Connect action. No connection request was sent during the unattended heartbeat because action-time confirmation is required for third-party LinkedIn invites.",
+        "visibleLeads": [
+          {
+            "name": "Jeff Meshey",
+            "title": "President and CEO at Desert Financial Credit Union",
+            "company": "Desert Financial Credit Union",
+            "location": "Greater Phoenix Area",
+            "tenure": "9 years 5 months in role; 32 years 1 month in company visible in Sales Navigator",
+            "signal": "NCUA details list Jeffrey D Meshey as CEO; Sales Navigator and regular LinkedIn visibly verified President and CEO at Desert Financial Credit Union.",
+            "titleMatched": "President and CEO",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAGHbMsBdI1GCollPy-IWWvfSYMkHxJ1Kjo,NAME_SEARCH,eygP",
+            "profileUrl": "https://www.linkedin.com/in/jeffmeshey/",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "blocker": "Verified target with visible Connect action, but no-note connection request was not sent because action-time confirmation is required for third-party LinkedIn invites."
+          },
+          {
+            "name": "Andrea Mosher",
+            "title": "Chief Lending Officer, SVP, at Desert Financial Credit Union",
+            "company": "Desert Financial Credit Union",
+            "location": "Phoenix, Arizona, United States",
+            "tenure": null,
+            "signal": "Regular LinkedIn visibly verified Chief Lending Officer, SVP, at Desert Financial Credit Union; public sources also identify her as Chief Lending Officer.",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Desert%20Financial%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": "https://www.linkedin.com/in/andrea-mosher-9785996/",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "blocker": "Verified target with visible Connect action, but no-note connection request was not sent because action-time confirmation is required for third-party LinkedIn invites."
+          },
+          {
+            "name": "Brian Bone",
+            "title": "President/CEO, American Partners Federal Credit Union",
+            "company": "American Partners Federal Credit Union",
+            "location": "Rocky Mount, Virginia, United States",
+            "tenure": "8 years 6 months in role/company visible",
+            "signal": "Sales Navigator visible result showed High Desert Community Credit Union CEO past experience but current company is not Desert Financial.",
+            "titleMatched": "President/CEO current role, but current target company mismatch",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Desert%20Financial%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": null,
+            "requestedAt": null,
+            "status": "not_requested",
+            "blocker": "Current company did not verify as Desert Financial Credit Union."
+          },
+          {
+            "name": "Chad Heese",
+            "title": "President & Chief Executive Officer, Community Resource Credit Union",
+            "company": "Community Resource Credit Union",
+            "location": "Greater Houston",
+            "tenure": "1 year 2 months in role/company visible",
+            "signal": "Sales Navigator visible result showed past Chief Lending & Strategy Officer at Rogue Credit Union; current company is not Desert Financial.",
+            "titleMatched": "CEO/lending executive background only; current target company mismatch",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Desert%20Financial%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": null,
+            "requestedAt": null,
+            "status": "not_requested",
+            "blocker": "Current company did not verify as Desert Financial Credit Union."
+          }
+        ],
+        "additionalVisibleNames": [
+          "Chase Johnson, Samuel C., Chris Kearney, Susi Bennett, Brian Turner, and Jeff Erickson appeared as visible Sales Navigator result names, but their full current title/company cards were not expanded in the viewport.",
+          "Stephen Jordan - Senior Vice President / Chief Revenue Officer at Desert Financial Credit Union appeared in public LinkedIn search results; revenue role is not a lending/CEO target.",
+          "Gary Sneed appeared in public search as SVP Chief Lending Officer/Define Mortgage Solutions related to Desert Financial, but Andrea Mosher appears to be the current Chief Lending Officer from newer sources and visible LinkedIn."
+        ],
+        "connectionRequests": [
+          {
+            "name": "Jeff Meshey",
+            "title": "President and CEO at Desert Financial Credit Union",
+            "company": "Desert Financial Credit Union",
+            "titleMatched": "President and CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/jeffmeshey/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Jeff%20Meshey%20Desert%20Financial%20Credit%20Union",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Desert%20Financial%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "blocker": "Action-time confirmation required before sending a third-party LinkedIn connection request.",
+            "note": "Regular LinkedIn profile was an exact current-company President and CEO match with a visible Connect action. No invite was sent during this unattended heartbeat."
+          },
+          {
+            "name": "Andrea Mosher",
+            "title": "Chief Lending Officer, SVP, at Desert Financial Credit Union",
+            "company": "Desert Financial Credit Union",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/andrea-mosher-9785996/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Andrea%20Mosher%20Desert%20Financial%20Credit%20Union",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Desert%20Financial%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "blocker": "Action-time confirmation required before sending a third-party LinkedIn connection request.",
+            "note": "Regular LinkedIn profile was an exact current-company Chief Lending Officer/SVP match with a visible Connect action. No invite was sent during this unattended heartbeat."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T01:05:37-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor",
+              "company": "Veridian Credit Union",
+              "connectedOn": "2026-06-19"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations",
+              "company": "Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "company": null,
+              "connectedOn": "2026-06-14"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "company": null,
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller",
+              "company": "Heartland Credit Union",
+              "connectedOn": "2026-06-06"
+            },
+            {
+              "name": "Steve O'Donnell, MBA, CCE",
+              "title": "President/CEO",
+              "company": null,
+              "connectedOn": "2026-05-17"
+            },
+            {
+              "name": "Mike Gutshall",
+              "title": "President & CEO",
+              "company": "Heritage Valley FCU",
+              "connectedOn": "2026-04-22"
+            },
+            {
+              "name": "Holly Augustine",
+              "title": "Director of Operations",
+              "company": "Colorado Credit Union",
+              "connectedOn": "2026-04-10"
+            }
+          ],
+          "note": "Connections monitor was refreshed. The visible recently-added list did not show any tracked request targets as newly accepted; target names visible only in LinkedIn recent-search suggestions were ignored."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA name search API for Desert Financial",
+          "url": "https://mapping.ncua.gov/api/Search/GetNameSearch",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API for charter 68713",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/68713",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report download endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/68713?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder for main office address",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=148%20N%2048th%20St%20Phoenix%20AZ%2085034&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Desert Financial senior leadership page for Jeff Meshey",
+          "url": "https://www.desertfinancial.com/en/who-we-are/our-story/leadership",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "CUInsight release identifying Andrea Mosher as Chief Lending Officer",
+          "url": "https://www.cuinsight.com/press-release/desert-financial-cu-becomes-newest-owner-of-student-choice-cuso/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn Sales Navigator people search for Desert Financial executive and lending leads",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=Desert%20Financial%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn profile verified for Jeff Meshey",
+          "url": "https://www.linkedin.com/in/jeffmeshey/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn profile verified for Andrea Mosher",
+          "url": "https://www.linkedin.com/in/andrea-mosher-9785996/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor refreshed",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified DESERT FINANCIAL charter 68713 as an active Arizona FISCU with March 2026 as the latest available call report cycle.",
+        "NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.",
+        "PDF text extraction captured Statement of Financial Condition loan totals, Statement of Income loan income/expense lines, Schedule A Sections 1 through 8, indirect-loan detail, loan purchase/sale and participation schedules, and Schedule C unfunded commitments.",
+        "Schedule A Section 5 reported $1.14B in total indirect loans, all in new/used vehicle loans.",
+        "Census geocoder returned an exact address match for 148 N 48th St, Phoenix, AZ 85034; coordinates were used for map display.",
+        "Sales Navigator visible top results included current-other-credit-union executives; those were excluded from connection requests because current company did not verify as Desert Financial Credit Union.",
+        "NCUA, Sales Navigator, regular LinkedIn, and Desert Financial leadership page visibly verified Jeff Meshey as Desert Financial President and CEO. Regular LinkedIn and public sources visibly verified Andrea Mosher as Chief Lending Officer/SVP. Visible Connect actions were not clicked because action-time confirmation is required for third-party LinkedIn invites.",
+        "Connections monitor refresh showed no accepted match for tracked request targets in the recently-added visible list."
       ]
     }
   ]
