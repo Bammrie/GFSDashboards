@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  updatedAt: '2026-06-20T20:05:41-05:00',
+  updatedAt: '2026-06-20T20:17:11-05:00',
   cadenceMinutes: 10,
   latestPublicNcuaCycleDate: '2026-03-31',
   connectionTracking: {
@@ -4711,6 +4711,867 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
                             "LinkedIn request was submitted through the regular LinkedIn custom invite dialog with no note. Post-submit profile verification did not fully rehydrate, so the request is recorded as requested/pending based on the completed Send without a note action and absence of a visible error.",
                             "Connections monitor refresh was visible and showed existing credit-union relationships, but no accepted match for David Gorman yet."
                         ]
+    },
+    {
+        "id": "rbfcu-8111-2026-03-31",
+        "name": "Randolph-Brooks Federal Credit Union (RBFCU)",
+        "charterNumber": "8111",
+        "priority": "High",
+        "status": "Research captured; verified LinkedIn target pending action-time confirmation",
+        "summary": "Large Texas FCU with a $12.73B loan book, $3.41B in new/used vehicle loans, and $1.34B in reported indirect vehicle loans as of the March 31, 2026 NCUA call report.",
+        "profile": {
+            "ncuaName": "RANDOLPH-BROOKS",
+            "type": "FCU",
+            "status": "Active",
+            "charterState": "Federal charter",
+            "region": "8 - ONES",
+            "fieldOfMembership": "Multiple common bond - primarily military",
+            "peerGroup": "6 - $500,000,000 and greater",
+            "assets": 19192250225,
+            "members": 1148891,
+            "ceo": "Mark Sekula",
+            "website": "http://www.rbfcu.org",
+            "phone": "210-945-3333",
+            "mainOffice": {
+                "street": "1 IKEA-RBFCU Parkway",
+                "city": "Live Oak",
+                "state": "TX",
+                "zip": "78233-2416",
+                "county": "Bexar",
+                "country": "United States",
+                "latitude": 29.5712857,
+                "longitude": -98.3382853,
+                "geocodePrecision": "Named RBFCU ASC BLDG III / 1 IKEA-RBFCU Parkway match from OpenStreetMap Nominatim; Census geocoder did not return a match for this private road address"
+            }
+        },
+        "callReport": {
+            "cycleDate": "2026-03-31",
+            "reportLabel": "March 2026 Call Report",
+            "totals": {
+                "loansHeldForSale": 363843288,
+                "totalLoansAndLeases": {
+                    "count": 536963,
+                    "amount": 12732081787
+                },
+                "allowanceForCreditLossesLoansAndLeases": 127228169,
+                "accruedInterestOnLoansAndLeases": 41156667,
+                "loansGrantedYtd": {
+                    "count": 48577,
+                    "amount": 877822863
+                },
+                "paydayAlternativeLoansGrantedYtd": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "interestOnLoansAndLeasesYtd": 195818604,
+                "creditLossExpenseLoansAndLeasesYtd": 27505661,
+                "gainLossOnSalesOfLoansAndLeasesYtd": 1033421,
+                "loanServicingExpenseYtd": 2598604
+            },
+            "loanCategories": [
+                {
+                    "label": "Unsecured Credit Card Loans",
+                    "accountAmountCode": "396",
+                    "interestRate": 18,
+                    "count": 180948,
+                    "amount": 633043617,
+                    "productFit": "Credit insurance/debt protection - unsecured consumer"
+                },
+                {
+                    "label": "Payday Alternative Loans",
+                    "accountAmountCode": "397A",
+                    "interestRate": 0,
+                    "count": 0,
+                    "amount": 0,
+                    "productFit": "No reported PAL exposure"
+                },
+                {
+                    "label": "Non-Federally Guaranteed Student Loans",
+                    "accountAmountCode": "698A",
+                    "interestRate": 0,
+                    "count": 0,
+                    "amount": 0,
+                    "productFit": "No reported private student loan exposure"
+                },
+                {
+                    "label": "All Other Unsecured Loans/Lines of Credit",
+                    "accountAmountCode": "397",
+                    "interestRate": 13.65,
+                    "count": 111621,
+                    "amount": 440470630,
+                    "productFit": "Credit insurance/debt protection - unsecured consumer"
+                },
+                {
+                    "label": "New Vehicle Loans",
+                    "accountAmountCode": "385",
+                    "interestRate": 5.25,
+                    "count": 28182,
+                    "amount": 743198286,
+                    "productFit": "Direct/indirect auto, VSC, GAP, debt protection"
+                },
+                {
+                    "label": "Used Vehicle Loans",
+                    "accountAmountCode": "370",
+                    "interestRate": 5.25,
+                    "count": 134086,
+                    "amount": 2662625828,
+                    "productFit": "Direct/indirect auto, VSC, GAP, debt protection"
+                },
+                {
+                    "label": "Leases Receivable",
+                    "accountAmountCode": "002",
+                    "interestRate": 0,
+                    "count": 0,
+                    "amount": 0,
+                    "productFit": "No reported lease exposure"
+                },
+                {
+                    "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "698C",
+                    "interestRate": 9.9,
+                    "count": 30682,
+                    "amount": 740714928,
+                    "productFit": "Debt protection and secured consumer ancillary products"
+                },
+                {
+                    "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "703A",
+                    "interestRate": 6.25,
+                    "count": 33065,
+                    "amount": 5450778312,
+                    "productFit": "Mortgage protection / debt protection conversation"
+                },
+                {
+                    "label": "Total Other Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "386A",
+                    "interestRate": 6.25,
+                    "count": 16984,
+                    "amount": 1102950353,
+                    "productFit": "Home equity debt protection conversation"
+                },
+                {
+                    "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+                    "accountAmountCode": "386B",
+                    "interestRate": 8,
+                    "count": 41,
+                    "amount": 1190972,
+                    "productFit": "Small non-commercial real estate exposure"
+                },
+                {
+                    "label": "Commercial Loans/Lines of Credit Real Estate Secured",
+                    "accountAmountCode": "718A5",
+                    "interestRate": 6,
+                    "count": 842,
+                    "amount": 928472649,
+                    "productFit": "Commercial portfolio context"
+                },
+                {
+                    "label": "Commercial Loans/Lines of Credit Not Real Estate Secured",
+                    "accountAmountCode": "400P",
+                    "interestRate": 18,
+                    "count": 512,
+                    "amount": 28636212,
+                    "productFit": "Commercial portfolio context"
+                }
+            ],
+            "governmentGuaranteedLoans": {
+                "nonCommercialSba": {
+                    "count": 0,
+                    "balance": 0,
+                    "guaranteedPortion": 0
+                },
+                "pppIncluded": {
+                    "count": 0,
+                    "balance": 0
+                },
+                "nonCommercialOtherGovernmentGuaranteed": {
+                    "count": 0,
+                    "balance": 0,
+                    "guaranteedPortion": 0
+                },
+                "commercialSba": {
+                    "count": 34,
+                    "balance": 14109105,
+                    "guaranteedPortion": 10925902
+                },
+                "commercialOtherGovernmentGuaranteed": {
+                    "count": 0,
+                    "balance": 0,
+                    "guaranteedPortion": 0
+                }
+            },
+            "chargeOffAndRecoveryYtd": [
+                {
+                    "label": "Unsecured Credit Card Loans",
+                    "chargeOffs": 7411930,
+                    "recoveries": 615171
+                },
+                {
+                    "label": "Payday Alternative Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Non-Federally Guaranteed Student Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "All Other Unsecured Loans/Lines of Credit",
+                    "chargeOffs": 6882984,
+                    "recoveries": 1959489
+                },
+                {
+                    "label": "New Vehicle Loans",
+                    "chargeOffs": 6086942,
+                    "recoveries": 697927
+                },
+                {
+                    "label": "Used Vehicle Loans",
+                    "chargeOffs": 6380653,
+                    "recoveries": 857780
+                },
+                {
+                    "label": "Leases Receivable",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 15352,
+                    "recoveries": 15082
+                },
+                {
+                    "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 127044,
+                    "recoveries": 1376
+                },
+                {
+                    "label": "Total Other Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 208222,
+                    "recoveries": 1560
+                },
+                {
+                    "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Construction and Development Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Secured by Farmland",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Secured by Multifamily Residential Properties",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Owner Occupied, Non-Farm Non-Residential Property",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Non-Owner Occupied, Non-Farm Non-Residential Property",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Commercial and Industrial Loans",
+                    "chargeOffs": 42637,
+                    "recoveries": 0
+                },
+                {
+                    "label": "Unsecured Commercial Loans",
+                    "chargeOffs": 402015,
+                    "recoveries": 254056
+                },
+                {
+                    "label": "Unsecured Revolving Commercial Lines of Credit",
+                    "chargeOffs": 129762,
+                    "recoveries": 858
+                },
+                {
+                    "label": "Total Loans and Leases",
+                    "chargeOffs": 27687541,
+                    "recoveries": 4403299
+                },
+                {
+                    "label": "Participation Loans Purchased",
+                    "chargeOffs": 4842060,
+                    "recoveries": 522627
+                },
+                {
+                    "label": "Indirect Loans",
+                    "chargeOffs": 3967171,
+                    "recoveries": 94733
+                },
+                {
+                    "label": "Whole/Partial Purchased Loans",
+                    "chargeOffs": 0,
+                    "recoveries": 0
+                }
+            ],
+            "delinquency": {
+                "totalDelinquent30To59Amount": 157599101,
+                "totalDelinquent60Plus": {
+                    "count": 10772,
+                    "amount": 127558237
+                },
+                "participationLoansPurchasedDelinquentAmount": 15055444,
+                "indirectDelinquentAmount": 17968307,
+                "wholeOrPartialPurchasedLoansDelinquentAmount": 681606,
+                "nonCommercialNonAccrualAmount": 59104459,
+                "commercialNonAccrualAmount": 1841020,
+                "bankruptcyClaimsOutstanding": 18532111,
+                "borrowerDifficultyModifiedLoans": {
+                    "count": 770,
+                    "amount": 6197435,
+                    "notInComplianceCount": 153,
+                    "notInComplianceAmount": 892270
+                }
+            },
+            "indirectLoans": [
+                {
+                    "label": "New and Used Vehicle Loans",
+                    "count": 56874,
+                    "amount": 1342653262,
+                    "countAccountCode": "IN0001",
+                    "amountAccountCode": "IN0002"
+                },
+                {
+                    "label": "Residential Real Estate Loans",
+                    "count": 0,
+                    "amount": 0,
+                    "countAccountCode": "IN0003",
+                    "amountAccountCode": "IN0004"
+                },
+                {
+                    "label": "Commercial Loans",
+                    "count": 0,
+                    "amount": 0,
+                    "countAccountCode": "IN0005",
+                    "amountAccountCode": "IN0006"
+                },
+                {
+                    "label": "All Other Loans",
+                    "count": 0,
+                    "amount": 0,
+                    "countAccountCode": "IN0007",
+                    "amountAccountCode": "IN0008"
+                }
+            ],
+            "indirectTotals": {
+                "count": 56874,
+                "amount": 1342653262,
+                "countAccountCode": "617A",
+                "amountAccountCode": "618A",
+                "delinquentAmount": 17968307,
+                "delinquentAmountAccountCode": "041E",
+                "chargeOffsYtd": 3967171,
+                "chargeOffsAccountCode": "550E",
+                "recoveriesYtd": 94733,
+                "recoveriesAccountCode": "551E"
+            },
+            "derivedMetrics": {
+                "nonCommercialLoanBalance": 11774972927,
+                "autoLoanBalance": 3405824114,
+                "autoLoanCount": 162268,
+                "directAutoLoanBalance": 2063170852,
+                "directAutoLoanCount": 105394,
+                "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+                "indirectShareOfLoanBook": 0.1054543385,
+                "indirectVehicleShareOfAutoBalance": 0.3942227247
+            },
+            "otherLoanInformation": {
+                "loansToOfficials": {
+                    "count": 135,
+                    "amount": 8697967
+                },
+                "fcuInterestRateCeiling": {
+                    "loansOver15PercentAmount": 398525184,
+                    "weightedAverageInterestRate": 16.84
+                },
+                "purchasedCreditImpairedLoans": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "purchasedCreditDeterioratedLoans": {
+                    "count": 0,
+                    "amount": 0,
+                    "aclBalance": 0,
+                    "carryingAmountBeforeAllowance": 0,
+                    "unpaidPrincipalBalance": 0
+                }
+            },
+            "realEstateDetails": {
+                "firstLienBalance": 5450778311,
+                "firstLienGrantedYtd": 194588927,
+                "juniorLienBalance": 1102950354,
+                "juniorLienGrantedYtd": 84332514,
+                "allOtherNonCommercialRealEstateBalance": 1190972,
+                "allOtherNonCommercialRealEstateGrantedYtd": 0,
+                "totalNonCommercialRealEstate": {
+                    "count": 50159,
+                    "amount": 6554919637,
+                    "grantedYtd": 278921441
+                },
+                "constructionBalance": 66616332,
+                "repricesOrMaturesWithinFiveYears": 872072322,
+                "interestOnlyPaymentOptionFirstLien": {
+                    "count": 28,
+                    "amount": 6660311,
+                    "grantedYtd": 457586
+                }
+            },
+            "commercialDetails": {
+                "memberLoans": {
+                    "constructionAndDevelopment": {
+                        "count": 86,
+                        "amount": 37499082,
+                        "grantedYtdCount": 4,
+                        "grantedYtdAmount": 4182500
+                    },
+                    "securedByFarmland": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "multifamily": {
+                        "count": 60,
+                        "amount": 33624738,
+                        "grantedYtdCount": 2,
+                        "grantedYtdAmount": 1087000
+                    },
+                    "ownerOccupiedNonFarmNonResidential": {
+                        "count": 282,
+                        "amount": 265296322,
+                        "grantedYtdCount": 6,
+                        "grantedYtdAmount": 2431571
+                    },
+                    "nonOwnerOccupiedNonFarmNonResidential": {
+                        "count": 410,
+                        "amount": 588169684,
+                        "grantedYtdCount": 6,
+                        "grantedYtdAmount": 6075150
+                    },
+                    "totalCommercialRealEstateSecured": {
+                        "count": 838,
+                        "amount": 924589826,
+                        "grantedYtdCount": 18,
+                        "grantedYtdAmount": 13776221
+                    },
+                    "commercialAndIndustrial": {
+                        "count": 383,
+                        "amount": 19101752,
+                        "grantedYtdCount": 53,
+                        "grantedYtdAmount": 3107577
+                    },
+                    "unsecuredCommercial": {
+                        "count": 6,
+                        "amount": 118224,
+                        "grantedYtdCount": 2,
+                        "grantedYtdAmount": 32000
+                    },
+                    "unsecuredRevolvingCommercialLines": {
+                        "count": 122,
+                        "amount": 2284955,
+                        "grantedYtdCount": 61,
+                        "grantedYtdAmount": 214500
+                    },
+                    "totalCommercialMemberLoans": {
+                        "count": 1349,
+                        "amount": 946094757,
+                        "grantedYtdCount": 134,
+                        "grantedYtdAmount": 17130298
+                    }
+                },
+                "nonMemberLoans": {
+                    "constructionAndDevelopment": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "multifamily": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "ownerOccupiedNonFarmNonResidential": {
+                        "count": 0,
+                        "amount": 0,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "nonOwnerOccupiedNonFarmNonResidential": {
+                        "count": 4,
+                        "amount": 3882822,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "totalCommercialRealEstateSecured": {
+                        "count": 4,
+                        "amount": 3882822,
+                        "grantedYtdCount": 0,
+                        "grantedYtdAmount": 0
+                    },
+                    "commercialAndIndustrial": {
+                        "count": 1,
+                        "amount": 7131281,
+                        "grantedYtdCount": 1,
+                        "grantedYtdAmount": 693126
+                    },
+                    "totalCommercialNonMemberLoans": {
+                        "count": 5,
+                        "amount": 11014103,
+                        "grantedYtdCount": 1,
+                        "grantedYtdAmount": 693126
+                    }
+                },
+                "totalCommercialLoans": {
+                    "count": 1354,
+                    "amount": 957108860
+                },
+                "outstandingAgriculturalRelatedLoans": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "commercialRealEstateRepricesOrMaturesWithinFiveYears": 404557874,
+                "commercialParticipationsSoldServicingRetained": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "commercialLoansSoldServicingRetained": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "commercialLoansSoldNoRetainedServicingYtd": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "totalMemberBusinessLoansNet": 996242670,
+                "commercialUnfundedCommitments": 52079601
+            },
+            "purchasedAndSoldLoans": {
+                "purchasedFromOtherFinancialInstitutionsYtd": {
+                    "count": 4539,
+                    "amount": 138290177
+                },
+                "purchasedFromOtherFinancialInstitutionsOutstanding": {
+                    "count": 937,
+                    "amount": 11775014
+                },
+                "purchasedFromOtherSourcesYtd": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "purchasedFromOtherSourcesOutstanding": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "loansSoldYtd": {
+                    "count": 2481,
+                    "amount": 76715609
+                },
+                "firstMortgageLoansSoldSecondaryMarketYtd": {
+                    "count": 34,
+                    "amount": 9541215
+                },
+                "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+                    "count": 0,
+                    "amount": 0
+                },
+                "realEstateLoansSoldServicingRetained": {
+                    "ytdCount": 34,
+                    "ytdAmount": 9541215,
+                    "outstandingCount": 2887,
+                    "outstandingAmount": 388237124
+                },
+                "allOtherLoansSoldServicingRetained": {
+                    "ytdCount": 0,
+                    "ytdAmount": 0,
+                    "outstandingCount": 0,
+                    "outstandingAmount": 0
+                },
+                "loanParticipations": [
+                    {
+                        "label": "Vehicle Loans, Non-Commercial",
+                        "purchasedYtd": 100794943,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 396,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Student Loans, Non-Commercial",
+                        "purchasedYtd": 0,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "1- to 4-Family Residential Property, Non-Commercial",
+                        "purchasedYtd": 336533253,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 2055537,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Commercial Loans, Excluding Commercial Construction and Development",
+                        "purchasedYtd": 11014103,
+                        "purchasedOutstanding": 693126,
+                        "soldYtd": 26155000,
+                        "soldOutstanding": 22907000
+                    },
+                    {
+                        "label": "Commercial Construction and Development Loans",
+                        "purchasedYtd": 0,
+                        "purchasedOutstanding": 0,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "All Other Loans",
+                        "purchasedYtd": 571770815,
+                        "purchasedOutstanding": 13630676,
+                        "soldYtd": 0,
+                        "soldOutstanding": 0
+                    },
+                    {
+                        "label": "Total Participation Loans",
+                        "purchasedYtd": 1020113114,
+                        "purchasedOutstanding": 14323802,
+                        "soldYtd": 28210933,
+                        "soldOutstanding": 22907000
+                    }
+                ]
+            },
+            "unfundedCommitments": {
+                "commercialLoans": 52079601,
+                "revolvingOpenEndSecuredByResidentialProperty": 351653573,
+                "creditCardLines": 1400724073,
+                "unsecuredShareDraftLinesOfCredit": 144259684,
+                "unusedOverdraftProtectionProgram": 485106116,
+                "otherUnfundedCommitments": 76840305,
+                "totalNonCommercialLoans": 2458583751,
+                "totalAllLoanTypes": 2510663352,
+                "unconditionallyCancelableAllLoanTypes": 2030089874,
+                "conditionallyCancelableCommercialLoans": 52079601,
+                "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 428493877,
+                "conditionallyCancelableConsumerLoansUnsecured": 0,
+                "totalConditionallyCancelable": 480573478,
+                "commercialLoansTransferredWithLimitedRecourse": 0,
+                "consumerLoansTransferredWithLimitedRecourse": 0,
+                "totalLoansTransferredWithLimitedRecourse": 0,
+                "loansTransferredFhlbMpf": 106203136,
+                "financialStandbyLettersOfCredit": 0,
+                "forwardAgreementsNotDerivativeContracts": 0
+            }
+        },
+        "modeledOpportunity": {
+            "assumptions": {
+                "creditLifeRatePerThousand": 1,
+                "creditDisabilityRatePerThousand": 2.25,
+                "debtProtectionIuiRatePerThousand": 1.4,
+                "creditAndDebtProtectionPenetration": 0.38,
+                "vscPenetration": 0.4,
+                "vscGfsMarginPerContract": 400,
+                "gapPenetration": 0.7,
+                "gapGfsMarginPerContract": 50,
+                "directAutoAverageTermMonths": 24
+            },
+            "modeledMonthlyCreditLifePremium": 4474489.71,
+            "modeledMonthlyCreditDisabilityPremium": 10067601.85,
+            "modeledMonthlyDebtProtectionIuiPremium": 6264285.6,
+            "modeledMonthlyDirectAutoOriginations": 4391.42,
+            "modeledMonthlyVscGfsIncome": 702626.67,
+            "modeledMonthlyGapGfsIncome": 153699.58,
+            "notes": [
+                "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+                "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+                "RBFCU reports $1.34B in indirect new/used vehicle loans, about 39.42% of its reported auto loan balance."
+            ]
+        },
+        "relationshipResearch": {
+            "capturedAt": "2026-06-20T20:17:11-05:00",
+            "source": "LinkedIn Sales Navigator visible search results plus regular LinkedIn people search in the authenticated Chrome session; no messages, saves, or profile edits were made.",
+            "searchUrl": "https://www.linkedin.com/sales/search/people?keywords=Randolph%20Brooks%20Federal%20Credit%20Union%20president%20CEO%20lending",
+            "resultSummary": "Sales Navigator surfaced six current-company RBFCU executive/lending-adjacent results. Regular LinkedIn search verified Mark Sekula as President/CEO at Randolph Brooks Federal Credit Union and a 2nd-degree connection. A connection request was not sent because browser-use policy requires action-time confirmation before creating a third-party LinkedIn invite.",
+            "visibleLeads": [
+                {
+                    "name": "Mark Sekula",
+                    "title": "President/CEO at Randolph Brooks Federal Credit Union",
+                    "company": "Randolph Brooks Federal Credit Union",
+                    "location": "Poth, Texas, United States",
+                    "tenure": "Sales Navigator visible result showed 15 years 9 months in company; regular LinkedIn search verified current Chief Executive Officer at Randolph Brooks Federal Credit Union.",
+                    "signal": "NCUA details list Mark Sekula as CEO. Sales Navigator showed current RBFCU role as SVP Consumer, Commercial and Collections with past SVP Consumer Lending; regular LinkedIn showed President/CEO at Randolph Brooks Federal Credit Union.",
+                    "titleMatched": "CEO / President and consumer lending executive adjacency",
+                    "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAH8cO0BJK3l5ouhWUN5gOp3loYKeR3XVcQ,NAME_SEARCH,4Kmh?_ntb=ZBe1gCQZSbOFf5K2YjUpig%3D%3D",
+                    "profileUrl": "https://www.linkedin.com/in/mark-sekula-1251abb/",
+                    "requestedAt": null,
+                    "status": "confirmation_required",
+                    "blocker": "Verified target, but no-note connection request was not sent because browser-use policy requires action-time confirmation for third-party LinkedIn invites."
+                },
+                {
+                    "name": "Sonya McDonald",
+                    "title": "Executive Vice President/Chief Operating Officer",
+                    "company": "Randolph Brooks Federal Credit Union",
+                    "location": "San Antonio, Texas Metropolitan Area",
+                    "tenure": "7 years 6 months in role; 22 years 7 months in company",
+                    "signal": "Sales Navigator visible result showed past RBFCU Executive Vice President/Chief Lending Officer from 2015 to 2019 and 3 mutual connections.",
+                    "titleMatched": "Executive/CXO with historical chief lending officer role; current title is operations, not lending.",
+                    "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAACwMKYwBGGYrAHe_6GKXZknXMb6RFFgUKlY,NAME_SEARCH,-kSa?_ntb=ZBe1gCQZSbOFf5K2YjUpig%3D%3D",
+                    "profileUrl": null,
+                    "requestedAt": null,
+                    "status": "not_requested",
+                    "blocker": "Current role is COO/operations; lending title was historical rather than a current VP/CEO/President/lending title."
+                },
+                {
+                    "name": "Sarah O'Brien",
+                    "title": "Sr Vice-President of Operations San Antonio and Corpus Christi",
+                    "company": "Randolph Brooks Federal Credit Union",
+                    "location": "San Antonio, Texas Metropolitan Area",
+                    "tenure": "9 years in role/company",
+                    "signal": "Sales Navigator visible result showed senior operations role and prior Navy Army Community Credit Union Executive VP/Controller experience with 43 mutual connections.",
+                    "titleMatched": "Senior VP but operations, not consumer lending/CEO/President.",
+                    "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAABozY1oB9J-kXQNQMk31FSgdhzAZJpRyX-k,NAME_SEARCH,CIUE?_ntb=ZBe1gCQZSbOFf5K2YjUpig%3D%3D",
+                    "profileUrl": null,
+                    "requestedAt": null,
+                    "status": "not_requested",
+                    "blocker": "Current title did not verify as lending, CEO, or President."
+                }
+            ],
+            "additionalVisibleNames": [
+                "Nicole Ramirez, CAMS - current Wells Fargo; past Randolph Brooks Federal CU Consumer Lending Specialist II",
+                "Richard Sandenaw - Member Board Of Directors at RBFCU",
+                "Jim Minge - visible current-company RBFCU result in Sales Navigator search",
+                "Drew Schmid, CPA, NCCO - visible current-company RBFCU result in Sales Navigator search",
+                "Tammy Murray - visible current-company RBFCU result in Sales Navigator search"
+            ],
+            "connectionRequests": [
+                {
+                    "name": "Mark Sekula",
+                    "title": "President/CEO at Randolph Brooks Federal Credit Union",
+                    "company": "Randolph Brooks Federal Credit Union",
+                    "titleMatched": "CEO / President and consumer lending executive adjacency",
+                    "requestedAt": null,
+                    "status": "confirmation_required",
+                    "acceptedAt": null,
+                    "profileUrl": "https://www.linkedin.com/in/mark-sekula-1251abb/",
+                    "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Mark%20Sekula%20Randolph%20Brooks%20Federal%20Credit%20Union&origin=GLOBAL_SEARCH_HEADER",
+                    "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAH8cO0BJK3l5ouhWUN5gOp3loYKeR3XVcQ,NAME_SEARCH,4Kmh?_ntb=ZBe1gCQZSbOFf5K2YjUpig%3D%3D",
+                    "blocker": "Action-time confirmation required before sending a third-party LinkedIn connection request.",
+                    "note": "Regular LinkedIn search result was an exact match: Mark Sekula, President/CEO at Randolph Brooks Federal Credit Union, 2nd-degree connection, current Chief Executive Officer at Randolph Brooks Federal Credit Union. No invite was sent."
+                }
+            ],
+            "connectionMonitor": {
+                "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+                "checkedAt": "2026-06-20T20:17:11-05:00",
+                "acceptedRequestMatches": [],
+                "visibleExistingCreditUnionConnections": [
+                    {
+                        "name": "Brandon Leonard",
+                        "title": "Consumer Lending Relations Advisor",
+                        "company": "Veridian Credit Union",
+                        "connectedOn": "2026-06-19"
+                    },
+                    {
+                        "name": "Amy White",
+                        "title": "VP of Retail Branch Operations",
+                        "company": "Heartland Credit Union - Kansas",
+                        "connectedOn": "2026-06-16"
+                    },
+                    {
+                        "name": "Rachel Murphy",
+                        "title": "VP of Consumer Lending",
+                        "company": null,
+                        "connectedOn": "2026-06-12"
+                    },
+                    {
+                        "name": "Jennifer Walker",
+                        "title": "Controller",
+                        "company": "Heartland Credit Union",
+                        "connectedOn": "2026-06-06"
+                    },
+                    {
+                        "name": "Mike Gutshall",
+                        "title": "President & CEO",
+                        "company": "Heritage Valley FCU",
+                        "connectedOn": "2026-04-22"
+                    },
+                    {
+                        "name": "Holly Augustine",
+                        "title": "Director of Operations",
+                        "company": "Colorado Credit Union",
+                        "connectedOn": "2026-04-10"
+                    }
+                ],
+                "note": "Connections monitor was refreshed. The visible accepted-connections list did not show David Gorman or any RBFCU match, so no prior request was marked accepted."
+            }
+        },
+        "sources": [
+            {
+                "label": "NCUA Research a Credit Union",
+                "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "NCUA credit union details API for charter 8111",
+                "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/8111",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "NCUA March 2026 call report download endpoint",
+                "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/8111?isCorpCU=false&cycleDate=03/31/2026",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "OpenStreetMap Nominatim geocode for main office address",
+                "url": "https://nominatim.openstreetmap.org/search?format=json&q=1%20IKEA-RBFCU%20Parkway%20Live%20Oak%20TX%2078233",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "U.S. Census geocoder attempt for main office address",
+                "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=1%20IKEA-RBFCU%20Parkway%20Live%20Oak%20TX%2078233&benchmark=Public_AR_Current&format=json",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "LinkedIn Sales Navigator people search for RBFCU executive and lending leads",
+                "url": "https://www.linkedin.com/sales/search/people?keywords=Randolph%20Brooks%20Federal%20Credit%20Union%20president%20CEO%20lending",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "Regular LinkedIn people search verifying Mark Sekula profile",
+                "url": "https://www.linkedin.com/search/results/people/?keywords=Mark%20Sekula%20Randolph%20Brooks%20Federal%20Credit%20Union&origin=GLOBAL_SEARCH_HEADER",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "LinkedIn profile verified for pending action-time confirmation",
+                "url": "https://www.linkedin.com/in/mark-sekula-1251abb/",
+                "capturedAt": "2026-06-20"
+            },
+            {
+                "label": "LinkedIn connections monitor refreshed",
+                "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+                "capturedAt": "2026-06-20"
+            }
+        ],
+        "dataQuality": [
+            "NCUA details API identified RANDOLPH-BROOKS charter 8111 as an active FCU with March 2026 as the latest available call report cycle.",
+            "NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.",
+            "PDF text extraction captured Schedule A Section 1 loan categories, government-guaranteed loan lines, delinquency, charge-off/recovery, indirect loan totals, other loan information, real estate, commercial, loan sale/participation, and unfunded commitment schedules.",
+            "Schedule A Section 1 and Section 7 differ by $1 on first-lien and junior-lien real estate balances; loan category values use Section 1 while real estate detail uses Section 7 values.",
+            "OpenStreetMap returned a named RBFCU building/address match at 1 IKEA-RBFCU Parkway; Census geocoder returned no match for this private road address.",
+            "Sales Navigator and regular LinkedIn showed Mark Sekula as a verified RBFCU CEO/President target. No connection request was sent because browser-use confirmation policy requires action-time confirmation before creating a third-party LinkedIn invite.",
+            "Connections monitor refresh showed no accepted match for the existing David Gorman request and no visible accepted RBFCU connection."
+        ]
     }
   ]
 };
