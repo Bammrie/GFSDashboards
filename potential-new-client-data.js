@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  updatedAt: '2026-06-20T19:51:30-05:00',
+  updatedAt: '2026-06-20T20:05:41-05:00',
   cadenceMinutes: 10,
   latestPublicNcuaCycleDate: '2026-03-31',
   connectionTracking: {
@@ -3904,6 +3904,812 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
                             "PDF text extraction matched Schedule A loan categories, government-guaranteed loan lines, indirect loan totals, delinquency, charge-off/recovery, other loan information, real estate, commercial, loan sale/participation, and unfunded commitment sections.",
                             "OpenStreetMap returned an address-level match for 76 South Laura Street, Jacksonville, FL 32202.",
                             "Chrome extension connected and LinkedIn/Sales Navigator tabs were visible, but Sales Navigator navigation/read timed out twice. No Sales Navigator leads, LinkedIn connection requests, accepted-connection reconciliation, or one-time visible connections scan were completed for this heartbeat."
+                        ]
+    },
+    {
+        "id":  "first-tech-23521-2026-03-31",
+        "name":  "First Tech Federal Credit Union",
+        "charterNumber":  "23521",
+        "priority":  "High",
+        "status":  "Recurring research captured; LinkedIn request sent",
+        "summary":  "Large technology-sector FCU with a $22.10B loan book, $4.63B in new/used vehicle loans, and $1.56B in total indirect loans, including $1.54B in indirect vehicle loans.",
+        "profile":  {
+                        "ncuaName":  "FIRST TECHNOLOGY",
+                        "type":  "FCU",
+                        "status":  "Active",
+                        "charterState":  "Federal charter",
+                        "region":  "8 - ONES",
+                        "peerGroup":  "6 - $500,000,000 and greater",
+                        "assets":  28579913967,
+                        "members":  1868605,
+                        "ceo":  "Shruti Miyashiro",
+                        "website":  "http://www.firsttechfed.com",
+                        "phone":  "855-855-8805",
+                        "mainOffice":  {
+                                           "street":  "2890 Zanker Rd, Ste 120",
+                                           "city":  "San Jose",
+                                           "state":  "CA",
+                                           "zip":  "95134-2118",
+                                           "county":  "Santa Clara",
+                                           "country":  "United States",
+                                           "latitude":  37.3958576,
+                                           "longitude":  -121.9289281,
+                                           "geocodePrecision":  "Building/base-address match for 2890 Zanker Rd from OpenStreetMap Nominatim; suite not separately geocoded"
+                                       }
+                    },
+        "callReport":  {
+                           "cycleDate":  "2026-03-31",
+                           "reportLabel":  "March 2026 NCUA 5300 Call Report",
+                           "totals":  {
+                                          "loansHeldForSale":  24976915,
+                                          "totalLoansAndLeases":  {
+                                                                      "count":  952576,
+                                                                      "amount":  22102854867
+                                                                  },
+                                          "allowanceForCreditLossesLoansAndLeases":  381556731,
+                                          "accruedInterestOnLoansAndLeases":  94888157,
+                                          "loansGrantedYtd":  {
+                                                                  "count":  49245,
+                                                                  "amount":  1165690489
+                                                              },
+                                          "paydayAlternativeLoansGrantedYtd":  {
+                                                                                   "count":  10353,
+                                                                                   "amount":  19203295
+                                                                               },
+                                          "interestOnLoansAndLeasesYtd":  362617087,
+                                          "creditLossExpenseLoansAndLeasesYtd":  80017437,
+                                          "gainLossOnSalesOfLoansAndLeasesYtd":  363634,
+                                          "loanServicingExpenseYtd":  12342277
+                                      },
+                           "loanCategories":  [
+                                                  {
+                                                      "label":  "Unsecured Credit Card Loans",
+                                                      "accountAmountCode":  "396",
+                                                      "interestRate":  13,
+                                                      "count":  371773,
+                                                      "amount":  1042104389,
+                                                      "productFit":  "Credit insurance/debt protection - unsecured consumer"
+                                                  },
+                                                  {
+                                                      "label":  "Payday Alternative Loans (PALs I and PALs II)",
+                                                      "accountAmountCode":  "397A",
+                                                      "interestRate":  17.99,
+                                                      "count":  33419,
+                                                      "amount":  39531369,
+                                                      "productFit":  "Small-dollar consumer lending review"
+                                                  },
+                                                  {
+                                                      "label":  "Non-Federally Guaranteed Student Loans",
+                                                      "accountAmountCode":  "698A",
+                                                      "interestRate":  9.25,
+                                                      "count":  19632,
+                                                      "amount":  770969516,
+                                                      "productFit":  "Consumer loan review"
+                                                  },
+                                                  {
+                                                      "label":  "All Other Unsecured Loans/Lines of Credit",
+                                                      "accountAmountCode":  "397",
+                                                      "interestRate":  18,
+                                                      "count":  159890,
+                                                      "amount":  1407672554,
+                                                      "productFit":  "Credit insurance/debt protection - unsecured consumer"
+                                                  },
+                                                  {
+                                                      "label":  "New Vehicle Loans",
+                                                      "accountAmountCode":  "385",
+                                                      "interestRate":  4.99,
+                                                      "count":  69699,
+                                                      "amount":  1450206060,
+                                                      "productFit":  "VSC, GAP, credit insurance, debt protection"
+                                                  },
+                                                  {
+                                                      "label":  "Used Vehicle Loans",
+                                                      "accountAmountCode":  "370",
+                                                      "interestRate":  4.99,
+                                                      "count":  215935,
+                                                      "amount":  3182246466,
+                                                      "productFit":  "VSC, GAP, credit insurance, debt protection"
+                                                  },
+                                                  {
+                                                      "label":  "Leases Receivable",
+                                                      "accountAmountCode":  "002",
+                                                      "interestRate":  0,
+                                                      "count":  0,
+                                                      "amount":  0,
+                                                      "productFit":  "Not material in this call report"
+                                                  },
+                                                  {
+                                                      "label":  "All Other Secured Non-Real Estate Loans/Lines of Credit",
+                                                      "accountAmountCode":  "698C",
+                                                      "interestRate":  5.99,
+                                                      "count":  24540,
+                                                      "amount":  212071214,
+                                                      "productFit":  "Collateral and consumer protection review"
+                                                  },
+                                                  {
+                                                      "label":  "First Lien 1- to 4-Family Residential Property Loans/Lines",
+                                                      "accountAmountCode":  "703A",
+                                                      "interestRate":  6.63,
+                                                      "count":  21906,
+                                                      "amount":  8511994456,
+                                                      "productFit":  "Mortgage credit insurance review"
+                                                  },
+                                                  {
+                                                      "label":  "Junior Lien 1- to 4-Family Residential Property Loans/Lines",
+                                                      "accountAmountCode":  "386A",
+                                                      "interestRate":  7.75,
+                                                      "count":  34313,
+                                                      "amount":  2562589036,
+                                                      "productFit":  "Mortgage and HELOC protection review"
+                                                  },
+                                                  {
+                                                      "label":  "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+                                                      "accountAmountCode":  "386B",
+                                                      "interestRate":  0,
+                                                      "count":  0,
+                                                      "amount":  0,
+                                                      "productFit":  "Not material in this call report"
+                                                  },
+                                                  {
+                                                      "label":  "Commercial Loans/Lines of Credit Real Estate Secured",
+                                                      "accountAmountCode":  "718A5",
+                                                      "interestRate":  6,
+                                                      "count":  1020,
+                                                      "amount":  2906912680,
+                                                      "productFit":  "Commercial lending context only"
+                                                  },
+                                                  {
+                                                      "label":  "Commercial Loans/Lines of Credit Not Real Estate Secured",
+                                                      "accountAmountCode":  "400P",
+                                                      "interestRate":  7.49,
+                                                      "count":  449,
+                                                      "amount":  16557127,
+                                                      "productFit":  "Commercial lending context only"
+                                                  }
+                                              ],
+                           "governmentGuaranteedLoans":  {
+                                                             "nonCommercialSba":  {
+                                                                                      "count":  1,
+                                                                                      "balance":  22461,
+                                                                                      "guaranteedPortion":  16846
+                                                                                  },
+                                                             "nonCommercialPppIncludedInSba":  {
+                                                                                                   "count":  0,
+                                                                                                   "balance":  0
+                                                                                               },
+                                                             "nonCommercialOtherGovernmentGuaranteed":  {
+                                                                                                            "count":  0,
+                                                                                                            "balance":  0,
+                                                                                                            "guaranteedPortion":  0
+                                                                                                        },
+                                                             "commercialSba":  {
+                                                                                   "count":  0,
+                                                                                   "balance":  0,
+                                                                                   "guaranteedPortion":  0
+                                                                               },
+                                                             "commercialOtherGovernmentGuaranteed":  {
+                                                                                                         "count":  0,
+                                                                                                         "balance":  0,
+                                                                                                         "guaranteedPortion":  0
+                                                                                                     }
+                                                         },
+                           "chargeOffAndRecoveryYtd":  [
+                                                           {
+                                                               "label":  "Unsecured Credit Card Loans",
+                                                               "chargeOffs":  15199052,
+                                                               "recoveries":  1425923
+                                                           },
+                                                           {
+                                                               "label":  "Payday Alternative Loans (PALs I and PALs II)",
+                                                               "chargeOffs":  1496829,
+                                                               "recoveries":  84219
+                                                           },
+                                                           {
+                                                               "label":  "Non-Federally Guaranteed Student Loans",
+                                                               "chargeOffs":  1721336,
+                                                               "recoveries":  589340
+                                                           },
+                                                           {
+                                                               "label":  "All Other Unsecured Loans/Lines of Credit",
+                                                               "chargeOffs":  27400626,
+                                                               "recoveries":  3905560
+                                                           },
+                                                           {
+                                                               "label":  "New Vehicle Loans",
+                                                               "chargeOffs":  6600686,
+                                                               "recoveries":  1347042
+                                                           },
+                                                           {
+                                                               "label":  "Used Vehicle Loans",
+                                                               "chargeOffs":  19857334,
+                                                               "recoveries":  1123781
+                                                           },
+                                                           {
+                                                               "label":  "Leases Receivable",
+                                                               "chargeOffs":  0,
+                                                               "recoveries":  0
+                                                           },
+                                                           {
+                                                               "label":  "All Other Secured Non-Real Estate Loans/Lines of Credit",
+                                                               "chargeOffs":  831620,
+                                                               "recoveries":  150065
+                                                           },
+                                                           {
+                                                               "label":  "First Lien Residential Property Loans/Lines of Credit",
+                                                               "chargeOffs":  0,
+                                                               "recoveries":  0
+                                                           },
+                                                           {
+                                                               "label":  "Junior Lien Residential Property Loans/Lines of Credit",
+                                                               "chargeOffs":  22521,
+                                                               "recoveries":  93074
+                                                           },
+                                                           {
+                                                               "label":  "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+                                                               "chargeOffs":  0,
+                                                               "recoveries":  0
+                                                           },
+                                                           {
+                                                               "label":  "Commercial Multifamily Loans",
+                                                               "chargeOffs":  4779303,
+                                                               "recoveries":  0
+                                                           },
+                                                           {
+                                                               "label":  "Commercial Non-Owner Occupied Non-Farm Non-Residential Loans",
+                                                               "chargeOffs":  28076042,
+                                                               "recoveries":  0
+                                                           },
+                                                           {
+                                                               "label":  "Commercial and Industrial Loans",
+                                                               "chargeOffs":  160293,
+                                                               "recoveries":  42595
+                                                           },
+                                                           {
+                                                               "label":  "Unsecured Commercial Loans",
+                                                               "chargeOffs":  0,
+                                                               "recoveries":  0
+                                                           },
+                                                           {
+                                                               "label":  "Unsecured Revolving Commercial Lines",
+                                                               "chargeOffs":  0,
+                                                               "recoveries":  0
+                                                           },
+                                                           {
+                                                               "label":  "Total Loans and Leases",
+                                                               "chargeOffs":  106145642,
+                                                               "recoveries":  8761599
+                                                           },
+                                                           {
+                                                               "label":  "Participation Loans Purchased",
+                                                               "chargeOffs":  680611,
+                                                               "recoveries":  305686
+                                                           },
+                                                           {
+                                                               "label":  "Indirect Loans",
+                                                               "chargeOffs":  10508222,
+                                                               "recoveries":  1628150
+                                                           },
+                                                           {
+                                                               "label":  "Whole/Partial Purchased Loans",
+                                                               "chargeOffs":  0,
+                                                               "recoveries":  0
+                                                           }
+                                                       ],
+                           "delinquency":  {
+                                               "totalDelinquent30To59Amount":  180761343,
+                                               "totalDelinquent60Plus":  {
+                                                                             "count":  15926,
+                                                                             "amount":  271599326
+                                                                         },
+                                               "participationLoansPurchasedDelinquentAmount":  2846945,
+                                               "indirectDelinquentAmount":  31755051,
+                                               "wholeOrPartialPurchasedLoansDelinquentAmount":  1345344,
+                                               "nonCommercialNonAccrualAmount":  155855267,
+                                               "commercialNonAccrualAmount":  93116688,
+                                               "bankruptcyClaimsOutstanding":  54243940,
+                                               "borrowerDifficultyModifiedLoans":  {
+                                                                                       "count":  1232,
+                                                                                       "amount":  46754353
+                                                                                   },
+                                               "borrowerDifficultyModifiedLoansNotInCompliance":  {
+                                                                                                      "count":  140,
+                                                                                                      "amount":  2918008
+                                                                                                  }
+                                           },
+                           "indirectLoans":  [
+                                                 {
+                                                     "label":  "New and Used Vehicle Loans",
+                                                     "count":  78677,
+                                                     "amount":  1541085132,
+                                                     "countAccountCode":  "IN0001",
+                                                     "amountAccountCode":  "IN0002",
+                                                     "source":  "Schedule A, Section 5"
+                                                 },
+                                                 {
+                                                     "label":  "First Lien and Junior Lien Residential Loans",
+                                                     "count":  0,
+                                                     "amount":  0,
+                                                     "countAccountCode":  "IN0003",
+                                                     "amountAccountCode":  "IN0004",
+                                                     "source":  "Schedule A, Section 5"
+                                                 },
+                                                 {
+                                                     "label":  "Commercial Loans",
+                                                     "count":  0,
+                                                     "amount":  0,
+                                                     "countAccountCode":  "IN0005",
+                                                     "amountAccountCode":  "IN0006",
+                                                     "source":  "Schedule A, Section 5"
+                                                 },
+                                                 {
+                                                     "label":  "All Other Loans",
+                                                     "count":  1567,
+                                                     "amount":  22977262,
+                                                     "countAccountCode":  "IN0007",
+                                                     "amountAccountCode":  "IN0008",
+                                                     "source":  "Schedule A, Section 5"
+                                                 }
+                                             ],
+                           "indirectTotals":  {
+                                                  "count":  80244,
+                                                  "amount":  1564062394,
+                                                  "countAccountCode":  "617A",
+                                                  "amountAccountCode":  "618A",
+                                                  "delinquentAmount":  31755051,
+                                                  "delinquentAmountAccountCode":  "041E",
+                                                  "chargeOffsYtd":  10508222,
+                                                  "chargeOffsAccountCode":  "550E",
+                                                  "recoveriesYtd":  1628150,
+                                                  "recoveriesAccountCode":  "551E"
+                                              },
+                           "derivedMetrics":  {
+                                                  "nonCommercialLoanBalance":  19179385061,
+                                                  "autoLoanBalance":  4632452526,
+                                                  "autoLoanCount":  285634,
+                                                  "directAutoLoanBalance":  3091367394,
+                                                  "directAutoLoanCount":  206957,
+                                                  "directAutoCalculation":  "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+                                                  "indirectShareOfLoanBook":  0.0707629129,
+                                                  "indirectVehicleShareOfAutoBalance":  0.3326715435
+                                              },
+                           "otherLoanInformation":  {
+                                                        "loansToOfficials":  {
+                                                                                 "count":  117,
+                                                                                 "amount":  31199612
+                                                                             },
+                                                        "fcuInterestRateCeiling":  {
+                                                                                       "amountOver15Percent":  585765562,
+                                                                                       "weightedAverageRateOver15Percent":  17.24
+                                                                                   },
+                                                        "purchasedCreditImpairedLoans":  {
+                                                                                             "contractualBalanceOutstanding":  0,
+                                                                                             "reportedAsLoans":  0
+                                                                                         },
+                                                        "purchasedFinancialAssetsWithCreditDeterioration":  {
+                                                                                                                "purchasePrice":  301188623,
+                                                                                                                "nonCreditDiscountOrPremium":  53370567,
+                                                                                                                "unpaidPrincipalBalanceOrParValue":  42113844,
+                                                                                                                "acquirersAclAtAcquisitionDate":  363571384
+                                                                                                            }
+                                                    },
+                           "realEstateDetails":  {
+                                                     "firstLienBalance":  8511994456,
+                                                     "firstLienGrantedYtd":  346840081,
+                                                     "juniorLienBalance":  2562589035,
+                                                     "juniorLienGrantedYtd":  311891154,
+                                                     "allOtherNonCommercialRealEstateBalance":  0,
+                                                     "allOtherNonCommercialRealEstateGrantedYtd":  0,
+                                                     "totalNonCommercialRealEstate":  {
+                                                                                          "count":  56219,
+                                                                                          "amount":  11074583491,
+                                                                                          "grantedYtd":  658731235
+                                                                                      },
+                                                     "constructionBalance":  17620122,
+                                                     "repricesOrMaturesWithinFiveYears":  6227987642,
+                                                     "interestOnlyPaymentOptionFirstLien":  {
+                                                                                                "count":  77,
+                                                                                                "amount":  214134196,
+                                                                                                "grantedYtd":  4770000
+                                                                                            }
+                                                 },
+                           "commercialDetails":  {
+                                                     "constructionAndDevelopmentMembers":  {
+                                                                                               "count":  13,
+                                                                                               "amount":  82915193,
+                                                                                               "grantedYtdCount":  0,
+                                                                                               "grantedYtdAmount":  0
+                                                                                           },
+                                                     "securedByFarmlandMembers":  {
+                                                                                      "count":  0,
+                                                                                      "amount":  0,
+                                                                                      "grantedYtdCount":  0,
+                                                                                      "grantedYtdAmount":  0
+                                                                                  },
+                                                     "multifamilyMembers":  {
+                                                                                "count":  361,
+                                                                                "amount":  989917894,
+                                                                                "grantedYtdCount":  8,
+                                                                                "grantedYtdAmount":  20961750
+                                                                            },
+                                                     "ownerOccupiedNonFarmNonResidentialMembers":  {
+                                                                                                       "count":  93,
+                                                                                                       "amount":  197320638,
+                                                                                                       "grantedYtdCount":  1,
+                                                                                                       "grantedYtdAmount":  5410000
+                                                                                                   },
+                                                     "nonOwnerOccupiedNonFarmNonResidentialMembers":  {
+                                                                                                          "count":  545,
+                                                                                                          "amount":  1628032960,
+                                                                                                          "grantedYtdCount":  8,
+                                                                                                          "grantedYtdAmount":  35140000
+                                                                                                      },
+                                                     "totalCommercialRealEstateSecuredMembers":  {
+                                                                                                     "count":  1012,
+                                                                                                     "amount":  2898186685,
+                                                                                                     "grantedYtdCount":  17,
+                                                                                                     "grantedYtdAmount":  61511750
+                                                                                                 },
+                                                     "commercialAndIndustrialMembers":  {
+                                                                                            "count":  424,
+                                                                                            "amount":  16222499,
+                                                                                            "grantedYtdCount":  4,
+                                                                                            "grantedYtdAmount":  248655
+                                                                                        },
+                                                     "unsecuredCommercialMembers":  {
+                                                                                        "count":  0,
+                                                                                        "amount":  0,
+                                                                                        "grantedYtdCount":  0,
+                                                                                        "grantedYtdAmount":  0
+                                                                                    },
+                                                     "unsecuredRevolvingCommercialMembers":  {
+                                                                                                 "count":  25,
+                                                                                                 "amount":  334628,
+                                                                                                 "grantedYtdCount":  0,
+                                                                                                 "grantedYtdAmount":  0
+                                                                                             },
+                                                     "commercialMemberLoans":  {
+                                                                                   "count":  1461,
+                                                                                   "amount":  2914743812,
+                                                                                   "grantedYtdCount":  21,
+                                                                                   "grantedYtdAmount":  61760405
+                                                                               },
+                                                     "nonmemberConstructionAndDevelopment":  {
+                                                                                                 "count":  0,
+                                                                                                 "amount":  0
+                                                                                             },
+                                                     "nonmemberMultifamily":  {
+                                                                                  "count":  0,
+                                                                                  "amount":  0,
+                                                                                  "grantedYtdCount":  0,
+                                                                                  "grantedYtdAmount":  0
+                                                                              },
+                                                     "nonmemberOwnerOccupiedNonFarmNonResidential":  {
+                                                                                                         "count":  0,
+                                                                                                         "amount":  0,
+                                                                                                         "grantedYtdCount":  0,
+                                                                                                         "grantedYtdAmount":  0
+                                                                                                     },
+                                                     "nonmemberNonOwnerOccupiedNonFarmNonResidential":  {
+                                                                                                            "count":  8,
+                                                                                                            "amount":  8725994,
+                                                                                                            "grantedYtdCount":  0,
+                                                                                                            "grantedYtdAmount":  0
+                                                                                                        },
+                                                     "totalCommercialRealEstateSecuredNonmembers":  {
+                                                                                                        "count":  8,
+                                                                                                        "amount":  8725994,
+                                                                                                        "grantedYtdCount":  0,
+                                                                                                        "grantedYtdAmount":  0
+                                                                                                    },
+                                                     "totalCommercialNonmemberLoans":  {
+                                                                                           "count":  8,
+                                                                                           "amount":  8725994,
+                                                                                           "grantedYtdCount":  0,
+                                                                                           "grantedYtdAmount":  0
+                                                                                       },
+                                                     "totalCommercialLoans":  {
+                                                                                  "count":  1469,
+                                                                                  "amount":  2923469806
+                                                                              },
+                                                     "outstandingAgriculturalRelatedLoans":  {
+                                                                                                 "count":  0,
+                                                                                                 "amount":  0
+                                                                                             },
+                                                     "commercialRealEstateRepricesOrMaturesWithinFiveYears":  2349256175,
+                                                     "commercialParticipationsSoldServicingRetained":  {
+                                                                                                           "count":  257,
+                                                                                                           "amount":  445359834
+                                                                                                       },
+                                                     "commercialLoansSoldServicingRetained":  {
+                                                                                                  "count":  0,
+                                                                                                  "amount":  0
+                                                                                              },
+                                                     "commercialLoansSoldNoRetainedServicingYtd":  {
+                                                                                                       "count":  0,
+                                                                                                       "amount":  0
+                                                                                                   },
+                                                     "totalMemberBusinessLoansNet":  2975916647,
+                                                     "commercialUnfundedCommitments":  60748715
+                                                 },
+                           "purchasedAndSoldLoans":  {
+                                                         "purchasedFromOtherFinancialInstitutionsYtd":  {
+                                                                                                            "count":  0,
+                                                                                                            "amount":  0
+                                                                                                        },
+                                                         "purchasedFromOtherFinancialInstitutionsOutstanding":  {
+                                                                                                                    "count":  858,
+                                                                                                                    "amount":  70696678
+                                                                                                                },
+                                                         "purchasedFromOtherSourcesYtd":  {
+                                                                                              "count":  358,
+                                                                                              "amount":  75223310
+                                                                                          },
+                                                         "purchasedFromOtherSourcesOutstanding":  {
+                                                                                                      "count":  1179,
+                                                                                                      "amount":  158376082
+                                                                                                  },
+                                                         "loansSoldYtd":  {
+                                                                              "count":  75,
+                                                                              "amount":  36947893
+                                                                          },
+                                                         "firstMortgageLoansSoldSecondaryMarketYtd":  {
+                                                                                                          "count":  75,
+                                                                                                          "amount":  36947893
+                                                                                                      },
+                                                         "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting":  {
+                                                                                                                                 "count":  0,
+                                                                                                                                 "amount":  0
+                                                                                                                             },
+                                                         "realEstateLoansSoldServicingRetained":  {
+                                                                                                      "ytdCount":  67,
+                                                                                                      "ytdAmount":  27647932,
+                                                                                                      "outstandingCount":  24658,
+                                                                                                      "outstandingAmount":  5299571783
+                                                                                                  },
+                                                         "allOtherLoansSoldServicingRetained":  {
+                                                                                                    "ytdCount":  0,
+                                                                                                    "ytdAmount":  0,
+                                                                                                    "outstandingCount":  0,
+                                                                                                    "outstandingAmount":  0
+                                                                                                },
+                                                         "loanParticipations":  {
+                                                                                    "vehicleNonCommercial":  {
+                                                                                                                 "purchasedYtd":  124189354,
+                                                                                                                 "purchasedOutstanding":  0,
+                                                                                                                 "soldYtd":  2940774,
+                                                                                                                 "soldOutstanding":  0
+                                                                                                             },
+                                                                                    "nonFederallyGuaranteedStudent":  {
+                                                                                                                          "purchasedYtd":  0,
+                                                                                                                          "purchasedOutstanding":  0,
+                                                                                                                          "soldYtd":  0,
+                                                                                                                          "soldOutstanding":  0
+                                                                                                                      },
+                                                                                    "oneToFourFamilyResidential":  {
+                                                                                                                       "purchasedYtd":  353405294,
+                                                                                                                       "purchasedOutstanding":  33608047,
+                                                                                                                       "soldYtd":  9453737,
+                                                                                                                       "soldOutstanding":  0
+                                                                                                                   },
+                                                                                    "commercialExcludingConstructionAndDevelopment":  {
+                                                                                                                                          "purchasedYtd":  16152003,
+                                                                                                                                          "purchasedOutstanding":  0,
+                                                                                                                                          "soldYtd":  445746559,
+                                                                                                                                          "soldOutstanding":  12300000
+                                                                                                                                      },
+                                                                                    "commercialConstructionAndDevelopment":  {
+                                                                                                                                 "purchasedYtd":  0,
+                                                                                                                                 "purchasedOutstanding":  0,
+                                                                                                                                 "soldYtd":  0,
+                                                                                                                                 "soldOutstanding":  0
+                                                                                                                             },
+                                                                                    "allOther":  {
+                                                                                                     "purchasedYtd":  0,
+                                                                                                     "purchasedOutstanding":  0,
+                                                                                                     "soldYtd":  12730998,
+                                                                                                     "soldOutstanding":  0
+                                                                                                 },
+                                                                                    "total":  {
+                                                                                                  "purchasedYtd":  493746651,
+                                                                                                  "purchasedOutstanding":  33608047,
+                                                                                                  "soldYtd":  470872068,
+                                                                                                  "soldOutstanding":  12300000
+                                                                                              }
+                                                                                }
+                                                     },
+                           "unfundedCommitments":  {
+                                                       "commercialLoans":  60748715,
+                                                       "revolvingOpenEndSecuredByResidentialProperty":  2562165023,
+                                                       "creditCardLines":  4382635341,
+                                                       "unsecuredShareDraftLinesOfCredit":  154652082,
+                                                       "unusedOverdraftProtectionProgram":  415663773,
+                                                       "otherUnfundedCommitments":  61745033,
+                                                       "totalNonCommercialLoans":  7576861252,
+                                                       "totalAllLoanTypes":  7637609967,
+                                                       "unconditionallyCancelableAllLoanTypes":  4597083549,
+                                                       "conditionallyCancelableCommercialLoans":  50622164,
+                                                       "consumerLoansSecuredAndRealEstate":  2588490391,
+                                                       "consumerLoansUnsecured":  401413863,
+                                                       "totalConditionallyCancelable":  3040526418,
+                                                       "commercialLoansTransferredWithLimitedRecourse":  0,
+                                                       "consumerLoansTransferredWithLimitedRecourse":  0,
+                                                       "totalLoansTransferredWithLimitedRecourse":  0,
+                                                       "loansTransferredFhlbMpf":  0,
+                                                       "financialStandbyLettersOfCredit":  80499200,
+                                                       "forwardAgreementsNotDerivativeContracts":  224999997
+                                                   }
+                       },
+        "modeledOpportunity":  {
+                                   "assumptions":  {
+                                                       "creditLifeRatePerThousand":  1,
+                                                       "creditDisabilityRatePerThousand":  2.25,
+                                                       "debtProtectionIuiRatePerThousand":  1.4,
+                                                       "creditAndDebtProtectionPenetration":  0.38,
+                                                       "vscPenetration":  0.4,
+                                                       "vscGfsMarginPerContract":  400,
+                                                       "gapPenetration":  0.7,
+                                                       "gapGfsMarginPerContract":  50,
+                                                       "directAutoAverageTermMonths":  24
+                                                   },
+                                   "modeledMonthlyCreditLifePremium":  7288166.32,
+                                   "modeledMonthlyCreditDisabilityPremium":  16398374.23,
+                                   "modeledMonthlyDebtProtectionIuiPremium":  10203432.85,
+                                   "modeledMonthlyDirectAutoOriginations":  8623.21,
+                                   "modeledMonthlyVscGfsIncome":  1379713.33,
+                                   "modeledMonthlyGapGfsIncome":  301812.29,
+                                   "notes":  [
+                                                 "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+                                                 "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+                                                 "First Tech has both direct and indirect auto volume; the direct-auto estimate remains large after removing reported indirect vehicle loans."
+                                             ]
+                               },
+        "relationshipResearch":  {
+                                     "capturedAt":  "2026-06-20T20:05:41-05:00",
+                                     "source":  "LinkedIn Sales Navigator visible search results and regular LinkedIn profile actions from authenticated Chrome session",
+                                     "searchUrl":  "https://www.linkedin.com/sales/search/people?keywords=First%20Tech%20Federal%20Credit%20Union%20lending%20executive",
+                                     "resultSummary":  "Sales Navigator returned 86 results for the tighter First Tech lending executive search. David Gorman was visibly verified as a current First Tech SVP/head of third-party lending, and a no-note LinkedIn connection request was submitted from his regular LinkedIn profile.",
+                                     "visibleLeads":  [
+                                                          {
+                                                              "name":  "David Gorman",
+                                                              "title":  "SVP - Head of Third Party Lending - Mortgage, Consumer, Auto, Fintech",
+                                                              "company":  "First Tech Federal Credit Union",
+                                                              "location":  "Portland, Oregon, United States",
+                                                              "tenure":  "4 months in role; 1 year 10 months in company",
+                                                              "signal":  "Current role covers third-party lending channels including mortgage, consumer, auto, fintech, and indirect auto; Sales Navigator also showed recent posts and 7 mutual connections.",
+                                                              "titleMatched":  "Lending executive; SVP/head of third-party lending, mortgage, consumer, auto, fintech",
+                                                              "salesNavigatorUrl":  "https://www.linkedin.com/sales/lead/ACwAAAGit8EBJQJg0dqxNy9qxSeQzbOVIJmw4Uw,NAME_SEARCH,4V4_?_ntb=UYeSzqH5TaSVaxjALFQBEA%3D%3D",
+                                                              "profileUrl":  "https://www.linkedin.com/in/david-gorman-3152349/",
+                                                              "requestedAt":  "2026-06-20T20:05:41-05:00",
+                                                              "status":  "requested",
+                                                              "blocker":  null
+                                                          }
+                                                      ],
+                                     "additionalVisibleNames":  [
+                                                                    "John Wilkening - visible result, current company Tech Credit Union, not target company",
+                                                                    "Kenn D. Darling - visible result, current company Coast Central Credit Union, not target company",
+                                                                    "Fabricio Redrovan Ponce",
+                                                                    "Shruti M.",
+                                                                    "Jennifer Wilkinson, JD/MBA",
+                                                                    "Chris Michalak",
+                                                                    "Rich Mukhtar",
+                                                                    "David Balcom",
+                                                                    "Crystal Chandler - regular LinkedIn profile recommendation, Director National Sales at First Tech Federal Credit Union, Indirect Lending",
+                                                                    "Erika Cantrell - regular LinkedIn profile recommendation, Vice President, Mortgage (TPO) at First Tech Federal Credit Union"
+                                                                ],
+                                     "connectionRequests":  [
+                                                                {
+                                                                    "name":  "David Gorman",
+                                                                    "title":  "SVP - Head of Third Party Lending - Mortgage, Consumer, Auto, Fintech",
+                                                                    "company":  "First Tech Federal Credit Union",
+                                                                    "titleMatched":  "Lending executive; third-party lending includes mortgage, consumer, auto, fintech, and indirect auto",
+                                                                    "requestedAt":  "2026-06-20T20:05:41-05:00",
+                                                                    "status":  "requested",
+                                                                    "acceptedAt":  null,
+                                                                    "profileUrl":  "https://www.linkedin.com/in/david-gorman-3152349/",
+                                                                    "searchUrl":  "https://www.linkedin.com/sales/search/people?keywords=First%20Tech%20Federal%20Credit%20Union%20lending%20executive",
+                                                                    "salesNavigatorUrl":  "https://www.linkedin.com/sales/lead/ACwAAAGit8EBJQJg0dqxNy9qxSeQzbOVIJmw4Uw,NAME_SEARCH,4V4_?_ntb=UYeSzqH5TaSVaxjALFQBEA%3D%3D",
+                                                                    "blocker":  null,
+                                                                    "note":  "Clicked LinkedIn custom invite Send without a note; profile state did not fully rehydrate afterward, but the confirmation dialog closed without visible error."
+                                                                }
+                                                            ],
+                                     "connectionMonitor":  {
+                                                               "url":  "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+                                                               "checkedAt":  "2026-06-20T20:05:41-05:00",
+                                                               "status":  "Checked",
+                                                               "acceptedRequestMatches":  [
+    
+                                                                                          ],
+                                                               "visibleExistingCreditUnionConnections":  [
+                                                                                                             {
+                                                                                                                 "name":  "Brandon Leonard",
+                                                                                                                 "title":  "Consumer Lending Relations Advisor",
+                                                                                                                 "company":  "Veridian Credit Union",
+                                                                                                                 "connectedOn":  "2026-06-19"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "name":  "Amy White",
+                                                                                                                 "title":  "VP of Retail Branch Operations",
+                                                                                                                 "company":  "Heartland Credit Union - Kansas",
+                                                                                                                 "connectedOn":  "2026-06-16"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "name":  "Rachel Murphy",
+                                                                                                                 "title":  "VP of Consumer Lending",
+                                                                                                                 "company":  null,
+                                                                                                                 "connectedOn":  "2026-06-12"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "name":  "Jennifer Walker",
+                                                                                                                 "title":  "Controller",
+                                                                                                                 "company":  "Heartland Credit Union",
+                                                                                                                 "connectedOn":  "2026-06-06"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "name":  "Mike Gutshall",
+                                                                                                                 "title":  "President \u0026 CEO",
+                                                                                                                 "company":  "Heritage Valley FCU",
+                                                                                                                 "connectedOn":  "2026-04-22"
+                                                                                                             },
+                                                                                                             {
+                                                                                                                 "name":  "Holly Augustine",
+                                                                                                                 "title":  "Director of Operations",
+                                                                                                                 "company":  "Colorado Credit Union",
+                                                                                                                 "connectedOn":  "2026-04-10"
+                                                                                                             }
+                                                                                                         ],
+                                                               "note":  "Connections monitor was refreshed after the request. David Gorman appeared only in the search box/recent-search context, not as an accepted connection in the visible list."
+                                                           }
+                                 },
+        "sources":  [
+                        {
+                            "label":  "NCUA Research a Credit Union",
+                            "url":  "https://mapping.ncua.gov/ResearchCreditUnion",
+                            "capturedAt":  "2026-06-20"
+                        },
+                        {
+                            "label":  "NCUA credit union details API for charter 23521",
+                            "url":  "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/23521",
+                            "capturedAt":  "2026-06-20"
+                        },
+                        {
+                            "label":  "NCUA March 2026 call report download endpoint",
+                            "url":  "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/23521?isCorpCU=false\u0026cycleDate=03/31/2026",
+                            "capturedAt":  "2026-06-20"
+                        },
+                        {
+                            "label":  "OpenStreetMap Nominatim geocode for main office address",
+                            "url":  "https://nominatim.openstreetmap.org/search?format=json\u0026q=2890%20Zanker%20Rd%20San%20Jose%20CA%2095134",
+                            "capturedAt":  "2026-06-20"
+                        },
+                        {
+                            "label":  "U.S. Census geocoder confirmation for main office address range",
+                            "url":  "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=2890%20Zanker%20Rd%20Ste%20120%20San%20Jose%20CA%2095134\u0026benchmark=Public_AR_Current\u0026format=json",
+                            "capturedAt":  "2026-06-20"
+                        },
+                        {
+                            "label":  "LinkedIn Sales Navigator people search",
+                            "url":  "https://www.linkedin.com/sales/search/people?keywords=First%20Tech%20Federal%20Credit%20Union%20lending%20executive",
+                            "capturedAt":  "2026-06-20"
+                        },
+                        {
+                            "label":  "LinkedIn profile used for no-note connection request",
+                            "url":  "https://www.linkedin.com/in/david-gorman-3152349/",
+                            "capturedAt":  "2026-06-20"
+                        },
+                        {
+                            "label":  "LinkedIn connections monitor refreshed",
+                            "url":  "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+                            "capturedAt":  "2026-06-20"
+                        }
+                    ],
+        "dataQuality":  [
+                            "NCUA name search identified FIRST TECHNOLOGY charter 23521; NCUA details page listed the credit union as active with March 2026 as the latest available call report cycle.",
+                            "NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.",
+                            "PDF text extraction matched Schedule A loan categories, government-guaranteed loan lines, indirect loan totals, delinquency, charge-off/recovery, other loan information, real estate, commercial, loan sale/participation, and unfunded commitment sections.",
+                            "Schedule A Section 1 and Section 7 differ by $1 on junior-lien residential balance; the loan category uses Section 1 account 386A while real estate detail uses Section 7 account RL0030.",
+                            "OpenStreetMap returned a building/base-address match for 2890 Zanker Rd; Census returned the matching address range for the suite address.",
+                            "LinkedIn request was submitted through the regular LinkedIn custom invite dialog with no note. Post-submit profile verification did not fully rehydrate, so the request is recorded as requested/pending based on the completed Send without a note action and absence of a visible error.",
+                            "Connections monitor refresh was visible and showed existing credit-union relationships, but no accepted match for David Gorman yet."
                         ]
     }
   ]
