@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T05:02:52-05:00",
+  "updatedAt": "2026-06-21T05:12:52-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -34892,6 +34892,1441 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "U.S. Census geocoder returned a Public_AR_Current address-range match for the main office; OpenStreetMap/Nominatim did not return a match for the same query.",
         "NCUA details and Eastman public materials verify Kelly F. Price as CEO/President; Eastman's annual report and ProPublica officer extracts verify Dolly T. Linkous as Chief Lending Officer.",
         "Authenticated LinkedIn connections monitor was read-only. It did not show a visible accepted Eastman relationship among recently added connections.",
+        "No LinkedIn connection request was sent during this unattended heartbeat; target executives/lending leaders are marked confirmation_required for action-time review."
+      ]
+    },
+    {
+      "id": "langley-1261-2026-03-31",
+      "name": "Langley Federal Credit Union",
+      "charterNumber": "1261",
+      "priority": "High",
+      "status": "Active",
+      "summary": "Large Virginia federal credit union with $4.55B in Schedule A loans, $2.39B in total indirect loans, and $1.57B of indirect new/used vehicle exposure. Langley is a strong consumer/auto lending prospect because indirect loans represent about 52.45% of its Schedule A loan book and about 76.07% of its auto balances.",
+      "profile": {
+        "ncuaName": "LANGLEY",
+        "type": "FCU",
+        "status": "Active",
+        "charterState": "",
+        "region": "1 - Eastern",
+        "fieldOfMembership": "Multiple common bond - primarily military",
+        "lowIncomeDesignation": true,
+        "fhlbMember": true,
+        "peerGroup": "6 - $500,000,000 and greater",
+        "assets": 5677171621,
+        "members": 405305,
+        "ceo": "Gaurav Bhatia",
+        "website": "https://www.langleyfcu.org",
+        "phone": "757-827-5328",
+        "mainOffice": {
+          "street": "721 Lakefront Cmns",
+          "city": "Newport News",
+          "state": "VA",
+          "zip": "23606",
+          "county": "Newport News City",
+          "country": "United States",
+          "latitude": 37.088158024551,
+          "longitude": -76.473829174857,
+          "geocodePrecision": "U.S. Census Public_AR_Current address-range match",
+          "geocodedAddress": "721 LAKEFRONT CMNS, NEWPORT NEWS, VA, 23606",
+          "alternateOpenStreetMapMatch": {
+            "latitude": 37.0879129,
+            "longitude": -76.4739782,
+            "displayName": "Fountain Plaza III, 721, Lakefront Commons, City Center, Oyster Point, Newport News, Virginia, 23606, United States"
+          }
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "March 2026 NCUA 5300 Call Report",
+        "totals": {
+          "loansHeldForSale": 0,
+          "totalLoansAndLeases": {
+            "count": 211461,
+            "amount": 4553180599
+          },
+          "statementTotalLoansAndLeases": {
+            "count": 211461,
+            "amount": 4553180600
+          },
+          "scheduleASection1TotalLoansAndLeases": {
+            "count": 211461,
+            "amount": 4553180599
+          },
+          "allowanceForCreditLossesLoansAndLeases": 69250000,
+          "accruedInterestOnLoansAndLeases": 16398889,
+          "loansGrantedYtd": {
+            "count": 11889,
+            "amount": 376885687
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 65486813,
+          "creditLossExpenseLoansAndLeasesYtd": 13895384,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 0,
+          "loanServicingExpenseYtd": 3985747
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "interestRate": 18,
+            "count": 55826,
+            "amount": 196040691,
+            "accountCode": "396"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "397A"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "interestRate": 7.9,
+            "count": 454,
+            "amount": 15058523,
+            "accountCode": "698A"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "interestRate": 18,
+            "count": 26023,
+            "amount": 71505880,
+            "accountCode": "397"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "interestRate": 7.24,
+            "count": 16129,
+            "amount": 398244245,
+            "accountCode": "385"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "interestRate": 7.24,
+            "count": 94918,
+            "amount": 1662207466,
+            "accountCode": "370"
+          },
+          {
+            "label": "Leases Receivable",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "002"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "interestRate": 5.27,
+            "count": 3383,
+            "amount": 22402459,
+            "accountCode": "698C"
+          },
+          {
+            "label": "First Lien 1-4 Family Residential Property Loans",
+            "interestRate": 6.75,
+            "count": 7010,
+            "amount": 1667827695,
+            "accountCode": "703A"
+          },
+          {
+            "label": "Junior Lien 1-4 Family Residential Property Loans",
+            "interestRate": 8.09,
+            "count": 6860,
+            "amount": 361986174,
+            "accountCode": "386A"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "386B"
+          },
+          {
+            "label": "Commercial Loans/Lines of Credit Real Estate Secured",
+            "interestRate": 5.34,
+            "count": 129,
+            "amount": 153606760,
+            "accountCode": "718A5"
+          },
+          {
+            "label": "Commercial Loans/Lines of Credit Not Real Estate Secured",
+            "interestRate": 5.99,
+            "count": 729,
+            "amount": 4300706,
+            "accountCode": "400P"
+          }
+        ],
+        "governmentGuaranteedLoans": [
+          {
+            "label": "Non-Commercial SBA",
+            "count": 2,
+            "outstandingBalance": 93489,
+            "guaranteedPortion": 70117
+          },
+          {
+            "label": "Non-Commercial PPP Loans",
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          },
+          {
+            "label": "Non-Commercial Other Government Guaranteed",
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          },
+          {
+            "label": "Commercial SBA",
+            "count": 6,
+            "outstandingBalance": 1160448,
+            "guaranteedPortion": 836828
+          },
+          {
+            "label": "Commercial Other Government Guaranteed",
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          }
+        ],
+        "delinquency": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "days30To59": 3232026,
+            "days60To89": 1411416,
+            "days90To179": 3781187,
+            "days180To359": 1337445,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 6530048,
+              "count": 1558
+            }
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "days30To59": 114246,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "days30To59": 1578904,
+            "days60To89": 461886,
+            "days90To179": 1202438,
+            "days180To359": 430941,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 2095265,
+              "count": 495
+            }
+          },
+          {
+            "label": "New Vehicle Loans",
+            "days30To59": 10230803,
+            "days60To89": 2218913,
+            "days90To179": 2885459,
+            "days180To359": 1552740,
+            "days360OrMore": 45491,
+            "days60OrMore": {
+              "amount": 6702603,
+              "count": 295
+            }
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "days30To59": 45661554,
+            "days60To89": 10025728,
+            "days90To179": 15308554,
+            "days180To359": 6598191,
+            "days360OrMore": 712442,
+            "days60OrMore": {
+              "amount": 32644915,
+              "count": 1982
+            }
+          },
+          {
+            "label": "Leases Receivable",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "days30To59": 366010,
+            "days60To89": 31227,
+            "days90To179": 26004,
+            "days180To359": 52965,
+            "days360OrMore": 8485,
+            "days60OrMore": {
+              "amount": 118681,
+              "count": 9
+            }
+          },
+          {
+            "label": "First Lien 1-4 Family Residential Property Loans",
+            "days30To59": 22210271,
+            "days60To89": 640141,
+            "days90To179": 399960,
+            "days180To359": 1141886,
+            "days360OrMore": 503812,
+            "days60OrMore": {
+              "amount": 2685799,
+              "count": 18
+            }
+          },
+          {
+            "label": "Junior Lien 1-4 Family Residential Property Loans",
+            "days30To59": 1984391,
+            "days60To89": 185363,
+            "days90To179": 678447,
+            "days180To359": 161259,
+            "days360OrMore": 168190,
+            "days60OrMore": {
+              "amount": 1193259,
+              "count": 23
+            }
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Construction and Development Loans",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial Farmland",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial Multifamily",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial Owner Occupied Non-Farm Non-Residential",
+            "days30To59": 324951,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial Non-Owner Occupied Non-Farm Non-Residential",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial Agricultural Production and Farmers",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial and Industrial Loans",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Unsecured Commercial Loans",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Unsecured Revolving Lines of Credit for Commercial Purposes",
+            "days30To59": 60321,
+            "days60To89": 55924,
+            "days90To179": 164529,
+            "days180To359": 24886,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 245339,
+              "count": 33
+            }
+          }
+        ],
+        "delinquencyTotals": {
+          "days30To59": 85763477,
+          "days60To89": 15030598,
+          "days90To179": 24446578,
+          "days180To359": 11300313,
+          "days360OrMore": 1438420,
+          "days60OrMore": {
+            "amount": 52215909,
+            "count": 4413
+          },
+          "reportableDelinquencyParticipationLoansPurchased": 0,
+          "reportableDelinquencyIndirectLoans": 34803733,
+          "reportableDelinquencyWholeOrPartialLoansPurchased": 0,
+          "nonCommercialNonAccrual": 37185311,
+          "commercialNonAccrual": 682818,
+          "bankruptcyClaims": 56293217,
+          "modificationsToBorrowersExperiencingFinancialDifficulty": {
+            "count": 111,
+            "amount": 2429666
+          },
+          "borrowerDifficultyNotInComplianceWithModifiedTerms": {
+            "count": 18,
+            "amount": 323619
+          }
+        },
+        "chargeOffAndRecoveryYtd": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "chargeOffs": 2934071,
+            "recoveries": 689597
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "chargeOffs": 0,
+            "recoveries": 8450
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "chargeOffs": 1091220,
+            "recoveries": 198467
+          },
+          {
+            "label": "New Vehicle Loans",
+            "chargeOffs": 1552327,
+            "recoveries": 230697
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "chargeOffs": 9548199,
+            "recoveries": 1936240
+          },
+          {
+            "label": "Leases Receivable",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 9768
+          },
+          {
+            "label": "First Lien 1-4 Family Residential Property Loans",
+            "chargeOffs": 27841,
+            "recoveries": 0
+          },
+          {
+            "label": "Junior Lien 1-4 Family Residential Property Loans",
+            "chargeOffs": 3933,
+            "recoveries": 16237
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Construction and Development Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial Farmland",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial Multifamily",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial Owner Occupied Non-Farm Non-Residential",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial Non-Owner Occupied Non-Farm Non-Residential",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial Agricultural Production and Farmers",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial and Industrial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Revolving Lines of Credit for Commercial Purposes",
+            "chargeOffs": 103837,
+            "recoveries": 26588
+          }
+        ],
+        "chargeOffRecoveryTotals": {
+          "chargeOffs": 15261428,
+          "recoveries": 3116044,
+          "participationLoansPurchased": {
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          "indirectLoans": {
+            "chargeOffs": 9721022,
+            "recoveries": 2014022
+          },
+          "wholeOrPartialLoansPurchased": {
+            "chargeOffs": 0,
+            "recoveries": 0
+          }
+        },
+        "otherLoanInformation": {
+          "loansToCreditUnionOfficialsAndSeniorExecutiveStaff": {
+            "count": 105,
+            "amount": 5870106
+          },
+          "federalCreditUnionInterestRateCeiling": {
+            "loansWithRatesAbove15PercentAmount": 111369252,
+            "aggregateWeightedAverageRateAbove15Percent": 17.74,
+            "note": "Federal credit union; FCU-only interest-rate ceiling fields were populated in Schedule A Section 4."
+          },
+          "purchasedCreditImpairedLoans": {
+            "contractualBalanceOutstanding": 0,
+            "recordedInvestmentReportedAsLoansInAccount025B": 0
+          },
+          "purchasedFinancialAssetsWithCreditDeterioration": {
+            "totalPcdLoansOutstanding": {
+              "purchasePrice": 0,
+              "acquirerAclAtAcquisition": 0,
+              "nonCreditDiscountOrPremium": 0,
+              "unpaidPrincipalBalanceOrParValue": 0
+            },
+            "totalPcdDebtSecurities": {
+              "purchasePrice": 0,
+              "acquirerAclAtAcquisition": 0,
+              "nonCreditDiscountOrPremium": 0,
+              "unpaidPrincipalBalanceOrParValue": 0
+            }
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 85900,
+            "amount": 1567333413,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "First Lien and Junior Lien Residential Loans",
+            "count": 1829,
+            "amount": 805700169,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 454,
+            "amount": 14986032,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 88183,
+          "amount": 2388019614
+        },
+        "purchasedAndSoldLoans": {
+          "loansPurchased": [
+            {
+              "label": "Loans Purchased from Other Financial Institutions",
+              "ytdCount": 0,
+              "ytdAmount": 0,
+              "outstandingCount": 0,
+              "outstandingAmount": 0
+            },
+            {
+              "label": "Loans Purchased from Other Sources",
+              "ytdCount": 5191,
+              "ytdAmount": 181275454,
+              "outstandingCount": 52936,
+              "outstandingAmount": 1994105971
+            }
+          ],
+          "loansSold": {
+            "ytdCount": 7,
+            "ytdAmount": 1759600,
+            "firstMortgageLoansSoldSecondaryMarket": {
+              "ytdCount": 0,
+              "ytdAmount": 0
+            },
+            "limitedRecourseQualifyingForSalesAccounting": {
+              "ytdCount": 0,
+              "ytdAmount": 0
+            },
+            "realEstateLoansSoldWithServicingRetained": {
+              "ytdCount": 7,
+              "ytdAmount": 1759600,
+              "outstandingCount": 1280,
+              "outstandingAmount": 196406136
+            },
+            "allOtherLoansSoldWithServicingRetained": {
+              "ytdCount": 0,
+              "ytdAmount": 0,
+              "outstandingCount": 0,
+              "outstandingAmount": 0
+            }
+          },
+          "loanParticipations": [
+            {
+              "label": "Vehicle - Non-commercial",
+              "purchasedOutstandingBalance": 0,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 1155234,
+              "soldYtdAmount": 0
+            },
+            {
+              "label": "Non-Federally Guaranteed Student Loans",
+              "purchasedOutstandingBalance": 0,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 0,
+              "soldYtdAmount": 0
+            },
+            {
+              "label": "1- to 4-Family Residential Property",
+              "purchasedOutstandingBalance": 598293,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 0,
+              "soldYtdAmount": 0
+            },
+            {
+              "label": "Commercial Loans excluding Construction & Development",
+              "purchasedOutstandingBalance": 0,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 28362078,
+              "soldYtdAmount": 0
+            },
+            {
+              "label": "Commercial Construction & Development",
+              "purchasedOutstandingBalance": 0,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 0,
+              "soldYtdAmount": 0
+            },
+            {
+              "label": "All Other",
+              "purchasedOutstandingBalance": 0,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 0,
+              "soldYtdAmount": 0
+            }
+          ],
+          "loanParticipationsTotals": {
+            "purchasedOutstandingBalance": 598293,
+            "purchasedYtdAmount": 0,
+            "soldRetainedOutstandingBalance": 29517312,
+            "soldYtdAmount": 0
+          }
+        },
+        "residentialRealEstate": {
+          "firstLien": [
+            {
+              "label": "Fixed Rate > 15 Years",
+              "count": 3215,
+              "amount": 735352915,
+              "grantedYtd": 51666358
+            },
+            {
+              "label": "Fixed Rate 15 Years or less",
+              "count": 1486,
+              "amount": 108394564,
+              "grantedYtd": 3542800
+            },
+            {
+              "label": "Balloon/Hybrid > 5 Years",
+              "count": 694,
+              "amount": 308170291,
+              "grantedYtd": 300000
+            },
+            {
+              "label": "Balloon/Hybrid 5 Years or less",
+              "count": 1214,
+              "amount": 490070923,
+              "grantedYtd": 20171717
+            },
+            {
+              "label": "Adjustable Rate",
+              "count": 401,
+              "amount": 25839002,
+              "grantedYtd": 4993867
+            }
+          ],
+          "firstLienTotal": {
+            "count": 7010,
+            "amount": 1667827695,
+            "grantedYtd": 80674742
+          },
+          "juniorLien": [
+            {
+              "label": "Closed-End Fixed Rate",
+              "count": 45,
+              "amount": 809747,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Closed-End Adjustable Rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 133000
+            },
+            {
+              "label": "Open-End Fixed Rate",
+              "count": 5839,
+              "amount": 312218082,
+              "grantedYtd": 27543815
+            },
+            {
+              "label": "Open-End Adjustable Rate",
+              "count": 976,
+              "amount": 48958345,
+              "grantedYtd": 17621243
+            }
+          ],
+          "juniorLienTotal": {
+            "count": 6860,
+            "amount": 361986174,
+            "grantedYtd": 45298058
+          },
+          "allOtherNonCommercialRealEstate": [
+            {
+              "label": "Closed-End Fixed Rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Closed-End Adjustable Rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-End Fixed Rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-End Adjustable Rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            }
+          ],
+          "allOtherNonCommercialRealEstateTotal": {
+            "count": 0,
+            "amount": 0,
+            "grantedYtd": 0
+          },
+          "totalRealEstate": {
+            "count": 13870,
+            "amount": 2029813869,
+            "grantedYtd": 125972800
+          },
+          "additionalInformation": {
+            "residentialConstructionLoansBalance": 0,
+            "realEstateLoansRepriceOrMatureWithinFiveYears": 598210675,
+            "interestOnlyAndPaymentOptionFirstLien": {
+              "count": 1185,
+              "amount": 73948186,
+              "grantedYtd": 5935910
+            }
+          }
+        },
+        "commercialLending": {
+          "memberCommercialLoans": [
+            {
+              "label": "Construction and Development Loans",
+              "count": 2,
+              "amount": 4819822,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Secured by Farmland",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Secured by Multifamily",
+              "count": 26,
+              "amount": 15071256,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Secured by Owner Occupied Non-Farm Non-Residential Property",
+              "count": 27,
+              "amount": 15798800,
+              "grantedOrPurchasedYtdCount": 3,
+              "grantedOrPurchasedYtdAmount": 623000
+            },
+            {
+              "label": "Secured by Non-Owner Occupied Non-Farm Non-Residential Property",
+              "count": 74,
+              "amount": 117916883,
+              "grantedOrPurchasedYtdCount": 1,
+              "grantedOrPurchasedYtdAmount": 250000
+            },
+            {
+              "label": "Total Commercial Real Estate Secured",
+              "count": 129,
+              "amount": 153606761,
+              "grantedOrPurchasedYtdCount": 4,
+              "grantedOrPurchasedYtdAmount": 873000
+            },
+            {
+              "label": "Loans to Finance Agricultural Production and Other Loans to Farmers",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Commercial and Industrial Loans",
+              "count": 8,
+              "amount": 1408911,
+              "grantedOrPurchasedYtdCount": 4,
+              "grantedOrPurchasedYtdAmount": 522115
+            },
+            {
+              "label": "Unsecured Commercial Loans",
+              "count": 2,
+              "amount": 77177,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Unsecured Revolving Lines of Credit for Commercial Purposes",
+              "count": 719,
+              "amount": 2814617,
+              "grantedOrPurchasedYtdCount": 24,
+              "grantedOrPurchasedYtdAmount": 223000
+            },
+            {
+              "label": "Total Commercial Loans to Members",
+              "count": 858,
+              "amount": 157907466,
+              "grantedOrPurchasedYtdCount": 32,
+              "grantedOrPurchasedYtdAmount": 1618115
+            }
+          ],
+          "purchasedCommercialLoansToNonmembers": [
+            {
+              "label": "Construction and Development Loans",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Secured by Farmland",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Secured by Multifamily",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Secured by Owner Occupied Non-Farm Non-Residential Property",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Secured by Non-Owner Occupied Non-Farm Non-Residential Property",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Total Commercial Real Estate Secured",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Loans to Finance Agricultural Production and Other Loans to Farmers",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Commercial and Industrial Loans",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Unsecured Commercial Loans",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Unsecured Revolving Lines of Credit for Commercial Purposes",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            },
+            {
+              "label": "Total Commercial Loans to Nonmembers",
+              "count": 0,
+              "amount": 0,
+              "grantedOrPurchasedYtdCount": 0,
+              "grantedOrPurchasedYtdAmount": 0
+            }
+          ],
+          "totalCommercialLoans": {
+            "count": 858,
+            "amount": 157907466
+          },
+          "miscellaneousCommercialLoanInformation": {
+            "outstandingAgriculturalRelatedLoans": {
+              "count": 0,
+              "amount": 0
+            },
+            "commercialRealEstateRepriceOrMatureWithinFiveYears": 54062644,
+            "outstandingCommercialParticipationsSoldRetainedServicing": {
+              "count": 28,
+              "amount": 60975814
+            },
+            "outstandingCommercialLoansSoldRetainedServicing": {
+              "count": 0,
+              "amount": 0
+            },
+            "ytdCommercialLoansOrParticipationsSoldNoServicing": {
+              "count": 0,
+              "amount": 0
+            },
+            "totalMemberBusinessLoansNetBalance": 169565228
+          }
+        },
+        "scheduleC": {
+          "unfundedCommitments": {
+            "commercialLoans": 9937363,
+            "nonCommercial": {
+              "revolvingOpenEndSecuredByResidential": 209413548,
+              "creditCardLines": 475034342,
+              "unsecuredShareDraftLinesOfCredit": 52351018,
+              "unusedOverdraftProtectionProgram": 54702533,
+              "otherUnfundedCommitments": 3646274,
+              "total": 795147715
+            },
+            "totalAllLoanTypes": 805085078
+          },
+          "offBalanceSheetExposures": {
+            "unconditionallyCancelableUnfundedCommitmentsAllLoanTypes": 587992821,
+            "conditionallyCancelableUnfundedCommitments": {
+              "commercialLoans": 4032435,
+              "consumerLoansSecuredAndRealEstate": 209413548,
+              "consumerLoansUnsecured": 3646274,
+              "total": 217092257
+            },
+            "loansTransferredWithLimitedRecourse": {
+              "commercialLoans": 0,
+              "consumerLoans": 0,
+              "total": 0
+            },
+            "fhlbMpfProgram": 5305965,
+            "financialStandbyLettersOfCredit": 0,
+            "forwardAgreementsNotDerivativeContracts": 0,
+            "soldCreditProtection": {
+              "guarantees": 0,
+              "creditDerivatives": 0,
+              "total": 0
+            },
+            "offBalanceSheetSecuritizationExposures": 0,
+            "securitiesBorrowingOrLendingTransactions": 0,
+            "repurchaseTransactionExposure": 0,
+            "allOtherOffBalanceSheetExposures": 0
+          },
+          "contingentLiabilities": {
+            "other": 0
+          },
+          "borrowingArrangements": {
+            "corporateCreditUnions": {
+              "totalCapacity": 80000000,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 0
+            },
+            "naturalPersonCreditUnions": {
+              "totalCapacity": 0,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 0
+            },
+            "federalHomeLoanBank": {
+              "totalCapacity": 1694257200,
+              "drawsAgainstCapacity": 250000000,
+              "assetsPledgedToSecureBorrowingCapacity": 250000000
+            },
+            "centralLiquidityFacility": {
+              "totalCapacity": 0,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 0
+            },
+            "federalReserveBank": {
+              "totalCapacity": 597156503,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 0
+            },
+            "frbPppLendingFacility": {
+              "totalCapacity": 0,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 0
+            },
+            "otherSources": {
+              "totalCapacity": 0,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 0
+            },
+            "totalBorrowingsAndAssetsPledged": {
+              "totalCapacity": 2371413703,
+              "drawsAgainstCapacity": 250000000,
+              "assetsPledgedToSecureBorrowingCapacity": 250000000
+            },
+            "amountCallableByLender": 0,
+            "maturityDistribution": {
+              "lessThanOneYear": 50000000,
+              "oneToThreeYears": 200000000,
+              "greaterThanThreeYears": 0,
+              "total": 250000000
+            }
+          }
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 4395273133,
+          "autoLoanBalance": 2060451711,
+          "autoLoanCount": 111047,
+          "directAutoLoanBalance": 493118298,
+          "directAutoLoanCount": 25147,
+          "indirectVehicleShareOfAutoBalance": 0.7607,
+          "indirectShareOfLoanBook": 0.5245,
+          "delinquency60PlusShareOfLoanBook": 0.0115,
+          "indirectDelinquencyShareOfIndirectLoans": 0.0146
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 0.38,
+          "creditDisabilityRatePerThousand": 0.855,
+          "debtProtectionIuiRatePerThousand": 0.532,
+          "creditAndDebtProtectionPenetration": 1,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 1670203.79,
+        "modeledMonthlyCreditDisabilityPremium": 3757958.53,
+        "modeledMonthlyDebtProtectionIuiPremium": 2338285.31,
+        "modeledMonthlyDirectAutoOriginations": 1047.79,
+        "modeledMonthlyVscGfsIncome": 167646.67,
+        "modeledMonthlyGapGfsIncome": 36672.71,
+        "notes": [
+          "Modeled credit/debt protection premium applies dashboard standard rates to non-commercial loan balances from Schedule A Section 1.",
+          "Langley reports $1.567B of indirect new/used vehicle loans, about 76.07% of total new/used vehicle balances.",
+          "Direct auto estimate subtracts Schedule A Section 5 indirect vehicle loans from total new and used vehicle loans, leaving 25,147 direct or non-indirect auto loans and $493.12M of direct/non-indirect auto balance.",
+          "Public relationship research found President/CEO, Chief Lending Officer, and consumer lending executives; all are queued for action-time confirmation before any LinkedIn request."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T05:12:52-05:00",
+        "source": "NCUA details/call report, authenticated LinkedIn connections monitor, Langley official pages, and public professional sources",
+        "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Langley%20Federal%20Credit%20Union%20CEO%20Chief%20Lending%20Officer%20Consumer%20Lending",
+        "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Langley%20Federal%20Credit%20Union%20CEO%20Chief%20Lending%20Officer%20Consumer%20Lending",
+        "resultSummary": "Public official and professional sources identified Gaurav Bhatia as President/CEO; Curtis Baker as SVP / Chief Lending Officer; Rob Lefkowicz as Senior Vice President of Mortgage & Consumer Lending; and Michael McNabb as Vice President of Consumer Lending. LinkedIn connections monitor was refreshed read-only and no visible accepted Langley match was found among recently added connections.",
+        "visibleLeads": [
+          {
+            "name": "Gaurav Bhatia",
+            "title": "President/Chief Executive Officer",
+            "company": "Langley Federal Credit Union",
+            "source": "NCUA details, Langley official new-CEO announcement, Langley facts page, and LinkedIn public profile/search result",
+            "profileUrl": "https://www.linkedin.com/in/gauravbhatia",
+            "titleMatched": "President & CEO",
+            "currentCompanyVerified": true,
+            "connectionStatus": "not_requested_confirmation_required",
+            "requestedAt": null,
+            "acceptedAt": null,
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action."
+          },
+          {
+            "name": "Curtis Baker",
+            "title": "SVP / Chief Lending Officer",
+            "company": "Langley Federal Credit Union",
+            "source": "LinkedIn public profile/search result",
+            "profileUrl": "https://www.linkedin.com/in/curtis-a-baker",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "currentCompanyVerified": true,
+            "connectionStatus": "not_requested_confirmation_required",
+            "requestedAt": null,
+            "acceptedAt": null,
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action."
+          },
+          {
+            "name": "Rob Lefkowicz",
+            "title": "Senior Vice President of Mortgage & Consumer Lending",
+            "company": "Langley Federal Credit Union",
+            "source": "Langley official author biography and LinkedIn public profile/search result",
+            "profileUrl": "https://www.linkedin.com/in/rob-lefkowicz-65729127",
+            "titleMatched": "Consumer lending executive",
+            "currentCompanyVerified": true,
+            "connectionStatus": "not_requested_confirmation_required",
+            "requestedAt": null,
+            "acceptedAt": null,
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action."
+          },
+          {
+            "name": "Michael McNabb",
+            "title": "Vice President of Consumer Lending",
+            "company": "Langley Federal Credit Union",
+            "source": "LinkedIn public profile/search result",
+            "profileUrl": "https://www.linkedin.com/in/michael-mcnabb-61a6397",
+            "titleMatched": "VP of Consumer Lending",
+            "currentCompanyVerified": true,
+            "connectionStatus": "not_requested_confirmation_required",
+            "requestedAt": null,
+            "acceptedAt": null,
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action."
+          }
+        ],
+        "additionalVisibleNames": [
+          {
+            "name": "Andrew Irwin",
+            "title": "Vice President of Loan Servicing and Collections",
+            "company": "Langley Federal Credit Union",
+            "source": "LinkedIn public profile/search result",
+            "profileUrl": "https://www.linkedin.com/in/andrew-irwin-266b629"
+          },
+          {
+            "name": "Barbara Elvington",
+            "title": "VP of Lending",
+            "company": "Langley Federal Credit Union",
+            "source": "LinkedIn public profile/search result",
+            "profileUrl": "https://www.linkedin.com/in/elvington-barbara-01710440"
+          },
+          {
+            "name": "Kelli Ragland",
+            "title": "Vice President of Marketing",
+            "company": "Langley Federal Credit Union",
+            "source": "Langley official author biography / press contact",
+            "profileUrl": "https://www.langleyfcu.org/learn/author/kelli-ragland"
+          }
+        ],
+        "connectionRequests": [
+          {
+            "name": "Gaurav Bhatia",
+            "title": "President/Chief Executive Officer",
+            "company": "Langley Federal Credit Union",
+            "titleMatched": "President & CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/gauravbhatia",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Gaurav%20Bhatia%20Langley%20Federal%20Credit%20Union%20President%2FChief%20Executive%20Officer",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Gaurav%20Bhatia%20Langley%20Federal%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action.",
+            "note": "Target executive/lending title identified and queued for manual/confirmed request decision."
+          },
+          {
+            "name": "Curtis Baker",
+            "title": "SVP / Chief Lending Officer",
+            "company": "Langley Federal Credit Union",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/curtis-a-baker",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Curtis%20Baker%20Langley%20Federal%20Credit%20Union%20SVP%20%2F%20Chief%20Lending%20Officer",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Curtis%20Baker%20Langley%20Federal%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action.",
+            "note": "Target executive/lending title identified and queued for manual/confirmed request decision."
+          },
+          {
+            "name": "Rob Lefkowicz",
+            "title": "Senior Vice President of Mortgage & Consumer Lending",
+            "company": "Langley Federal Credit Union",
+            "titleMatched": "Consumer lending executive",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/rob-lefkowicz-65729127",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Rob%20Lefkowicz%20Langley%20Federal%20Credit%20Union%20Senior%20Vice%20President%20of%20Mortgage%20%26%20Consumer%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Rob%20Lefkowicz%20Langley%20Federal%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action.",
+            "note": "Target executive/lending title identified and queued for manual/confirmed request decision."
+          },
+          {
+            "name": "Michael McNabb",
+            "title": "Vice President of Consumer Lending",
+            "company": "Langley Federal Credit Union",
+            "titleMatched": "VP of Consumer Lending",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/michael-mcnabb-61a6397",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Michael%20McNabb%20Langley%20Federal%20Credit%20Union%20Vice%20President%20of%20Consumer%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Michael%20McNabb%20Langley%20Federal%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action.",
+            "note": "Target executive/lending title identified and queued for manual/confirmed request decision."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T05:12:52-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor at Veridian Credit Union",
+              "connectedOn": "2026-06-19",
+              "companyMatched": "Veridian Credit Union"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations at Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "connectedOn": "2026-06-14"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller at Heartland Credit Union",
+              "connectedOn": "2026-06-06"
+            },
+            {
+              "name": "Steve O'Donnell, MBA, CCE",
+              "title": "President/CEO",
+              "connectedOn": "2026-05-17"
+            }
+          ],
+          "note": "Connections monitor was refreshed read-only. The visible recently-added list did not include Gaurav Bhatia, Curtis Baker, Rob Lefkowicz, Michael McNabb, or another Langley Federal Credit Union accepted match."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA active credit union detail search API",
+          "url": "https://mapping.ncua.gov/api/ResearchCreditUnion/GetDetailSearch",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/1261",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report PDF endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/1261?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder address match",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=721%20Lakefront%20Cmns%20Newport%20News%20VA%2023606&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "OpenStreetMap Nominatim geocode match",
+          "url": "https://nominatim.openstreetmap.org/search?q=721%20Lakefront%20Cmns%20Newport%20News%20VA%2023606&format=json&limit=3",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Langley Federal Credit Union new CEO announcement",
+          "url": "https://www.langleyfcu.org/press/release/langley-fcu-selects-new-ceo",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Langley Federal Credit Union facts and history",
+          "url": "https://www.langleyfcu.org/press/facts",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Rob Lefkowicz official Langley author biography",
+          "url": "https://www.langleyfcu.org/learn/author/rob-lefkowicz",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Langley Federal Credit Union public LinkedIn company page",
+          "url": "https://www.linkedin.com/company/langleyfcu",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Gaurav Bhatia public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/gauravbhatia",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Curtis Baker public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/curtis-a-baker",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Rob Lefkowicz public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/rob-lefkowicz-65729127",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Michael McNabb public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/michael-mcnabb-61a6397",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified charter 1261 as active Langley, a federally chartered, NCUA-insured credit union with March 2026 as the latest available call report cycle used in this run.",
+        "NCUA call-report endpoint returned a JSON fileContents byte array; the byte array was decoded to a March 31, 2026 PDF and PDF text extraction captured Statement totals, Schedule A Sections 1 through 8, and Schedule C commitments/off-balance-sheet values.",
+        "Schedule A Section 1 loan category rows sum to $4,553,180,599 and 211,461 loans, matching Section 1 Account 025B1/025A1. The Statement page reports $4,553,180,600 in Account 025B, a one-dollar difference preserved separately in statementTotalLoansAndLeases.",
+        "Schedule A Section 5 reports $2,388,019,614 in total indirect loans and 88,183 indirect loans; $1,567,333,413 is new/used vehicle indirect exposure.",
+        "Indirect vehicle loans represent about 76.07% of total new/used vehicle balances and total indirect loans represent about 52.45% of the Schedule A loan book, making Langley a high-priority indirect-lending prospect.",
+        "U.S. Census geocoder returned a Public_AR_Current address-range match for the main office; OpenStreetMap/Nominatim returned a building-level Fountain Plaza III match for the same street address.",
+        "NCUA details and official Langley pages verify Gaurav Bhatia as President/CEO; Langley official author page verifies Rob Lefkowicz as Senior Vice President of Mortgage & Consumer Lending. Public LinkedIn results identified Curtis Baker as SVP / Chief Lending Officer and Michael McNabb as Vice President of Consumer Lending.",
+        "Authenticated LinkedIn connections monitor was read-only. It did not show a visible accepted Langley relationship among recently added connections.",
         "No LinkedIn connection request was sent during this unattended heartbeat; target executives/lending leaders are marked confirmation_required for action-time review."
       ]
     }
