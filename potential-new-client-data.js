@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T04:03:21-05:00",
+  "updatedAt": "2026-06-21T04:13:21-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -29367,6 +29367,1330 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Authenticated LinkedIn regular search was read-only and visibly showed Nicole Sanders, Jim Minge, Whitney McLeod, and William Kelsey as current Texas Trust leaders with Connect controls. No connection request was sent because this heartbeat was unattended and action-time confirmation is required before external side effects.",
         "Sales Navigator loaded but returned zero results for the broad Texas Trust keyword search, so regular LinkedIn visible search was the relationship source of record for this run.",
         "Connections monitor refreshed successfully and no Texas Trust accepted-request match was found or changed."
+      ]
+    },
+    {
+      "id": "american-airlines-23957-2026-03-31",
+      "name": "American Airlines Federal Credit Union",
+      "charterNumber": "23957",
+      "priority": "High",
+      "status": "Active prospect - large consumer, auto, student, and indirect residential loan book",
+      "summary": "Texas FCU with $9.45B in assets, 388,005 members, a $5.45B loan book, $928.69M in new/used vehicle loans, $107.56M in non-federally guaranteed student loans, and $667.75M in total indirect loans, primarily residential indirect exposure.",
+      "profile": {
+        "ncuaName": "AMERICAN AIRLINES",
+        "type": "FCU",
+        "status": "Active",
+        "charterState": "",
+        "region": "2 - Southern",
+        "fieldOfMembership": "Service - transportation",
+        "lowIncomeDesignation": false,
+        "fhlbMember": true,
+        "peerGroup": "6 - $500,000,000 and greater",
+        "assets": 9448440753,
+        "members": 388005,
+        "ceo": "Gail Enda",
+        "website": "http://www.aacreditunion.org",
+        "phone": "800-533-0035",
+        "mainOffice": {
+          "street": "14050 FAA Blvd",
+          "city": "Fort Worth",
+          "state": "TX",
+          "zip": "76155",
+          "county": "Tarrant",
+          "country": "United States",
+          "latitude": 32.8322707,
+          "longitude": -97.0628849,
+          "geocodePrecision": "OpenStreetMap/Nominatim address match after U.S. Census no-match",
+          "geocodedAddress": "14050, FAA Boulevard, Fort Worth, Tarrant County, Texas, 76155, United States"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "March 2026 NCUA 5300 Call Report",
+        "totals": {
+          "loansHeldForSale": 0,
+          "totalLoansAndLeases": {
+            "count": 195964,
+            "amount": 5450814991
+          },
+          "allowanceForCreditLossesLoansAndLeases": 54297501,
+          "accruedInterestOnLoansAndLeases": 20537201,
+          "loansGrantedYtd": {
+            "count": 10948,
+            "amount": 262936330
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 2402,
+            "amount": 1192546
+          },
+          "interestOnLoansAndLeasesYtd": 71770621,
+          "creditLossExpenseLoansAndLeasesYtd": 8706278,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 0,
+          "loanServicingExpenseYtd": 1541273
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "interestRate": 17.74,
+            "count": 52560,
+            "amount": 222002191,
+            "accountCode": "396"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "interestRate": 18,
+            "count": 3481,
+            "amount": 1164318,
+            "accountCode": "397A"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "interestRate": 5.99,
+            "count": 1359,
+            "amount": 107561681,
+            "accountCode": "698A"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "interestRate": 17.75,
+            "count": 68675,
+            "amount": 315656729,
+            "accountCode": "397"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "interestRate": 4.99,
+            "count": 16533,
+            "amount": 413201229,
+            "accountCode": "385"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "interestRate": 5.64,
+            "count": 31596,
+            "amount": 515490375,
+            "accountCode": "370"
+          },
+          {
+            "label": "Leases Receivable",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "002"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "interestRate": 7.25,
+            "count": 1615,
+            "amount": 28438897,
+            "accountCode": "698C"
+          },
+          {
+            "label": "First Lien 1-4 Family Residential Property Loans",
+            "interestRate": 5.88,
+            "count": 14868,
+            "amount": 3478731829,
+            "accountCode": "703A"
+          },
+          {
+            "label": "Junior Lien 1-4 Family Residential Property Loans",
+            "interestRate": 7,
+            "count": 5274,
+            "amount": 367599626,
+            "accountCode": "386A"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "386B"
+          },
+          {
+            "label": "Commercial Real Estate Secured Loans",
+            "interestRate": 6.3,
+            "count": 3,
+            "amount": 968116,
+            "accountCode": "718A5"
+          },
+          {
+            "label": "Commercial Loans Not Secured by Real Estate",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "400P"
+          }
+        ],
+        "governmentGuaranteedLoans": {
+          "nonCommercialSba": {
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          },
+          "nonCommercialPpp": {
+            "count": 0,
+            "outstandingBalance": 0
+          },
+          "nonCommercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          },
+          "commercialSba": {
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          },
+          "commercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          }
+        },
+        "chargeOffAndRecoveryYtd": {
+          "byCategory": [
+            {
+              "label": "Unsecured Credit Card Loans",
+              "chargeOffs": 3005575,
+              "recoveries": 411390
+            },
+            {
+              "label": "Payday Alternative Loans",
+              "chargeOffs": 64817,
+              "recoveries": 25966
+            },
+            {
+              "label": "Non-Federally Guaranteed Student Loans",
+              "chargeOffs": 461384,
+              "recoveries": 661
+            },
+            {
+              "label": "All Other Unsecured Loans/Lines of Credit",
+              "chargeOffs": 3582234,
+              "recoveries": 770593
+            },
+            {
+              "label": "New Vehicle Loans",
+              "chargeOffs": 327859,
+              "recoveries": 61531
+            },
+            {
+              "label": "Used Vehicle Loans",
+              "chargeOffs": 1177401,
+              "recoveries": 344264
+            },
+            {
+              "label": "Leases Receivable",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "All Other Secured Non-Real Estate Loans",
+              "chargeOffs": 34300,
+              "recoveries": 67456
+            },
+            {
+              "label": "First Mortgage Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 3432
+            },
+            {
+              "label": "Junior Lien Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 9626
+            },
+            {
+              "label": "All Other Non-Commercial Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Construction and Development Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Farmland Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Multifamily Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Owner Occupied Non-Farm Non-Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Non-Owner Occupied Non-Farm Non-Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Agricultural Production Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Commercial and Industrial Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Unsecured Commercial Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Unsecured Revolving Commercial Lines of Credit",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Total Loans and Leases",
+              "chargeOffs": 8653570,
+              "recoveries": 1694919
+            },
+            {
+              "label": "Participation Loans Purchased",
+              "chargeOffs": 7370,
+              "recoveries": 6825
+            },
+            {
+              "label": "Indirect Loans",
+              "chargeOffs": 7370,
+              "recoveries": 6825
+            },
+            {
+              "label": "Whole or Partial Loans Purchased",
+              "chargeOffs": 0,
+              "recoveries": 0
+            }
+          ],
+          "totalLoansAndLeases": {
+            "chargeOffs": 8653570,
+            "recoveries": 1694919
+          },
+          "participationLoansPurchased": {
+            "chargeOffs": 7370,
+            "recoveries": 6825
+          },
+          "indirectLoans": {
+            "chargeOffs": 7370,
+            "recoveries": 6825
+          },
+          "wholeOrPartialLoansPurchased": {
+            "chargeOffs": 0,
+            "recoveries": 0
+          }
+        },
+        "delinquency": {
+          "byCategory": [
+            {
+              "label": "Unsecured Credit Card Loans",
+              "days30To59": 2483711,
+              "days60To89": 1026832,
+              "days90To179": 924914,
+              "days180To359": 1512,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 1953258,
+                "count": 458
+              }
+            },
+            {
+              "label": "Payday Alternative Loans",
+              "days30To59": 44864,
+              "days60To89": 32341,
+              "days90To179": 23129,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 55470,
+                "count": 170
+              }
+            },
+            {
+              "label": "Non-Federally Guaranteed Student Loans",
+              "days30To59": 822204,
+              "days60To89": 682502,
+              "days90To179": 1164803,
+              "days180To359": 340657,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 2187962,
+                "count": 27
+              }
+            },
+            {
+              "label": "All Other Unsecured Loans/Lines of Credit",
+              "days30To59": 3421739,
+              "days60To89": 1943853,
+              "days90To179": 3240643,
+              "days180To359": 13962,
+              "days360OrMore": 11652,
+              "days60OrMore": {
+                "amount": 5210110,
+                "count": 1369
+              }
+            },
+            {
+              "label": "New Vehicle Loans",
+              "days30To59": 1760720,
+              "days60To89": 280454,
+              "days90To179": 284410,
+              "days180To359": 244010,
+              "days360OrMore": 14216,
+              "days60OrMore": {
+                "amount": 823090,
+                "count": 32
+              }
+            },
+            {
+              "label": "Used Vehicle Loans",
+              "days30To59": 5016013,
+              "days60To89": 965302,
+              "days90To179": 1313027,
+              "days180To359": 1131852,
+              "days360OrMore": 262743,
+              "days60OrMore": {
+                "amount": 3672924,
+                "count": 227
+              }
+            },
+            {
+              "label": "Leases Receivable",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "All Other Secured Non-Real Estate Loans",
+              "days30To59": 156289,
+              "days60To89": 7339,
+              "days90To179": 98113,
+              "days180To359": 46297,
+              "days360OrMore": 9225,
+              "days60OrMore": {
+                "amount": 160974,
+                "count": 14
+              }
+            },
+            {
+              "label": "First Mortgage Real Estate Loans",
+              "days30To59": 12440398,
+              "days60To89": 4022429,
+              "days90To179": 4391236,
+              "days180To359": 3075771,
+              "days360OrMore": 1084259,
+              "days60OrMore": {
+                "amount": 12573695,
+                "count": 55
+              }
+            },
+            {
+              "label": "Junior Lien Real Estate Loans",
+              "days30To59": 3852767,
+              "days60To89": 193778,
+              "days90To179": 926488,
+              "days180To359": 528387,
+              "days360OrMore": 216443,
+              "days60OrMore": {
+                "amount": 1865096,
+                "count": 33
+              }
+            },
+            {
+              "label": "All Other Non-Commercial Real Estate Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Construction and Development Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Farmland Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Multifamily Residential Property Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Owner Occupied Non-Farm Non-Residential Property Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Non-Owner Occupied Non-Farm Non-Residential Property Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Agricultural Production Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Commercial and Industrial Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Unsecured Commercial Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Unsecured Revolving Commercial Lines of Credit",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            }
+          ],
+          "totalDelinquent30To59DaysAmount": 29998705,
+          "totalDelinquent60DaysOrMore": {
+            "amount": 28502579,
+            "count": 2385
+          },
+          "participationLoansPurchasedDelinquentAmount": 3143264,
+          "indirectLoansDelinquentAmount": 2903284,
+          "wholeOrPartialPurchasedLoansDelinquentAmount": 428433,
+          "nonCommercialLoansNonAccrualAmount": 19560421,
+          "commercialLoansNonAccrualAmount": 0,
+          "bankruptcyClaimsOutstandingAmount": 5698556,
+          "borrowerDifficultyModifiedLoans": {
+            "count": 226,
+            "amount": 4018416,
+            "notInComplianceCount": 136,
+            "notInComplianceAmount": 1722274
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 65,
+            "amount": 182791,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "First Lien and Junior Lien Residential Loans",
+            "count": 940,
+            "amount": 667564351,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 1005,
+          "amount": 667747142,
+          "countAccountCode": "617A",
+          "amountAccountCode": "618A"
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 5449846875,
+          "autoLoanBalance": 928691604,
+          "autoLoanCount": 48129,
+          "leaseReceivableBalance": 0,
+          "leaseReceivableCount": 0,
+          "directAutoLoanBalance": 928508813,
+          "directAutoLoanCount": 48064,
+          "directAutoCalculation": "New and used vehicle loan totals minus Schedule A Section 5 indirect new/used vehicle loans.",
+          "indirectShareOfLoanBook": 0.1225,
+          "indirectVehicleShareOfAutoBalance": 0.0002,
+          "indirectResidentialShareOfResidentialBalance": 0.1736
+        },
+        "otherLoanInformation": {
+          "loansToOfficialsAndSeniorExecutiveStaff": {
+            "count": 41,
+            "amount": 3893461
+          },
+          "fcuLoansWithRatesExceeding15Percent": {
+            "amount": 37718173,
+            "weightedAverageRate": 16.72
+          },
+          "purchasedCreditImpairedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFinancialAssetsWithCreditDeterioration": {
+            "count": 0,
+            "amortizedCost": 0,
+            "unpaidPrincipalBalance": 0
+          },
+          "purchasedFinancialAssetsWithCreditDeteriorationDebtSecurities": {
+            "count": 0,
+            "amortizedCost": 0,
+            "unpaidPrincipalBalance": 0
+          }
+        },
+        "realEstateDetails": {
+          "firstLienBalance": 3478731828,
+          "firstLienGrantedYtd": 87469650,
+          "firstLienBreakdown": [
+            {
+              "label": "Fixed rate, over 15 years",
+              "count": 7981,
+              "amount": 2274168579,
+              "grantedYtd": 55559250
+            },
+            {
+              "label": "Fixed rate, 15 years or less",
+              "count": 4237,
+              "amount": 464377865,
+              "grantedYtd": 10393400
+            },
+            {
+              "label": "Balloon/hybrid, over 5 years",
+              "count": 1005,
+              "amount": 313226671,
+              "grantedYtd": 1932950
+            },
+            {
+              "label": "Balloon/hybrid, 5 years or less",
+              "count": 1585,
+              "amount": 423616534,
+              "grantedYtd": 19584050
+            },
+            {
+              "label": "Adjustable rate",
+              "count": 60,
+              "amount": 3342179,
+              "grantedYtd": 0
+            }
+          ],
+          "juniorLienBalance": 367599626,
+          "juniorLienGrantedYtd": 32007074,
+          "juniorLienBreakdown": [
+            {
+              "label": "Closed-end fixed rate",
+              "count": 26,
+              "amount": 387940,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Closed-end adjustable rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-end fixed rate",
+              "count": 4981,
+              "amount": 350578842,
+              "grantedYtd": 24998974
+            },
+            {
+              "label": "Open-end adjustable rate",
+              "count": 267,
+              "amount": 16632844,
+              "grantedYtd": 7008100
+            }
+          ],
+          "allOtherNonCommercialRealEstateBalance": 0,
+          "allOtherNonCommercialRealEstateGrantedYtd": 0,
+          "allOtherNonCommercialRealEstateBreakdown": [
+            {
+              "label": "Closed-end fixed rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Closed-end adjustable rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-end fixed rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-end adjustable rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            }
+          ],
+          "totalNonCommercialRealEstate": {
+            "count": 20142,
+            "amount": 3846331454,
+            "grantedYtd": 119476724
+          },
+          "constructionBalance": 0,
+          "repricesOrMaturesWithinFiveYears": 614886104,
+          "interestOnlyPaymentOptionFirstLien": {
+            "count": 0,
+            "amount": 0,
+            "grantedYtd": 0
+          }
+        },
+        "commercialDetails": {
+          "memberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamilyResidentialProperty": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidentialProperty": {
+              "count": 1,
+              "amount": 17426,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidentialProperty": {
+              "count": 2,
+              "amount": 950690,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 3,
+              "amount": 968116,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "agriculturalProductionAndOtherLoansToFarmers": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrialLoans": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercialLoans": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingLinesOfCreditForCommercialPurposes": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialMemberLoans": {
+              "count": 3,
+              "amount": 968116,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "nonMemberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamilyResidentialProperty": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidentialProperty": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidentialProperty": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "agriculturalProductionAndOtherLoansToFarmers": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrialLoans": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercialLoans": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingLinesOfCreditForCommercialPurposes": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialNonMemberLoans": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 3,
+            "amount": 968116
+          },
+          "outstandingAgriculturalRelatedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialRealEstateRepricesOrMaturesWithinFiveYears": 968116,
+          "commercialParticipationsSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldNoRetainedServicingYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "totalMemberBusinessLoansNet": 2323713
+        },
+        "purchasedAndSoldLoans": {
+          "purchasedFromOtherFinancialInstitutionsYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherFinancialInstitutionsOutstanding": {
+            "count": 389,
+            "amount": 256074690
+          },
+          "purchasedFromOtherSourcesYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "loansSoldYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "firstMortgageLoansSoldSecondaryMarketYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+            "count": 0,
+            "amount": 0
+          },
+          "realEstateLoansSoldServicingRetained": {
+            "ytd": {
+              "count": 0,
+              "amount": 0
+            },
+            "outstanding": {
+              "count": 18,
+              "amount": 7122075
+            }
+          },
+          "allOtherLoansSoldServicingRetained": {
+            "ytd": {
+              "count": 0,
+              "amount": 0
+            },
+            "outstanding": {
+              "count": 0,
+              "amount": 0
+            }
+          },
+          "loanParticipations": {
+            "vehicleNonCommercial": {
+              "purchasedYtd": 183853,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "student": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "residential": {
+              "purchasedYtd": 519504086,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "commercialExcludingConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "commercialConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "allOther": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "total": {
+              "purchasedYtd": 519687939,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            }
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 0,
+          "revolvingOpenEndSecuredByResidentialProperty": 244315197,
+          "creditCardLines": 842419523,
+          "unsecuredShareDraftLinesOfCredit": 32476906,
+          "unusedOverdraftProtectionProgram": 7459999,
+          "otherUnfundedCommitments": 344253603,
+          "totalNonCommercialLoans": 1470925228,
+          "totalAllLoanTypes": 1470925228,
+          "unconditionallyCancelableAllLoanTypes": 1219150032,
+          "conditionallyCancelableCommercialLoans": 0,
+          "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 244315197,
+          "conditionallyCancelableConsumerLoansUnsecured": 0,
+          "totalConditionallyCancelable": 244315197,
+          "commercialLoansTransferredWithLimitedRecourse": 0,
+          "consumerLoansTransferredWithLimitedRecourse": 0,
+          "totalLoansTransferredWithLimitedRecourse": 0,
+          "loansTransferredFhlbMpf": 7122075,
+          "financialStandbyLettersOfCredit": 0,
+          "forwardAgreementsNotDerivativeContracts": 0,
+          "soldCreditProtectionTotal": 0,
+          "offBalanceSheetSecuritizationExposures": 0,
+          "securitiesBorrowingOrLendingTransactions": 0,
+          "offBalanceSheetRepurchaseExposure": 0,
+          "allOtherOffBalanceSheetCommitments": 0,
+          "borrowingArrangements": {
+            "corporateCreditUnions": {
+              "totalBorrowingCapacity": 95000000,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 95000000
+            },
+            "naturalPersonCreditUnions": {
+              "totalBorrowingCapacity": 0,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 0
+            },
+            "federalHomeLoanBank": {
+              "totalBorrowingCapacity": 3514285311,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 5438373218
+            },
+            "centralLiquidityFacility": {
+              "totalBorrowingCapacity": 0,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 0
+            },
+            "federalReserveBank": {
+              "totalBorrowingCapacity": 648776872,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 842575993
+            },
+            "otherBorrowingSources": {
+              "totalBorrowingCapacity": 0,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 0
+            },
+            "total": {
+              "totalBorrowingCapacity": 4258062183,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 6375949211
+            }
+          }
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 0.38,
+          "creditDisabilityRatePerThousand": 0.855,
+          "debtProtectionIuiRatePerThousand": 0.532,
+          "creditAndDebtProtectionPenetration": 1,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 2070941.81,
+        "modeledMonthlyCreditDisabilityPremium": 4659619.08,
+        "modeledMonthlyDebtProtectionIuiPremium": 2899318.54,
+        "modeledMonthlyDirectAutoOriginations": 2002.67,
+        "modeledMonthlyVscGfsIncome": 320426.67,
+        "modeledMonthlyGapGfsIncome": 70093.33,
+        "notes": [
+          "Modeled credit/debt protection premium applies dashboard standard rates to non-commercial loan balances from Schedule A Section 1.",
+          "Direct auto opportunity subtracts Schedule A Section 5 indirect vehicle loans from total new and used vehicle loans; direct auto estimate is 48,064 loans and $928,508,813.",
+          "American Airlines FCU reports only $182,791 of indirect new/used vehicle loans, so auto appears overwhelmingly direct or non-indirect in the March 2026 call report.",
+          "The largest indirect exposure is residential: $667,564,351 in first/junior lien residential indirect loans, about 17.36% of the residential loan balance captured in Schedule A Section 7."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T04:13:21-05:00",
+        "source": "NCUA details, American Airlines Credit Union public pages, public web/LinkedIn snippets, authenticated Sales Navigator broad search, regular LinkedIn broad search, and LinkedIn connections monitor; read-only capture with no requests sent.",
+        "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=American%20Airlines%20Federal%20Credit%20Union%20Gail%20Enda%20lending%20CEO%20President%20VP",
+        "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=American%20Airlines%20Federal%20Credit%20Union%20Gail%20Enda%20lending%20CEO%20President%20VP",
+        "resultSummary": "NCUA and official American Airlines Credit Union pages verify Gail Enda as CEO/President and CEO. Public search surfaced Gail Enda, Aubrey Magyar, and Elidia Suchomel as target-title or closely related lending leads. Authenticated Sales Navigator and regular LinkedIn broad searches loaded but did not surface usable visible people results for the broad query; a direct profile verification loop timed out, so no Connect controls were safely captured. The LinkedIn connections monitor refreshed and showed no visible American Airlines FCU accepted-request match.",
+        "visibleLeads": [
+          {
+            "name": "Gail Enda",
+            "title": "President and CEO",
+            "company": "American Airlines Federal Credit Union",
+            "relationshipDegree": "Not visible in final authenticated pass",
+            "profileUrl": "https://www.linkedin.com/in/gail-enda-ab885044/",
+            "sourceUrl": "https://www.aacreditunion.org/membership/90th-anniversary/",
+            "currentCompanyVerified": true,
+            "titleMatched": "President & CEO",
+            "visibleAction": "No Connect action safely captured; public LinkedIn profile and official credit-union pages verified identity/title.",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "NCUA details name Gail Enda as CEO; American Airlines Credit Union public pages identify Gail Enda as President and CEO."
+          },
+          {
+            "name": "Aubrey Magyar",
+            "title": "VP Lending",
+            "company": "American Airlines Federal Credit Union",
+            "relationshipDegree": "Not visible in final authenticated pass",
+            "profileUrl": "https://www.linkedin.com/in/aubrey-magyar-9b28a326/",
+            "sourceUrl": "https://wiza.co/d/american-airlines-federal-credit-union/eb96/aubrey-magyar",
+            "currentCompanyVerified": true,
+            "titleMatched": "VP Lending",
+            "visibleAction": "No Connect action safely captured; public people directory and LinkedIn search result verified role signal.",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "Wiza and public search identify Aubrey Magyar as VP Lending at American Airlines Federal Credit Union; Wiza lists latest personal update as October 25, 2025."
+          },
+          {
+            "name": "Elidia Suchomel",
+            "title": "VP, Lending Performance & Servicing",
+            "company": "American Airlines Federal Credit Union",
+            "relationshipDegree": "Not visible in final authenticated pass",
+            "profileUrl": "https://www.linkedin.com/in/elidia-suchomel-cpa-cgma-a6018a80/",
+            "sourceUrl": "https://www.linkedin.com/in/elidia-suchomel-cpa-cgma-a6018a80/",
+            "currentCompanyVerified": true,
+            "titleMatched": "VP Lending / Lending Performance & Servicing",
+            "visibleAction": "No Connect action safely captured; public LinkedIn search result verified role signal.",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "Public LinkedIn search result identified Elidia Suchomel as American Airlines FCU VP, Lending Performance & Servicing; Wiza company directory also lists an Elidia Suchomel VP-level current employee signal."
+          }
+        ],
+        "additionalVisibleNames": [
+          "Raul Diaz - public LinkedIn result identifies Phone Lending Manager at American Airlines Federal Credit Union; manager title is useful context but not a target executive/VP request candidate for this run.",
+          "Anthony Fletcher - Wiza lists VP, Payments & Digital Strategy; not a lending/CEO/president target title.",
+          "Lois August - public LinkedIn result identifies Director Payment, Collection & Recovery; related collections context but not a target title for connection-request tracking."
+        ],
+        "connectionRequests": [
+          {
+            "name": "Gail Enda",
+            "title": "President and CEO",
+            "company": "American Airlines Federal Credit Union",
+            "titleMatched": "President & CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/gail-enda-ab885044/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Gail%20Enda%20American%20Airlines%20Federal%20Credit%20Union%20President%20CEO",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Gail%20Enda%20American%20Airlines%20Federal%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect, and direct profile action state was not safely verified after a Chrome automation timeout.",
+            "note": "Target executive identified and queued for manual/confirmed request decision."
+          },
+          {
+            "name": "Aubrey Magyar",
+            "title": "VP Lending",
+            "company": "American Airlines Federal Credit Union",
+            "titleMatched": "VP Lending",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/aubrey-magyar-9b28a326/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Aubrey%20Magyar%20American%20Airlines%20Federal%20Credit%20Union%20VP%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Aubrey%20Magyar%20American%20Airlines%20Federal%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect, and direct profile action state was not safely verified after a Chrome automation timeout.",
+            "note": "Target lending title identified and queued for manual/confirmed request decision."
+          },
+          {
+            "name": "Elidia Suchomel",
+            "title": "VP, Lending Performance & Servicing",
+            "company": "American Airlines Federal Credit Union",
+            "titleMatched": "VP Lending / Lending Performance & Servicing",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/elidia-suchomel-cpa-cgma-a6018a80/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Elidia%20Suchomel%20American%20Airlines%20Federal%20Credit%20Union%20VP%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Elidia%20Suchomel%20American%20Airlines%20Federal%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect, and direct profile action state was not safely verified after a Chrome automation timeout.",
+            "note": "Target lending-related VP title identified and queued for manual/confirmed request decision."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T04:13:21-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor at Veridian Credit Union",
+              "connectedOn": "Visible recent connection"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations at Heartland Credit Union - Kansas",
+              "connectedOn": "Visible recent connection"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "connectedOn": "Visible recent connection"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "connectedOn": "Visible recent connection"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller at Heartland Credit Union",
+              "connectedOn": "Visible recent connection"
+            }
+          ],
+          "note": "Connections monitor refreshed successfully; visible recent connections did not include Gail Enda, Aubrey Magyar, Elidia Suchomel, or American Airlines Federal Credit Union."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/23957",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report PDF endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/23957?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder no-match check",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=14050%20FAA%20Blvd%2C%20Fort%20Worth%2C%20TX%2076155&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "OpenStreetMap Nominatim geocode fallback",
+          "url": "https://nominatim.openstreetmap.org/search?q=14050%20FAA%20Blvd%2C%20Fort%20Worth%2C%20TX%2076155&format=json&limit=3",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "American Airlines Credit Union About Us",
+          "url": "https://www.aacreditunion.org/about-us/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "American Airlines Credit Union President's Corner",
+          "url": "https://www.aacreditunion.org/about-us/presidents-corner/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "American Airlines Credit Union 90th Anniversary page",
+          "url": "https://www.aacreditunion.org/membership/90th-anniversary/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "CUInsight Gail Enda President and CEO announcement",
+          "url": "https://www.cuinsight.com/press-release/gail-enda-was-named-the-president-ceo-of-american-airlines-federal-credit-union/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Gail Enda public LinkedIn profile",
+          "url": "https://www.linkedin.com/in/gail-enda-ab885044/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Aubrey Magyar public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/aubrey-magyar-9b28a326/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Elidia Suchomel public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/elidia-suchomel-cpa-cgma-a6018a80/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Wiza American Airlines Federal Credit Union people directory",
+          "url": "https://wiza.co/d/american-airlines-federal-credit-union/eb96",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Wiza Aubrey Magyar VP Lending profile",
+          "url": "https://wiza.co/d/american-airlines-federal-credit-union/eb96/aubrey-magyar",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn/Sales Navigator visible search snapshot",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=American%20Airlines%20Federal%20Credit%20Union%20Gail%20Enda%20lending%20CEO%20President%20VP",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified charter 23957 as active American Airlines, a federal credit union with service/transportation field of membership and March 2026 as the latest available call report cycle used in this run.",
+        "NCUA call-report endpoint returned a March 31, 2026 PDF; PDF text extraction captured Statement totals, Schedule A Sections 1 through 8, and Schedule C commitments/off-balance-sheet values.",
+        "Schedule A loan category rows sum exactly to the reported $5,450,814,991 total loans and leases and 195,964 loan count.",
+        "Schedule A Section 5 reports $667,747,142 in total indirect loans and 1,005 indirect loans; $667,564,351 is first/junior lien residential indirect, while only $182,791 is indirect new/used vehicle loans.",
+        "Indirect loans represent roughly 12.25% of the total loan book; indirect vehicle balances represent about 0.02% of total new/used auto balances.",
+        "Schedule A Section 7 totals are used for real-estate breakdowns; the extracted first-lien Section 7 subtotal is $1 lower than the Section 1 account 703A row, so the loan-category value preserves the Section 1 total for category-sum validation.",
+        "U.S. Census geocoder returned no match for 14050 FAA Blvd, Fort Worth, TX 76155; OpenStreetMap/Nominatim returned coordinates for the address and is marked as a fallback geocode.",
+        "Official American Airlines Credit Union pages verify the institution identity, 90th anniversary context, and Gail Enda as President and CEO; NCUA details also list Gail Enda as CEO.",
+        "Authenticated LinkedIn/Sales Navigator browsing was read-only. Broad LinkedIn/Sales Navigator searches did not surface usable visible people results; direct profile verification timed out, so no connection request was sent and no Connect controls were safely captured.",
+        "Connections monitor refreshed successfully and no American Airlines FCU accepted-request match was found or changed."
       ]
     }
   ]
