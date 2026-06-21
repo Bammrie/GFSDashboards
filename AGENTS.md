@@ -492,4 +492,5 @@ quotes.
 2026-06-21: Added Gesa Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, Census map coordinates, high indirect-auto exposure, and read-only LinkedIn relationship research.
 2026-06-21: Added Texas Trust Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, Census map coordinates, indirect auto/lease exposure, and read-only LinkedIn relationship research.
 2026-06-21: Added Coastal Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, OpenStreetMap fallback map coordinates, high indirect-auto exposure, and read-only LinkedIn relationship research.
+2026-06-21: Added Eastman Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, Census map coordinates, material indirect-auto exposure, and read-only LinkedIn relationship research.
 
