@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T01:05:37-05:00",
+  "updatedAt": "2026-06-21T01:08:18-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -14985,6 +14985,1040 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Census geocoder returned an exact address match for 148 N 48th St, Phoenix, AZ 85034; coordinates were used for map display.",
         "Sales Navigator visible top results included current-other-credit-union executives; those were excluded from connection requests because current company did not verify as Desert Financial Credit Union.",
         "NCUA, Sales Navigator, regular LinkedIn, and Desert Financial leadership page visibly verified Jeff Meshey as Desert Financial President and CEO. Regular LinkedIn and public sources visibly verified Andrea Mosher as Chief Lending Officer/SVP. Visible Connect actions were not clicked because action-time confirmation is required for third-party LinkedIn invites.",
+        "Connections monitor refresh showed no accepted match for tracked request targets in the recently-added visible list."
+      ]
+    },
+    {
+      "id": "global-5913-2026-03-31",
+      "name": "Global Credit Union",
+      "charterNumber": "5913",
+      "priority": "High",
+      "status": "Recurring research captured",
+      "summary": "Large Alaska-based FCU with a $10.51B loan book, $4.18B in new/used vehicle balances, and $4.37B in reported indirect loans, including $3.80B of indirect vehicle loans.",
+      "profile": {
+        "ncuaName": "GLOBAL",
+        "type": "FCU",
+        "status": "Active",
+        "charterState": "",
+        "region": "3 - Western",
+        "peerGroup": "6 - $500,000,000 and greater",
+        "fieldOfMembership": "Multiple common bond - primarily military",
+        "lowIncomeDesignation": "Yes",
+        "assets": 12863315758,
+        "members": 801895,
+        "ceo": "Geofferey S Lundfelt",
+        "website": "https://www.globalcu.org",
+        "phone": "907-563-4567",
+        "mainOffice": {
+          "addressLine1": "4000 Credit Union Dr",
+          "city": "Anchorage",
+          "state": "AK",
+          "postalCode": "99503",
+          "county": "Anchorage",
+          "latitude": 61.184416464291,
+          "longitude": -149.888072178498,
+          "geocodeSource": "U.S. Census Geocoder",
+          "geocodePrecision": "Exact address match",
+          "geocodeMatchedAddress": "4000 CREDIT UNION DR, ANCHORAGE, AK, 99503"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "NCUA Call Report for March 31, 2026",
+        "totals": {
+          "loansHeldForSale": 37759589,
+          "totalLoansAndLeases": {
+            "count": 453688,
+            "amount": 10511297354
+          },
+          "allowanceForCreditLossesLoansAndLeases": 120991755,
+          "accruedInterestOnLoansAndLeases": 41758201,
+          "loansGrantedYtd": {
+            "count": 20156,
+            "amount": 981048183
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 145818954,
+          "creditLossExpenseLoansAndLeasesYtd": 14963626,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 0,
+          "loanServicingExpenseYtd": 2189743
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "accountAmountCode": "396",
+            "interestRate": 12.5,
+            "count": 168661,
+            "amount": 176099742,
+            "productFit": "Material credit-card balance and 168,661 accounts for credit/debt protection review"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "accountAmountCode": "397A",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported PAL exposure"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "accountAmountCode": "698A",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported non-federally guaranteed student loans"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "accountAmountCode": "397",
+            "interestRate": 13.5,
+            "count": 86081,
+            "amount": 168033227,
+            "productFit": "Unsecured consumer-loan balances create credit/debt protection cross-sell potential"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "accountAmountCode": "385",
+            "interestRate": 6.25,
+            "count": 51580,
+            "amount": 1547217839,
+            "productFit": "Large new-auto portfolio supports VSC/GAP and dealer-channel discussions"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "accountAmountCode": "370",
+            "interestRate": 6.25,
+            "count": 110469,
+            "amount": 2633955881,
+            "productFit": "Large used-auto portfolio supports VSC/GAP and indirect lending review"
+          },
+          {
+            "label": "Leases Receivable",
+            "accountAmountCode": "002",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported lease exposure"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "698C",
+            "interestRate": 7.75,
+            "count": 20041,
+            "amount": 497072145,
+            "productFit": "Other secured consumer balances add debt-protection opportunity"
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "703A",
+            "interestRate": 2.75,
+            "count": 8315,
+            "amount": 2926741220,
+            "productFit": "Mortgage scale is material but secondary to auto/indirect opportunity for this view"
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386A",
+            "interestRate": 7.25,
+            "count": 7259,
+            "amount": 555048324,
+            "productFit": "Junior-lien HELOC exposure can support debt-protection conversation"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386B",
+            "interestRate": 7.26,
+            "count": 11,
+            "amount": 328000,
+            "productFit": "Minimal other non-commercial real-estate exposure"
+          },
+          {
+            "label": "Total Commercial Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "718A5",
+            "interestRate": 6.5,
+            "count": 1021,
+            "amount": 1945792032,
+            "productFit": "Large commercial real-estate portfolio but outside the primary consumer/auto prospect thesis"
+          },
+          {
+            "label": "Total Commercial Loans/Lines of Credit Not Secured by Real Estate",
+            "accountAmountCode": "400P",
+            "interestRate": 8.28,
+            "count": 250,
+            "amount": 61008949,
+            "productFit": "Smaller commercial non-real-estate balance"
+          }
+        ],
+        "governmentGuaranteedLoans": {
+          "nonCommercialSba": {
+            "count": 220,
+            "balance": 3029767,
+            "guaranteedBalance": 2698098
+          },
+          "pppIncluded": {
+            "count": 2,
+            "balance": 11838
+          },
+          "nonCommercialOtherGovernmentGuaranteed": {
+            "count": 881,
+            "balance": 215764445,
+            "guaranteedBalance": 134063057
+          },
+          "commercialSba": {
+            "count": 17,
+            "balance": 22664645,
+            "guaranteedBalance": 7150536
+          },
+          "commercialOtherGovernmentGuaranteed": {
+            "count": 41,
+            "balance": 62326284,
+            "guaranteedBalance": 61509589
+          }
+        },
+        "chargeOffAndRecoveryYtd": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "chargeOffs": 2040388,
+            "recoveries": 379590
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "chargeOffs": 2967230,
+            "recoveries": 675023
+          },
+          {
+            "label": "New Vehicle Loans",
+            "chargeOffs": 2860919,
+            "recoveries": 378382
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "chargeOffs": 6788755,
+            "recoveries": 975493
+          },
+          {
+            "label": "Leases Receivable",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "chargeOffs": 1605277,
+            "recoveries": 81317
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 250
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "chargeOffs": 29300,
+            "recoveries": 3450
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "chargeOffs": 831857,
+            "recoveries": 1275
+          },
+          {
+            "label": "Construction and Development Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Farmland Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Multifamily Property Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Owner Occupied Non-Farm Non-Residential Property Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Non-Owner Occupied Non-Farm Non-Residential Property Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Agricultural Production and Other Loans to Farmers Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial and Industrial Loans",
+            "chargeOffs": 3311412,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Commercial Loans",
+            "chargeOffs": 62576,
+            "recoveries": 28363
+          },
+          {
+            "label": "Unsecured Revolving Commercial Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Total Loans and Leases",
+            "chargeOffs": 20497714,
+            "recoveries": 2523143
+          },
+          {
+            "label": "Participation Loans Purchased",
+            "chargeOffs": 2471801,
+            "recoveries": 306722
+          },
+          {
+            "label": "Indirect Loans",
+            "chargeOffs": 7508383,
+            "recoveries": 1005438
+          },
+          {
+            "label": "Whole or Partial Purchased Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          }
+        ],
+        "delinquency": {
+          "totalDelinquent30To59DaysAmount": 138885897,
+          "totalDelinquent60DaysOrMore": {
+            "count": 2628,
+            "amount": 129083328
+          },
+          "participationLoansPurchasedDelinquentAmount": 12227748,
+          "indirectLoansDelinquentAmount": 37331168,
+          "wholeOrPartialPurchasedLoansDelinquentAmount": 19399795,
+          "nonCommercialLoansNonAccrualAmount": 127980809,
+          "commercialLoansNonAccrualAmount": 33913070,
+          "bankruptcyClaimsOutstandingAmount": 22333732,
+          "borrowerDifficultyModifiedLoans": {
+            "count": 2391,
+            "amount": 73631593,
+            "notInComplianceCount": 823,
+            "notInComplianceAmount": 22886051
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 141261,
+            "amount": 3799933459,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "Residential Real Estate Loans",
+            "count": 3410,
+            "amount": 320306028,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 27486,
+            "amount": 245370716,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 172157,
+          "amount": 4365610203,
+          "delinquentAmount": 37331168,
+          "chargeOffsYtd": 7508383,
+          "recoveriesYtd": 1005438
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 8504496378,
+          "autoLoanBalance": 4181173720,
+          "autoLoanCount": 162049,
+          "directAutoLoanBalance": 381240261,
+          "directAutoLoanCount": 20788,
+          "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+          "indirectShareOfLoanBook": 0.41532553556185886,
+          "indirectVehicleShareOfAutoBalance": 0.9088197988099859
+        },
+        "otherLoanInformation": {
+          "loansToOfficials": {
+            "count": 36,
+            "amount": 10197681
+          },
+          "fcuInterestRateCeilingLoansOver15Percent": {
+            "amount": 235167,
+            "weightedAverageInterestRate": 16.52
+          },
+          "purchasedCreditImpairedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedCreditDeterioratedLoans": {
+            "count": 0,
+            "amount": 0
+          }
+        },
+        "realEstateDetails": {
+          "firstLienBalance": 2926741219,
+          "firstLienGrantedYtd": 233047396,
+          "firstLienBreakdown": {
+            "fixedOver15Years": {
+              "count": 3473,
+              "amount": 1300094089,
+              "grantedYtdAmount": 93658208
+            },
+            "fixed15YearsOrLess": {
+              "count": 1190,
+              "amount": 130265496,
+              "grantedYtdAmount": 12133565
+            },
+            "balloonHybridOver5Years": {
+              "count": 1540,
+              "amount": 606805366,
+              "grantedYtdAmount": 26783332
+            },
+            "balloonHybrid5YearsOrLess": {
+              "count": 1313,
+              "amount": 744206501,
+              "grantedYtdAmount": 94198563
+            },
+            "adjustableRate": {
+              "count": 799,
+              "amount": 145369767,
+              "grantedYtdAmount": 6273728
+            }
+          },
+          "juniorLienBalance": 555048324,
+          "juniorLienGrantedYtd": 13984409,
+          "juniorLienBreakdown": {
+            "closedEndFixedRate": {
+              "count": 985,
+              "amount": 48461549,
+              "grantedYtdAmount": 3450035
+            },
+            "closedEndAdjustableRate": {
+              "count": 13,
+              "amount": 1442031,
+              "grantedYtdAmount": 0
+            },
+            "openEndFixedRate": {
+              "count": 1,
+              "amount": 38659,
+              "grantedYtdAmount": 0
+            },
+            "openEndAdjustableRate": {
+              "count": 6260,
+              "amount": 505106085,
+              "grantedYtdAmount": 10534374
+            }
+          },
+          "allOtherNonCommercialRealEstateBalance": 328000,
+          "allOtherNonCommercialRealEstateGrantedYtd": 0,
+          "allOtherNonCommercialRealEstateBreakdown": {
+            "closedEndFixedRate": {
+              "count": 2,
+              "amount": 51233,
+              "grantedYtdAmount": 0
+            },
+            "closedEndAdjustableRate": {
+              "count": 7,
+              "amount": 224644,
+              "grantedYtdAmount": 0
+            },
+            "openEndFixedRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndAdjustableRate": {
+              "count": 2,
+              "amount": 52123,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalNonCommercialRealEstate": {
+            "count": 15585,
+            "amount": 3482117543,
+            "grantedYtdAmount": 247031805
+          },
+          "constructionBalance": 42797253,
+          "repricesOrMaturesWithinFiveYears": 688150315,
+          "interestOnlyPaymentOptionFirstLien": {
+            "count": 262,
+            "amount": 73012518,
+            "grantedYtdAmount": 6273728
+          }
+        },
+        "commercialDetails": {
+          "memberLoans": {
+            "constructionAndDevelopment": {
+              "count": 7,
+              "amount": 18807800,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 231,
+              "amount": 551145648,
+              "grantedYtdCount": 5,
+              "grantedYtdAmount": 12418000
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 249,
+              "amount": 239615490,
+              "grantedYtdCount": 2,
+              "grantedYtdAmount": 3160000
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 492,
+              "amount": 1025177003,
+              "grantedYtdCount": 4,
+              "grantedYtdAmount": 14825000
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 979,
+              "amount": 1834745941,
+              "grantedYtdCount": 11,
+              "grantedYtdAmount": 30403000
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 190,
+              "amount": 36039446,
+              "grantedYtdCount": 7,
+              "grantedYtdAmount": 798559
+            },
+            "unsecuredCommercial": {
+              "count": 2,
+              "amount": 91275,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 41,
+              "amount": 1623837,
+              "grantedYtdCount": 2,
+              "grantedYtdAmount": 75000
+            },
+            "totalCommercialMemberLoans": {
+              "count": 1212,
+              "amount": 1872500499,
+              "grantedYtdCount": 20,
+              "grantedYtdAmount": 31276559
+            }
+          },
+          "nonMemberLoans": {
+            "constructionAndDevelopment": {
+              "count": 1,
+              "amount": 5304158,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 2,
+              "amount": 1685310,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 3,
+              "amount": 6757016,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 36,
+              "amount": 97299607,
+              "grantedYtdCount": 2,
+              "grantedYtdAmount": 5029631
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 42,
+              "amount": 111046091,
+              "grantedYtdCount": 2,
+              "grantedYtdAmount": 5029631
+            },
+            "agriculturalProduction": {
+              "count": 8,
+              "amount": 10303487,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 9,
+              "amount": 12950904,
+              "grantedYtdCount": 2,
+              "grantedYtdAmount": 2298960
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialNonMemberLoans": {
+              "count": 59,
+              "amount": 134300482,
+              "grantedYtdCount": 4,
+              "grantedYtdAmount": 7328591
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 1271,
+            "amount": 2006800981
+          },
+          "outstandingAgriculturalRelatedLoans": {
+            "count": 10,
+            "amount": 11988797
+          },
+          "commercialRealEstateRepricesOrMaturesWithinFiveYears": 567574434,
+          "commercialParticipationsSoldServicingRetained": {
+            "count": 41,
+            "amount": 138267989
+          },
+          "commercialLoansSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldNoRetainedServicingYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "totalMemberBusinessLoansNet": 1967475521,
+          "commercialUnfundedCommitments": 95873667
+        },
+        "purchasedAndSoldLoans": {
+          "purchasedFromOtherFinancialInstitutionsYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherFinancialInstitutionsOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesYtd": {
+            "count": 23,
+            "amount": 13109099
+          },
+          "purchasedFromOtherSourcesOutstanding": {
+            "count": 514,
+            "amount": 164650392
+          },
+          "loansSoldYtd": {
+            "count": 243,
+            "amount": 89228060
+          },
+          "firstMortgageLoansSoldSecondaryMarketYtd": {
+            "count": 243,
+            "amount": 89228060
+          },
+          "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+            "count": 0,
+            "amount": 0
+          },
+          "realEstateLoansSoldServicingRetained": {
+            "ytdCount": 236,
+            "ytdAmount": 87615232,
+            "outstandingCount": 21946,
+            "outstandingAmount": 4571612702
+          },
+          "allOtherLoansSoldServicingRetained": {
+            "ytdCount": 0,
+            "ytdAmount": 0,
+            "outstandingCount": 0,
+            "outstandingAmount": 0
+          },
+          "loanParticipations": {
+            "vehicleNonCommercial": {
+              "purchasedYtd": 166405356,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "student": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "oneToFourFamilyResidential": {
+              "purchasedYtd": 561934700,
+              "purchasedOutstanding": 0,
+              "soldYtd": 53053601,
+              "soldOutstandingServicingRetained": 0
+            },
+            "commercialExcludingConstructionDevelopment": {
+              "purchasedYtd": 63523737,
+              "purchasedOutstanding": 0,
+              "soldYtd": 58525083,
+              "soldOutstandingServicingRetained": 7920000
+            },
+            "commercialConstructionDevelopment": {
+              "purchasedYtd": 14000000,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "allOther": {
+              "purchasedYtd": 148141102,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "total": {
+              "purchasedYtd": 954004895,
+              "purchasedOutstanding": 0,
+              "soldYtd": 111578684,
+              "soldOutstandingServicingRetained": 7920000
+            }
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 95873667,
+          "revolvingOpenEndSecuredByResidentialProperty": 303431786,
+          "creditCardLines": 490831359,
+          "unsecuredShareDraftLinesOfCredit": 234494514,
+          "unusedOverdraftProtectionProgram": 324438789,
+          "otherUnfundedCommitments": 12832979,
+          "totalNonCommercialLoans": 1366029427,
+          "totalAllLoanTypes": 1461903094,
+          "unconditionallyCancelableAllLoanTypes": 1049764662,
+          "conditionallyCancelableCommercialLoans": 95873667,
+          "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 303431786,
+          "conditionallyCancelableConsumerLoansUnsecured": 12832979,
+          "totalConditionallyCancelable": 412138432,
+          "commercialLoansTransferredWithLimitedRecourse": 0,
+          "consumerLoansTransferredWithLimitedRecourse": 0,
+          "totalLoansTransferredWithLimitedRecourse": 0,
+          "loansTransferredFhlbMpf": 0,
+          "financialStandbyLettersOfCredit": 0,
+          "forwardAgreementsNotDerivativeContracts": 0,
+          "soldCreditProtectionTotal": 0,
+          "offBalanceSheetSecuritizationExposures": 0,
+          "securitiesBorrowingOrLendingTransactions": 0,
+          "offBalanceSheetRepurchaseExposure": 0,
+          "allOtherOffBalanceSheetCommitments": 0
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 1,
+          "creditDisabilityRatePerThousand": 2.25,
+          "debtProtectionIuiRatePerThousand": 1.4,
+          "creditAndDebtProtectionPenetration": 0.38,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 3231708.62,
+        "modeledMonthlyCreditDisabilityPremium": 7271344.4,
+        "modeledMonthlyDebtProtectionIuiPremium": 4524392.07,
+        "modeledMonthlyDirectAutoOriginations": 866.17,
+        "modeledMonthlyVscGfsIncome": 138586.67,
+        "modeledMonthlyGapGfsIncome": 30315.83,
+        "notes": [
+          "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+          "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+          "Global reports 90.88% of auto balances as indirect vehicle loans, making indirect-channel product fit the primary prospect signal."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T01:08:18-05:00",
+        "source": "LinkedIn Sales Navigator visible search results plus regular LinkedIn profile verification in the authenticated Chrome session; no messages, saves, profile edits, or connection requests were made.",
+        "searchUrl": "https://www.linkedin.com/sales/search/people?keywords=Global%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+        "resultSummary": "Sales Navigator returned 1K+ broad Global Credit Union keyword results. Geoff Lundfelt was verified on regular LinkedIn as President and CEO at Global Credit Union with a visible Connect action. Patrick Cosgrove was visibly tied to Global Credit Union on LinkedIn and public Global Credit Union sources identify him as Chief Lending Officer; a visible Connect path appeared on the profile. No connection request was sent during the unattended heartbeat because action-time confirmation is required for third-party LinkedIn invites.",
+        "visibleLeads": [
+          {
+            "name": "Geoff Lundfelt",
+            "title": "President and CEO at Global Credit Union",
+            "company": "Global Credit Union",
+            "location": "Anchorage, Alaska, United States",
+            "tenure": null,
+            "signal": "NCUA details list Geofferey S Lundfelt as CEO; regular LinkedIn visibly verified President and CEO at Global Credit Union with a visible Connect action.",
+            "titleMatched": "President and CEO",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Global%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": "https://www.linkedin.com/in/geoff-lundfelt-6aa14a88/",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "blocker": "Verified target with visible Connect action, but no-note connection request was not sent because action-time confirmation is required for third-party LinkedIn invites."
+          },
+          {
+            "name": "Patrick Cosgrove",
+            "title": "Chief Lending Officer / Banking C-level Executive at Global Credit Union",
+            "company": "Global Credit Union",
+            "location": "San Diego, California, United States",
+            "tenure": null,
+            "signal": "Regular LinkedIn visibly tied Patrick Cosgrove to Global Credit Union and showed a Connect path; Global Credit Union public annual-report/press materials identify Patrick Cosgrove as Chief Lending Officer.",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Global%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": "https://www.linkedin.com/in/patrick-cosgrove-0b5bb84/",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "blocker": "Visible target appears to match Global Credit Union Chief Lending Officer using LinkedIn plus public Global sources, but no-note connection request was not sent because action-time confirmation is required for third-party LinkedIn invites."
+          },
+          {
+            "name": "Jason Sasena, CMB",
+            "title": "Chief Strategy Officer | Strategy, M&A, and Lending Leader | Driving Enterprise Transformation",
+            "company": "Global Credit Union",
+            "location": "Greater Phoenix Area",
+            "tenure": null,
+            "signal": "Sales Navigator visible result showed current Global Credit Union CSO and first-degree relationship; prior/current lending signal exists but current title is not the requested CEO/VP lending target set.",
+            "titleMatched": "Lending background, current title outside target set",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Global%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": "https://www.linkedin.com/in/jasonsasena/",
+            "requestedAt": null,
+            "status": "not_requested",
+            "blocker": "Current title did not verify as CEO, President, VP of Lending, VP Consumer Lending, or equivalent; profile is already first-degree with Message action."
+          },
+          {
+            "name": "Ranbir B.",
+            "title": "CEO / vCISO at CyberCulture.io",
+            "company": "CyberCulture.io",
+            "location": null,
+            "tenure": null,
+            "signal": "Visible Sales Navigator result appeared in broad search but current company did not match Global Credit Union.",
+            "titleMatched": "CEO current role, but current target company mismatch",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Global%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": null,
+            "requestedAt": null,
+            "status": "not_requested",
+            "blocker": "Current company did not verify as Global Credit Union."
+          },
+          {
+            "name": "Mark Rigney",
+            "title": "Chairman at Ascend Federal Credit Union",
+            "company": "Ascend Federal Credit Union",
+            "location": null,
+            "tenure": null,
+            "signal": "Visible Sales Navigator result appeared in broad search but current company did not match Global Credit Union.",
+            "titleMatched": "Executive credit-union role, but current target company mismatch",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Global%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": null,
+            "requestedAt": null,
+            "status": "not_requested",
+            "blocker": "Current company did not verify as Global Credit Union."
+          }
+        ],
+        "additionalVisibleNames": [
+          "LinkedIn recommendations on Patrick Cosgrove profile also surfaced Geoff Lundfelt, Elizabeth Pavlas, Randy Carswell, Wayne Bailey, and Jason Sasena as Global Credit Union-adjacent visible profiles.",
+          "Sales Navigator broad search also exposed visible names David Bressler, David Sweiderk, Richard Wada, Steve Boylan, John Demmler, and Chris Rogers, but their current company/title cards were not verified in the viewport."
+        ],
+        "connectionRequests": [
+          {
+            "name": "Geoff Lundfelt",
+            "title": "President and CEO at Global Credit Union",
+            "company": "Global Credit Union",
+            "titleMatched": "President and CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/geoff-lundfelt-6aa14a88/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Geoff%20Lundfelt%20Global%20Credit%20Union",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Global%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "blocker": "Action-time confirmation required before sending a third-party LinkedIn connection request.",
+            "note": "Regular LinkedIn profile was an exact current-company President and CEO match with a visible Connect action. No invite was sent during this unattended heartbeat."
+          },
+          {
+            "name": "Patrick Cosgrove",
+            "title": "Chief Lending Officer / Banking C-level Executive at Global Credit Union",
+            "company": "Global Credit Union",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/patrick-cosgrove-0b5bb84/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Patrick%20Cosgrove%20Global%20Credit%20Union",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Global%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "blocker": "Action-time confirmation required before sending a third-party LinkedIn connection request.",
+            "note": "Regular LinkedIn visibly tied the profile to Global Credit Union and public Global sources identify him as Chief Lending Officer. No invite was sent during this unattended heartbeat."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T01:08:18-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor",
+              "company": "Veridian Credit Union",
+              "connectedOn": "2026-06-19"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations",
+              "company": "Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "company": null,
+              "connectedOn": "2026-06-14"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "company": null,
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller",
+              "company": "Heartland Credit Union",
+              "connectedOn": "2026-06-06"
+            },
+            {
+              "name": "Steve O'Donnell, MBA, CCE",
+              "title": "President/CEO",
+              "company": null,
+              "connectedOn": "2026-05-17"
+            },
+            {
+              "name": "Ron Shevlin",
+              "title": "Chief Research Officer",
+              "company": "Cornerstone Advisors",
+              "connectedOn": "2026-04-30"
+            },
+            {
+              "name": "Mike Gutshall",
+              "title": "President & CEO",
+              "company": "Heritage Valley FCU",
+              "connectedOn": "2026-04-22"
+            },
+            {
+              "name": "Holly Augustine",
+              "title": "Director of Operations",
+              "company": "Colorado Credit Union",
+              "connectedOn": "2026-04-10"
+            }
+          ],
+          "note": "Connections monitor was refreshed. The visible recently-added list did not show any tracked request targets as newly accepted; target names visible only in LinkedIn recent-search suggestions were ignored."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA name search API for Global",
+          "url": "https://mapping.ncua.gov/api/Search/GetNameSearch",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API for charter 5913",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/5913",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report download endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/5913?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder for main office address",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=4000%20Credit%20Union%20Dr%20Anchorage%20AK%2099503&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Global Credit Union release identifying Geoff Lundfelt as President and CEO",
+          "url": "https://www.globalcu.org/about/news/press-releases/Alaska-USA-President-CEO-appointed-to-the-FRB-of-San-Francisco-CDIAC/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Global Credit Union executive leadership release identifying Patrick Cosgrove",
+          "url": "https://www.globalcu.org/about/news/press-releases/alaska_usa_announces_new_executive_leadership2/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Global Credit Union 2025 annual report naming Patrick Cosgrove Chief Lending Officer",
+          "url": "https://www.globalcu.org/siteassets/pdfs/02680-2025-annual-report-v260513b-web.pdf",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn Sales Navigator people search for Global executive and lending leads",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=Global%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn profile verified for Geoff Lundfelt",
+          "url": "https://www.linkedin.com/in/geoff-lundfelt-6aa14a88/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn profile checked for Patrick Cosgrove",
+          "url": "https://www.linkedin.com/in/patrick-cosgrove-0b5bb84/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor refreshed",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified GLOBAL charter 5913 as an active federal credit union with March 2026 as the latest available call report cycle.",
+        "NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.",
+        "PDF text extraction captured Statement of Financial Condition loan totals, Statement of Income loan income/expense lines, Schedule A Sections 1 through 8, indirect-loan detail, loan purchase/sale and participation schedules, and Schedule C unfunded commitments.",
+        "Statement page reported $10,511,297,354 in total loans and leases; Schedule A category rows sum to $10,511,297,359, a $5 immaterial PDF/table rounding discrepancy retained in category-level fields.",
+        "Schedule A Section 5 reported $4.37B in total indirect loans, including $3.80B in new/used vehicle indirect loans and $320.31M in residential real-estate indirect loans.",
+        "Census geocoder returned an exact address match for 4000 Credit Union Dr, Anchorage, AK 99503; coordinates were used for map display.",
+        "NCUA CEO spelling is Geofferey S Lundfelt; LinkedIn and Global public pages display Geoff Lundfelt. Both references were retained in their source contexts.",
+        "Sales Navigator broad search returned noisy results; current-company mismatches were excluded from connection requests.",
+        "Regular LinkedIn visibly verified Geoff Lundfelt as President and CEO at Global Credit Union. Regular LinkedIn visibly tied Patrick Cosgrove to Global Credit Union, and Global public sources identify him as Chief Lending Officer. Visible Connect actions were not clicked because action-time confirmation is required for third-party LinkedIn invites.",
         "Connections monitor refresh showed no accepted match for tracked request targets in the recently-added visible list."
       ]
     }
