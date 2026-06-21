@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T02:18:01-05:00",
+  "updatedAt": "2026-06-21T02:34:53-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -21001,6 +21001,1079 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Regular LinkedIn visibly verified Keith Sultemeier as President & CEO at Kinecta Federal Credit Union and showed a Connect action. No connection request was sent because the heartbeat was unattended and action-time confirmation is still required.",
         "Regular LinkedIn search showed Jason Pendergist as a former Kinecta Chief Lending Officer & Chief Marketing Officer, so he was not treated as a current-company lending target for connection outreach.",
         "Connections monitor refresh showed no accepted match for Keith Sultemeier or Jason Pendergist in the recently-added visible list."
+      ]
+    },
+    {
+      "id": "logix-1999-2026-03-31",
+      "name": "Logix Federal Credit Union",
+      "charterNumber": "1999",
+      "priority": "High",
+      "status": "Main-branch research captured",
+      "summary": "Active California FCU with a $7.72B loan book, $1.22B in new/used vehicle balances, and a small $1.42M indirect-loan schedule, making direct auto and consumer lending the primary GFS opportunity.",
+      "profile": {
+        "ncuaName": "LOGIX",
+        "type": "FCU",
+        "status": "Active",
+        "charterState": "",
+        "region": "3 - Western",
+        "fieldOfMembership": "Multiple common bond - primarily transportation equipment",
+        "lowIncomeDesignation": false,
+        "fhlbMember": true,
+        "peerGroup": "6 - $500,000,000 and greater",
+        "assets": 9716129809,
+        "members": 244797,
+        "ceo": "Ana Fonseca",
+        "website": "http://www.logixbanking.com",
+        "phone": "800-328-5328",
+        "mainOffice": {
+          "street": "27918 Franklin Pkwy",
+          "city": "Valencia",
+          "state": "CA",
+          "zip": "91355",
+          "county": "Los Angeles",
+          "country": "United States",
+          "latitude": 34.439359565195,
+          "longitude": -118.622716043595,
+          "geocodePrecision": "Exact U.S. Census address match",
+          "geocodedAddress": "27918 FRANKLIN PKWY, VALENCIA, CA, 91355"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "March 2026 NCUA 5300 Call Report",
+        "totals": {
+          "loansHeldForSale": 1678263,
+          "totalLoansAndLeases": {
+            "count": 169025,
+            "amount": 7723500130
+          },
+          "allowanceForCreditLossesLoansAndLeases": 84531340,
+          "accruedInterestOnLoansAndLeases": 33775855,
+          "loansGrantedYtd": {
+            "count": 8182,
+            "amount": 391159200
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 102179735,
+          "creditLossExpenseLoansAndLeasesYtd": 9700000,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 72945,
+          "loanServicingExpenseYtd": 5546485
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "interestRate": 16.24,
+            "count": 74108,
+            "amount": 323440770,
+            "accountCode": "396"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "397A"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "698A"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "interestRate": 16.99,
+            "count": 16954,
+            "amount": 140438397,
+            "accountCode": "397"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "interestRate": 4.99,
+            "count": 13342,
+            "amount": 401104657,
+            "accountCode": "385"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "interestRate": 5.14,
+            "count": 37989,
+            "amount": 818560721,
+            "accountCode": "370"
+          },
+          {
+            "label": "Leases Receivable",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "002"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "interestRate": 3.25,
+            "count": 6013,
+            "amount": 203318379,
+            "accountCode": "698C"
+          },
+          {
+            "label": "First Lien 1-4 Family Residential Property Loans",
+            "interestRate": 2.88,
+            "count": 9120,
+            "amount": 3853242112,
+            "accountCode": "703A"
+          },
+          {
+            "label": "Junior Lien 1-4 Family Residential Property Loans",
+            "interestRate": 7.24,
+            "count": 11140,
+            "amount": 1152682971,
+            "accountCode": "386A"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "386B"
+          },
+          {
+            "label": "Commercial Loans Secured by Real Estate",
+            "interestRate": 6.5,
+            "count": 335,
+            "amount": 829161641,
+            "accountCode": "718A5"
+          },
+          {
+            "label": "Commercial Loans Not Secured by Real Estate",
+            "interestRate": 8.75,
+            "count": 24,
+            "amount": 1550482,
+            "accountCode": "400P"
+          }
+        ],
+        "governmentGuaranteedLoans": {
+          "nonCommercialSba": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0,
+            "pppIncluded": {
+              "count": 0,
+              "balance": 0
+            }
+          },
+          "nonCommercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          },
+          "commercialSba": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          },
+          "commercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          }
+        },
+        "chargeOffAndRecoveryYtd": {
+          "byCategory": [
+            {
+              "label": "Unsecured Credit Card Loans",
+              "chargeOffs": 4696729,
+              "recoveries": 474474
+            },
+            {
+              "label": "Payday Alternative Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Non-Federally Guaranteed Student Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "All Other Unsecured Loans/Lines of Credit",
+              "chargeOffs": 1576545,
+              "recoveries": 195680
+            },
+            {
+              "label": "New Vehicle Loans",
+              "chargeOffs": 441198,
+              "recoveries": 40065
+            },
+            {
+              "label": "Used Vehicle Loans",
+              "chargeOffs": 1370017,
+              "recoveries": 141808
+            },
+            {
+              "label": "Leases Receivable",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "All Other Secured Non-Real Estate Loans",
+              "chargeOffs": 1392779,
+              "recoveries": 240062
+            },
+            {
+              "label": "First Mortgage Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Junior Lien Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "All Other Non-Commercial Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Construction and Development Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Farmland Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Multifamily Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Owner Occupied Non-Farm Non-Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Non-Owner Occupied Non-Farm Non-Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Agricultural Production Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Commercial and Industrial Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Unsecured Commercial Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Unsecured Revolving Commercial Lines of Credit",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Total Loans and Leases",
+              "chargeOffs": 9477268,
+              "recoveries": 1092089
+            },
+            {
+              "label": "Participation Loans Purchased",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Indirect Loans",
+              "chargeOffs": 18951,
+              "recoveries": 10926
+            },
+            {
+              "label": "Whole or Partial Loans Purchased",
+              "chargeOffs": 0,
+              "recoveries": 0
+            }
+          ],
+          "totalLoansAndLeases": {
+            "chargeOffs": 9477268,
+            "recoveries": 1092089
+          },
+          "participationLoansPurchased": {
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          "indirectLoans": {
+            "chargeOffs": 18951,
+            "recoveries": 10926
+          },
+          "wholeOrPartialLoansPurchased": {
+            "chargeOffs": 0,
+            "recoveries": 0
+          }
+        },
+        "delinquency": {
+          "totalDelinquent30To59DaysAmount": 87017219,
+          "totalDelinquent60DaysOrMore": {
+            "count": 896,
+            "amount": 56528540
+          },
+          "participationLoansPurchasedDelinquentAmount": 0,
+          "indirectLoansDelinquentAmount": 22900,
+          "wholeOrPartialPurchasedLoansDelinquentAmount": 0,
+          "nonCommercialLoansNonAccrualAmount": 40262618,
+          "commercialLoansNonAccrualAmount": 12991172,
+          "bankruptcyClaimsOutstandingAmount": 17408924,
+          "borrowerDifficultyModifiedLoans": {
+            "count": 191,
+            "amount": 3520099,
+            "notInComplianceCount": 19,
+            "notInComplianceAmount": 257492
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 147,
+            "amount": 1422579,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "Residential Real Estate Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 147,
+          "amount": 1422579,
+          "delinquentAmount": 22900,
+          "chargeOffsYtd": 18951,
+          "recoveriesYtd": 10926
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 6892788007,
+          "autoLoanBalance": 1219665378,
+          "autoLoanCount": 51331,
+          "directAutoLoanBalance": 1218242799,
+          "directAutoLoanCount": 51184,
+          "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+          "indirectShareOfLoanBook": 0.00018418838299417495,
+          "indirectVehicleShareOfAutoBalance": 0.0011663682725279426
+        },
+        "otherLoanInformation": {
+          "loansToOfficials": {
+            "count": 29,
+            "amount": 8744251
+          },
+          "fcuInterestRateCeilingLoansOver15Percent": {
+            "amount": 234358218,
+            "weightedAverageInterestRate": 16.88
+          },
+          "purchasedCreditImpairedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedCreditDeterioratedLoans": {
+            "count": 0,
+            "amount": 0
+          }
+        },
+        "realEstateDetails": {
+          "firstLienBalance": 3853242112,
+          "firstLienGrantedYtd": 78330455,
+          "firstLienBreakdown": {
+            "fixedOver15Years": {
+              "count": 4153,
+              "amount": 1748341534,
+              "grantedYtdAmount": 13021250
+            },
+            "fixed15YearsOrLess": {
+              "count": 1212,
+              "amount": 158363675,
+              "grantedYtdAmount": 3070500
+            },
+            "balloonHybridOver5Years": {
+              "count": 1226,
+              "amount": 879082672,
+              "grantedYtdAmount": 1765000
+            },
+            "balloonHybrid5YearsOrLess": {
+              "count": 1769,
+              "amount": 887601876,
+              "grantedYtdAmount": 41907313
+            },
+            "adjustableRate": {
+              "count": 760,
+              "amount": 179852354,
+              "grantedYtdAmount": 18566392
+            }
+          },
+          "juniorLienBalance": 1152682971,
+          "juniorLienGrantedYtd": 101733441,
+          "juniorLienBreakdown": {
+            "closedEndFixedRate": {
+              "count": 2147,
+              "amount": 193383040,
+              "grantedYtdAmount": 11003290
+            },
+            "closedEndAdjustableRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndFixedRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndAdjustableRate": {
+              "count": 8993,
+              "amount": 959299932,
+              "grantedYtdAmount": 90730151
+            }
+          },
+          "allOtherNonCommercialRealEstateBalance": 0,
+          "allOtherNonCommercialRealEstateGrantedYtd": 0,
+          "allOtherNonCommercialRealEstateBreakdown": {
+            "closedEndFixedRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "closedEndAdjustableRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndFixedRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndAdjustableRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalNonCommercialRealEstate": {
+            "count": 20260,
+            "amount": 5005925083,
+            "grantedYtdAmount": 180063896
+          },
+          "constructionBalance": 0,
+          "repricesOrMaturesWithinFiveYears": 2441294183,
+          "interestOnlyPaymentOptionFirstLien": {
+            "count": 142,
+            "amount": 146520540,
+            "grantedYtdAmount": 0
+          }
+        },
+        "commercialDetails": {
+          "memberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 19,
+              "amount": 73199973,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 35,
+              "amount": 99508719,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 6500000
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 281,
+              "amount": 656452949,
+              "grantedYtdCount": 5,
+              "grantedYtdAmount": 16689000
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 335,
+              "amount": 829161641,
+              "grantedYtdCount": 6,
+              "grantedYtdAmount": 23189000
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 1,
+              "amount": 293147,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 23,
+              "amount": 1257335,
+              "grantedYtdCount": 3,
+              "grantedYtdAmount": 120000
+            },
+            "totalCommercialMemberLoans": {
+              "count": 359,
+              "amount": 830712123,
+              "grantedYtdCount": 9,
+              "grantedYtdAmount": 23309000
+            }
+          },
+          "nonMemberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialNonMemberLoans": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 359,
+            "amount": 830712123
+          },
+          "outstandingAgriculturalRelatedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialRealEstateRepricesOrMaturesWithinFiveYears": 809692057,
+          "commercialParticipationsSoldServicingRetained": {
+            "count": 41,
+            "amount": 85514326
+          },
+          "commercialLoansSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldNoRetainedServicingYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "totalMemberBusinessLoansNet": 841035372,
+          "commercialUnfundedCommitments": 787405
+        },
+        "purchasedAndSoldLoans": {
+          "purchasedFromOtherFinancialInstitutionsYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherFinancialInstitutionsOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "loansSoldYtd": {
+            "count": 31,
+            "amount": 13492332
+          },
+          "firstMortgageLoansSoldSecondaryMarketYtd": {
+            "count": 31,
+            "amount": 13492332
+          },
+          "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+            "count": 0,
+            "amount": 0
+          },
+          "realEstateLoansSoldServicingRetained": {
+            "ytdCount": 31,
+            "ytdAmount": 13492332,
+            "outstandingCount": 6431,
+            "outstandingAmount": 1473797398
+          },
+          "allOtherLoansSoldServicingRetained": {
+            "ytdCount": 0,
+            "ytdAmount": 0,
+            "outstandingCount": 0,
+            "outstandingAmount": 0
+          },
+          "loanParticipations": {
+            "vehicleNonCommercial": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "student": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "oneToFourFamilyResidential": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 403866,
+              "soldOutstandingServicingRetained": 0
+            },
+            "commercialExcludingConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 40663298,
+              "soldOutstandingServicingRetained": 0
+            },
+            "commercialConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "allOther": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "total": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 41067164,
+              "soldOutstandingServicingRetained": 0
+            }
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 787405,
+          "revolvingOpenEndSecuredByResidentialProperty": 1220371085,
+          "creditCardLines": 1095461569,
+          "unsecuredShareDraftLinesOfCredit": 12906876,
+          "unusedOverdraftProtectionProgram": 562446723,
+          "otherUnfundedCommitments": 13813820,
+          "totalNonCommercialLoans": 2905000073,
+          "totalAllLoanTypes": 2905787478,
+          "unconditionallyCancelableAllLoanTypes": 1674253590,
+          "conditionallyCancelableCommercialLoans": 787405,
+          "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 1230746483,
+          "conditionallyCancelableConsumerLoansUnsecured": 0,
+          "totalConditionallyCancelable": 1231533888,
+          "commercialLoansTransferredWithLimitedRecourse": 0,
+          "consumerLoansTransferredWithLimitedRecourse": 0,
+          "totalLoansTransferredWithLimitedRecourse": 0,
+          "loansTransferredFhlbMpf": 64218216,
+          "financialStandbyLettersOfCredit": 0,
+          "forwardAgreementsNotDerivativeContracts": 0,
+          "soldCreditProtectionTotal": 0,
+          "offBalanceSheetSecuritizationExposures": 0,
+          "securitiesBorrowingOrLendingTransactions": 0,
+          "offBalanceSheetRepurchaseExposure": 0,
+          "allOtherOffBalanceSheetCommitments": 0
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 1,
+          "creditDisabilityRatePerThousand": 2.25,
+          "debtProtectionIuiRatePerThousand": 1.4,
+          "creditAndDebtProtectionPenetration": 0.38,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 2619259.44,
+        "modeledMonthlyCreditDisabilityPremium": 5893333.75,
+        "modeledMonthlyDebtProtectionIuiPremium": 3666963.22,
+        "modeledMonthlyDirectAutoOriginations": 2132.67,
+        "modeledMonthlyVscGfsIncome": 341227.2,
+        "modeledMonthlyGapGfsIncome": 74643.45,
+        "notes": [
+          "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+          "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+          "Logix reports only 0.12% of auto balances as indirect vehicle loans and 0.02% of total loans as indirect, so the modeled opportunity is primarily direct auto and consumer lending rather than dealer-channel indirect loans."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T02:34:53-05:00",
+        "source": "Authenticated LinkedIn and Sales Navigator visible-page snapshot plus Logix public management page; no messages, saves, profile changes, or connection requests were made.",
+        "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Jake%20Raymond%20Logix%20Federal%20Credit%20Union%20VP%20Consumer%20Lending",
+        "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Logix%20Federal%20Credit%20Union%20Ana%20Fonseca%20Mike%20Ishkhanian%20Jake%20Raymond%20Consumer%20Lending",
+        "resultSummary": "Visible LinkedIn results verified Ana Fonseca, Jake Raymond, Mike Ishkhanian, and Michael Na in current Logix executive or lending roles. Each target had either a visible Connect action or Message plus Connect access, but no unattended request was sent.",
+        "visibleLeads": [
+          {
+            "name": "Ana Fonseca",
+            "title": "President & CEO",
+            "company": "Logix Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "profileUrl": "https://www.linkedin.com/in/anaevafonseca/",
+            "sourceUrl": "https://www.linkedin.com/in/anaevafonseca/",
+            "currentCompanyVerified": true,
+            "titleMatched": "President & CEO",
+            "visibleAction": "Message and Connect",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "LinkedIn profile showed President & CEO and Logix Federal Credit Union; Logix management page and FHLBank profile also verify the CEO role."
+          },
+          {
+            "name": "Jake Raymond",
+            "title": "Vice President, Consumer Lending",
+            "company": "Logix Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "profileUrl": "https://www.linkedin.com/in/jake-raymond-b4ba2b9/",
+            "sourceUrl": "https://www.linkedin.com/search/results/people/?keywords=Jake%20Raymond%20Logix%20Federal%20Credit%20Union%20VP%20Consumer%20Lending",
+            "currentCompanyVerified": true,
+            "titleMatched": "Vice President, Consumer Lending",
+            "visibleAction": "Connect",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "LinkedIn search and Logix management page both showed Jake Raymond as VP/Vice President, Consumer Lending at Logix."
+          },
+          {
+            "name": "Mike Ishkhanian",
+            "title": "SVP Real Estate & Consumer Lending",
+            "company": "Logix Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "profileUrl": "https://www.linkedin.com/in/mike-ishkhanian-837aa185/",
+            "sourceUrl": "https://www.linkedin.com/search/results/people/?keywords=Mike%20Ishkhanian%20Logix%20Federal%20Credit%20Union%20Real%20Estate%20Consumer%20Lending",
+            "currentCompanyVerified": true,
+            "titleMatched": "SVP Real Estate & Consumer Lending",
+            "visibleAction": "Connect",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "LinkedIn search and Logix management page both showed a current senior consumer/real estate lending role."
+          },
+          {
+            "name": "Michael Na",
+            "title": "Senior Vice President, Commercial Lending & Business Services",
+            "company": "Logix Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "profileUrl": "https://www.linkedin.com/in/michael-na-32007a24/",
+            "sourceUrl": "https://www.linkedin.com/search/results/people/?keywords=Michael%20Na%20Logix%20Federal%20Credit%20Union%20Commercial%20Lending",
+            "currentCompanyVerified": true,
+            "titleMatched": "Senior Vice President, Commercial Lending & Business Services",
+            "visibleAction": "Connect",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "LinkedIn search and Logix management page both showed a current senior commercial lending role."
+          }
+        ],
+        "additionalVisibleNames": [
+          {
+            "name": "Kevin Rishko",
+            "visibleTitle": "Executive Vice President, Chief Administrative Officer",
+            "relationshipDegree": "2nd",
+            "sourceUrl": "https://www.linkedin.com/in/kevin-rishko-mba-85061161/"
+          },
+          {
+            "name": "Andrea Carpenter",
+            "visibleTitle": "EVP, Chief Operating Officer at Logix Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "sourceUrl": "https://www.linkedin.com/in/andrea-carpenter-a547352/"
+          },
+          {
+            "name": "Leticia Meza-Guerrero",
+            "visibleTitle": "SVP, Retail Banking and Loan Centers at Logix Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "sourceUrl": "https://www.linkedin.com/in/leticia-meza-guerrero/"
+          },
+          {
+            "name": "Clark Dilley",
+            "visibleTitle": "Senior Vice President, CIO at Logix Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "sourceUrl": "https://www.linkedin.com/in/clark-dilley/"
+          }
+        ],
+        "connectionRequests": [
+          {
+            "name": "Ana Fonseca",
+            "title": "President & CEO at Logix Federal Credit Union",
+            "company": "Logix Federal Credit Union",
+            "titleMatched": "President & CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/anaevafonseca/",
+            "searchUrl": "https://www.linkedin.com/in/anaevafonseca/",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Logix%20Federal%20Credit%20Union%20Ana%20Fonseca%20Mike%20Ishkhanian%20Jake%20Raymond%20Consumer%20Lending",
+            "blocker": "Visible CEO profile had Connect access, but no connection request was sent during the unattended heartbeat.",
+            "note": "Visible LinkedIn profile showed Ana Fonseca as President & CEO with Logix Federal Credit Union listed."
+          },
+          {
+            "name": "Jake Raymond",
+            "title": "Vice President, Consumer Lending at Logix Federal Credit Union",
+            "company": "Logix Federal Credit Union",
+            "titleMatched": "Vice President, Consumer Lending",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/jake-raymond-b4ba2b9/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Jake%20Raymond%20Logix%20Federal%20Credit%20Union%20VP%20Consumer%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Logix%20Federal%20Credit%20Union%20Ana%20Fonseca%20Mike%20Ishkhanian%20Jake%20Raymond%20Consumer%20Lending",
+            "blocker": "Visible Connect action found on verified current-company VP Consumer Lending result, but no unattended request was sent.",
+            "note": "Visible LinkedIn search showed Jake Raymond as Vice President, Consumer Lending at Logix Federal Credit Union."
+          },
+          {
+            "name": "Mike Ishkhanian",
+            "title": "SVP Real Estate & Consumer Lending at Logix Federal Credit Union",
+            "company": "Logix Federal Credit Union",
+            "titleMatched": "SVP Real Estate & Consumer Lending",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/mike-ishkhanian-837aa185/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Mike%20Ishkhanian%20Logix%20Federal%20Credit%20Union%20Real%20Estate%20Consumer%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Logix%20Federal%20Credit%20Union%20Ana%20Fonseca%20Mike%20Ishkhanian%20Jake%20Raymond%20Consumer%20Lending",
+            "blocker": "Visible Connect action found on verified current-company senior lending result, but no unattended request was sent.",
+            "note": "Visible LinkedIn search showed Mike Ishkhanian as SVP Real Estate & Consumer Lending & Business Intelligence Implementation at Logix."
+          },
+          {
+            "name": "Michael Na",
+            "title": "Senior Vice President, Commercial Lending & Business Services at Logix Federal Credit Union",
+            "company": "Logix Federal Credit Union",
+            "titleMatched": "Senior Vice President, Commercial Lending & Business Services",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/michael-na-32007a24/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Michael%20Na%20Logix%20Federal%20Credit%20Union%20Commercial%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Logix%20Federal%20Credit%20Union%20Ana%20Fonseca%20Mike%20Ishkhanian%20Jake%20Raymond%20Consumer%20Lending",
+            "blocker": "Visible Connect action found on verified current-company commercial lending result, but no unattended request was sent.",
+            "note": "Visible LinkedIn search showed Michael Na as Senior Vice President, Commercial Lending & Business Services at Logix Federal Credit Union."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T02:34:53-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor",
+              "company": "Veridian Credit Union",
+              "connectedOn": "2026-06-19"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations",
+              "company": "Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "company": null,
+              "connectedOn": "2026-06-14"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "company": null,
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller",
+              "company": "Heartland Credit Union",
+              "connectedOn": "2026-06-06"
+            },
+            {
+              "name": "Steve O'Donnell, MBA, CCE",
+              "title": "President/CEO",
+              "company": null,
+              "connectedOn": "2026-05-17"
+            },
+            {
+              "name": "Mike Gutshall",
+              "title": "President & CEO",
+              "company": "Heritage Valley FCU",
+              "connectedOn": "2026-04-22"
+            },
+            {
+              "name": "Holly Augustine",
+              "title": "Director of Operations",
+              "company": "Colorado Credit Union",
+              "connectedOn": "2026-04-10"
+            }
+          ],
+          "note": "Connections monitor was refreshed. The visible recently-added list did not show Ana Fonseca, Jake Raymond, Mike Ishkhanian, or Michael Na as accepted connections."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA name search API for Logix",
+          "url": "https://mapping.ncua.gov/api/Search/GetNameSearch",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API for charter 1999",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/1999",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report download endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/1999?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder for main office address",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=27918%20Franklin%20Pkwy%20Valencia%20CA%2091355&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Logix public management page",
+          "url": "https://www.logixbanking.com/about-us/management",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "FHLBank San Francisco profile for Ana E. Fonseca",
+          "url": "https://www.fhlbsf.com/about-us/leadership/ana-e-fonseca",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn profile visible snapshot for Ana Fonseca",
+          "url": "https://www.linkedin.com/in/anaevafonseca/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn search visible snapshot for Jake Raymond",
+          "url": "https://www.linkedin.com/search/results/people/?keywords=Jake%20Raymond%20Logix%20Federal%20Credit%20Union%20VP%20Consumer%20Lending",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn search visible snapshot for Mike Ishkhanian",
+          "url": "https://www.linkedin.com/search/results/people/?keywords=Mike%20Ishkhanian%20Logix%20Federal%20Credit%20Union%20Real%20Estate%20Consumer%20Lending",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn search visible snapshot for Michael Na",
+          "url": "https://www.linkedin.com/search/results/people/?keywords=Michael%20Na%20Logix%20Federal%20Credit%20Union%20Commercial%20Lending",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn Sales Navigator exact keyword search",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=Logix%20Federal%20Credit%20Union%20Ana%20Fonseca%20Mike%20Ishkhanian%20Jake%20Raymond%20Consumer%20Lending",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified LOGIX charter 1999 as an active California federal credit union with March 2026 as the latest available call report cycle.",
+        "NCUA name search API returned a single LOGIX result for the selected candidate.",
+        "NCUA call-report endpoint returned a PDF in JSON fileContents format; bytes were decoded before text extraction.",
+        "PDF text extraction captured Statement of Financial Condition loan totals, Statement of Income loan income/expense lines, Schedule A Sections 1 through 8, indirect-loan detail, loan purchase/sale and participation schedules, and Schedule C unfunded commitments.",
+        "Schedule A loan category rows sum exactly to the reported $7,723,500,130 total loans and leases.",
+        "Schedule A Section 5 reported $1.42M in total indirect loans, all in new/used vehicle loans; the indirect balance is small relative to the $1.22B total auto portfolio.",
+        "Schedule A Section 7 displayed one-dollar cross-foot variance between extracted real estate subtotal lines and component/category balances; Section 1 category balances were used for first-lien and junior-lien totals while component rows are retained as extracted.",
+        "Census geocoder returned an exact match for 27918 Franklin Pkwy, Valencia, CA 91355 and supplied coordinates for map display.",
+        "Logix public management page verified Ana Fonseca, Mike Ishkhanian, Michael Na, and Jake Raymond in relevant executive or lending roles; FHLBank San Francisco also verified Ana Fonseca as President and Chief Executive Officer.",
+        "Regular LinkedIn/Sales Navigator visibly surfaced Ana Fonseca, Jake Raymond, Mike Ishkhanian, and Michael Na as target-title relationship leads. No connection request was sent because the heartbeat was unattended and action-time confirmation is still required.",
+        "Connections monitor refresh showed no accepted match for Ana Fonseca, Jake Raymond, Mike Ishkhanian, or Michael Na in the recently-added visible list."
       ]
     }
   ]
