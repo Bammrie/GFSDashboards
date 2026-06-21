@@ -481,3 +481,4 @@ quotes.
 2026-05-04: Added a 5-year call report asset projection in the account workspace call report chart, estimating future credit union size from historical asset growth and showing the projected month/year and asset total.
 
 2026-05-11: Added a new standalone loan-application React+TypeScript+Tailwind wizard area (one-question-at-a-time intake flow with localStorage persistence, review/submit/completion states) and linked it from the landing page without altering existing account/quote workspaces.
+2026-06-21: Added Kinecta Federal Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, Census map coordinates, and read-only LinkedIn relationship research.
