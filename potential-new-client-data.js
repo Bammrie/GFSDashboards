@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T01:50:01-05:00",
+  "updatedAt": "2026-06-21T02:03:22-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -19011,6 +19011,999 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Census geocoder returned an exact address match for 300 N Field Dr, Lake Forest, IL 60045; coordinates were used for map display.",
         "NCUA, Consumers public pages, public web search, Sales Navigator, and regular LinkedIn visibly verified Sean Rathjen as CEO and Dave Valentine as Chief Lending & Experience Officer. Both showed Connect actions, but no connection request was sent during the unattended heartbeat; both are marked confirmation_required.",
         "Connections monitor refresh showed no accepted match for Sean Rathjen or Dave Valentine in the recently-added visible list."
+      ]
+    },
+    {
+      "id": "wings-68671-2026-03-31",
+      "name": "Wings Credit Union (Ent Credit Union)",
+      "charterNumber": "68671",
+      "priority": "High",
+      "status": "Recurring research captured",
+      "summary": "Large Colorado FISCU reporting under the Wings charter/Ent brand with a $15.74B loan book, $2.19B in new/used vehicle balances, and $1.94B in reported indirect loans, including $1.71B of indirect vehicle loans.",
+      "profile": {
+        "ncuaName": "WINGS",
+        "callReportName": "ENT",
+        "type": "FISCU",
+        "status": "Active",
+        "charterState": "Colorado",
+        "region": "3 - Western",
+        "peerGroup": "6 - $500,000,000 and greater",
+        "fieldOfMembership": "Non-Federal Credit Union",
+        "lowIncomeDesignation": "Yes",
+        "fhlbMember": "Yes",
+        "assets": 19478955762,
+        "members": 948633,
+        "ceo": "Chad Graves",
+        "website": "http://www.ent.com",
+        "phone": "719-574-1100",
+        "mainOffice": {
+          "addressLine1": "11550 Ent Pkwy",
+          "city": "Colorado Springs",
+          "state": "CO",
+          "postalCode": "80921-4274",
+          "county": "El Paso",
+          "latitude": 38.9984692,
+          "longitude": -104.8126327,
+          "geocodeSource": "OpenStreetMap Nominatim fallback after Census no-match",
+          "geocodePrecision": "Headquarters/office match",
+          "geocodeMatchedAddress": "Ent Credit Union Headquarters, 11550, Ent Parkway, Colorado Springs, El Paso County, Colorado, 80921, United States"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "NCUA Call Report for March 31, 2026",
+        "totals": {
+          "loansHeldForSale": 38122296,
+          "totalLoansAndLeases": {
+            "count": 504510,
+            "amount": 15744018949
+          },
+          "allowanceForCreditLossesLoansAndLeases": 180558999,
+          "accruedInterestOnLoansAndLeases": 58952788,
+          "loansGrantedYtd": {
+            "count": 27542,
+            "amount": 1356068728
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 230743567,
+          "creditLossExpenseLoansAndLeasesYtd": 45174839,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 1386776,
+          "loanServicingExpenseYtd": 3673477
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "accountAmountCode": "396",
+            "interestRate": 21.49,
+            "count": 184047,
+            "amount": 474073393,
+            "productFit": "Very large credit-card base and balance for credit/debt protection review"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "accountAmountCode": "397A",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported PAL exposure in the March 2026 schedule"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "accountAmountCode": "698A",
+            "interestRate": 5.75,
+            "count": 16,
+            "amount": 91484,
+            "productFit": "Minimal student-loan exposure"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "accountAmountCode": "397",
+            "interestRate": 17.74,
+            "count": 89641,
+            "amount": 352860594,
+            "productFit": "Large unsecured consumer loan base for protection product review"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "accountAmountCode": "385",
+            "interestRate": 5.74,
+            "count": 65641,
+            "amount": 1213982616,
+            "productFit": "Material new-auto balance for VSC/GAP workflow review"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "accountAmountCode": "370",
+            "interestRate": 5.99,
+            "count": 66901,
+            "amount": 975500844,
+            "productFit": "Material used-auto balance for GAP/VSC and indirect-channel review"
+          },
+          {
+            "label": "Leases Receivable",
+            "accountAmountCode": "002",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported lease receivable exposure"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "698C",
+            "interestRate": 6.5,
+            "count": 19533,
+            "amount": 456015995,
+            "productFit": "Additional secured consumer exposure for ancillary product review"
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "703A",
+            "interestRate": 6.5,
+            "count": 33040,
+            "amount": 7474946798,
+            "productFit": "Large mortgage portfolio, useful for institution scale but secondary to auto/consumer fit"
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386A",
+            "interestRate": 6.5,
+            "count": 35282,
+            "amount": 2053410576,
+            "productFit": "Large junior-lien/home-equity book may inform broader member-protection conversations"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386B",
+            "interestRate": 6.25,
+            "count": 10,
+            "amount": 960256,
+            "productFit": "Minimal all-other non-commercial real estate exposure"
+          },
+          {
+            "label": "Commercial Loans Secured by Real Estate",
+            "accountAmountCode": "718A5",
+            "interestRate": 6.25,
+            "count": 893,
+            "amount": 2517042485,
+            "productFit": "Large commercial real estate book helps size institution but is outside the primary consumer-insurance target"
+          },
+          {
+            "label": "Commercial Loans Not Secured by Real Estate",
+            "accountAmountCode": "400P",
+            "interestRate": 6.75,
+            "count": 9506,
+            "amount": 225133908,
+            "productFit": "Commercial non-real-estate exposure included for complete loan schedule context"
+          }
+        ],
+        "governmentGuaranteedLoans": {
+          "nonCommercialSba": {
+            "count": 1,
+            "balance": 100000,
+            "guaranteedBalance": 50000
+          },
+          "pppIncluded": {
+            "count": 0,
+            "balance": 0
+          },
+          "nonCommercialOtherGovernmentGuaranteed": {
+            "count": 1514,
+            "balance": 461634030,
+            "guaranteedBalance": 175104474
+          },
+          "commercialSba": {
+            "count": 24,
+            "balance": 15008222,
+            "guaranteedBalance": 10354420
+          },
+          "commercialOtherGovernmentGuaranteed": {
+            "count": 41,
+            "balance": 24286770,
+            "guaranteedBalance": 23558343
+          }
+        },
+        "chargeOffAndRecoveryYtd": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "chargeOffs": 7597611,
+            "recoveries": 736593
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "chargeOffs": 6688159,
+            "recoveries": 729764
+          },
+          {
+            "label": "New Vehicle Loans",
+            "chargeOffs": 1960477,
+            "recoveries": 503559
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "chargeOffs": 2944588,
+            "recoveries": 475170
+          },
+          {
+            "label": "Leases Receivable",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "chargeOffs": 1686854,
+            "recoveries": 178751
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "chargeOffs": 140783,
+            "recoveries": 74015
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "chargeOffs": 215487,
+            "recoveries": 31558
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Construction and Development Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Farmland Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Multifamily Property Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Owner Occupied Non-Farm Non-Residential Property Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Non-Owner Occupied Non-Farm Non-Residential Property Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Agricultural Production and Other Loans to Farmers Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial and Industrial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Revolving Commercial Lines of Credit",
+            "chargeOffs": 608071,
+            "recoveries": 0
+          },
+          {
+            "label": "Total Loans and Leases",
+            "chargeOffs": 21842030,
+            "recoveries": 2729410
+          },
+          {
+            "label": "Participation Loans Purchased",
+            "chargeOffs": 336057,
+            "recoveries": 79632
+          },
+          {
+            "label": "Indirect Loans",
+            "chargeOffs": 4743217,
+            "recoveries": 827629
+          },
+          {
+            "label": "Whole or Partial Purchased Loans",
+            "chargeOffs": 4610616,
+            "recoveries": 224661
+          }
+        ],
+        "delinquency": {
+          "totalDelinquent30To59DaysAmount": 90144853,
+          "totalDelinquent60DaysOrMore": {
+            "count": 4916,
+            "amount": 80168506
+          },
+          "participationLoansPurchasedDelinquentAmount": 2814050,
+          "indirectLoansDelinquentAmount": 9351486,
+          "wholeOrPartialPurchasedLoansDelinquentAmount": 0,
+          "nonCommercialLoansNonAccrualAmount": 52208971,
+          "commercialLoansNonAccrualAmount": 2643775,
+          "bankruptcyClaimsOutstandingAmount": 38369325,
+          "borrowerDifficultyModifiedLoans": {
+            "count": 1097,
+            "amount": 62356733,
+            "notInComplianceCount": 255,
+            "notInComplianceAmount": 3568342
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 97669,
+            "amount": 1707714445,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "Residential Real Estate Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 42,
+            "amount": 1972699,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 9468,
+            "amount": 225409820,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 107179,
+          "amount": 1935096964,
+          "delinquentAmount": 9351486,
+          "chargeOffsYtd": 4743217,
+          "recoveriesYtd": 827629
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 13001842556,
+          "autoLoanBalance": 2189483460,
+          "autoLoanCount": 132542,
+          "directAutoLoanBalance": 481769015,
+          "directAutoLoanCount": 34873,
+          "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+          "indirectShareOfLoanBook": 0.12290997427457429,
+          "indirectVehicleShareOfAutoBalance": 0.7799622496348979
+        },
+        "otherLoanInformation": {
+          "loansToOfficials": {
+            "count": 75,
+            "amount": 16012488
+          },
+          "fcuInterestRateCeilingLoansOver15Percent": {
+            "amount": 0,
+            "weightedAverageInterestRate": null
+          },
+          "purchasedCreditImpairedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedCreditDeterioratedLoans": {
+            "count": 0,
+            "amount": 0
+          }
+        },
+        "realEstateDetails": {
+          "firstLienBalance": 7474946798,
+          "firstLienGrantedYtd": 424752215,
+          "firstLienBreakdown": {
+            "fixedOver15Years": {
+              "count": 15360,
+              "amount": 3870633838,
+              "grantedYtdAmount": 199399939
+            },
+            "fixed15YearsOrLess": {
+              "count": 4206,
+              "amount": 479624728,
+              "grantedYtdAmount": 17741659
+            },
+            "balloonHybridOver5Years": {
+              "count": 8065,
+              "amount": 1851939295,
+              "grantedYtdAmount": 88509464
+            },
+            "balloonHybrid5YearsOrLess": {
+              "count": 2407,
+              "amount": 1076847335,
+              "grantedYtdAmount": 66518193
+            },
+            "adjustableRate": {
+              "count": 3003,
+              "amount": 195901602,
+              "grantedYtdAmount": 52582960
+            }
+          },
+          "juniorLienBalance": 2053410576,
+          "juniorLienGrantedYtd": 215783482,
+          "juniorLienBreakdown": {
+            "closedEndFixedRate": {
+              "count": 147,
+              "amount": 18381203,
+              "grantedYtdAmount": 0
+            },
+            "closedEndAdjustableRate": {
+              "count": 46,
+              "amount": 6343633,
+              "grantedYtdAmount": 221500
+            },
+            "openEndFixedRate": {
+              "count": 17642,
+              "amount": 941847828,
+              "grantedYtdAmount": 68834042
+            },
+            "openEndAdjustableRate": {
+              "count": 17447,
+              "amount": 1086837912,
+              "grantedYtdAmount": 146727940
+            }
+          },
+          "allOtherNonCommercialRealEstateBalance": 960256,
+          "allOtherNonCommercialRealEstateGrantedYtd": 0,
+          "allOtherNonCommercialRealEstateBreakdown": {
+            "closedEndFixedRate": {
+              "count": 8,
+              "amount": 251417,
+              "grantedYtdAmount": 0
+            },
+            "closedEndAdjustableRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndFixedRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndAdjustableRate": {
+              "count": 2,
+              "amount": 708839,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalNonCommercialRealEstate": {
+            "count": 68333,
+            "amount": 9529317630,
+            "grantedYtdAmount": 640535697
+          },
+          "constructionBalance": 24954283,
+          "repricesOrMaturesWithinFiveYears": 3360173597,
+          "interestOnlyPaymentOptionFirstLien": {
+            "count": 5750,
+            "amount": 383968092,
+            "grantedYtdAmount": 65870345
+          }
+        },
+        "commercialDetails": {
+          "memberLoans": {
+            "constructionAndDevelopment": {
+              "count": 17,
+              "amount": 68418289,
+              "grantedYtdCount": 2,
+              "grantedYtdAmount": 7159500
+            },
+            "securedByFarmland": {
+              "count": 1,
+              "amount": 84301,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 115,
+              "amount": 734098955,
+              "grantedYtdCount": 9,
+              "grantedYtdAmount": 142454889
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 277,
+              "amount": 307683344,
+              "grantedYtdCount": 8,
+              "grantedYtdAmount": 24379046
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 434,
+              "amount": 1133237449,
+              "grantedYtdCount": 5,
+              "grantedYtdAmount": 18607400
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 844,
+              "amount": 2243522338,
+              "grantedYtdCount": 24,
+              "grantedYtdAmount": 192600835
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 588,
+              "amount": 158982940,
+              "grantedYtdCount": 32,
+              "grantedYtdAmount": 30917576
+            },
+            "unsecuredCommercial": {
+              "count": 52,
+              "amount": 9760599,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 175000
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 8835,
+              "amount": 40274083,
+              "grantedYtdCount": 14,
+              "grantedYtdAmount": 1210000
+            },
+            "totalCommercialMemberLoans": {
+              "count": 10319,
+              "amount": 2452539960,
+              "grantedYtdCount": 71,
+              "grantedYtdAmount": 224903411
+            }
+          },
+          "nonMemberLoans": {
+            "constructionAndDevelopment": {
+              "count": 1,
+              "amount": 327559,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 21333500
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 7,
+              "amount": 75061853,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 1,
+              "amount": 2768230,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 40,
+              "amount": 195362504,
+              "grantedYtdCount": 2,
+              "grantedYtdAmount": 24676980
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 49,
+              "amount": 273520146,
+              "grantedYtdCount": 3,
+              "grantedYtdAmount": 46010480
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 31,
+              "amount": 16116285,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialNonMemberLoans": {
+              "count": 80,
+              "amount": 289636431,
+              "grantedYtdCount": 3,
+              "grantedYtdAmount": 46010480
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 10399,
+            "amount": 2742176391
+          },
+          "outstandingAgriculturalRelatedLoans": {
+            "count": 1,
+            "amount": 84301
+          },
+          "commercialRealEstateRepricesOrMaturesWithinFiveYears": 2018810306,
+          "commercialParticipationsSoldServicingRetained": {
+            "count": 39,
+            "amount": 148864358
+          },
+          "commercialLoansSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldNoRetainedServicingYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "totalMemberBusinessLoansNet": 2747615937,
+          "commercialUnfundedCommitments": 415411860
+        },
+        "purchasedAndSoldLoans": {
+          "purchasedFromOtherFinancialInstitutionsYtd": {
+            "count": 16,
+            "amount": 15001235
+          },
+          "purchasedFromOtherFinancialInstitutionsOutstanding": {
+            "count": 627,
+            "amount": 379854236
+          },
+          "purchasedFromOtherSourcesYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesOutstanding": {
+            "count": 107409,
+            "amount": 324184152
+          },
+          "loansSoldYtd": {
+            "count": 315,
+            "amount": 111663956
+          },
+          "firstMortgageLoansSoldSecondaryMarketYtd": {
+            "count": 315,
+            "amount": 111663956
+          },
+          "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+            "count": 0,
+            "amount": 0
+          },
+          "realEstateLoansSoldServicingRetained": {
+            "ytdCount": 307,
+            "ytdAmount": 109116578,
+            "outstandingCount": 15000,
+            "outstandingAmount": 3553091088
+          },
+          "allOtherLoansSoldServicingRetained": {
+            "ytdCount": 0,
+            "ytdAmount": 0,
+            "outstandingCount": 4327,
+            "outstandingAmount": 89335171
+          },
+          "loanParticipations": {
+            "vehicleNonCommercial": {
+              "purchasedYtd": 76655704,
+              "purchasedOutstanding": 0,
+              "soldYtd": 69854829,
+              "soldOutstandingServicingRetained": 0
+            },
+            "student": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "oneToFourFamilyResidential": {
+              "purchasedYtd": 304276968,
+              "purchasedOutstanding": 0,
+              "soldYtd": 25376216,
+              "soldOutstandingServicingRetained": 0
+            },
+            "commercialExcludingConstructionDevelopment": {
+              "purchasedYtd": 289308872,
+              "purchasedOutstanding": 24676980,
+              "soldYtd": 172226229,
+              "soldOutstandingServicingRetained": 18076926
+            },
+            "commercialConstructionDevelopment": {
+              "purchasedYtd": 327559,
+              "purchasedOutstanding": 21333500,
+              "soldYtd": 3634416,
+              "soldOutstandingServicingRetained": 0
+            },
+            "allOther": {
+              "purchasedYtd": 37010582,
+              "purchasedOutstanding": 0,
+              "soldYtd": 1470700,
+              "soldOutstandingServicingRetained": 0
+            },
+            "total": {
+              "purchasedYtd": 707579685,
+              "purchasedOutstanding": 46010480,
+              "soldYtd": 272562390,
+              "soldOutstandingServicingRetained": 18076926
+            }
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 415411860,
+          "revolvingOpenEndSecuredByResidentialProperty": 2105834860,
+          "creditCardLines": 2091121818,
+          "unsecuredShareDraftLinesOfCredit": 280684890,
+          "unusedOverdraftProtectionProgram": 363523742,
+          "otherUnfundedCommitments": 22778916,
+          "totalNonCommercialLoans": 4863944226,
+          "totalAllLoanTypes": 5279356086,
+          "unconditionallyCancelableAllLoanTypes": 2844309202,
+          "conditionallyCancelableCommercialLoans": 307439777,
+          "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 2111377431,
+          "conditionallyCancelableConsumerLoansUnsecured": 16229676,
+          "totalConditionallyCancelable": 2435046884,
+          "commercialLoansTransferredWithLimitedRecourse": 0,
+          "consumerLoansTransferredWithLimitedRecourse": 0,
+          "totalLoansTransferredWithLimitedRecourse": 0,
+          "loansTransferredFhlbMpf": 33093681,
+          "financialStandbyLettersOfCredit": 4888397,
+          "forwardAgreementsNotDerivativeContracts": 0,
+          "soldCreditProtectionTotal": 0,
+          "offBalanceSheetSecuritizationExposures": 0,
+          "securitiesBorrowingOrLendingTransactions": 0,
+          "offBalanceSheetRepurchaseExposure": 0,
+          "allOtherOffBalanceSheetCommitments": 419117
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 1,
+          "creditDisabilityRatePerThousand": 2.25,
+          "debtProtectionIuiRatePerThousand": 1.4,
+          "creditAndDebtProtectionPenetration": 0.38,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 4940700.17,
+        "modeledMonthlyCreditDisabilityPremium": 11116575.39,
+        "modeledMonthlyDebtProtectionIuiPremium": 6916980.24,
+        "modeledMonthlyDirectAutoOriginations": 1453.04,
+        "modeledMonthlyVscGfsIncome": 232486.67,
+        "modeledMonthlyGapGfsIncome": 50856.46,
+        "notes": [
+          "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+          "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+          "Wings/Ent reports 78.00% of auto balances as indirect vehicle loans and 12.29% of total loans as indirect, so dealer-channel economics and residual direct-auto volume both matter."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T02:03:22-05:00",
+        "source": "Google/web public search, LinkedIn Sales Navigator visible search page, regular LinkedIn profile verification in the authenticated Chrome session; no messages, saves, profile edits, or connection requests were made.",
+        "searchUrl": "https://www.linkedin.com/sales/search/people?keywords=Ent%20Credit%20Union%20Wings%20Chad%20Graves%20Jon%20Paukovich%20Chief%20Lending%20Officer",
+        "resultSummary": "NCUA details and Ent public pages verified the official Wings/Ent naming transition. Regular LinkedIn visibly verified Chad Graves as Chief Executive Officer at Ent Credit Union - Becoming Wings and Jon Paukovich as Chief Lending Officer at Ent Credit Union. Sales Navigator loaded but returned 0 lead cards for the exact keyword query. Chad showed a visible Connect action and is marked confirmation_required; Jon showed Message rather than Connect and is marked not_requested.",
+        "visibleLeads": [
+          {
+            "name": "Chad Graves",
+            "title": "Chief Executive Officer at Ent Credit Union - Becoming Wings",
+            "company": "Ent Credit Union / Wings Credit Union",
+            "location": "Colorado Springs, Colorado, United States",
+            "tenure": null,
+            "signal": "NCUA details list Chad Graves as CEO; regular LinkedIn visibly verified CEO at Ent Credit Union - Becoming Wings; public sources identify him as President and CEO of Ent.",
+            "titleMatched": "CEO / President and CEO",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Ent%20Credit%20Union%20Wings%20Chad%20Graves%20Jon%20Paukovich%20Chief%20Lending%20Officer",
+            "profileUrl": "https://www.linkedin.com/in/chadgraves/",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "blocker": "Visible Connect action found, but the unattended heartbeat did not send a LinkedIn invitation without an action-time confirmation."
+          },
+          {
+            "name": "Jon Paukovich",
+            "title": "Chief Lending Officer at Ent Credit Union",
+            "company": "Ent Credit Union",
+            "location": "Colorado Springs, Colorado, United States",
+            "tenure": null,
+            "signal": "Regular LinkedIn visibly verified current Chief Lending Officer at Ent Credit Union; public search also surfaced Jon Paukovich as Ent Chief Lending Officer.",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Ent%20Credit%20Union%20Wings%20Chad%20Graves%20Jon%20Paukovich%20Chief%20Lending%20Officer",
+            "profileUrl": "https://www.linkedin.com/in/jon-paukovich-2815507/",
+            "requestedAt": null,
+            "status": "not_requested",
+            "blocker": "Verified lending-executive target, but regular LinkedIn profile showed Message rather than a visible Connect action during this pass."
+          }
+        ],
+        "additionalVisibleNames": [
+          "Sales Navigator loaded in the authenticated session but returned 0 lead cards for the exact Wings/Ent keyword query used in this pass.",
+          "Jon Paukovich profile recommendations visibly surfaced Chad Graves, Norm Creveling, Chris Chippindale, Amy Nigrelli, and Jay Caldwell as adjacent profiles; only Chad and Jon were retained as verified target-title/current-company leads.",
+          "The connections monitor visible recently-added list did not show Chad Graves or Jon Paukovich as accepted connections."
+        ],
+        "connectionRequests": [
+          {
+            "name": "Chad Graves",
+            "title": "Chief Executive Officer at Ent Credit Union - Becoming Wings",
+            "company": "Ent Credit Union / Wings Credit Union",
+            "titleMatched": "CEO / President and CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/chadgraves/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Chad%20Graves%20Ent%20Credit%20Union%20Wings",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Ent%20Credit%20Union%20Wings%20Chad%20Graves%20Jon%20Paukovich%20Chief%20Lending%20Officer",
+            "blocker": "Visible Connect action found on verified current-company CEO profile, but no connection request was sent during the unattended heartbeat.",
+            "note": "Regular LinkedIn profile showed Chad Graves as a 2nd-degree Chief Executive Officer at Ent Credit Union - Becoming Wings with a Connect action."
+          },
+          {
+            "name": "Jon Paukovich",
+            "title": "Chief Lending Officer at Ent Credit Union",
+            "company": "Ent Credit Union",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "requestedAt": null,
+            "status": "not_requested",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/jon-paukovich-2815507/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Jon%20Paukovich%20Ent%20Credit%20Union%20Chief%20Lending%20Officer",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Ent%20Credit%20Union%20Wings%20Chad%20Graves%20Jon%20Paukovich%20Chief%20Lending%20Officer",
+            "blocker": "No visible Connect action on verified current-company Chief Lending Officer profile during this pass.",
+            "note": "Regular LinkedIn profile showed Jon Paukovich as Chief Lending Officer at Ent Credit Union and displayed Message rather than Connect."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T02:03:22-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor",
+              "company": "Veridian Credit Union",
+              "connectedOn": "2026-06-19"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations",
+              "company": "Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "company": null,
+              "connectedOn": "2026-06-14"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "company": null,
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller",
+              "company": "Heartland Credit Union",
+              "connectedOn": "2026-06-06"
+            },
+            {
+              "name": "Steve O'Donnell, MBA, CCE",
+              "title": "President/CEO",
+              "company": null,
+              "connectedOn": "2026-05-17"
+            },
+            {
+              "name": "Mike Gutshall",
+              "title": "President & CEO",
+              "company": "Heritage Valley FCU",
+              "connectedOn": "2026-04-22"
+            },
+            {
+              "name": "Holly Augustine",
+              "title": "Director of Operations",
+              "company": "Colorado Credit Union",
+              "connectedOn": "2026-04-10"
+            }
+          ],
+          "note": "Connections monitor was refreshed. The visible recently-added list did not show Chad Graves or Jon Paukovich as accepted connections."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA name search API for Wings",
+          "url": "https://mapping.ncua.gov/api/Search/GetNameSearch",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API for charter 68671",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/68671",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report download endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/68671?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder for main office address",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=11550%20Ent%20Pkwy%20Colorado%20Springs%20CO%2080921-4274&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "OpenStreetMap Nominatim fallback geocode for Ent Credit Union Headquarters",
+          "url": "https://nominatim.openstreetmap.org/search?format=jsonv2&q=11550%20Ent%20Pkwy%20Colorado%20Springs%20CO%2080921&limit=1",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Ent leadership / official naming transition page",
+          "url": "https://www.ent.com/about-us/who-we-are/our-leadership/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "GoWest item identifying Chad Graves as Ent President and CEO",
+          "url": "https://gowestassociation.org/2025/06/20/ent-ceo-chad-graves-named-one-of-colorados-most-influential-leaders-by-denver-business-journal/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn public/search snippet for Chad Graves",
+          "url": "https://www.linkedin.com/in/chadgraves/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn public/search snippet for Jon Paukovich",
+          "url": "https://www.linkedin.com/in/jon-paukovich-2815507/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn company page noting Ent Credit Union changed official name to Wings Credit Union",
+          "url": "https://www.linkedin.com/company/entcreditunion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn Sales Navigator exact keyword search",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=Ent%20Credit%20Union%20Wings%20Chad%20Graves%20Jon%20Paukovich%20Chief%20Lending%20Officer",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified WINGS charter 68671 as an active Colorado FISCU with March 2026 as the latest available call report cycle; the NCUA call report text labels the institution ENT.",
+        "Ent public footer and LinkedIn company page state Ent Credit Union has officially changed its name to Wings Credit Union and is doing business as Ent Credit Union during the transition.",
+        "NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.",
+        "PDF text extraction captured Statement of Financial Condition loan totals, Statement of Income loan income/expense lines, Schedule A Sections 1 through 8, indirect-loan detail, loan purchase/sale and participation schedules, and Schedule C unfunded commitments.",
+        "Schedule A loan category rows sum exactly to the reported $15,744,018,949 total loans and leases.",
+        "Schedule A Section 5 reported $1.94B in total indirect loans, including $1.71B in new/used vehicle indirect loans, $1.97M in commercial indirect loans, and $225.41M in all-other indirect loans.",
+        "Census geocoder returned no match for 11550 Ent Pkwy, Colorado Springs, CO 80921-4274; OpenStreetMap Nominatim matched Ent Credit Union Headquarters and supplied fallback coordinates for map display.",
+        "NCUA, Ent public pages, public web search, Sales Navigator, and regular LinkedIn visibly verified Chad Graves as CEO and Jon Paukovich as Chief Lending Officer. No connection request was sent because Chad requires action-time confirmation and Jon showed Message rather than Connect.",
+        "Connections monitor refresh showed no accepted match for Chad Graves or Jon Paukovich in the recently-added visible list."
       ]
     }
   ]
