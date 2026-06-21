@@ -493,4 +493,4 @@ quotes.
 2026-06-21: Added Texas Trust Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, Census map coordinates, indirect auto/lease exposure, and read-only LinkedIn relationship research.
 2026-06-21: Added Coastal Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, OpenStreetMap fallback map coordinates, high indirect-auto exposure, and read-only LinkedIn relationship research.
 2026-06-21: Added Eastman Credit Union to Potential New Client Overview with March 2026 NCUA loan schedules, Census map coordinates, material indirect-auto exposure, and read-only LinkedIn relationship research.
-
+- 2026-06-21: Added Langley Federal Credit Union to the Potential New Client Overview recurring research data with March 2026 NCUA loan schedules, Census-confirmed Newport News headquarters geocode, $2.39B total indirect exposure, $1.57B indirect vehicle exposure, modeled opportunity, visible President/CEO and lending executive relationship research, read-only LinkedIn connections monitor refresh, and Gaurav Bhatia / Curtis Baker / Rob Lefkowicz / Michael McNabb LinkedIn confirmation-required blocker notes.
