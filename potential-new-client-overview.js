@@ -67,6 +67,50 @@ function getSelectedProspect() {
   return prospects.find((prospect) => prospect.id === selectedProspectId) || prospects[0] || null;
 }
 
+function getConnectionRequests(prospect) {
+  const requests = prospect?.relationshipResearch?.connectionRequests;
+  return Array.isArray(requests) ? requests : [];
+}
+
+function getAllConnectionRequests() {
+  return prospects.flatMap((prospect) =>
+    getConnectionRequests(prospect).map((request) => ({ ...request, prospectName: prospect.name }))
+  );
+}
+
+function normalizeName(value) {
+  return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function isAcceptedConnectionRequest(request) {
+  return Boolean(request?.acceptedAt || String(request?.status || '').toLowerCase() === 'accepted');
+}
+
+function findConnectionRequestForLead(lead, research) {
+  const requests = Array.isArray(research?.connectionRequests) ? research.connectionRequests : [];
+  const leadName = normalizeName(lead?.name);
+  return requests.find((request) => normalizeName(request.name) === leadName) || null;
+}
+
+function formatConnectionStatus(status) {
+  const normalized = String(status || '').toLowerCase();
+  if (normalized === 'accepted') return '\u2713 Accepted';
+  if (normalized === 'requested' || normalized === 'pending') return 'Requested';
+  if (normalized === 'blocked') return 'Blocked';
+  if (normalized === 'already_connected') return '\u2713 Already connected';
+  return status || '-';
+}
+
+function formatLeadConnectionStatus(lead, research) {
+  const request = findConnectionRequestForLead(lead, research);
+  const status = request?.status || lead?.connectionStatus || lead?.connectionRequest?.status;
+  if (!status) return '-';
+  const label = formatConnectionStatus(status);
+  if (request?.acceptedAt) return `${label} ${formatDate(request.acceptedAt)}`;
+  if (request?.requestedAt) return `${label} ${formatDate(request.requestedAt)}`;
+  return label;
+}
+
 function renderMetricGrid(id, metrics) {
   const element = getElement(id);
   if (!element) return;
@@ -96,10 +140,17 @@ function renderOverview() {
     'research-meta',
     `Last updated ${formatDate(data.updatedAt)}. Current public NCUA cycle: ${data.latestPublicNcuaCycleDate || '-'}. Cadence target: every ${data.cadenceMinutes || 10} minutes.`
   );
+  const connectionRequests = getAllConnectionRequests();
+  const acceptedConnectionRequests = connectionRequests.filter(isAcceptedConnectionRequest);
   renderMetricGrid('overview-metrics', [
     { label: 'Prospects researched', value: formatNumber(prospects.length), detail: 'Seeded records in this overview' },
     { label: 'Loan balance reviewed', value: formatCurrency(totalLoanBalance), detail: 'Latest call-report total loans and leases' },
     { label: 'Indirect balance reviewed', value: formatCurrency(totalIndirectBalance), detail: 'Schedule A, Section 5 balances' },
+    {
+      label: 'LinkedIn requests',
+      value: formatNumber(connectionRequests.length),
+      detail: `${formatNumber(acceptedConnectionRequests.length)} accepted; ${formatNumber(connectionRequests.length - acceptedConnectionRequests.length)} requested or pending`
+    },
     { label: 'NCUA cycle', value: data.latestPublicNcuaCycleDate || '-', detail: 'Most recent public cycle observed' }
   ]);
 }
@@ -117,13 +168,23 @@ function renderProspectList() {
     .map((prospect) => {
       const active = prospect.id === selectedProspectId;
       const indirect = prospect.callReport?.indirectTotals?.amount;
+      const requests = getConnectionRequests(prospect);
+      const acceptedCount = requests.filter(isAcceptedConnectionRequest).length;
+      const badge = acceptedCount
+        ? `<span class="client-connection-badge client-connection-badge--accepted">&#10003; ${formatNumber(acceptedCount)} accepted</span>`
+        : requests.length
+          ? `<span class="client-connection-badge client-connection-badge--pending">${formatNumber(requests.length)} requested</span>`
+          : '';
       return `
         <button class="client-prospect-button" type="button" data-prospect-id="${escapeHtml(prospect.id)}" aria-pressed="${active}">
           <span>
             <strong>${escapeHtml(prospect.name)}</strong>
             <small>Charter ${escapeHtml(prospect.charterNumber)} - ${escapeHtml(prospect.priority)}</small>
           </span>
-          <span class="client-prospect-button__amount">${formatCurrency(indirect)}</span>
+          <span class="client-prospect-button__meta">
+            <span class="client-prospect-button__amount">${formatCurrency(indirect)}</span>
+            ${badge}
+          </span>
         </button>
       `;
     })
@@ -274,7 +335,8 @@ function renderRelationshipResearch(prospect) {
     { key: 'title' },
     { key: 'location' },
     { key: 'tenure' },
-    { key: 'signal' }
+    { key: 'signal' },
+    { key: 'connectionStatus', format: (value, row) => formatLeadConnectionStatus(row, research) }
   ]);
 
   const additional = getElement('additional-relationship-names');
@@ -283,6 +345,44 @@ function renderRelationshipResearch(prospect) {
       .map((name) => `<span class="client-chip">${escapeHtml(name)}</span>`)
       .join('');
   }
+
+  renderConnectionTracking(research);
+}
+
+function renderConnectionTracking(research) {
+  const requests = Array.isArray(research.connectionRequests) ? research.connectionRequests : [];
+  const accepted = requests.filter(isAcceptedConnectionRequest);
+  setText(
+    'connection-tracking-summary',
+    requests.length
+      ? `${formatNumber(requests.length)} connection request${requests.length === 1 ? '' : 's'} recorded. ${formatNumber(accepted.length)} accepted from the LinkedIn connections monitor.`
+      : 'No LinkedIn connection requests have been recorded for this prospect yet.'
+  );
+
+  const list = getElement('connection-request-list');
+  if (!list) return;
+  list.innerHTML = requests.length
+    ? requests
+        .map((request) => {
+          const acceptedRequest = isAcceptedConnectionRequest(request);
+          const statusClass = acceptedRequest ? 'accepted' : String(request.status || 'requested').toLowerCase();
+          const statusLabel = formatConnectionStatus(request.status || (acceptedRequest ? 'accepted' : 'requested'));
+          const dateLine = acceptedRequest
+            ? `Accepted ${formatDate(request.acceptedAt)}`
+            : request.requestedAt
+              ? `Requested ${formatDate(request.requestedAt)}`
+              : 'Request date not recorded';
+          return `
+            <li>
+              <strong>${acceptedRequest ? '&#10003; ' : ''}${escapeHtml(request.name || 'Unnamed lead')}</strong>
+              <span>${escapeHtml(request.title || request.titleMatched || 'Title not recorded')}</span>
+              <span class="client-connection-status client-connection-status--${escapeHtml(statusClass)}">${escapeHtml(statusLabel)} - ${escapeHtml(dateLine)}</span>
+              ${request.blocker ? `<span>${escapeHtml(request.blocker)}</span>` : ''}
+            </li>
+          `;
+        })
+        .join('')
+    : '';
 }
 
 function renderSources(prospect) {
