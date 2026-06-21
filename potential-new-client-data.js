@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T02:03:22-05:00",
+  "updatedAt": "2026-06-21T02:18:01-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -20004,6 +20004,1003 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Census geocoder returned no match for 11550 Ent Pkwy, Colorado Springs, CO 80921-4274; OpenStreetMap Nominatim matched Ent Credit Union Headquarters and supplied fallback coordinates for map display.",
         "NCUA, Ent public pages, public web search, Sales Navigator, and regular LinkedIn visibly verified Chad Graves as CEO and Jon Paukovich as Chief Lending Officer. No connection request was sent because Chad requires action-time confirmation and Jon showed Message rather than Connect.",
         "Connections monitor refresh showed no accepted match for Chad Graves or Jon Paukovich in the recently-added visible list."
+      ]
+    },
+    {
+      "id": "kinecta-4142-2026-03-31",
+      "name": "Kinecta Federal Credit Union",
+      "charterNumber": "4142",
+      "priority": "High",
+      "status": "Main-branch research captured",
+      "summary": "Active California FCU with a $5.19B loan book, $417.44M in auto balances, and $291.79M in indirect loans, including $251.09M in indirect vehicle loans.",
+      "profile": {
+        "ncuaName": "KINECTA",
+        "type": "FCU",
+        "status": "Active",
+        "charterState": "",
+        "region": "3 - Western",
+        "fieldOfMembership": "Multiple common bond - primarily transportation equipment",
+        "lowIncomeDesignation": true,
+        "fhlbMember": true,
+        "peerGroup": "6 - $500,000,000 and greater",
+        "assets": 6443715004,
+        "members": 229597,
+        "ceo": "Keith A Sultemeier",
+        "website": "http://www.kinecta.org",
+        "phone": "310-643-2045",
+        "mainOffice": {
+          "street": "1440 Rosecrans Ave",
+          "city": "Manhattan Beach",
+          "state": "CA",
+          "zip": "90266",
+          "county": "Los Angeles",
+          "country": "United States",
+          "latitude": 33.901812138529,
+          "longitude": -118.391069383813,
+          "geocodePrecision": "Exact U.S. Census address match",
+          "geocodedAddress": "1440 ROSECRANS AVE, MANHATTAN BEACH, CA, 90266"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "March 2026 NCUA 5300 Call Report",
+        "totals": {
+          "loansHeldForSale": 23160085,
+          "totalLoansAndLeases": {
+            "count": 91178,
+            "amount": 5187392934
+          },
+          "allowanceForCreditLossesLoansAndLeases": 55000000,
+          "accruedInterestOnLoansAndLeases": 18553392,
+          "loansGrantedYtd": {
+            "count": 11863,
+            "amount": 261580017
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 61960755,
+          "creditLossExpenseLoansAndLeasesYtd": 5775042,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 126971,
+          "loanServicingExpenseYtd": 1322054
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "interestRate": 15.46,
+            "count": 32820,
+            "amount": 110444730,
+            "accountCode": "396"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "interestRate": 28,
+            "count": 132,
+            "amount": 27259,
+            "accountCode": "397A"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "interestRate": 8.18,
+            "count": 39,
+            "amount": 321263,
+            "accountCode": "698A"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "interestRate": 11.67,
+            "count": 14357,
+            "amount": 132430939,
+            "accountCode": "397"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "interestRate": 5.09,
+            "count": 8946,
+            "amount": 188206547,
+            "accountCode": "385"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "interestRate": 6.27,
+            "count": 13811,
+            "amount": 229233955,
+            "accountCode": "370"
+          },
+          {
+            "label": "Leases Receivable",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "002"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans",
+            "interestRate": 2.68,
+            "count": 11566,
+            "amount": 313527599,
+            "accountCode": "698C"
+          },
+          {
+            "label": "First Lien 1-4 Family Residential Property Loans",
+            "interestRate": 3.97,
+            "count": 4311,
+            "amount": 3061670180,
+            "accountCode": "703A"
+          },
+          {
+            "label": "Junior Lien 1-4 Family Residential Property Loans",
+            "interestRate": 7.21,
+            "count": 4847,
+            "amount": 486715946,
+            "accountCode": "386A"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "386B"
+          },
+          {
+            "label": "Commercial Loans Secured by Real Estate",
+            "interestRate": 4.87,
+            "count": 320,
+            "amount": 660567471,
+            "accountCode": "718A5"
+          },
+          {
+            "label": "Commercial Loans Not Secured by Real Estate",
+            "interestRate": 12.2,
+            "count": 29,
+            "amount": 4247045,
+            "accountCode": "400P"
+          }
+        ],
+        "governmentGuaranteedLoans": {
+          "nonCommercialSba": {
+            "count": 1,
+            "balance": 9,
+            "guaranteedPortion": 9,
+            "pppIncluded": {
+              "count": 1,
+              "balance": 9
+            }
+          },
+          "nonCommercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          },
+          "commercialSba": {
+            "count": 25,
+            "balance": 4843989,
+            "guaranteedPortion": 3508032
+          },
+          "commercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          }
+        },
+        "chargeOffAndRecoveryYtd": {
+          "byCategory": [
+            {
+              "label": "Unsecured Credit Card Loans",
+              "chargeOffs": 1426341,
+              "recoveries": 140745
+            },
+            {
+              "label": "Payday Alternative Loans",
+              "chargeOffs": 27425,
+              "recoveries": 13091
+            },
+            {
+              "label": "Non-Federally Guaranteed Student Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "All Other Unsecured Loans/Lines of Credit",
+              "chargeOffs": 2161514,
+              "recoveries": 359297
+            },
+            {
+              "label": "New Vehicle Loans",
+              "chargeOffs": 441637,
+              "recoveries": 147403
+            },
+            {
+              "label": "Used Vehicle Loans",
+              "chargeOffs": 629668,
+              "recoveries": 168401
+            },
+            {
+              "label": "Leases Receivable",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "All Other Secured Non-Real Estate Loans",
+              "chargeOffs": 2435499,
+              "recoveries": 216812
+            },
+            {
+              "label": "First Mortgage Real Estate Loans",
+              "chargeOffs": 156496,
+              "recoveries": 1894
+            },
+            {
+              "label": "Junior Lien Real Estate Loans",
+              "chargeOffs": 8496,
+              "recoveries": 20758
+            },
+            {
+              "label": "All Other Non-Commercial Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Construction and Development Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Farmland Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Multifamily Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Owner Occupied Non-Farm Non-Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Non-Owner Occupied Non-Farm Non-Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Agricultural Production Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Commercial and Industrial Loans",
+              "chargeOffs": 156859,
+              "recoveries": 492
+            },
+            {
+              "label": "Unsecured Commercial Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Unsecured Revolving Commercial Lines of Credit",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Total Loans and Leases",
+              "chargeOffs": 7443935,
+              "recoveries": 1068893
+            },
+            {
+              "label": "Participation Loans Purchased",
+              "chargeOffs": 463897,
+              "recoveries": 224789
+            },
+            {
+              "label": "Indirect Loans",
+              "chargeOffs": 753190,
+              "recoveries": 290438
+            },
+            {
+              "label": "Whole or Partial Loans Purchased",
+              "chargeOffs": 2578521,
+              "recoveries": 253968
+            }
+          ],
+          "totalLoansAndLeases": {
+            "chargeOffs": 7443935,
+            "recoveries": 1068893
+          },
+          "participationLoansPurchased": {
+            "chargeOffs": 463897,
+            "recoveries": 224789
+          },
+          "indirectLoans": {
+            "chargeOffs": 753190,
+            "recoveries": 290438
+          },
+          "wholeOrPartialLoansPurchased": {
+            "chargeOffs": 2578521,
+            "recoveries": 253968
+          }
+        },
+        "delinquency": {
+          "totalDelinquent30To59DaysAmount": 22711426,
+          "totalDelinquent60DaysOrMore": {
+            "count": 780,
+            "amount": 21774297
+          },
+          "participationLoansPurchasedDelinquentAmount": 1335955,
+          "indirectLoansDelinquentAmount": 2827821,
+          "wholeOrPartialPurchasedLoansDelinquentAmount": 3953906,
+          "nonCommercialLoansNonAccrualAmount": 20834866,
+          "commercialLoansNonAccrualAmount": 5182638,
+          "bankruptcyClaimsOutstandingAmount": 10895877,
+          "borrowerDifficultyModifiedLoans": {
+            "count": 107,
+            "amount": 27356355,
+            "notInComplianceCount": 20,
+            "notInComplianceAmount": 6933022
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 13586,
+            "amount": 251091273,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "Residential Real Estate Loans",
+            "count": 141,
+            "amount": 39766125,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 27,
+            "amount": 930136,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 13754,
+          "amount": 291787534,
+          "delinquentAmount": 2827821,
+          "chargeOffsYtd": 753190,
+          "recoveriesYtd": 290438
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 4522578418,
+          "autoLoanBalance": 417440502,
+          "autoLoanCount": 22757,
+          "directAutoLoanBalance": 166349229,
+          "directAutoLoanCount": 9171,
+          "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+          "indirectShareOfLoanBook": 0.05624936026872415,
+          "indirectVehicleShareOfAutoBalance": 0.6015019429044286
+        },
+        "otherLoanInformation": {
+          "loansToOfficials": {
+            "count": 42,
+            "amount": 8782516
+          },
+          "fcuInterestRateCeilingLoansOver15Percent": {
+            "amount": 18901124,
+            "weightedAverageInterestRate": 16.9
+          },
+          "purchasedCreditImpairedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedCreditDeterioratedLoans": {
+            "count": 0,
+            "amount": 0
+          }
+        },
+        "realEstateDetails": {
+          "firstLienBalance": 3061670180,
+          "firstLienGrantedYtd": 71874981,
+          "firstLienBreakdown": {
+            "fixedOver15Years": {
+              "count": 2501,
+              "amount": 2073683653,
+              "grantedYtdAmount": 18445278
+            },
+            "fixed15YearsOrLess": {
+              "count": 159,
+              "amount": 25881210,
+              "grantedYtdAmount": 602400
+            },
+            "balloonHybridOver5Years": {
+              "count": 622,
+              "amount": 639326278,
+              "grantedYtdAmount": 16397166
+            },
+            "balloonHybrid5YearsOrLess": {
+              "count": 407,
+              "amount": 284432454,
+              "grantedYtdAmount": 34378089
+            },
+            "adjustableRate": {
+              "count": 622,
+              "amount": 38346585,
+              "grantedYtdAmount": 2052048
+            }
+          },
+          "juniorLienBalance": 486715946,
+          "juniorLienGrantedYtd": 60916721,
+          "juniorLienBreakdown": {
+            "closedEndFixedRate": {
+              "count": 735,
+              "amount": 67505538,
+              "grantedYtdAmount": 8465375
+            },
+            "closedEndAdjustableRate": {
+              "count": 207,
+              "amount": 9848212,
+              "grantedYtdAmount": 0
+            },
+            "openEndFixedRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndAdjustableRate": {
+              "count": 3905,
+              "amount": 409362196,
+              "grantedYtdAmount": 52451346
+            }
+          },
+          "allOtherNonCommercialRealEstateBalance": 0,
+          "allOtherNonCommercialRealEstateGrantedYtd": 0,
+          "allOtherNonCommercialRealEstateBreakdown": {
+            "closedEndFixedRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "closedEndAdjustableRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndFixedRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            },
+            "openEndAdjustableRate": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalNonCommercialRealEstate": {
+            "count": 9158,
+            "amount": 3548386126,
+            "grantedYtdAmount": 132791702
+          },
+          "constructionBalance": 160045814,
+          "repricesOrMaturesWithinFiveYears": 1082793564,
+          "interestOnlyPaymentOptionFirstLien": {
+            "count": 638,
+            "amount": 221914378,
+            "grantedYtdAmount": 12365518
+          }
+        },
+        "commercialDetails": {
+          "memberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 48,
+              "amount": 63299009,
+              "grantedYtdCount": 3,
+              "grantedYtdAmount": 3110000
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 92,
+              "amount": 239744244,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 815000
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 180,
+              "amount": 357524218,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 4100000
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 320,
+              "amount": 660567471,
+              "grantedYtdCount": 5,
+              "grantedYtdAmount": 8025000
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 25,
+              "amount": 4229478,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 4,
+              "amount": 17567,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialMemberLoans": {
+              "count": 349,
+              "amount": 664814516,
+              "grantedYtdCount": 5,
+              "grantedYtdAmount": 8025000
+            }
+          },
+          "nonMemberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialNonMemberLoans": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 349,
+            "amount": 664814516
+          },
+          "outstandingAgriculturalRelatedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialRealEstateRepricesOrMaturesWithinFiveYears": 139893283,
+          "commercialParticipationsSoldServicingRetained": {
+            "count": 23,
+            "amount": 36563355
+          },
+          "commercialLoansSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldNoRetainedServicingYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "totalMemberBusinessLoansNet": 670642148,
+          "commercialUnfundedCommitments": 14133795
+        },
+        "purchasedAndSoldLoans": {
+          "purchasedFromOtherFinancialInstitutionsYtd": {
+            "count": 1,
+            "amount": 277964
+          },
+          "purchasedFromOtherFinancialInstitutionsOutstanding": {
+            "count": 718,
+            "amount": 1629677
+          },
+          "purchasedFromOtherSourcesYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesOutstanding": {
+            "count": 10229,
+            "amount": 365600012
+          },
+          "loansSoldYtd": {
+            "count": 18,
+            "amount": 6058407
+          },
+          "firstMortgageLoansSoldSecondaryMarketYtd": {
+            "count": 18,
+            "amount": 6058407
+          },
+          "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+            "count": 0,
+            "amount": 0
+          },
+          "realEstateLoansSoldServicingRetained": {
+            "ytdCount": 18,
+            "ytdAmount": 6058407,
+            "outstandingCount": 9228,
+            "outstandingAmount": 1873412954
+          },
+          "allOtherLoansSoldServicingRetained": {
+            "ytdCount": 0,
+            "ytdAmount": 0,
+            "outstandingCount": 0,
+            "outstandingAmount": 0
+          },
+          "loanParticipations": {
+            "vehicleNonCommercial": {
+              "purchasedYtd": 49599302,
+              "purchasedOutstanding": 27984126,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "student": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "oneToFourFamilyResidential": {
+              "purchasedYtd": 657787081,
+              "purchasedOutstanding": 0,
+              "soldYtd": 2249932,
+              "soldOutstandingServicingRetained": 0
+            },
+            "commercialExcludingConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 26253334,
+              "soldOutstandingServicingRetained": 0
+            },
+            "commercialConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "allOther": {
+              "purchasedYtd": 4518713,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingServicingRetained": 0
+            },
+            "total": {
+              "purchasedYtd": 711905096,
+              "purchasedOutstanding": 27984126,
+              "soldYtd": 28503266,
+              "soldOutstandingServicingRetained": 0
+            }
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 14133795,
+          "revolvingOpenEndSecuredByResidentialProperty": 489885640,
+          "creditCardLines": 550100643,
+          "unsecuredShareDraftLinesOfCredit": 73653856,
+          "unusedOverdraftProtectionProgram": 64636775,
+          "otherUnfundedCommitments": 40985300,
+          "totalNonCommercialLoans": 1219262214,
+          "totalAllLoanTypes": 1233396009,
+          "unconditionallyCancelableAllLoanTypes": 0,
+          "conditionallyCancelableCommercialLoans": 14133795,
+          "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 530870940,
+          "conditionallyCancelableConsumerLoansUnsecured": 688391274,
+          "totalConditionallyCancelable": 1233396009,
+          "commercialLoansTransferredWithLimitedRecourse": 0,
+          "consumerLoansTransferredWithLimitedRecourse": 0,
+          "totalLoansTransferredWithLimitedRecourse": 0,
+          "loansTransferredFhlbMpf": 0,
+          "financialStandbyLettersOfCredit": 990000,
+          "forwardAgreementsNotDerivativeContracts": 0,
+          "soldCreditProtectionTotal": 0,
+          "offBalanceSheetSecuritizationExposures": 0,
+          "securitiesBorrowingOrLendingTransactions": 0,
+          "offBalanceSheetRepurchaseExposure": 0,
+          "allOtherOffBalanceSheetCommitments": 0
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 1,
+          "creditDisabilityRatePerThousand": 2.25,
+          "debtProtectionIuiRatePerThousand": 1.4,
+          "creditAndDebtProtectionPenetration": 0.38,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 1718579.8,
+        "modeledMonthlyCreditDisabilityPremium": 3866804.55,
+        "modeledMonthlyDebtProtectionIuiPremium": 2406011.72,
+        "modeledMonthlyDirectAutoOriginations": 382.13,
+        "modeledMonthlyVscGfsIncome": 61140.8,
+        "modeledMonthlyGapGfsIncome": 13374.55,
+        "notes": [
+          "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+          "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+          "Kinecta reports 60.15% of auto balances as indirect vehicle loans and 5.62% of total loans as indirect; the remaining direct auto base still models a material dealer/ancillary opportunity."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T02:18:01-05:00",
+        "source": "Authenticated LinkedIn and Sales Navigator visible-page snapshot; no messages, saves, or profile changes were made.",
+        "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Jason%20Pendergist%20Kinecta%20Federal%20Credit%20Union",
+        "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Kinecta%20Federal%20Credit%20Union%20Keith%20Sultemeier%20Jason%20Pendergist%20Chief%20Lending%20Officer",
+        "resultSummary": "Keith Sultemeier was visible as a 2nd-degree President & CEO at Kinecta Federal Credit Union with a Connect control. Jason Pendergist was visible in regular LinkedIn search as a 2nd-degree former Chief Lending Officer & Chief Marketing Officer at Kinecta, so current-company qualification was not met.",
+        "visibleLeads": [
+          {
+            "name": "Keith Sultemeier",
+            "title": "President & CEO",
+            "company": "Kinecta Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "profileUrl": "https://www.linkedin.com/in/keith-sultemeier-964a399/",
+            "sourceUrl": "https://www.linkedin.com/in/keith-sultemeier-964a399/",
+            "currentCompanyVerified": true,
+            "titleMatched": "President & CEO",
+            "visibleAction": "Connect",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "Visible profile showed President & CEO at Kinecta Federal Credit Union, 500+ connections, and a Connect action. No unattended request was sent."
+          },
+          {
+            "name": "Jason Pendergist",
+            "title": "Experienced Financial Services C-Suite Executive",
+            "company": null,
+            "relationshipDegree": "2nd",
+            "profileUrl": "https://www.linkedin.com/in/jasonpendergist/",
+            "sourceUrl": "https://www.linkedin.com/search/results/people/?keywords=Jason%20Pendergist%20Kinecta%20Federal%20Credit%20Union",
+            "currentCompanyVerified": false,
+            "titleMatched": "Former Chief Lending Officer at Kinecta shown in search result",
+            "visibleAction": "Connect",
+            "connectionRequestStatus": "not_requested",
+            "note": "Search result listed Past: Chief Lending Officer & Chief Marketing Officer at Kinecta Federal Credit Union, so the current-company requirement was not satisfied."
+          }
+        ],
+        "additionalVisibleNames": [
+          {
+            "name": "Kim Einarsson",
+            "visibleTitle": "Chief People Officer at Kinecta Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "sourceUrl": "https://www.linkedin.com/in/kimg5/"
+          },
+          {
+            "name": "Michael Squire",
+            "visibleTitle": "SVP, Chief Operations Officer at Kinecta Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "sourceUrl": "https://www.linkedin.com/in/mikesquire/"
+          },
+          {
+            "name": "Raj Bandaru",
+            "visibleTitle": "Chief Information Officer at Kinecta Federal Credit Union",
+            "relationshipDegree": "2nd",
+            "sourceUrl": "https://www.linkedin.com/in/rajbandaru/"
+          },
+          {
+            "name": "Mark Holbrook",
+            "visibleTitle": "Chief Risk Officer/Executive",
+            "relationshipDegree": "2nd",
+            "sourceUrl": "https://www.linkedin.com/in/mark-holbrook-cpa-inactive-3793014a/"
+          }
+        ],
+        "connectionRequests": [
+          {
+            "name": "Keith Sultemeier",
+            "title": "President & CEO at Kinecta Federal Credit Union",
+            "company": "Kinecta Federal Credit Union",
+            "titleMatched": "President & CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/keith-sultemeier-964a399/",
+            "searchUrl": "https://www.linkedin.com/in/keith-sultemeier-964a399/",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Kinecta%20Federal%20Credit%20Union%20Keith%20Sultemeier%20Jason%20Pendergist%20Chief%20Lending%20Officer",
+            "blocker": "Visible Connect action found on verified current-company CEO profile, but no connection request was sent during the unattended heartbeat.",
+            "note": "Regular LinkedIn profile showed Keith Sultemeier as a 2nd-degree President & CEO at Kinecta Federal Credit Union with a Connect action."
+          },
+          {
+            "name": "Jason Pendergist",
+            "title": "Former Chief Lending Officer & Chief Marketing Officer at Kinecta Federal Credit Union",
+            "company": "Kinecta Federal Credit Union",
+            "titleMatched": "Former Chief Lending Officer; current role not verified",
+            "requestedAt": null,
+            "status": "not_requested",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/jasonpendergist/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Jason%20Pendergist%20Kinecta%20Federal%20Credit%20Union",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Kinecta%20Federal%20Credit%20Union%20Keith%20Sultemeier%20Jason%20Pendergist%20Chief%20Lending%20Officer",
+            "blocker": "Visible LinkedIn search result showed the Kinecta lending role as Past rather than current, so the identity/current-company requirement was not met.",
+            "note": "No request was sent."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T02:18:01-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor",
+              "company": "Veridian Credit Union",
+              "connectedOn": "2026-06-19"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations",
+              "company": "Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "company": null,
+              "connectedOn": "2026-06-14"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "company": null,
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller",
+              "company": "Heartland Credit Union",
+              "connectedOn": "2026-06-06"
+            },
+            {
+              "name": "Steve O'Donnell, MBA, CCE",
+              "title": "President/CEO",
+              "company": null,
+              "connectedOn": "2026-05-17"
+            },
+            {
+              "name": "Mike Gutshall",
+              "title": "President & CEO",
+              "company": "Heritage Valley FCU",
+              "connectedOn": "2026-04-22"
+            },
+            {
+              "name": "Holly Augustine",
+              "title": "Director of Operations",
+              "company": "Colorado Credit Union",
+              "connectedOn": "2026-04-10"
+            }
+          ],
+          "note": "Connections monitor was refreshed. The visible recently-added list did not show Keith Sultemeier or Jason Pendergist as accepted connections."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API for charter 4142",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/4142",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report download endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/4142?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder for main office address",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=1440%20Rosecrans%20Ave%20Manhattan%20Beach%20CA%2090266&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Kinecta public website from NCUA profile",
+          "url": "http://www.kinecta.org",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn profile visible snapshot for Keith Sultemeier",
+          "url": "https://www.linkedin.com/in/keith-sultemeier-964a399/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn search visible snapshot for Jason Pendergist",
+          "url": "https://www.linkedin.com/search/results/people/?keywords=Jason%20Pendergist%20Kinecta%20Federal%20Credit%20Union",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn Sales Navigator exact keyword search",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=Kinecta%20Federal%20Credit%20Union%20Keith%20Sultemeier%20Jason%20Pendergist%20Chief%20Lending%20Officer",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified KINECTA charter 4142 as an active California federal credit union with March 2026 as the latest available call report cycle.",
+        "NCUA call-report endpoint returned a PDF that was decoded and text-extracted before schedule mapping.",
+        "PDF text extraction captured Statement of Financial Condition loan totals, Statement of Income loan income/expense lines, Schedule A Sections 1 through 8, indirect-loan detail, loan purchase/sale and participation schedules, and Schedule C unfunded commitments.",
+        "Schedule A loan category rows sum exactly to the reported $5,187,392,934 total loans and leases.",
+        "Schedule A Section 5 reported $291.79M in total indirect loans, including $251.09M in new/used vehicle indirect loans, $39.77M in residential real estate indirect loans, and $0.93M in all-other indirect loans.",
+        "Census geocoder returned an exact match for 1440 Rosecrans Ave, Manhattan Beach, CA 90266 and supplied coordinates for map display.",
+        "Regular LinkedIn visibly verified Keith Sultemeier as President & CEO at Kinecta Federal Credit Union and showed a Connect action. No connection request was sent because the heartbeat was unattended and action-time confirmation is still required.",
+        "Regular LinkedIn search showed Jason Pendergist as a former Kinecta Chief Lending Officer & Chief Marketing Officer, so he was not treated as a current-company lending target for connection outreach.",
+        "Connections monitor refresh showed no accepted match for Keith Sultemeier or Jason Pendergist in the recently-added visible list."
       ]
     }
   ]
