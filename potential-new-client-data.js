@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T03:42:51-05:00",
+  "updatedAt": "2026-06-21T04:03:21-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -28030,6 +28030,1343 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Authenticated LinkedIn regular search was read-only and visibly showed Kevin Willborn and Keven Gray with Connect controls. No connection request was sent because this heartbeat was unattended and action-time confirmation is required before external side effects.",
         "Sales Navigator navigation timed out before a readable result page could be captured; the regular LinkedIn search and public source trail supplied the relationship research used here.",
         "Connections monitor refreshed successfully and no Gesa accepted-request match was found or changed."
+      ]
+    },
+    {
+      "id": "texas-trust-68434-2026-03-31",
+      "name": "Texas Trust Credit Union",
+      "charterNumber": "68434",
+      "priority": "High",
+      "status": "Active prospect - indirect auto and direct lending growth focus",
+      "summary": "Texas FISCU with $2.07B in assets, 138,569 members, a $1.52B loan book, $586.21M in new/used vehicle loans, $198.42M in leases receivable, and $417.00M in indirect vehicle loans.",
+      "profile": {
+        "ncuaName": "TEXAS TRUST",
+        "type": "FISCU",
+        "status": "Active",
+        "charterState": "Texas",
+        "region": "2 - Southern",
+        "fieldOfMembership": "Non-Federal Credit Union",
+        "lowIncomeDesignation": true,
+        "fhlbMember": true,
+        "peerGroup": "6 - $500,000,000 and greater",
+        "assets": 2067879165,
+        "members": 138569,
+        "ceo": "Jim Minge",
+        "website": "https://www.texastrustcu.org",
+        "phone": "972-263-5171",
+        "mainOffice": {
+          "street": "5850 W Interstate 20",
+          "city": "Arlington",
+          "state": "TX",
+          "zip": "76017",
+          "county": "Tarrant",
+          "country": "United States",
+          "latitude": 32.673404342188,
+          "longitude": -97.197128382486,
+          "geocodePrecision": "U.S. Census address-range match",
+          "geocodedAddress": "5850 I- 20 W, ARLINGTON, TX, 76017"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "March 2026 NCUA 5300 Call Report",
+        "totals": {
+          "loansHeldForSale": 0,
+          "totalLoansAndLeases": {
+            "count": 68174,
+            "amount": 1523385282
+          },
+          "allowanceForCreditLossesLoansAndLeases": 11361502,
+          "accruedInterestOnLoansAndLeases": 5191523,
+          "loansGrantedYtd": {
+            "count": 4267,
+            "amount": 132384728
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 21879446,
+          "creditLossExpenseLoansAndLeasesYtd": 3552589,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 0,
+          "loanServicingExpenseYtd": 298264
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "interestRate": 9.9,
+            "count": 20783,
+            "amount": 64055982,
+            "accountCode": "396"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "397A"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "698A"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "interestRate": 17.9,
+            "count": 13520,
+            "amount": 62200848,
+            "accountCode": "397"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "interestRate": 5.65,
+            "count": 4569,
+            "amount": 151291934,
+            "accountCode": "385"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "interestRate": 4.99,
+            "count": 19182,
+            "amount": 434914678,
+            "accountCode": "370"
+          },
+          {
+            "label": "Leases Receivable",
+            "interestRate": 6.7,
+            "count": 5614,
+            "amount": 198423285,
+            "accountCode": "002"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "interestRate": 2.6,
+            "count": 411,
+            "amount": 5639178,
+            "accountCode": "698C"
+          },
+          {
+            "label": "First Lien 1-4 Family Residential Property Loans",
+            "interestRate": 5.88,
+            "count": 3381,
+            "amount": 491143436,
+            "accountCode": "703A"
+          },
+          {
+            "label": "Junior Lien 1-4 Family Residential Property Loans",
+            "interestRate": 6.88,
+            "count": 588,
+            "amount": 46474759,
+            "accountCode": "386A"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "interestRate": 4.25,
+            "count": 25,
+            "amount": 1068268,
+            "accountCode": "386B"
+          },
+          {
+            "label": "Commercial Real Estate Secured Loans",
+            "interestRate": 5.07,
+            "count": 58,
+            "amount": 65602925,
+            "accountCode": "718A5"
+          },
+          {
+            "label": "Commercial Loans Not Secured by Real Estate",
+            "interestRate": 7.81,
+            "count": 43,
+            "amount": 2569989,
+            "accountCode": "400P"
+          }
+        ],
+        "governmentGuaranteedLoans": {
+          "nonCommercialSba": {
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          },
+          "nonCommercialPpp": {
+            "count": 0,
+            "outstandingBalance": 0
+          },
+          "nonCommercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          },
+          "commercialSba": {
+            "count": 3,
+            "outstandingBalance": 118832,
+            "guaranteedPortion": 6704
+          },
+          "commercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          }
+        },
+        "chargeOffAndRecoveryYtd": {
+          "byCategory": [
+            {
+              "label": "Unsecured Credit Card Loans",
+              "chargeOffs": 939798,
+              "recoveries": 29179
+            },
+            {
+              "label": "Payday Alternative Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Non-Federally Guaranteed Student Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "All Other Unsecured Loans/Lines of Credit",
+              "chargeOffs": 1056675,
+              "recoveries": 10134
+            },
+            {
+              "label": "New Vehicle Loans",
+              "chargeOffs": 105524,
+              "recoveries": 36473
+            },
+            {
+              "label": "Used Vehicle Loans",
+              "chargeOffs": 756496,
+              "recoveries": 86438
+            },
+            {
+              "label": "Leases Receivable",
+              "chargeOffs": 234335,
+              "recoveries": 4109
+            },
+            {
+              "label": "All Other Secured Non-Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "First Mortgage Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Junior Lien Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "All Other Non-Commercial Real Estate Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Construction and Development Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Farmland Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Multifamily Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Owner Occupied Non-Farm Non-Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Non-Owner Occupied Non-Farm Non-Residential Property Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Agricultural Production Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Commercial and Industrial Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Unsecured Commercial Loans",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Unsecured Revolving Commercial Lines of Credit",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Total Loans and Leases",
+              "chargeOffs": 3092828,
+              "recoveries": 166333
+            },
+            {
+              "label": "Participation Loans Purchased",
+              "chargeOffs": 0,
+              "recoveries": 0
+            },
+            {
+              "label": "Indirect Loans",
+              "chargeOffs": 851000,
+              "recoveries": 85136
+            },
+            {
+              "label": "Whole or Partial Loans Purchased",
+              "chargeOffs": 0,
+              "recoveries": 0
+            }
+          ],
+          "totalLoansAndLeases": {
+            "chargeOffs": 3092828,
+            "recoveries": 166333
+          },
+          "participationLoansPurchased": {
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          "indirectLoans": {
+            "chargeOffs": 851000,
+            "recoveries": 85136
+          },
+          "wholeOrPartialLoansPurchased": {
+            "chargeOffs": 0,
+            "recoveries": 0
+          }
+        },
+        "delinquency": {
+          "byCategory": [
+            {
+              "label": "Unsecured Credit Card Loans",
+              "days30To59": 553340,
+              "days60To89": 354441,
+              "days90To179": 876200,
+              "days180To359": 1107124,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 2337765,
+                "count": 466
+              }
+            },
+            {
+              "label": "Payday Alternative Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Non-Federally Guaranteed Student Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "All Other Unsecured Loans/Lines of Credit",
+              "days30To59": 1046302,
+              "days60To89": 324654,
+              "days90To179": 1388210,
+              "days180To359": 1361812,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 3074676,
+                "count": 520
+              }
+            },
+            {
+              "label": "New Vehicle Loans",
+              "days30To59": 757545,
+              "days60To89": 141219,
+              "days90To179": 347316,
+              "days180To359": 244655,
+              "days360OrMore": 53356,
+              "days60OrMore": {
+                "amount": 786546,
+                "count": 32
+              }
+            },
+            {
+              "label": "Used Vehicle Loans",
+              "days30To59": 3458321,
+              "days60To89": 793007,
+              "days90To179": 1391814,
+              "days180To359": 1132865,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 3317686,
+                "count": 215
+              }
+            },
+            {
+              "label": "Leases Receivable",
+              "days30To59": 1372890,
+              "days60To89": 331163,
+              "days90To179": 475551,
+              "days180To359": 500184,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 1306898,
+                "count": 78
+              }
+            },
+            {
+              "label": "All Other Secured Non-Real Estate Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "First Mortgage Real Estate Loans",
+              "days30To59": 16663666,
+              "days60To89": 439232,
+              "days90To179": 878583,
+              "days180To359": 755149,
+              "days360OrMore": 137421,
+              "days60OrMore": {
+                "amount": 2210385,
+                "count": 16
+              }
+            },
+            {
+              "label": "Junior Lien Real Estate Loans",
+              "days30To59": 1745415,
+              "days60To89": 188270,
+              "days90To179": 15930,
+              "days180To359": 193562,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 397762,
+                "count": 3
+              }
+            },
+            {
+              "label": "All Other Non-Commercial Real Estate Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Construction and Development Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Farmland Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Multifamily Residential Property Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Owner Occupied Non-Farm Non-Residential Property Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Non-Owner Occupied Non-Farm Non-Residential Property Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Agricultural Production Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Commercial and Industrial Loans",
+              "days30To59": 962625,
+              "days60To89": 0,
+              "days90To179": 121444,
+              "days180To359": 180753,
+              "days360OrMore": 244825,
+              "days60OrMore": {
+                "amount": 547022,
+                "count": 5
+              }
+            },
+            {
+              "label": "Unsecured Commercial Loans",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            },
+            {
+              "label": "Unsecured Revolving Commercial Lines of Credit",
+              "days30To59": 0,
+              "days60To89": 0,
+              "days90To179": 0,
+              "days180To359": 0,
+              "days360OrMore": 0,
+              "days60OrMore": {
+                "amount": 0,
+                "count": 0
+              }
+            }
+          ],
+          "totalDelinquent30To59DaysAmount": 26560104,
+          "totalDelinquent60DaysOrMore": {
+            "amount": 13978740,
+            "count": 1335
+          },
+          "participationLoansPurchasedDelinquentAmount": 0,
+          "indirectLoansDelinquentAmount": 3021089,
+          "wholeOrPartialPurchasedLoansDelinquentAmount": 0,
+          "nonCommercialLoansNonAccrualAmount": 10761989,
+          "commercialLoansNonAccrualAmount": 547022,
+          "bankruptcyClaimsOutstandingAmount": 2444917,
+          "borrowerDifficultyModifiedLoans": {
+            "count": 2,
+            "amount": 130565,
+            "notInComplianceCount": 1,
+            "notInComplianceAmount": 128551
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 17057,
+            "amount": 417002941,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "First Lien and Junior Lien Residential Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 17057,
+          "amount": 417002941,
+          "countAccountCode": "617A",
+          "amountAccountCode": "618A"
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 1455212368,
+          "autoLoanBalance": 586206612,
+          "autoLoanCount": 23751,
+          "leaseReceivableBalance": 198423285,
+          "leaseReceivableCount": 5614,
+          "directAutoLoanBalance": 169203671,
+          "directAutoLoanCount": 6694,
+          "directAutoCalculation": "New and used vehicle loan totals minus Schedule A Section 5 indirect new/used vehicle loans.",
+          "indirectShareOfLoanBook": 0.2737,
+          "indirectVehicleShareOfAutoBalance": 0.7114
+        },
+        "otherLoanInformation": {
+          "loansToOfficialsAndSeniorExecutiveStaff": {
+            "count": 59,
+            "amount": 4691261
+          },
+          "purchasedCreditImpairedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFinancialAssetsWithCreditDeterioration": {
+            "count": 0,
+            "amortizedCost": 0,
+            "unpaidPrincipalBalance": 0
+          },
+          "purchasedFinancialAssetsWithCreditDeteriorationDebtSecurities": {
+            "count": 0,
+            "amortizedCost": 0,
+            "unpaidPrincipalBalance": 0
+          }
+        },
+        "realEstateDetails": {
+          "firstLienBalance": 491143436,
+          "firstLienGrantedYtd": 13666151,
+          "firstLienBreakdown": [
+            {
+              "label": "Fixed rate, over 15 years",
+              "count": 1934,
+              "amount": 338585683,
+              "grantedYtd": 12039360
+            },
+            {
+              "label": "Fixed rate, 15 years or less",
+              "count": 1421,
+              "amount": 150720389,
+              "grantedYtd": 1626791
+            },
+            {
+              "label": "Balloon/hybrid, over 5 years",
+              "count": 5,
+              "amount": 965711,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Balloon/hybrid, 5 years or less",
+              "count": 7,
+              "amount": 422775,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Adjustable rate",
+              "count": 11,
+              "amount": 448878,
+              "grantedYtd": 0
+            }
+          ],
+          "juniorLienBalance": 46474759,
+          "juniorLienGrantedYtd": 2947892,
+          "juniorLienBreakdown": [
+            {
+              "label": "Closed-end fixed rate",
+              "count": 588,
+              "amount": 46474759,
+              "grantedYtd": 2947892
+            },
+            {
+              "label": "Closed-end adjustable rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-end fixed rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-end adjustable rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            }
+          ],
+          "allOtherNonCommercialRealEstateBalance": 1068268,
+          "allOtherNonCommercialRealEstateGrantedYtd": 132000,
+          "allOtherNonCommercialRealEstateBreakdown": [
+            {
+              "label": "Closed-end fixed rate",
+              "count": 25,
+              "amount": 1068268,
+              "grantedYtd": 132000
+            },
+            {
+              "label": "Closed-end adjustable rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-end fixed rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-end adjustable rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            }
+          ],
+          "totalNonCommercialRealEstate": {
+            "count": 3991,
+            "amount": 538686463,
+            "grantedYtd": 16746043
+          },
+          "constructionBalance": 0,
+          "repricesOrMaturesWithinFiveYears": 13357223,
+          "interestOnlyPaymentOptionFirstLien": {
+            "count": 0,
+            "amount": 0,
+            "grantedYtd": 0
+          }
+        },
+        "commercialDetails": {
+          "memberLoans": {
+            "constructionAndDevelopment": {
+              "count": 8,
+              "amount": 10857751,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 2728625
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamilyResidentialProperty": {
+              "count": 2,
+              "amount": 740021,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidentialProperty": {
+              "count": 18,
+              "amount": 4134030,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidentialProperty": {
+              "count": 30,
+              "amount": 49871122,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 58,
+              "amount": 65602924,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 2728625
+            },
+            "agriculturalProductionAndOtherLoansToFarmers": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrialLoans": {
+              "count": 24,
+              "amount": 2296752,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 656828
+            },
+            "unsecuredCommercialLoans": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingLinesOfCreditForCommercialPurposes": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialMemberLoans": {
+              "count": 82,
+              "amount": 67899676,
+              "grantedYtdCount": 2,
+              "grantedYtdAmount": 3385453
+            }
+          },
+          "nonMemberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamilyResidentialProperty": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidentialProperty": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidentialProperty": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "agriculturalProductionAndOtherLoansToFarmers": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrialLoans": {
+              "count": 19,
+              "amount": 273237,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercialLoans": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingLinesOfCreditForCommercialPurposes": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialNonMemberLoans": {
+              "count": 19,
+              "amount": 273237,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 101,
+            "amount": 68172913
+          },
+          "outstandingAgriculturalRelatedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialRealEstateRepricesOrMaturesWithinFiveYears": 6325201,
+          "commercialParticipationsSoldServicingRetained": {
+            "count": 1,
+            "amount": 272721
+          },
+          "commercialLoansSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldNoRetainedServicingYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "totalMemberBusinessLoansNet": 67533074
+        },
+        "purchasedAndSoldLoans": {
+          "purchasedFromOtherFinancialInstitutionsYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherFinancialInstitutionsOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "loansSoldYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "firstMortgageLoansSoldSecondaryMarketYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+            "count": 0,
+            "amount": 0
+          },
+          "realEstateLoansSoldServicingRetained": {
+            "ytd": {
+              "count": 0,
+              "amount": 0
+            },
+            "outstanding": {
+              "count": 87,
+              "amount": 10313488
+            }
+          },
+          "allOtherLoansSoldServicingRetained": {
+            "ytd": {
+              "count": 0,
+              "amount": 0
+            },
+            "outstanding": {
+              "count": 0,
+              "amount": 0
+            }
+          },
+          "loanParticipations": {
+            "vehicleNonCommercial": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "student": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "residential": {
+              "purchasedYtd": 182030,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "commercialExcludingConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 272721,
+              "soldOutstanding": 0
+            },
+            "commercialConstructionDevelopment": {
+              "purchasedYtd": 363603,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "allOther": {
+              "purchasedYtd": 324,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstanding": 0
+            },
+            "total": {
+              "purchasedYtd": 545957,
+              "purchasedOutstanding": 0,
+              "soldYtd": 272721,
+              "soldOutstanding": 0
+            }
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 8643139,
+          "revolvingOpenEndSecuredByResidentialProperty": 0,
+          "creditCardLines": 167507501,
+          "unsecuredShareDraftLinesOfCredit": 4234832,
+          "unusedOverdraftProtectionProgram": 42336917,
+          "otherUnfundedCommitments": 0,
+          "totalNonCommercialLoans": 214079250,
+          "totalAllLoanTypes": 222722389,
+          "unconditionallyCancelableAllLoanTypes": 0,
+          "conditionallyCancelableCommercialLoans": 8643139,
+          "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 0,
+          "conditionallyCancelableConsumerLoansUnsecured": 214079250,
+          "totalConditionallyCancelable": 222722389,
+          "commercialLoansTransferredWithLimitedRecourse": 0,
+          "consumerLoansTransferredWithLimitedRecourse": 0,
+          "totalLoansTransferredWithLimitedRecourse": 0,
+          "loansTransferredFhlbMpf": 363279,
+          "financialStandbyLettersOfCredit": 0,
+          "forwardAgreementsNotDerivativeContracts": 0,
+          "soldCreditProtectionTotal": 0,
+          "offBalanceSheetSecuritizationExposures": 0,
+          "securitiesBorrowingOrLendingTransactions": 0,
+          "offBalanceSheetRepurchaseExposure": 0,
+          "allOtherOffBalanceSheetCommitments": 0,
+          "borrowingArrangements": {
+            "corporateCreditUnions": {
+              "totalBorrowingCapacity": 0,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 0
+            },
+            "naturalPersonCreditUnions": {
+              "totalBorrowingCapacity": 0,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 0
+            },
+            "federalHomeLoanBank": {
+              "totalBorrowingCapacity": 377810212,
+              "amountDrawnAgainstLines": 149500000,
+              "assetsPledged": 617931003
+            },
+            "centralLiquidityFacility": {
+              "totalBorrowingCapacity": 0,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 0
+            },
+            "federalReserveBank": {
+              "totalBorrowingCapacity": 594268708,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 771818570
+            },
+            "otherBorrowingSources": {
+              "totalBorrowingCapacity": 10000000,
+              "amountDrawnAgainstLines": 0,
+              "assetsPledged": 0
+            },
+            "total": {
+              "totalBorrowingCapacity": 982078920,
+              "amountDrawnAgainstLines": 149500000,
+              "assetsPledged": 1389749573
+            }
+          }
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 0.38,
+          "creditDisabilityRatePerThousand": 0.855,
+          "debtProtectionIuiRatePerThousand": 0.532,
+          "creditAndDebtProtectionPenetration": 1,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 552980.7,
+        "modeledMonthlyCreditDisabilityPremium": 1244206.57,
+        "modeledMonthlyDebtProtectionIuiPremium": 774172.98,
+        "modeledMonthlyDirectAutoOriginations": 278.92,
+        "modeledMonthlyVscGfsIncome": 44626.67,
+        "modeledMonthlyGapGfsIncome": 9762.08,
+        "notes": [
+          "Modeled credit/debt protection premium applies dashboard standard rates to non-commercial loan balances from Schedule A Section 1.",
+          "Direct auto opportunity subtracts Schedule A Section 5 indirect vehicle loans from total new and used vehicle loans; direct auto estimate is 6,694 loans and $169,203,671.",
+          "Texas Trust also reports 5,614 leases receivable totaling $198,423,285, which may create a separate review track from the direct auto estimate.",
+          "Texas Trust is materially indirect-heavy: indirect vehicle loans represent about 71.14% of total new/used auto balances and about 27.37% of the total loan book."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T04:03:21-05:00",
+        "source": "Google/web public search, Texas Trust public/news sources, authenticated LinkedIn visible search page, Sales Navigator visible page, and LinkedIn connections monitor; read-only capture with no requests sent.",
+        "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Texas%20Trust%20Credit%20Union%20Jim%20Minge%20Nicole%20Sanders%20Whitney%20McLeod%20William%20Kelsey%20lending",
+        "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Texas%20Trust%20Credit%20Union%20Jim%20Minge%20Nicole%20Sanders%20Whitney%20McLeod%20lending",
+        "resultSummary": "Regular LinkedIn search visibly surfaced Nicole Sanders, Jim Minge, Whitney McLeod, and William Kelsey as current Texas Trust Credit Union leaders with Connect controls. Sales Navigator loaded but returned zero leads for the broad keyword query. The connections monitor refreshed and showed no Texas Trust accepted-request match among the visible recent connections.",
+        "visibleLeads": [
+          {
+            "name": "Nicole Sanders",
+            "title": "VP, Consumer Lending at Texas Trust Credit Union",
+            "company": "Texas Trust Credit Union",
+            "relationshipDegree": "2nd",
+            "profileUrl": "https://www.linkedin.com/in/nicole-sanders-3093485/",
+            "sourceUrl": "https://www.linkedin.com/search/results/people/?keywords=Texas%20Trust%20Credit%20Union%20Jim%20Minge%20Nicole%20Sanders%20Whitney%20McLeod%20William%20Kelsey%20lending",
+            "currentCompanyVerified": true,
+            "titleMatched": "VP of Consumer Lending",
+            "visibleAction": "Connect visible on regular LinkedIn search result.",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "LinkedIn search visibly showed Nicole Sanders as VP, Consumer Lending at Texas Trust Credit Union; Texas Trust 2024 annual report lists Nicole Sanders under VP Lending Operations."
+          },
+          {
+            "name": "Jim Minge",
+            "title": "President & C.E.O. at Texas Trust Credit Union",
+            "company": "Texas Trust Credit Union",
+            "relationshipDegree": "2nd",
+            "profileUrl": "https://www.linkedin.com/in/jminge1/",
+            "sourceUrl": "https://www.linkedin.com/search/results/people/?keywords=Texas%20Trust%20Credit%20Union%20Jim%20Minge%20Nicole%20Sanders%20Whitney%20McLeod%20William%20Kelsey%20lending",
+            "currentCompanyVerified": true,
+            "titleMatched": "President & CEO",
+            "visibleAction": "Connect visible on regular LinkedIn search result.",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "NCUA details name Jim Minge as CEO; Texas Trust public news and LinkedIn search verify the CEO role."
+          },
+          {
+            "name": "Whitney McLeod",
+            "title": "Senior Vice President of Lending & Collections at Texas Trust Credit Union",
+            "company": "Texas Trust Credit Union",
+            "relationshipDegree": "2nd",
+            "profileUrl": "https://www.linkedin.com/in/whitney-mcleod-2a475a22/",
+            "sourceUrl": "https://www.linkedin.com/search/results/people/?keywords=Texas%20Trust%20Credit%20Union%20Jim%20Minge%20Nicole%20Sanders%20Whitney%20McLeod%20William%20Kelsey%20lending",
+            "currentCompanyVerified": true,
+            "titleMatched": "SVP Lending",
+            "visibleAction": "Connect visible on regular LinkedIn search result.",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "LinkedIn search visibly showed Whitney McLeod as Senior Vice President of Lending & Collections; Texas Trust 2024 annual report lists Whitney McLeod as SVP Lending."
+          },
+          {
+            "name": "William Kelsey",
+            "title": "President at Texas Trust Credit Union",
+            "company": "Texas Trust Credit Union",
+            "relationshipDegree": "2nd",
+            "profileUrl": "https://www.linkedin.com/in/william-kelsey-2a402610/",
+            "sourceUrl": "https://www.linkedin.com/search/results/people/?keywords=Texas%20Trust%20Credit%20Union%20Jim%20Minge%20Nicole%20Sanders%20Whitney%20McLeod%20William%20Kelsey%20lending",
+            "currentCompanyVerified": true,
+            "titleMatched": "President",
+            "visibleAction": "Connect visible on regular LinkedIn search result.",
+            "connectionRequestStatus": "confirmation_required",
+            "note": "LinkedIn search visibly showed William Kelsey as President at Texas Trust Credit Union; Texas Trust 2024 annual report lists Willy Kelsey as President."
+          }
+        ],
+        "additionalVisibleNames": [
+          "Alex Godina - public LinkedIn/search result and Texas Trust annual report identify VP Mortgage & Business Lending, but the authenticated LinkedIn visible search pass did not surface him in the first readable result set.",
+          "Kelsey Lyle - visible current Texas Trust multimedia coordinator, not a target lending/executive title.",
+          "Nicole Solis - visible current Texas Trust document management coordinator, not a target lending/executive title.",
+          "Brandon Leonard - visible recent connection from connections monitor, Veridian Credit Union consumer lending relation, not Texas Trust."
+        ],
+        "connectionRequests": [
+          {
+            "name": "Nicole Sanders",
+            "title": "VP, Consumer Lending at Texas Trust Credit Union",
+            "company": "Texas Trust Credit Union",
+            "titleMatched": "VP of Consumer Lending",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/nicole-sanders-3093485/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Texas%20Trust%20Credit%20Union%20Nicole%20Sanders%20VP%20Consumer%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Nicole%20Sanders%20Texas%20Trust%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect.",
+            "note": "Connect action was visible on regular LinkedIn search result."
+          },
+          {
+            "name": "Jim Minge",
+            "title": "President & C.E.O. at Texas Trust Credit Union",
+            "company": "Texas Trust Credit Union",
+            "titleMatched": "President & CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/jminge1/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Jim%20Minge%20Texas%20Trust%20Credit%20Union%20President%20CEO",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Jim%20Minge%20Texas%20Trust%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect.",
+            "note": "Connect action was visible on regular LinkedIn search result."
+          },
+          {
+            "name": "Whitney McLeod",
+            "title": "Senior Vice President of Lending & Collections at Texas Trust Credit Union",
+            "company": "Texas Trust Credit Union",
+            "titleMatched": "SVP Lending",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/whitney-mcleod-2a475a22/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Whitney%20McLeod%20Texas%20Trust%20Credit%20Union%20SVP%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Whitney%20McLeod%20Texas%20Trust%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect.",
+            "note": "Connect action was visible on regular LinkedIn search result."
+          },
+          {
+            "name": "William Kelsey",
+            "title": "President at Texas Trust Credit Union",
+            "company": "Texas Trust Credit Union",
+            "titleMatched": "President",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/william-kelsey-2a402610/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=William%20Kelsey%20Texas%20Trust%20Credit%20Union%20President",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=William%20Kelsey%20Texas%20Trust%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect.",
+            "note": "Connect action was visible on regular LinkedIn search result."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T04:03:21-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor at Veridian Credit Union",
+              "connectedOn": "2026-06-19"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations at Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Steve O'Donnell",
+              "title": "President/CEO",
+              "connectedOn": "2026-05-17"
+            },
+            {
+              "name": "Mike Gutshall",
+              "title": "President & CEO at Heritage Valley FCU",
+              "connectedOn": "2026-04-22"
+            }
+          ],
+          "note": "Connections monitor refreshed successfully; visible recent connections did not include Nicole Sanders, Jim Minge, Whitney McLeod, William Kelsey, or Texas Trust Credit Union."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/68434",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report PDF endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/68434?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=5850%20W%20Interstate%2020%2C%20Arlington%2C%20TX%2076017&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Texas Trust 2024 annual report",
+          "url": "https://www.texastrustcu.org/es/hubfs/TexasTrustCreditUnion_June2025/pdf/Annual%20Report-2024.pdf",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Texas Trust CEO reappointment news",
+          "url": "https://www.texastrustcu.org/news/texas-trust-cu-ceo-reappointed-to-cu-commission",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Texas Trust 2026 growth news",
+          "url": "https://www.texastrustcu.org/news/texas-trust-credit-union-surpasses-1-million-giving-milestone-reports-record-growth-entering-90th-year",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Capital Analytics Jim Minge interview",
+          "url": "https://capitalanalyticsassociates.com/jim-minge-ceo-texas-trust-credit-union/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Nicole Sanders public LinkedIn profile",
+          "url": "https://www.linkedin.com/in/nicole-sanders-3093485/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Jim Minge public LinkedIn profile",
+          "url": "https://www.linkedin.com/in/jminge1/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Whitney McLeod public LinkedIn profile",
+          "url": "https://www.linkedin.com/in/whitney-mcleod-2a475a22/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "William Kelsey public LinkedIn profile",
+          "url": "https://www.linkedin.com/in/william-kelsey-2a402610/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn/Sales Navigator visible search snapshot",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=Texas%20Trust%20Credit%20Union%20Jim%20Minge%20Nicole%20Sanders%20Whitney%20McLeod%20lending",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified charter 68434 as active Texas Trust, a Texas FISCU with March 2026 as the latest available call report cycle used in this run.",
+        "NCUA call-report endpoint returned a March 31, 2026 PDF; PDF text extraction captured Statement totals, Schedule A Sections 1 through 8, and Schedule C commitments/off-balance-sheet values.",
+        "Schedule A loan category rows sum exactly to the reported $1,523,385,282 total loans and leases and 68,174 loan count.",
+        "Schedule A Section 5 reports $417,002,941 in total indirect loans and 17,057 indirect loans; all reported indirect balances and counts are new/used vehicle loans.",
+        "Indirect vehicle balances represent roughly 71.14% of Texas Trust new/used auto balances and roughly 27.37% of the total loan book. Lease receivables add another $198,423,285 in vehicle-adjacent exposure.",
+        "Census geocoder returned an address-range match for 5850 W Interstate 20, Arlington, TX 76017 and supplied coordinates for map display.",
+        "Texas Trust public/news sources verify Jim Minge as CEO and indicate 2025 double-digit growth in vehicle loans, credit cards, and unsecured signature loans; the 2024 annual report lists Whitney McLeod as SVP Lending and Nicole Sanders as VP Lending Operations.",
+        "Authenticated LinkedIn regular search was read-only and visibly showed Nicole Sanders, Jim Minge, Whitney McLeod, and William Kelsey as current Texas Trust leaders with Connect controls. No connection request was sent because this heartbeat was unattended and action-time confirmation is required before external side effects.",
+        "Sales Navigator loaded but returned zero results for the broad Texas Trust keyword search, so regular LinkedIn visible search was the relationship source of record for this run.",
+        "Connections monitor refreshed successfully and no Texas Trust accepted-request match was found or changed."
       ]
     }
   ]
