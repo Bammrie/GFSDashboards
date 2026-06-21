@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T04:13:21-05:00",
+  "updatedAt": "2026-06-21T04:36:51-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -30691,6 +30691,1426 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Official American Airlines Credit Union pages verify the institution identity, 90th anniversary context, and Gail Enda as President and CEO; NCUA details also list Gail Enda as CEO.",
         "Authenticated LinkedIn/Sales Navigator browsing was read-only. Broad LinkedIn/Sales Navigator searches did not surface usable visible people results; direct profile verification timed out, so no connection request was sent and no Connect controls were safely captured.",
         "Connections monitor refreshed successfully and no American Airlines FCU accepted-request match was found or changed."
+      ]
+    },
+    {
+      "id": "veridian-64418-2026-03-31",
+      "name": "Veridian Credit Union",
+      "charterNumber": "64418",
+      "priority": "High",
+      "status": "Active prospect - very large indirect vehicle and consumer loan book",
+      "summary": "Iowa FISCU with $8.90B in assets, 374,001 members, a $7.68B loan book, $3.46B in new/used vehicle loans, and $3.15B in indirect loans, with indirect new/used vehicle loans representing about 88.9% of the auto portfolio.",
+      "profile": {
+        "ncuaName": "VERIDIAN",
+        "type": "FISCU",
+        "status": "Active",
+        "charterState": "Iowa",
+        "region": "3 - Western",
+        "fieldOfMembership": "Non-Federal Credit Union",
+        "lowIncomeDesignation": true,
+        "fhlbMember": true,
+        "peerGroup": "6 - $500,000,000 and greater",
+        "assets": 8897116559,
+        "members": 374001,
+        "ceo": "Renee Christoffer",
+        "website": "http://www.veridiancu.org",
+        "phone": "319-236-5600",
+        "mainOffice": {
+          "street": "1827 Ansborough Ave",
+          "city": "Waterloo",
+          "state": "IA",
+          "zip": "50701",
+          "county": "Black Hawk",
+          "country": "United States",
+          "latitude": 42.485214802359,
+          "longitude": -92.376790816918,
+          "geocodePrecision": "U.S. Census Public_AR_Current address-range match",
+          "geocodedAddress": "1827 ANSBOROUGH AVE, WATERLOO, IA, 50701"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "March 2026 NCUA 5300 Call Report",
+        "totals": {
+          "loansHeldForSale": 12531038,
+          "totalLoansAndLeases": {
+            "count": 362649,
+            "amount": 7682792148
+          },
+          "statementTotalLoansAndLeases": {
+            "count": 362649,
+            "amount": 7682792147
+          },
+          "allowanceForCreditLossesLoansAndLeases": 61528220,
+          "accruedInterestOnLoansAndLeases": 25141186,
+          "loansGrantedYtd": {
+            "count": 22324,
+            "amount": 856631975
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 108622182,
+          "creditLossExpenseLoansAndLeasesYtd": 8984275,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 1583382,
+          "loanServicingExpenseYtd": 3753333
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "interestRate": 18.65,
+            "count": 80868,
+            "amount": 144677228,
+            "accountCode": "396"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "accountCode": "397A"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "interestRate": 5.95,
+            "count": 8679,
+            "amount": 31405046,
+            "accountCode": "698A"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "interestRate": 19,
+            "count": 53020,
+            "amount": 105303363,
+            "accountCode": "397"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "interestRate": 5.49,
+            "count": 23381,
+            "amount": 630470931,
+            "accountCode": "385"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "interestRate": 5.64,
+            "count": 143873,
+            "amount": 2833414500,
+            "accountCode": "370"
+          },
+          {
+            "label": "Leases Receivable",
+            "interestRate": 7.75,
+            "count": 92,
+            "amount": 3436762,
+            "accountCode": "002"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "interestRate": 19.65,
+            "count": 14169,
+            "amount": 112594253,
+            "accountCode": "698C"
+          },
+          {
+            "label": "First Lien 1-4 Family Residential Property Loans",
+            "interestRate": 2.99,
+            "count": 17206,
+            "amount": 2276595711,
+            "accountCode": "703A"
+          },
+          {
+            "label": "Junior Lien 1-4 Family Residential Property Loans",
+            "interestRate": 2.99,
+            "count": 20986,
+            "amount": 748521453,
+            "accountCode": "386A"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "interestRate": 7.49,
+            "count": 19,
+            "amount": 1256270,
+            "accountCode": "386B"
+          },
+          {
+            "label": "Commercial Loans/Lines of Credit Real Estate Secured",
+            "interestRate": 6.42,
+            "count": 278,
+            "amount": 783575410,
+            "accountCode": "718A5"
+          },
+          {
+            "label": "Commercial Loans/Lines of Credit Not Real Estate Secured",
+            "interestRate": 13.75,
+            "count": 78,
+            "amount": 11541221,
+            "accountCode": "400P"
+          }
+        ],
+        "governmentGuaranteedLoans": [
+          {
+            "label": "Non-Commercial SBA",
+            "count": 1,
+            "outstandingBalance": 149,
+            "guaranteedPortion": 0
+          },
+          {
+            "label": "Non-Commercial PPP Loans",
+            "count": 1,
+            "outstandingBalance": 149,
+            "guaranteedPortion": 0
+          },
+          {
+            "label": "Non-Commercial Other Government Guaranteed",
+            "count": 0,
+            "outstandingBalance": 0,
+            "guaranteedPortion": 0
+          },
+          {
+            "label": "Commercial SBA",
+            "count": 7,
+            "outstandingBalance": 2746742,
+            "guaranteedPortion": 24111
+          },
+          {
+            "label": "Commercial Other Government Guaranteed",
+            "count": 19,
+            "outstandingBalance": 10002566,
+            "guaranteedPortion": 10002566
+          }
+        ],
+        "delinquency": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "days30To59": 839501,
+            "days60To89": 417129,
+            "days90To179": 110706,
+            "days180To359": 95730,
+            "days360OrMore": 19869,
+            "days60OrMore": {
+              "amount": 643434,
+              "count": 150
+            }
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "days30To59": 167035,
+            "days60To89": 107854,
+            "days90To179": 55645,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 163499,
+              "count": 34
+            }
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "days30To59": 846368,
+            "days60To89": 315136,
+            "days90To179": 293156,
+            "days180To359": 90970,
+            "days360OrMore": 1260,
+            "days60OrMore": {
+              "amount": 700522,
+              "count": 308
+            }
+          },
+          {
+            "label": "New Vehicle Loans",
+            "days30To59": 4280401,
+            "days60To89": 737794,
+            "days90To179": 835299,
+            "days180To359": 774571,
+            "days360OrMore": 482195,
+            "days60OrMore": {
+              "amount": 2829859,
+              "count": 118
+            }
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "days30To59": 27824464,
+            "days60To89": 6073874,
+            "days90To179": 7920109,
+            "days180To359": 7327150,
+            "days360OrMore": 3172690,
+            "days60OrMore": {
+              "amount": 24493823,
+              "count": 1398
+            }
+          },
+          {
+            "label": "Leases Receivable",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 29263,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 29263,
+              "count": 1
+            }
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "days30To59": 813258,
+            "days60To89": 122816,
+            "days90To179": 422499,
+            "days180To359": 416051,
+            "days360OrMore": 407327,
+            "days60OrMore": {
+              "amount": 1368693,
+              "count": 122
+            }
+          },
+          {
+            "label": "First Lien 1-4 Family Residential Property Loans",
+            "days30To59": 36564588,
+            "days60To89": 3765784,
+            "days90To179": 2638100,
+            "days180To359": 3949016,
+            "days360OrMore": 2230710,
+            "days60OrMore": {
+              "amount": 12583610,
+              "count": 118
+            }
+          },
+          {
+            "label": "Junior Lien 1-4 Family Residential Property Loans",
+            "days30To59": 4515509,
+            "days60To89": 1341725,
+            "days90To179": 925166,
+            "days180To359": 1068616,
+            "days360OrMore": 569407,
+            "days60OrMore": {
+              "amount": 3904914,
+              "count": 105
+            }
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Construction and Development Loans",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial Farmland",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial Multifamily",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial Owner Occupied Non-Farm Non-Residential",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 75790,
+            "days60OrMore": {
+              "amount": 75790,
+              "count": 1
+            }
+          },
+          {
+            "label": "Commercial Non-Owner Occupied Non-Farm Non-Residential",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial Agricultural Production and Farmers",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Commercial and Industrial Loans",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 31949,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 31949,
+              "count": 1
+            }
+          },
+          {
+            "label": "Unsecured Commercial Loans",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          },
+          {
+            "label": "Unsecured Revolving Lines of Credit for Commercial Purposes",
+            "days30To59": 0,
+            "days60To89": 0,
+            "days90To179": 0,
+            "days180To359": 0,
+            "days360OrMore": 0,
+            "days60OrMore": {
+              "amount": 0,
+              "count": 0
+            }
+          }
+        ],
+        "delinquencyTotals": {
+          "days30To59": 75851124,
+          "days60To89": 12882112,
+          "days90To179": 13261892,
+          "days180To359": 13722104,
+          "days360OrMore": 6959248,
+          "days60OrMore": {
+            "amount": 46825356,
+            "count": 2356
+          },
+          "reportableDelinquencyParticipationLoansPurchased": 507899,
+          "reportableDelinquencyIndirectLoans": 26437484,
+          "reportableDelinquencyWholeOrPartialLoansPurchased": 254522,
+          "nonCommercialNonAccrual": 33196488,
+          "commercialNonAccrual": 107739,
+          "bankruptcyClaims": 43097195,
+          "modificationsToBorrowersExperiencingFinancialDifficulty": {
+            "count": 543,
+            "amount": 9026387
+          },
+          "borrowerDifficultyNotInComplianceWithModifiedTerms": {
+            "count": 170,
+            "amount": 3771432
+          }
+        },
+        "chargeOffAndRecoveryYtd": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "chargeOffs": 1114582,
+            "recoveries": 222899
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "chargeOffs": 178894,
+            "recoveries": 31720
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "chargeOffs": 795657,
+            "recoveries": 263907
+          },
+          {
+            "label": "New Vehicle Loans",
+            "chargeOffs": 432375,
+            "recoveries": 131105
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "chargeOffs": 5477165,
+            "recoveries": 492815
+          },
+          {
+            "label": "Leases Receivable",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "chargeOffs": 216501,
+            "recoveries": 24017
+          },
+          {
+            "label": "First Lien 1-4 Family Residential Property Loans",
+            "chargeOffs": 1794,
+            "recoveries": 71843
+          },
+          {
+            "label": "Junior Lien 1-4 Family Residential Property Loans",
+            "chargeOffs": 53294,
+            "recoveries": 1827
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 999
+          },
+          {
+            "label": "Construction and Development Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial Farmland",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial Multifamily",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial Owner Occupied Non-Farm Non-Residential",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial Non-Owner Occupied Non-Farm Non-Residential",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial Agricultural Production and Farmers",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial and Industrial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Revolving Lines of Credit for Commercial Purposes",
+            "chargeOffs": 0,
+            "recoveries": 0
+          }
+        ],
+        "chargeOffRecoveryTotals": {
+          "chargeOffs": 8270262,
+          "recoveries": 1241132,
+          "participationLoansPurchased": {
+            "chargeOffs": 178894,
+            "recoveries": 31720
+          },
+          "indirectLoans": {
+            "chargeOffs": 5782483,
+            "recoveries": 600247
+          },
+          "wholeOrPartialLoansPurchased": {
+            "chargeOffs": 355978,
+            "recoveries": 147344
+          }
+        },
+        "otherLoanInformation": {
+          "loansToCreditUnionOfficialsAndSeniorExecutiveStaff": {
+            "count": 63,
+            "amount": 3590153
+          },
+          "federalCreditUnionInterestRateCeiling": {
+            "loansWithRatesAbove15PercentAmount": null,
+            "aggregateWeightedAverageRateAbove15Percent": null,
+            "note": "State-chartered FISCU; FCU-only interest-rate ceiling fields were not applicable/blank."
+          },
+          "purchasedCreditImpairedLoans": {
+            "contractualBalanceOutstanding": 0,
+            "recordedInvestmentReportedAsLoansInAccount025B": 0
+          },
+          "purchasedFinancialAssetsWithCreditDeterioration": {
+            "totalPcdLoansOutstanding": {
+              "purchasePrice": 0,
+              "acquirerAclAtAcquisition": 0,
+              "nonCreditDiscountOrPremium": 0,
+              "unpaidPrincipalBalanceOrParValue": 0
+            },
+            "totalPcdDebtSecurities": {
+              "purchasePrice": 0,
+              "acquirerAclAtAcquisition": 0,
+              "nonCreditDiscountOrPremium": 0,
+              "unpaidPrincipalBalanceOrParValue": 0
+            }
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 148223,
+            "amount": 3078514891,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "First Lien and Junior Lien Residential Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 5097,
+            "amount": 66637314,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 153320,
+          "amount": 3145152205,
+          "countAccountCode": "617A",
+          "amountAccountCode": "618A"
+        },
+        "purchasedAndSoldLoans": {
+          "loansPurchased": [
+            {
+              "label": "Loans Purchased from Other Financial Institutions",
+              "ytdCount": 0,
+              "ytdAmount": 0,
+              "outstandingCount": 0,
+              "outstandingAmount": 0
+            },
+            {
+              "label": "Loans Purchased from Other Sources",
+              "ytdCount": 615,
+              "ytdAmount": 731022,
+              "outstandingCount": 22487,
+              "outstandingAmount": 23370498
+            }
+          ],
+          "loansSold": {
+            "ytdCount": 340,
+            "ytdAmount": 79917968,
+            "firstMortgageLoansSoldSecondaryMarket": {
+              "ytdCount": 340,
+              "ytdAmount": 79917968
+            },
+            "limitedRecourseQualifyingForSalesAccounting": {
+              "ytdCount": 38,
+              "ytdAmount": 9970045
+            },
+            "realEstateLoansSoldWithServicingRetained": {
+              "ytdCount": 183,
+              "ytdAmount": 34534139,
+              "outstandingCount": 1706,
+              "outstandingAmount": 315830109
+            },
+            "allOtherLoansSoldWithServicingRetained": {
+              "ytdCount": 0,
+              "ytdAmount": 0,
+              "outstandingCount": 5789,
+              "outstandingAmount": 86723492
+            }
+          },
+          "loanParticipations": [
+            {
+              "label": "Vehicle - Non-commercial",
+              "purchasedOutstandingBalance": 0,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 6667103,
+              "soldYtdAmount": 10234697
+            },
+            {
+              "label": "Non-Federally Guaranteed Student Loans",
+              "purchasedOutstandingBalance": 2495050,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 28898113,
+              "soldYtdAmount": 17453978
+            },
+            {
+              "label": "1- to 4-Family Residential Property",
+              "purchasedOutstandingBalance": 13046627,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 0,
+              "soldYtdAmount": 0
+            },
+            {
+              "label": "Commercial Loans excluding Construction & Development",
+              "purchasedOutstandingBalance": 13405928,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 0,
+              "soldYtdAmount": 0
+            },
+            {
+              "label": "Commercial Construction & Development",
+              "purchasedOutstandingBalance": 0,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 0,
+              "soldYtdAmount": 0
+            },
+            {
+              "label": "All Other",
+              "purchasedOutstandingBalance": 0,
+              "purchasedYtdAmount": 0,
+              "soldRetainedOutstandingBalance": 54138309,
+              "soldYtdAmount": 41737821
+            }
+          ],
+          "loanParticipationTotals": {
+            "purchasedOutstandingBalance": 28947605,
+            "purchasedYtdAmount": 0,
+            "soldRetainedOutstandingBalance": 89703525,
+            "soldYtdAmount": 69426496
+          }
+        },
+        "realEstateDetails": {
+          "firstLien": [
+            {
+              "label": "Fixed Rate > 15 Years",
+              "count": 2955,
+              "amount": 549638010,
+              "grantedYtd": 131357776
+            },
+            {
+              "label": "Fixed Rate 15 Years or Less",
+              "count": 2980,
+              "amount": 160398214,
+              "grantedYtd": 9133770
+            },
+            {
+              "label": "Balloon/Hybrid > 5 Years",
+              "count": 10088,
+              "amount": 1513695001,
+              "grantedYtd": 95560314
+            },
+            {
+              "label": "Balloon/Hybrid 5 Years or Less",
+              "count": 854,
+              "amount": 47807558,
+              "grantedYtd": 2160780
+            },
+            {
+              "label": "Adjustable Rate",
+              "count": 329,
+              "amount": 5056928,
+              "grantedYtd": 0
+            }
+          ],
+          "firstLienTotal": {
+            "count": 17206,
+            "amount": 2276595711,
+            "grantedYtd": 238212640
+          },
+          "juniorLien": [
+            {
+              "label": "Closed-End Fixed Rate",
+              "count": 5653,
+              "amount": 191293896,
+              "grantedYtd": 10970138
+            },
+            {
+              "label": "Closed-End Adjustable Rate",
+              "count": 88,
+              "amount": 5405761,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-End Fixed Rate",
+              "count": 9,
+              "amount": 973027,
+              "grantedYtd": 954500
+            },
+            {
+              "label": "Open-End Adjustable Rate",
+              "count": 15236,
+              "amount": 550848768,
+              "grantedYtd": 43683360
+            }
+          ],
+          "juniorLienTotal": {
+            "count": 20986,
+            "amount": 748521452,
+            "grantedYtd": 55607998
+          },
+          "allOtherNonCommercialRealEstate": [
+            {
+              "label": "Closed-End Fixed Rate",
+              "count": 16,
+              "amount": 1152261,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Closed-End Adjustable Rate",
+              "count": 3,
+              "amount": 104009,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-End Fixed Rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            {
+              "label": "Open-End Adjustable Rate",
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            }
+          ],
+          "allOtherNonCommercialRealEstateTotal": {
+            "count": 19,
+            "amount": 1256270,
+            "grantedYtd": 0
+          },
+          "total": {
+            "count": 38211,
+            "amount": 3026373433,
+            "grantedYtd": 293820638
+          },
+          "additionalInfo": {
+            "oneToFourFamilyResidentialConstructionLoansBalance": 45118558,
+            "loansContractuallyRefinanceRepriceOrMatureWithinFiveYears": 1338830748,
+            "interestOnlyAndPaymentOptionFirstLien": {
+              "count": 251,
+              "amount": 45620969,
+              "grantedYtd": 12159927
+            }
+          }
+        },
+        "commercialDetails": {
+          "memberCommercialLoans": {
+            "constructionAndDevelopment": {
+              "count": 24,
+              "amount": 113422631,
+              "grantedYtdCount": 6,
+              "grantedYtdAmount": 60141081
+            },
+            "securedByFarmland": {
+              "count": 3,
+              "amount": 314912,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByMultifamily": {
+              "count": 118,
+              "amount": 293297119,
+              "grantedYtdCount": 4,
+              "grantedYtdAmount": 13361321
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 66,
+              "amount": 59251647,
+              "grantedYtdCount": 3,
+              "grantedYtdAmount": 1316523
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 62,
+              "amount": 314587338,
+              "grantedYtdCount": 3,
+              "grantedYtdAmount": 26003309
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 273,
+              "amount": 780873647,
+              "grantedYtdCount": 16,
+              "grantedYtdAmount": 100822234
+            },
+            "agriculturalProductionAndFarmers": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 12,
+              "amount": 785117,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 100000
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercial": {
+              "count": 48,
+              "amount": 51941,
+              "grantedYtdCount": 2,
+              "grantedYtdAmount": 8000
+            },
+            "totalCommercialLoansToMembers": {
+              "count": 333,
+              "amount": 781710705,
+              "grantedYtdCount": 19,
+              "grantedYtdAmount": 100930234
+            }
+          },
+          "purchasedCommercialLoansToNonmembers": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByMultifamily": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 1,
+              "amount": 868334,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 4,
+              "amount": 1833430,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 5,
+              "amount": 2701764,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "agriculturalProductionAndFarmers": {
+              "count": 16,
+              "amount": 8694350,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 2,
+              "amount": 2009814,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialLoansToNonmembers": {
+              "count": 23,
+              "amount": 13405928,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 356,
+            "amount": 795116633
+          },
+          "miscellaneous": {
+            "outstandingAgriculturalRelatedLoans": {
+              "count": 19,
+              "amount": 9009262
+            },
+            "commercialRealEstateRepriceOrMatureWithinFiveYears": 726271996,
+            "outstandingCommercialParticipationsSoldButServicingRetained": {
+              "count": 0,
+              "amount": 0
+            },
+            "outstandingCommercialLoansSoldButServicingRetained": {
+              "count": 0,
+              "amount": 0
+            },
+            "ytdCommercialLoansSoldNoServicingRetained": {
+              "count": 0,
+              "amount": 0
+            },
+            "totalMemberBusinessLoansNetBalance": 932380261
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 191199295,
+          "nonCommercial": {
+            "revolvingOpenEndSecuredByResidential": 467659271,
+            "creditCardLines": 519290090,
+            "unsecuredShareDraftLines": 5184669,
+            "unusedOverdraftProtection": 145319479,
+            "otherUnfundedCommitments": 2390173,
+            "total": 1139843682
+          },
+          "totalAllLoanTypes": 1331042977,
+          "offBalanceSheetExposures": {
+            "unconditionallyCancelableUnfundedCommitments": 664609569,
+            "conditionallyCancelable": {
+              "commercialLoans": 191199295,
+              "consumerLoansSecuredAndRealEstate": 470049444,
+              "consumerLoansUnsecured": 5184669,
+              "total": 666433408
+            },
+            "loansTransferredWithLimitedRecourse": {
+              "commercial": 0,
+              "consumer": 0,
+              "total": 0
+            },
+            "loansTransferredUnderFhlbMpfProgram": 27532254,
+            "financialStandbyLettersOfCredit": 65317000,
+            "forwardAgreementsNotDerivativeContracts": 0,
+            "soldCreditProtection": {
+              "guarantees": 0,
+              "creditDerivatives": 0,
+              "total": 0
+            },
+            "offBalanceSheetSecuritizationExposures": 0,
+            "securitiesBorrowingOrLendingTransactions": 0,
+            "repurchaseTransactionExposure": 0,
+            "allOtherOffBalanceSheetExposures": 0
+          },
+          "contingentLiabilities": {
+            "other": 0
+          },
+          "borrowingArrangements": {
+            "corporateCreditUnions": {
+              "totalCapacity": 200000000,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 800000000
+            },
+            "naturalPersonCreditUnions": {
+              "totalCapacity": 0,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 0
+            },
+            "federalHomeLoanBank": {
+              "totalCapacity": 1913508443,
+              "drawsAgainstCapacity": 273152644,
+              "assetsPledgedToSecureBorrowingCapacity": 3158866540
+            },
+            "centralLiquidityFacility": {
+              "totalCapacity": 0,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 0
+            },
+            "federalReserveBank": {
+              "totalCapacity": 55021901,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 56582479
+            },
+            "frbPppLendingFacility": {
+              "totalCapacity": 0,
+              "drawsAgainstCapacity": 0,
+              "assetsPledgedToSecureBorrowingCapacity": 0
+            },
+            "otherSources": {
+              "totalCapacity": 30246531,
+              "drawsAgainstCapacity": 246531,
+              "assetsPledgedToSecureBorrowingCapacity": 0
+            },
+            "totalBorrowingsAndAssetsPledged": {
+              "totalCapacity": 2198776875,
+              "drawsAgainstCapacity": 273399175,
+              "assetsPledgedToSecureBorrowingCapacity": 4015449019
+            },
+            "amountCallableByLender": 0,
+            "maturityDistribution": {
+              "lessThanOneYear": 203070480,
+              "oneToThreeYears": 53833694,
+              "greaterThanThreeYears": 16495000,
+              "total": 273399174
+            }
+          }
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 6887675517,
+          "autoLoanBalance": 3463885431,
+          "autoLoanCount": 167254,
+          "directAutoLoanBalance": 385370540,
+          "directAutoLoanCount": 19031,
+          "indirectVehicleShareOfAutoBalance": 0.8887,
+          "indirectShareOfLoanBook": 0.4094,
+          "delinquency60PlusShareOfLoanBook": 0.0061,
+          "indirectDelinquencyShareOfIndirectLoans": 0.0084
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 0.38,
+          "creditDisabilityRatePerThousand": 0.855,
+          "debtProtectionIuiRatePerThousand": 0.532,
+          "creditAndDebtProtectionPenetration": 1,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 2617316.7,
+        "modeledMonthlyCreditDisabilityPremium": 5888962.57,
+        "modeledMonthlyDebtProtectionIuiPremium": 3664243.38,
+        "modeledMonthlyDirectAutoOriginations": 792.96,
+        "modeledMonthlyVscGfsIncome": 126873.33,
+        "modeledMonthlyGapGfsIncome": 27753.54,
+        "notes": [
+          "Modeled credit/debt protection premium applies dashboard standard rates to non-commercial loan balances from Schedule A Section 1.",
+          "Veridian reports $3.079B of indirect new/used vehicle loans, about 88.87% of total new/used vehicle balances.",
+          "Direct auto estimate subtracts Schedule A Section 5 indirect vehicle loans from total new and used vehicle loans, leaving 19,031 direct or non-indirect auto loans and $385.37M of direct/non-indirect auto balance.",
+          "The relationship path is already warm: the LinkedIn connections monitor shows Brandon Leonard, Consumer Lending Relations Advisor at Veridian Credit Union, connected on June 19, 2026."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T04:36:51-05:00",
+        "source": "NCUA details/call report, authenticated LinkedIn connection monitor, Sales Navigator visible search snapshot, and public professional/official sources",
+        "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Veridian%20Credit%20Union%20Renee%20Christoffer%20Kara%20Van%20Wert%20Joe%20Lichty%20Randy%20Hesiak%20lending%20CEO%20President%20VP",
+        "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Veridian%20Credit%20Union%20CEO%20President%20VP%20Lending%20Consumer%20Lending",
+        "resultSummary": "Authenticated Sales Navigator broad keyword search returned visible results that were not current Veridian employees. Public search results and official/industry pages identified Renee Christoffer, Kara Van Wert, Joe Lichty, Randy Hesiak, and an already-connected Veridian consumer-lending contact, Brandon Leonard.",
+        "visibleLeads": [
+          {
+            "name": "Renee Christoffer",
+            "title": "President and CEO",
+            "company": "Veridian Credit Union",
+            "source": "NCUA details, Veridian FAQ, LinkedIn public profile/search result, and Veridian public LinkedIn company update",
+            "profileUrl": "https://www.linkedin.com/in/renee-christoffer-9a2836b",
+            "titleMatched": "President & CEO",
+            "currentCompanyVerified": true,
+            "connectionStatus": "not_requested_confirmation_required",
+            "requestedAt": null,
+            "acceptedAt": null,
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action."
+          },
+          {
+            "name": "Kara Van Wert",
+            "title": "Chief Lending Officer",
+            "company": "Veridian Credit Union",
+            "source": "Member Student Lending board biography, ProPublica Form 990 extract, and LinkedIn public profile/search result",
+            "profileUrl": "https://www.linkedin.com/in/kara-vanwert-7722b966",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "currentCompanyVerified": true,
+            "connectionStatus": "not_requested_confirmation_required",
+            "requestedAt": null,
+            "acceptedAt": null,
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action."
+          },
+          {
+            "name": "Joe Lichty",
+            "title": "VP of Consumer Lending",
+            "company": "Veridian Credit Union",
+            "source": "LinkedIn public search result",
+            "profileUrl": "https://www.linkedin.com/in/joe-lichty-ccue-84707739",
+            "titleMatched": "VP of Consumer Lending",
+            "currentCompanyVerified": true,
+            "connectionStatus": "not_requested_confirmation_required",
+            "requestedAt": null,
+            "acceptedAt": null,
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action."
+          },
+          {
+            "name": "Randy Hesiak",
+            "title": "VP of Indirect Lending",
+            "company": "Veridian Credit Union",
+            "source": "LinkedIn public search result and ProPublica Form 990 extract",
+            "profileUrl": "https://www.linkedin.com/in/randy-hesiak-5b6a305",
+            "titleMatched": "VP of Indirect Lending",
+            "currentCompanyVerified": true,
+            "connectionStatus": "not_requested_confirmation_required",
+            "requestedAt": null,
+            "acceptedAt": null,
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action."
+          },
+          {
+            "name": "Brandon Leonard",
+            "title": "Consumer Lending Relations Advisor",
+            "company": "Veridian Credit Union",
+            "source": "Authenticated LinkedIn connections page and LinkedIn public profile/search result",
+            "profileUrl": "https://www.linkedin.com/in/brandon-leonard-14397210b",
+            "titleMatched": "Consumer lending relationship contact",
+            "currentCompanyVerified": true,
+            "connectionStatus": "already_connected",
+            "requestedAt": null,
+            "acceptedAt": "2026-06-19",
+            "blocker": null
+          }
+        ],
+        "additionalVisibleNames": [
+          {
+            "name": "Kody Plymesser",
+            "title": "Consumer Lending Relations Advisor",
+            "company": "Veridian Credit Union",
+            "source": "LinkedIn public search result"
+          },
+          {
+            "name": "Renee Christoffer",
+            "title": "President and CEO",
+            "company": "Veridian Credit Union",
+            "source": "Veridian FAQ and NCUA CEO field"
+          },
+          {
+            "name": "Kara Van Wert",
+            "title": "Chief Lending Officer",
+            "company": "Veridian Credit Union",
+            "source": "Member Student Lending board biography"
+          }
+        ],
+        "connectionRequests": [
+          {
+            "name": "Renee Christoffer",
+            "title": "President and CEO",
+            "company": "Veridian Credit Union",
+            "titleMatched": "President & CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/renee-christoffer-9a2836b",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Renee%20Christoffer%20Veridian%20Credit%20Union%20President%20CEO",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Renee%20Christoffer%20Veridian%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action.",
+            "note": "Target executive identified and queued for manual/confirmed request decision."
+          },
+          {
+            "name": "Kara Van Wert",
+            "title": "Chief Lending Officer",
+            "company": "Veridian Credit Union",
+            "titleMatched": "Chief Lending Officer",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/kara-vanwert-7722b966",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Kara%20Van%20Wert%20Veridian%20Credit%20Union%20Chief%20Lending%20Officer",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Kara%20Van%20Wert%20Veridian%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action.",
+            "note": "Target lending executive identified and queued for manual/confirmed request decision."
+          },
+          {
+            "name": "Joe Lichty",
+            "title": "VP of Consumer Lending",
+            "company": "Veridian Credit Union",
+            "titleMatched": "VP of Consumer Lending",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/joe-lichty-ccue-84707739",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Joe%20Lichty%20Veridian%20Credit%20Union%20VP%20Consumer%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Joe%20Lichty%20Veridian%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action.",
+            "note": "Target consumer lending title identified and queued for manual/confirmed request decision."
+          },
+          {
+            "name": "Randy Hesiak",
+            "title": "VP of Indirect Lending",
+            "company": "Veridian Credit Union",
+            "titleMatched": "VP of Indirect Lending",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/randy-hesiak-5b6a305",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Randy%20Hesiak%20Veridian%20Credit%20Union%20VP%20Indirect%20Lending",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Randy%20Hesiak%20Veridian%20Credit%20Union",
+            "blocker": "No LinkedIn connection request was sent during the unattended heartbeat; action-time user confirmation is required before creating an external side effect. Current-company/profile action state was not safely verified for a Connect action.",
+            "note": "Target indirect lending title identified and queued for manual/confirmed request decision."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T04:36:51-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor at Veridian Credit Union",
+              "connectedOn": "2026-06-19",
+              "companyMatched": "Veridian Credit Union"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations at Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "connectedOn": "2026-06-14"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller at Heartland Credit Union",
+              "connectedOn": "2026-06-06"
+            }
+          ],
+          "note": "Connections monitor refreshed successfully; Brandon Leonard is an existing accepted Veridian relationship. No accepted matches were found for the newly identified Renee Christoffer, Kara Van Wert, Joe Lichty, or Randy Hesiak connection-request queue because no requests were sent."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA active credit union detail search API",
+          "url": "https://mapping.ncua.gov/api/ResearchCreditUnion/GetDetailSearch",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/64418",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report PDF endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/64418?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder address match",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=1827%20Ansborough%20Ave%20Waterloo%20IA%2050701&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "OpenStreetMap Nominatim geocode cross-check",
+          "url": "https://nominatim.openstreetmap.org/search?q=1827%20Ansborough%20Ave%20Waterloo%20IA%2050701&format=json&limit=3",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Veridian CEO FAQ",
+          "url": "https://www.veridiancu.org/faq/8223/who-is-the-ceo-president-of-veridian",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Veridian public LinkedIn company page",
+          "url": "https://www.linkedin.com/company/veridiancu",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Renee Christoffer public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/renee-christoffer-9a2836b",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Kara VanWert public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/kara-vanwert-7722b966",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Joe Lichty public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/joe-lichty-ccue-84707739",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Randy Hesiak public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/randy-hesiak-5b6a305",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Brandon Leonard public LinkedIn profile/search result",
+          "url": "https://www.linkedin.com/in/brandon-leonard-14397210b",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Member Student Lending board biography for Kara Van Wert",
+          "url": "https://www.memberstudentlending.com/the-board/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "ProPublica nonprofit explorer Veridian Form 990 officer extracts",
+          "url": "https://projects.propublica.org/nonprofits/organizations/421132695",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn/Sales Navigator visible search snapshot",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=Veridian%20Credit%20Union%20CEO%20President%20VP%20Lending%20Consumer%20Lending",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified charter 64418 as active Veridian, a federally insured state-chartered credit union with March 2026 as the latest available call report cycle used in this run.",
+        "NCUA call-report endpoint returned a March 31, 2026 PDF; PDF text extraction captured Statement totals, Schedule A Sections 1 through 8, and Schedule C commitments/off-balance-sheet values.",
+        "Schedule A Section 1 loan category rows sum exactly to $7,682,792,148 and 362,649 loans. Statement page 2 Account 025B shows $7,682,792,147, a one-dollar variance; the dashboard record preserves the Section 1 value for category-sum validation and stores the statement total separately.",
+        "Schedule A Section 5 reports $3,145,152,205 in total indirect loans and 153,320 indirect loans; $3,078,514,891 is new/used vehicle indirect exposure.",
+        "Indirect vehicle loans represent about 88.87% of total new/used vehicle balances and total indirect loans represent about 40.94% of total loans and leases, making Veridian a high-priority indirect auto prospect.",
+        "U.S. Census geocoder returned a Public_AR_Current address-range match for 1827 Ansborough Ave, Waterloo, IA 50701; OpenStreetMap/Nominatim returned a close cross-check coordinate.",
+        "Official Veridian FAQ verifies Renee Christoffer as CEO/President; NCUA details also list Renee Christoffer as CEO.",
+        "Public LinkedIn and Member Student Lending sources identify Kara Van Wert as Chief Lending Officer with responsibility for Consumer Direct & Indirect Lending; ProPublica officer extracts also list Kara Vanwert as Chief Lending Officer and Randy Hesiak as VP of Indirect Lending.",
+        "Authenticated LinkedIn/Sales Navigator browsing was read-only. Broad Sales Navigator search did not return usable current Veridian employee results; the LinkedIn connections monitor did show Brandon Leonard at Veridian as an existing accepted connection.",
+        "No LinkedIn connection request was sent during this unattended heartbeat; target executives/lending leaders are marked confirmation_required for action-time review."
       ]
     }
   ]
