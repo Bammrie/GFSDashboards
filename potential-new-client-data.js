@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T00:25:47-05:00",
+  "updatedAt": "2026-06-21T00:47:13-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -12970,6 +12970,1010 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Sales Navigator visible top cards were mostly past-Patelco lending/executive leaders now at other credit unions; those were excluded from connection requests because current company did not verify as Patelco.",
         "NCUA, regular LinkedIn, and Patelco leadership page visibly verified Erin Mendez as Patelco CEO/President. The visible Connect action was not clicked because action-time confirmation is required for third-party LinkedIn invites.",
         "Connections monitor refresh showed no accepted match for David Gorman, Mark Sekula, Kevin Johnson, Dietrich Kuhlmann, Aaron Aggerwal, Tim Mislansky, Hank Halter, Charles Goss, or Erin Mendez."
+      ]
+    },
+    {
+      "id": "idaho-central-63194-2026-03-31",
+      "name": "Idaho Central Credit Union",
+      "charterNumber": "63194",
+      "priority": "High",
+      "status": "Recurring research captured",
+      "summary": "Large Idaho FISCU with a $12.99B loan book, $4.61B in new/used vehicle balances, and $4.67B in reported indirect loans, including $4.41B of indirect vehicle loans.",
+      "profile": {
+        "ncuaName": "IDAHO CENTRAL",
+        "type": "FISCU",
+        "status": "Active",
+        "charterState": "Idaho",
+        "region": "3 - Western",
+        "peerGroup": "6 - $500,000,000 and greater",
+        "fieldOfMembership": "Non-Federal Credit Union",
+        "lowIncomeDesignation": "Yes",
+        "assets": 14952421506,
+        "members": 788996,
+        "ceo": "Brenda Worrell",
+        "website": "https://www.iccu.com",
+        "phone": "208-239-3000",
+        "mainOffice": {
+          "addressLine1": "4400 Central Way",
+          "city": "Chubbuck",
+          "state": "ID",
+          "postalCode": "83202",
+          "county": "Bannock",
+          "latitude": 42.914490778529,
+          "longitude": -112.464711570053,
+          "geocodeSource": "U.S. Census Geocoder",
+          "geocodePrecision": "Exact address match",
+          "geocodeMatchedAddress": "4400 CENTRAL WAY, CHUBBUCK, ID, 83202"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "March 31, 2026 NCUA 5300 Call Report",
+        "totals": {
+          "loansHeldForSale": 28083367,
+          "totalLoansAndLeases": {
+            "count": 450617,
+            "amount": 12985162772
+          },
+          "allowanceForCreditLossesLoansAndLeases": 79423299,
+          "accruedInterestOnLoansAndLeases": 47210726,
+          "loansGrantedYtd": {
+            "count": 34481,
+            "amount": 1988622341
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 183577505,
+          "creditLossExpenseLoansAndLeasesYtd": 12948368,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 4655081,
+          "loanServicingExpenseYtd": 10905473
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "accountAmountCode": "396",
+            "interestRate": 14.06,
+            "count": 163599,
+            "amount": 294319788,
+            "productFit": "Credit insurance/debt protection - unsecured consumer"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "accountAmountCode": "397A",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No PAL exposure reported; FISCU so FCU-only PAL fields are blank"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "accountAmountCode": "698A",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported private student exposure"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "accountAmountCode": "397",
+            "interestRate": 9.29,
+            "count": 50670,
+            "amount": 272999025,
+            "productFit": "Debt protection / unsecured consumer lending"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "accountAmountCode": "385",
+            "interestRate": 6.35,
+            "count": 64558,
+            "amount": 2271866585,
+            "productFit": "Auto VSC/GAP/credit protection; mostly indirect after Section 5 adjustment"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "accountAmountCode": "370",
+            "interestRate": 7.46,
+            "count": 103381,
+            "amount": 2341283390,
+            "productFit": "Auto VSC/GAP/credit protection; mostly indirect after Section 5 adjustment"
+          },
+          {
+            "label": "Leases Receivable",
+            "accountAmountCode": "002",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No lease exposure reported"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "698C",
+            "interestRate": 7.52,
+            "count": 18407,
+            "amount": 391870617,
+            "productFit": "Secured consumer protection adjacency"
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "703A",
+            "interestRate": 5.09,
+            "count": 19335,
+            "amount": 4212074009,
+            "productFit": "Mortgage protection / home-equity adjacency"
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386A",
+            "interestRate": 6.95,
+            "count": 26479,
+            "amount": 1342953031,
+            "productFit": "HELOC/junior-lien protection adjacency"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386B",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported other non-commercial real estate exposure"
+          },
+          {
+            "label": "Commercial Loans/Lines of Credit Real Estate Secured",
+            "accountAmountCode": "718A5",
+            "interestRate": 5.6,
+            "count": 892,
+            "amount": 1553480919,
+            "productFit": "Commercial lending; generally outside consumer protection focus"
+          },
+          {
+            "label": "Commercial Loans/Lines of Credit Not Real Estate Secured",
+            "accountAmountCode": "400P",
+            "interestRate": 7.88,
+            "count": 3296,
+            "amount": 304315408,
+            "productFit": "Commercial lending; generally outside consumer protection focus"
+          }
+        ],
+        "governmentGuaranteedLoans": {
+          "nonCommercialSba": {
+            "count": 1,
+            "balance": 709,
+            "guaranteedPortion": 709
+          },
+          "pppIncluded": {
+            "count": 1,
+            "balance": 709
+          },
+          "nonCommercialOtherGovernmentGuaranteed": {
+            "count": 10,
+            "balance": 2810781,
+            "guaranteedPortion": 2810781
+          },
+          "commercialSba": {
+            "count": 256,
+            "balance": 133917148,
+            "guaranteedPortion": 98774508
+          },
+          "commercialOtherGovernmentGuaranteed": {
+            "count": 2,
+            "balance": 1335893,
+            "guaranteedPortion": 1068715
+          }
+        },
+        "chargeOffAndRecoveryYtd": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "chargeOffs": 3492227,
+            "recoveries": 580888
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "chargeOffs": 5114809,
+            "recoveries": 311700
+          },
+          {
+            "label": "New Vehicle Loans",
+            "chargeOffs": 1502651,
+            "recoveries": 554984
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "chargeOffs": 3959321,
+            "recoveries": 2058698
+          },
+          {
+            "label": "Leases Receivable",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "chargeOffs": 866411,
+            "recoveries": 338242
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 500
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "chargeOffs": 889954,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Construction and Development Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Farmland",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Multifamily Residential Properties",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Owner Occupied, Non-Farm Non-Residential Property",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Owner Occupied, Non-Farm Non-Residential Property",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Loans to Finance Agricultural Production and Other Loans to Farmers",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial and Industrial Loans",
+            "chargeOffs": 357003,
+            "recoveries": 1630
+          },
+          {
+            "label": "Unsecured Commercial Loans",
+            "chargeOffs": 20596,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Revolving Commercial Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 200
+          },
+          {
+            "label": "Total Loans and Leases",
+            "chargeOffs": 16202972,
+            "recoveries": 3846842
+          },
+          {
+            "label": "Participation Loans Purchased",
+            "chargeOffs": 971460,
+            "recoveries": 26657
+          },
+          {
+            "label": "Indirect Loans",
+            "chargeOffs": 5989891,
+            "recoveries": 2613490
+          },
+          {
+            "label": "Whole/Partial Purchased Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          }
+        ],
+        "delinquency": {
+          "totalDelinquent30To59Amount": 71937400,
+          "totalDelinquent60Plus": {
+            "count": 1853,
+            "amount": 55956128
+          },
+          "participationLoansPurchasedDelinquentAmount": 1511702,
+          "indirectDelinquentAmount": 24425763,
+          "wholeOrPartialPurchasedLoansDelinquentAmount": 0,
+          "nonCommercialNonAccrualAmount": 27650650,
+          "commercialNonAccrualAmount": 1702968,
+          "bankruptcyClaimsOutstanding": 7374043,
+          "borrowerDifficultyModifiedLoans": {
+            "count": 383,
+            "amount": 21616378,
+            "notInComplianceCount": 77,
+            "notInComplianceAmount": 6888543
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 146401,
+            "amount": 4406161880,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "Residential Real Estate Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 11884,
+            "amount": 267244915,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 158285,
+          "amount": 4673406795,
+          "delinquentAmount": 24425763,
+          "chargeOffsYtd": 5989891,
+          "recoveriesYtd": 2613490
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 11127366445,
+          "autoLoanBalance": 4613149975,
+          "autoLoanCount": 167939,
+          "directAutoLoanBalance": 206988095,
+          "directAutoLoanCount": 21538,
+          "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+          "indirectShareOfLoanBook": 0.3599035974410194,
+          "indirectVehicleShareOfAutoBalance": 0.9551308550292688
+        },
+        "otherLoanInformation": {
+          "loansToOfficials": {
+            "count": 84,
+            "amount": 7075616
+          },
+          "fcuInterestRateCeiling": {
+            "loansOver15PercentAmount": null,
+            "weightedAverageInterestRate": null,
+            "note": "FISCU; FCU-only interest-rate-ceiling fields were blank in the call report."
+          },
+          "purchasedCreditImpairedLoans": {
+            "contractualBalance": 0,
+            "recordedInvestment": 0
+          },
+          "purchasedCreditDeterioratedLoans": {
+            "count": 0,
+            "amount": 0,
+            "aclBalance": 0,
+            "carryingAmountBeforeAllowance": 0,
+            "unpaidPrincipalBalance": 0
+          }
+        },
+        "realEstateDetails": {
+          "firstLienBalance": 4212074009,
+          "firstLienGrantedYtd": 533401245,
+          "firstLienBreakdown": {
+            "fixedOver15Years": {
+              "count": 6604,
+              "amount": 2445272576,
+              "grantedYtd": 317604820
+            },
+            "fixed15YearsOrLess": {
+              "count": 4821,
+              "amount": 597196778,
+              "grantedYtd": 53588689
+            },
+            "balloonHybridOver5Years": {
+              "count": 147,
+              "amount": 62868426,
+              "grantedYtd": 18512007
+            },
+            "balloonHybrid5YearsOrLess": {
+              "count": 3179,
+              "amount": 805847231,
+              "grantedYtd": 64427127
+            },
+            "adjustableRate": {
+              "count": 4584,
+              "amount": 300888998,
+              "grantedYtd": 79268602
+            }
+          },
+          "juniorLienBalance": 1342953031,
+          "juniorLienGrantedYtd": 179470931,
+          "juniorLienBreakdown": {
+            "closedEndFixed": {
+              "count": 645,
+              "amount": 52780858,
+              "grantedYtd": 11514806
+            },
+            "closedEndAdjustable": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndFixed": {
+              "count": 1,
+              "amount": 50419,
+              "grantedYtd": 0
+            },
+            "openEndAdjustable": {
+              "count": 25833,
+              "amount": 1290121754,
+              "grantedYtd": 167956125
+            }
+          },
+          "allOtherNonCommercialRealEstateBalance": 0,
+          "allOtherNonCommercialRealEstateGrantedYtd": 0,
+          "allOtherNonCommercialRealEstateBreakdown": {
+            "closedEndFixed": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "closedEndAdjustable": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndFixed": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndAdjustable": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            }
+          },
+          "totalNonCommercialRealEstate": {
+            "count": 45814,
+            "amount": 5555027040,
+            "grantedYtd": 712872176
+          },
+          "constructionBalance": 143073996,
+          "repricesOrMaturesWithinFiveYears": 2066688015,
+          "interestOnlyPaymentOptionFirstLien": {
+            "count": 4479,
+            "amount": 288726079,
+            "grantedYtd": 79268602
+          }
+        },
+        "commercialDetails": {
+          "memberLoans": {
+            "constructionAndDevelopment": {
+              "count": 57,
+              "amount": 105309798,
+              "grantedYtdCount": 11,
+              "grantedYtdAmount": 22190700
+            },
+            "securedByFarmland": {
+              "count": 1,
+              "amount": 2574605,
+              "grantedYtdCount": 1,
+              "grantedYtdAmount": 2582000
+            },
+            "multifamily": {
+              "count": 76,
+              "amount": 100770996,
+              "grantedYtdCount": 4,
+              "grantedYtdAmount": 32511202
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 421,
+              "amount": 574301772,
+              "grantedYtdCount": 27,
+              "grantedYtdAmount": 38252703
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 329,
+              "amount": 697087050,
+              "grantedYtdCount": 10,
+              "grantedYtdAmount": 16606161
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 884,
+              "amount": 1480044221,
+              "grantedYtdCount": 53,
+              "grantedYtdAmount": 112142766
+            },
+            "agriculturalProduction": {
+              "count": 5,
+              "amount": 3540486,
+              "grantedYtdCount": 3,
+              "grantedYtdAmount": 5100000
+            },
+            "commercialAndIndustrial": {
+              "count": 3081,
+              "amount": 254195160,
+              "grantedYtdCount": 552,
+              "grantedYtdAmount": 50055648
+            },
+            "unsecuredCommercial": {
+              "count": 32,
+              "amount": 33183724,
+              "grantedYtdCount": 7,
+              "grantedYtdAmount": 5065538
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 178,
+              "amount": 13396038,
+              "grantedYtdCount": 7,
+              "grantedYtdAmount": 4420000
+            },
+            "totalCommercialMemberLoans": {
+              "count": 4180,
+              "amount": 1784359629,
+              "grantedYtdCount": 622,
+              "grantedYtdAmount": 176783952
+            }
+          },
+          "nonMemberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 3,
+              "amount": 37268203,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 5,
+              "amount": 36168496,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 8,
+              "amount": 73436699,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialNonMemberLoans": {
+              "count": 8,
+              "amount": 73436699,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 4188,
+            "amount": 1857796328
+          },
+          "outstandingAgriculturalRelatedLoans": {
+            "count": 6,
+            "amount": 6115091
+          },
+          "commercialRealEstateRepricesOrMaturesWithinFiveYears": 1553480919,
+          "commercialParticipationsSoldServicingRetained": {
+            "count": 2,
+            "amount": 25074915
+          },
+          "commercialLoansSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldNoRetainedServicingYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "totalMemberBusinessLoansNet": 2129494685,
+          "commercialUnfundedCommitments": 386518902
+        },
+        "purchasedAndSoldLoans": {
+          "purchasedFromOtherFinancialInstitutionsYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherFinancialInstitutionsOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "loansSoldYtd": {
+            "count": 658,
+            "amount": 236220757
+          },
+          "firstMortgageLoansSoldSecondaryMarketYtd": {
+            "count": 658,
+            "amount": 236220757
+          },
+          "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+            "count": 38,
+            "amount": 18008581
+          },
+          "realEstateLoansSoldServicingRetained": {
+            "ytdCount": 182,
+            "ytdAmount": 63916293,
+            "outstandingCount": 18754,
+            "outstandingAmount": 4003645490
+          },
+          "allOtherLoansSoldServicingRetained": {
+            "ytdCount": 0,
+            "ytdAmount": 0,
+            "outstandingCount": 0,
+            "outstandingAmount": 0
+          },
+          "loanParticipations": {
+            "vehicleNonCommercial": {
+              "purchasedYtd": 834352,
+              "purchasedOutstanding": 0,
+              "soldYtd": 30827371,
+              "soldOutstandingRetainedBalance": 103683270
+            },
+            "nonFederallyGuaranteedStudent": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "oneToFourFamilyResidential": {
+              "purchasedYtd": 135590518,
+              "purchasedOutstanding": 0,
+              "soldYtd": 12036339,
+              "soldOutstandingRetainedBalance": 90912595
+            },
+            "commercialExcludingConstructionDevelopment": {
+              "purchasedYtd": 73436698,
+              "purchasedOutstanding": 0,
+              "soldYtd": 2516663,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "commercialConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 3989038,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "allOther": {
+              "purchasedYtd": 1743957,
+              "purchasedOutstanding": 0,
+              "soldYtd": 4279101,
+              "soldOutstandingRetainedBalance": 34620210
+            },
+            "total": {
+              "purchasedYtd": 211605525,
+              "purchasedOutstanding": 0,
+              "soldYtd": 53648512,
+              "soldOutstandingRetainedBalance": 229216075
+            }
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 386518902,
+          "revolvingOpenEndSecuredByResidentialProperty": 2021016328,
+          "creditCardLines": 1131082352,
+          "unsecuredShareDraftLinesOfCredit": 33062009,
+          "unusedOverdraftProtectionProgram": 0,
+          "otherUnfundedCommitments": 128342208,
+          "totalNonCommercialLoans": 3313502897,
+          "totalAllLoanTypes": 3700021799,
+          "unconditionallyCancelableAllLoanTypes": 1164144361,
+          "conditionallyCancelableCommercialLoans": 386518902,
+          "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 2149358536,
+          "conditionallyCancelableConsumerLoansUnsecured": 0,
+          "totalConditionallyCancelable": 2535877438,
+          "commercialLoansTransferredWithLimitedRecourse": 0,
+          "consumerLoansTransferredWithLimitedRecourse": 0,
+          "totalLoansTransferredWithLimitedRecourse": 0,
+          "loansTransferredFhlbMpf": 619936479,
+          "financialStandbyLettersOfCredit": 0,
+          "forwardAgreementsNotDerivativeContracts": 0,
+          "soldCreditProtectionTotal": 0,
+          "offBalanceSheetSecuritizationExposures": 0,
+          "securitiesBorrowingOrLendingTransactions": 0,
+          "offBalanceSheetRepurchaseExposure": 0,
+          "allOtherOffBalanceSheetCommitments": 0
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 1,
+          "creditDisabilityRatePerThousand": 2.25,
+          "debtProtectionIuiRatePerThousand": 1.4,
+          "creditAndDebtProtectionPenetration": 0.38,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 4228399.25,
+        "modeledMonthlyCreditDisabilityPremium": 9513898.31,
+        "modeledMonthlyDebtProtectionIuiPremium": 5919758.95,
+        "modeledMonthlyDirectAutoOriginations": 897.42,
+        "modeledMonthlyVscGfsIncome": 143587.2,
+        "modeledMonthlyGapGfsIncome": 31409.7,
+        "notes": [
+          "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+          "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+          "Idaho Central reports 95.51% of auto balances as indirect vehicle loans, so indirect-channel product fit is the main prospect signal."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T00:47:13-05:00",
+        "source": "LinkedIn Sales Navigator visible search results plus regular LinkedIn profile verification in the authenticated Chrome session; no messages, saves, profile edits, or connection requests were made.",
+        "searchUrl": "https://www.linkedin.com/sales/search/people?keywords=Idaho%20Central%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+        "resultSummary": "Sales Navigator returned 27 broad Idaho Central keyword results. Top visible results included several past-ICCU or current-other-credit-union leaders that were excluded, while regular LinkedIn visibly verified Brenda Worrell as CEO at Idaho Central Credit Union and Edward F. Tierney as Chief Lending Officer at Idaho Central Credit Union with visible Connect actions. No connection request was sent during the unattended heartbeat because action-time confirmation is required for third-party LinkedIn invites.",
+        "visibleLeads": [
+          {
+            "name": "Brenda Worrell",
+            "title": "CEO at Idaho Central Credit Union",
+            "company": "Idaho Central Credit Union",
+            "location": "Pocatello, Idaho, United States",
+            "tenure": null,
+            "signal": "NCUA details list Brenda Worrell as CEO; regular LinkedIn visibly verified CEO at Idaho Central Credit Union with 500+ connections and visible Connect action.",
+            "titleMatched": "CEO",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Idaho%20Central%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": "https://www.linkedin.com/in/brenda-worrell-2008a813/",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "blocker": "Verified target with visible Connect action, but no-note connection request was not sent because action-time confirmation is required for third-party LinkedIn invites."
+          },
+          {
+            "name": "Edward F. Tierney",
+            "title": "Chief Lending Officer, Idaho Central Credit Union",
+            "company": "Idaho Central Credit Union",
+            "location": "Inkom, Idaho, United States",
+            "tenure": null,
+            "signal": "Regular LinkedIn visibly verified Chief Lending Officer, Idaho Central Credit Union, with a visible Connect action.",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Idaho%20Central%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": "https://www.linkedin.com/in/edward-f-tierney-370795b/",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "blocker": "Verified target with visible Connect action, but no-note connection request was not sent because action-time confirmation is required for third-party LinkedIn invites."
+          },
+          {
+            "name": "Doug Wadsworth",
+            "title": "President, Endangered Small Credit Union Defense (ESCUD)",
+            "company": "Endangered Small Credit Union Defense (ESCUD)",
+            "location": "Greater Kennewick Area",
+            "tenure": "1 year in role/company visible",
+            "signal": "Sales Navigator visible result showed past ICCU VP of Consumer Lending from 2006 to 2008, but current company is not Idaho Central Credit Union.",
+            "titleMatched": "Past ICCU VP of Consumer Lending only; current target company mismatch",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Idaho%20Central%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": null,
+            "requestedAt": null,
+            "status": "not_requested",
+            "blocker": "Current company did not verify as Idaho Central Credit Union."
+          },
+          {
+            "name": "Nick McGhee",
+            "title": "President/Chief Executive Officer, Idaho United Credit Union",
+            "company": "Idaho United Credit Union",
+            "location": "Meridian, Idaho, United States",
+            "tenure": "3 years 9 months in role/company visible",
+            "signal": "Sales Navigator visible result showed past Idaho Central Business Relationship Officer experience, but current company is Idaho United Credit Union.",
+            "titleMatched": "President/CEO current role, but current target company mismatch",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Idaho%20Central%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "profileUrl": null,
+            "requestedAt": null,
+            "status": "not_requested",
+            "blocker": "Current company did not verify as Idaho Central Credit Union."
+          }
+        ],
+        "additionalVisibleNames": [
+          "Timothy Barthel - President at Sentry Credit Union; visible Sales Navigator result, current company mismatch",
+          "Brian Berrett - Chief Financial Officer at Idaho Central Credit Union; visible from LinkedIn profile recommendations, not a lending/CEO target",
+          "Wade Saunders - Senior Vice President of Member Lending at Idaho Central Credit Union; visible from LinkedIn profile recommendations, potential lending target for follow-up confirmation",
+          "Darlene Johnson - Executive Vice President/Chief Strategy role visible from profile recommendations; not a lending/CEO target in this pass",
+          "Curt P., Doug Chambers, Lauren Sorenson and other Sales Navigator result names appeared in the visible result list but full current title/company cards were not expanded in the viewport"
+        ],
+        "connectionRequests": [
+          {
+            "name": "Brenda Worrell",
+            "title": "CEO at Idaho Central Credit Union",
+            "company": "Idaho Central Credit Union",
+            "titleMatched": "CEO",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/brenda-worrell-2008a813/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Brenda%20Worrell%20Idaho%20Central%20Credit%20Union",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Idaho%20Central%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "blocker": "Action-time confirmation required before sending a third-party LinkedIn connection request.",
+            "note": "Regular LinkedIn profile was an exact current-company CEO match with a visible Connect action. No invite was sent during this unattended heartbeat."
+          },
+          {
+            "name": "Edward F. Tierney",
+            "title": "Chief Lending Officer, Idaho Central Credit Union",
+            "company": "Idaho Central Credit Union",
+            "titleMatched": "Chief Lending Officer / lending executive",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/edward-f-tierney-370795b/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Edward%20F.%20Tierney%20Idaho%20Central%20Credit%20Union",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Idaho%20Central%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "blocker": "Action-time confirmation required before sending a third-party LinkedIn connection request.",
+            "note": "Regular LinkedIn profile was an exact current-company Chief Lending Officer match with a visible Connect action. No invite was sent during this unattended heartbeat."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T00:47:13-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor",
+              "company": "Veridian Credit Union",
+              "connectedOn": "2026-06-19"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations",
+              "company": "Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "company": null,
+              "connectedOn": "2026-06-14"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "company": null,
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller",
+              "company": "Heartland Credit Union",
+              "connectedOn": "2026-06-06"
+            },
+            {
+              "name": "Steve O'Donnell, MBA, CCE",
+              "title": "President/CEO",
+              "company": null,
+              "connectedOn": "2026-05-17"
+            },
+            {
+              "name": "Mike Gutshall",
+              "title": "President & CEO",
+              "company": "Heritage Valley FCU",
+              "connectedOn": "2026-04-22"
+            },
+            {
+              "name": "Holly Augustine",
+              "title": "Director of Operations",
+              "company": "Colorado Credit Union",
+              "connectedOn": "2026-04-10"
+            }
+          ],
+          "note": "Connections monitor was refreshed. The visible recently-added list did not show David Gorman, Mark Sekula, Kevin Johnson, Dietrich Kuhlmann, Aaron Aggerwal, Tim Mislansky, Hank Halter, Charles Goss, Erin Mendez, Brenda Worrell, or Edward F. Tierney as newly accepted, so no request was marked accepted. Target names visible only in LinkedIn recent-search suggestions were ignored."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA name search API for Idaho Central",
+          "url": "https://mapping.ncua.gov/api/Search/GetNameSearch",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API for charter 63194",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/63194",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report download endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/63194?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder for main office address",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=4400%20Central%20Way%20Chubbuck%20ID%2083202&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn Sales Navigator people search for Idaho Central executive and lending leads",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=Idaho%20Central%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn profile verified for Brenda Worrell",
+          "url": "https://www.linkedin.com/in/brenda-worrell-2008a813/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn profile verified for Edward F. Tierney",
+          "url": "https://www.linkedin.com/in/edward-f-tierney-370795b/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor refreshed",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified IDAHO CENTRAL charter 63194 as an active Idaho FISCU with March 2026 as the latest available call report cycle.",
+        "NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.",
+        "PDF text extraction captured Statement of Financial Condition loan totals, Statement of Income loan income/expense lines, Schedule A Sections 1 through 8, indirect-loan detail, loan purchase/sale and participation schedules, and Schedule C unfunded commitments.",
+        "Schedule A Section 5 reported $4.67B in total indirect loans, including $4.41B in new/used vehicle indirect loans and $267.2M in all other indirect loans.",
+        "Census geocoder returned an exact address match for 4400 Central Way, Chubbuck, ID 83202; coordinates were used for map display.",
+        "Sales Navigator visible top results included past-ICCU or current-other-credit-union leaders; those were excluded from connection requests because current company did not verify as Idaho Central Credit Union.",
+        "NCUA and regular LinkedIn visibly verified Brenda Worrell as Idaho Central CEO; regular LinkedIn visibly verified Edward F. Tierney as Idaho Central Chief Lending Officer. Visible Connect actions were not clicked because action-time confirmation is required for third-party LinkedIn invites.",
+        "Connections monitor refresh showed no accepted match for prior tracked request targets or the newly verified Idaho Central leads in the recently-added visible list."
       ]
     }
   ]
