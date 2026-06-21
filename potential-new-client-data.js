@@ -1,5 +1,5 @@
 window.POTENTIAL_NEW_CLIENT_DATA = {
-  "updatedAt": "2026-06-21T00:10:28-05:00",
+  "updatedAt": "2026-06-21T00:25:47-05:00",
   "cadenceMinutes": 10,
   "latestPublicNcuaCycleDate": "2026-03-31",
   "connectionTracking": {
@@ -12001,6 +12001,975 @@ window.POTENTIAL_NEW_CLIENT_DATA = {
         "Census geocoder returned an exact address match for 16211 La Cantera Pkwy, San Antonio, TX 78256.",
         "Regular LinkedIn visibly verified Charles Goss as Executive Vice Presient / Chief Lending Officer at Security Service Federal Credit Union. The visible Connect action was not clicked because action-time confirmation is required for third-party LinkedIn invites.",
         "Connections monitor refresh showed no accepted match for David Gorman, Mark Sekula, Kevin Johnson, Dietrich Kuhlmann, Aaron Aggerwal, Tim Mislansky, Hank Halter, or Charles Goss."
+      ]
+    },
+    {
+      "id": "patelco-68579-2026-03-31",
+      "name": "Patelco Credit Union",
+      "charterNumber": "68579",
+      "priority": "High",
+      "status": "Recurring research captured",
+      "summary": "Large California FISCU with a $7.10B loan book, $1.78B in new/used vehicle balances, and $1.48B in reported indirect vehicle loans.",
+      "profile": {
+        "ncuaName": "PATELCO",
+        "type": "FISCU",
+        "status": "Active",
+        "charterState": "California",
+        "region": "3 - Western",
+        "peerGroup": "6 - $500,000,000 and greater",
+        "fieldOfMembership": "Non-Federal Credit Union",
+        "lowIncomeDesignation": "No",
+        "assets": 9616999527,
+        "members": 543881,
+        "ceo": "Erin Mendez",
+        "website": "https://www.patelco.org",
+        "phone": "800-358-8228",
+        "mainOffice": {
+          "addressLine1": "3 Park Pl",
+          "city": "Dublin",
+          "state": "CA",
+          "postalCode": "94568",
+          "county": "Alameda",
+          "latitude": 37.7071182,
+          "longitude": -121.8889419,
+          "geocodeSource": "OpenStreetMap Nominatim after Census no-match",
+          "geocodePrecision": "Building match for Three Sybase Dr / 3 Park Place",
+          "geocodeMatchedAddress": "Three Sybase Dr, 3, Park Place, Dublin, Alameda County, California, 94568, United States"
+        }
+      },
+      "callReport": {
+        "cycleDate": "2026-03-31",
+        "reportLabel": "March 31, 2026 NCUA 5300 Call Report",
+        "totals": {
+          "loansHeldForSale": 0,
+          "totalLoansAndLeases": {
+            "count": 287715,
+            "amount": 7102188771
+          },
+          "allowanceForCreditLossesLoansAndLeases": 71398103,
+          "accruedInterestOnLoansAndLeases": 25728366,
+          "loansGrantedYtd": {
+            "count": 18350,
+            "amount": 462703917
+          },
+          "paydayAlternativeLoansGrantedYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "interestOnLoansAndLeasesYtd": 94385803,
+          "creditLossExpenseLoansAndLeasesYtd": 15496023,
+          "gainLossOnSalesOfLoansAndLeasesYtd": 100727,
+          "loanServicingExpenseYtd": 3379259
+        },
+        "loanCategories": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "accountAmountCode": "396",
+            "interestRate": 11.65,
+            "count": 104006,
+            "amount": 324475834,
+            "productFit": "Credit insurance/debt protection - unsecured consumer"
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "accountAmountCode": "397A",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No PAL exposure reported; FISCU so FCU-only PAL fields are blank"
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "accountAmountCode": "698A",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported private student exposure"
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "accountAmountCode": "397",
+            "interestRate": 17.9,
+            "count": 80541,
+            "amount": 291551776,
+            "productFit": "Debt protection / unsecured consumer lending"
+          },
+          {
+            "label": "New Vehicle Loans",
+            "accountAmountCode": "385",
+            "interestRate": 5.89,
+            "count": 32077,
+            "amount": 883184694,
+            "productFit": "Auto VSC/GAP/credit protection; mostly indirect after Section 5 adjustment"
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "accountAmountCode": "370",
+            "interestRate": 6.14,
+            "count": 46402,
+            "amount": 897898814,
+            "productFit": "Auto VSC/GAP/credit protection; mostly indirect after Section 5 adjustment"
+          },
+          {
+            "label": "Leases Receivable",
+            "accountAmountCode": "002",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No lease exposure reported"
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "698C",
+            "interestRate": 9.7,
+            "count": 4844,
+            "amount": 23978882,
+            "productFit": "Secured consumer protection adjacency"
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "703A",
+            "interestRate": 5.5,
+            "count": 6435,
+            "amount": 3611870613,
+            "productFit": "Mortgage protection / home-equity adjacency"
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386A",
+            "interestRate": 5.49,
+            "count": 13367,
+            "amount": 847971827,
+            "productFit": "HELOC/junior-lien protection adjacency"
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "accountAmountCode": "386B",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported other non-commercial real estate exposure"
+          },
+          {
+            "label": "Commercial Loans/Lines of Credit Real Estate Secured",
+            "accountAmountCode": "718A5",
+            "interestRate": 0,
+            "count": 43,
+            "amount": 221256331,
+            "productFit": "Commercial participations/purchased nonmember loans; generally outside consumer protection focus"
+          },
+          {
+            "label": "Commercial Loans/Lines of Credit Not Real Estate Secured",
+            "accountAmountCode": "400P",
+            "interestRate": 0,
+            "count": 0,
+            "amount": 0,
+            "productFit": "No reported non-real-estate commercial exposure"
+          }
+        ],
+        "governmentGuaranteedLoans": {
+          "nonCommercialSba": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          },
+          "pppIncluded": {
+            "count": 0,
+            "balance": 0
+          },
+          "nonCommercialOtherGovernmentGuaranteed": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          },
+          "commercialSba": {
+            "count": 0,
+            "balance": 0,
+            "guaranteedPortion": 0
+          },
+          "commercialOtherGovernmentGuaranteed": {
+            "count": 6,
+            "balance": 9688522,
+            "guaranteedPortion": 9688522
+          }
+        },
+        "chargeOffAndRecoveryYtd": [
+          {
+            "label": "Unsecured Credit Card Loans",
+            "chargeOffs": 5365160,
+            "recoveries": 380113
+          },
+          {
+            "label": "Payday Alternative Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Federally Guaranteed Student Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Unsecured Loans/Lines of Credit",
+            "chargeOffs": 3746267,
+            "recoveries": 587772
+          },
+          {
+            "label": "New Vehicle Loans",
+            "chargeOffs": 1594784,
+            "recoveries": 314305
+          },
+          {
+            "label": "Used Vehicle Loans",
+            "chargeOffs": 2672774,
+            "recoveries": 529514
+          },
+          {
+            "label": "Leases Receivable",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "All Other Secured Non-Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 1705
+          },
+          {
+            "label": "Total 1st Mortgage Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Total Other Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 34842
+          },
+          {
+            "label": "All Other Non-Commercial Real Estate Loans/Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Construction and Development Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Farmland",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Secured by Multifamily Residential Properties",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Owner Occupied, Non-Farm Non-Residential Property",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Non-Owner Occupied, Non-Farm Non-Residential Property",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Loans to Finance Agricultural Production and Other Loans to Farmers",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Commercial and Industrial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Commercial Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Unsecured Revolving Commercial Lines of Credit",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Total Loans and Leases",
+            "chargeOffs": 13378985,
+            "recoveries": 1848251
+          },
+          {
+            "label": "Participation Loans Purchased",
+            "chargeOffs": 0,
+            "recoveries": 0
+          },
+          {
+            "label": "Indirect Loans",
+            "chargeOffs": 3252466,
+            "recoveries": 734065
+          },
+          {
+            "label": "Whole/Partial Purchased Loans",
+            "chargeOffs": 0,
+            "recoveries": 0
+          }
+        ],
+        "delinquency": {
+          "totalDelinquent30To59Amount": 86560299,
+          "totalDelinquent60Plus": {
+            "count": 2914,
+            "amount": 44332591
+          },
+          "participationLoansPurchasedDelinquentAmount": 1465006,
+          "indirectDelinquentAmount": 8276481,
+          "wholeOrPartialPurchasedLoansDelinquentAmount": 621078,
+          "nonCommercialNonAccrualAmount": 31050505,
+          "commercialNonAccrualAmount": 1465006,
+          "bankruptcyClaimsOutstanding": 24633000,
+          "borrowerDifficultyModifiedLoans": {
+            "count": 492,
+            "amount": 15892955,
+            "notInComplianceCount": 127,
+            "notInComplianceAmount": 6194646
+          }
+        },
+        "indirectLoans": [
+          {
+            "label": "New and Used Vehicle Loans",
+            "count": 60224,
+            "amount": 1483183271,
+            "countAccountCode": "IN0001",
+            "amountAccountCode": "IN0002"
+          },
+          {
+            "label": "Residential Real Estate Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0003",
+            "amountAccountCode": "IN0004"
+          },
+          {
+            "label": "Commercial Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0005",
+            "amountAccountCode": "IN0006"
+          },
+          {
+            "label": "All Other Loans",
+            "count": 0,
+            "amount": 0,
+            "countAccountCode": "IN0007",
+            "amountAccountCode": "IN0008"
+          }
+        ],
+        "indirectTotals": {
+          "count": 60224,
+          "amount": 1483183271,
+          "delinquentAmount": 8276481,
+          "chargeOffsYtd": 3252466,
+          "recoveriesYtd": 734065
+        },
+        "derivedMetrics": {
+          "nonCommercialLoanBalance": 6880932440,
+          "autoLoanBalance": 1781083508,
+          "autoLoanCount": 78479,
+          "directAutoLoanBalance": 297900237,
+          "directAutoLoanCount": 18255,
+          "directAutoCalculation": "New vehicle plus used vehicle loans minus indirect new/used vehicle loans; count never below zero.",
+          "indirectShareOfLoanBook": 0.20883467320049356,
+          "indirectVehicleShareOfAutoBalance": 0.8327421282259159
+        },
+        "otherLoanInformation": {
+          "loansToOfficials": {
+            "count": 60,
+            "amount": 9356540
+          },
+          "fcuInterestRateCeiling": {
+            "loansOver15PercentAmount": null,
+            "weightedAverageInterestRate": null,
+            "note": "FISCU; FCU-only interest-rate-ceiling fields were blank in the call report."
+          },
+          "purchasedCreditImpairedLoans": {
+            "contractualBalance": 0,
+            "recordedInvestment": 0
+          },
+          "purchasedCreditDeterioratedLoans": {
+            "count": 0,
+            "amount": 0,
+            "aclBalance": 0,
+            "carryingAmountBeforeAllowance": 0,
+            "unpaidPrincipalBalance": 0
+          }
+        },
+        "realEstateDetails": {
+          "firstLienBalance": 3611870613,
+          "firstLienGrantedYtd": 87283803,
+          "firstLienBreakdown": {
+            "fixedOver15Years": {
+              "count": 2955,
+              "amount": 1516033900,
+              "grantedYtd": 8783468
+            },
+            "fixed15YearsOrLess": {
+              "count": 566,
+              "amount": 94617281,
+              "grantedYtd": 1520000
+            },
+            "balloonHybridOver5Years": {
+              "count": 2114,
+              "amount": 1833683028,
+              "grantedYtd": 72000335
+            },
+            "balloonHybrid5YearsOrLess": {
+              "count": 352,
+              "amount": 141155783,
+              "grantedYtd": 0
+            },
+            "adjustableRate": {
+              "count": 448,
+              "amount": 26380621,
+              "grantedYtd": 4980000
+            }
+          },
+          "juniorLienBalance": 847971827,
+          "juniorLienGrantedYtd": 40130399,
+          "juniorLienBreakdown": {
+            "closedEndFixed": {
+              "count": 3236,
+              "amount": 235324073,
+              "grantedYtd": 5770400
+            },
+            "closedEndAdjustable": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndFixed": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndAdjustable": {
+              "count": 10131,
+              "amount": 612647754,
+              "grantedYtd": 34359999
+            }
+          },
+          "allOtherNonCommercialRealEstateBalance": 0,
+          "allOtherNonCommercialRealEstateGrantedYtd": 0,
+          "allOtherNonCommercialRealEstateBreakdown": {
+            "closedEndFixed": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "closedEndAdjustable": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndFixed": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            },
+            "openEndAdjustable": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtd": 0
+            }
+          },
+          "totalNonCommercialRealEstate": {
+            "count": 19802,
+            "amount": 4459842440,
+            "grantedYtd": 127414202
+          },
+          "constructionBalance": 0,
+          "repricesOrMaturesWithinFiveYears": 1535355280,
+          "interestOnlyPaymentOptionFirstLien": {
+            "count": 447,
+            "amount": 26296201,
+            "grantedYtd": 4980000
+          }
+        },
+        "commercialDetails": {
+          "memberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialMemberLoans": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "nonMemberLoans": {
+            "constructionAndDevelopment": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "securedByFarmland": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "multifamily": {
+              "count": 10,
+              "amount": 47956279,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "ownerOccupiedNonFarmNonResidential": {
+              "count": 4,
+              "amount": 16137836,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "nonOwnerOccupiedNonFarmNonResidential": {
+              "count": 29,
+              "amount": 157162216,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialRealEstateSecured": {
+              "count": 43,
+              "amount": 221256331,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "agriculturalProduction": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "commercialAndIndustrial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredCommercial": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "unsecuredRevolvingCommercialLines": {
+              "count": 0,
+              "amount": 0,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            },
+            "totalCommercialNonMemberLoans": {
+              "count": 43,
+              "amount": 221256331,
+              "grantedYtdCount": 0,
+              "grantedYtdAmount": 0
+            }
+          },
+          "totalCommercialLoans": {
+            "count": 43,
+            "amount": 221256331
+          },
+          "outstandingAgriculturalRelatedLoans": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialRealEstateRepricesOrMaturesWithinFiveYears": 173633008,
+          "commercialParticipationsSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldServicingRetained": {
+            "count": 0,
+            "amount": 0
+          },
+          "commercialLoansSoldNoRetainedServicingYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "totalMemberBusinessLoansNet": 0,
+          "commercialUnfundedCommitments": 0
+        },
+        "purchasedAndSoldLoans": {
+          "purchasedFromOtherFinancialInstitutionsYtd": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherFinancialInstitutionsOutstanding": {
+            "count": 0,
+            "amount": 0
+          },
+          "purchasedFromOtherSourcesYtd": {
+            "count": 35,
+            "amount": 2086680
+          },
+          "purchasedFromOtherSourcesOutstanding": {
+            "count": 7828,
+            "amount": 277475119
+          },
+          "loansSoldYtd": {
+            "count": 20,
+            "amount": 6434347
+          },
+          "firstMortgageLoansSoldSecondaryMarketYtd": {
+            "count": 20,
+            "amount": 6434347
+          },
+          "loansTransferredWithLimitedRecourseQualifyingForSalesAccounting": {
+            "count": 0,
+            "amount": 0
+          },
+          "realEstateLoansSoldServicingRetained": {
+            "ytdCount": 20,
+            "ytdAmount": 6434347,
+            "outstandingCount": 4586,
+            "outstandingAmount": 974766939
+          },
+          "allOtherLoansSoldServicingRetained": {
+            "ytdCount": 0,
+            "ytdAmount": 0,
+            "outstandingCount": 0,
+            "outstandingAmount": 0
+          },
+          "loanParticipations": {
+            "vehicleNonCommercial": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 241134,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "nonFederallyGuaranteedStudent": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "oneToFourFamilyResidential": {
+              "purchasedYtd": 24681008,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "commercialExcludingConstructionDevelopment": {
+              "purchasedYtd": 221256331,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "commercialConstructionDevelopment": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "allOther": {
+              "purchasedYtd": 0,
+              "purchasedOutstanding": 0,
+              "soldYtd": 0,
+              "soldOutstandingRetainedBalance": 0
+            },
+            "total": {
+              "purchasedYtd": 245937339,
+              "purchasedOutstanding": 0,
+              "soldYtd": 241134,
+              "soldOutstandingRetainedBalance": 0
+            }
+          }
+        },
+        "unfundedCommitments": {
+          "commercialLoans": 0,
+          "revolvingOpenEndSecuredByResidentialProperty": 954151620,
+          "creditCardLines": 1143468804,
+          "unsecuredShareDraftLinesOfCredit": 74673870,
+          "unusedOverdraftProtectionProgram": 7077271,
+          "otherUnfundedCommitments": 7764919,
+          "totalNonCommercialLoans": 2187136484,
+          "totalAllLoanTypes": 2187136484,
+          "unconditionallyCancelableAllLoanTypes": 1143468804,
+          "conditionallyCancelableCommercialLoans": 0,
+          "conditionallyCancelableConsumerLoansSecuredAndRealEstate": 961916539,
+          "conditionallyCancelableConsumerLoansUnsecured": 81751141,
+          "totalConditionallyCancelable": 1043667680,
+          "commercialLoansTransferredWithLimitedRecourse": 0,
+          "consumerLoansTransferredWithLimitedRecourse": 0,
+          "totalLoansTransferredWithLimitedRecourse": 0,
+          "loansTransferredFhlbMpf": 0,
+          "financialStandbyLettersOfCredit": 0,
+          "forwardAgreementsNotDerivativeContracts": 0,
+          "soldCreditProtectionTotal": 0,
+          "offBalanceSheetSecuritizationExposures": 0,
+          "securitiesBorrowingOrLendingTransactions": 0,
+          "offBalanceSheetRepurchaseExposure": 0,
+          "allOtherOffBalanceSheetCommitments": 0
+        }
+      },
+      "modeledOpportunity": {
+        "assumptions": {
+          "creditLifeRatePerThousand": 1,
+          "creditDisabilityRatePerThousand": 2.25,
+          "debtProtectionIuiRatePerThousand": 1.4,
+          "creditAndDebtProtectionPenetration": 0.38,
+          "vscPenetration": 0.4,
+          "vscGfsMarginPerContract": 400,
+          "gapPenetration": 0.7,
+          "gapGfsMarginPerContract": 50,
+          "directAutoAverageTermMonths": 24
+        },
+        "modeledMonthlyCreditLifePremium": 2614754.33,
+        "modeledMonthlyCreditDisabilityPremium": 5883197.24,
+        "modeledMonthlyDebtProtectionIuiPremium": 3660656.06,
+        "modeledMonthlyDirectAutoOriginations": 760.63,
+        "modeledMonthlyVscGfsIncome": 121700,
+        "modeledMonthlyGapGfsIncome": 26621.88,
+        "notes": [
+          "Credit and debt protection uses the repo AGENTS prospect heuristic on non-commercial loan balance.",
+          "VSC and GAP use direct auto count after subtracting indirect vehicle loans from new/used vehicle loan counts.",
+          "Patelco reports 83.27% of auto balances as indirect vehicle loans, so indirect-channel product fit is the main prospect signal."
+        ]
+      },
+      "relationshipResearch": {
+        "capturedAt": "2026-06-21T00:25:47-05:00",
+        "source": "LinkedIn Sales Navigator visible search results plus regular LinkedIn profile verification in the authenticated Chrome session; no messages, saves, profile edits, or connection requests were made.",
+        "searchUrl": "https://www.linkedin.com/sales/search/people?keywords=Patelco%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+        "resultSummary": "Sales Navigator returned 44 broad Patelco-keyword results, but the first visible lending/executive cards were mostly past-Patelco leaders now at other credit unions. Regular LinkedIn visibly verified Erin Mendez as CEO/President at Patelco Credit Union with a visible Connect action. No connection request was sent during the unattended heartbeat because action-time confirmation is required for the third-party LinkedIn invite.",
+        "visibleLeads": [
+          {
+            "name": "Erin Mendez",
+            "title": "CEO/President at Patelco Credit Union",
+            "company": "Patelco Credit Union",
+            "location": "Pleasanton, California, United States",
+            "tenure": null,
+            "signal": "NCUA details list Erin Mendez as CEO; regular LinkedIn and Patelco leadership page visibly verify President/CEO at Patelco Credit Union.",
+            "titleMatched": "CEO / President",
+            "salesNavigatorUrl": null,
+            "profileUrl": "https://www.linkedin.com/in/erin-mendez-36ba7b9/",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "blocker": "Verified target with visible Connect action, but no-note connection request was not sent because action-time confirmation is required for third-party LinkedIn invites."
+          },
+          {
+            "name": "Richard Wada",
+            "title": "President / Chief Executive Officer at University Credit Union",
+            "company": "University Credit Union",
+            "location": "Los Angeles, California, United States",
+            "tenure": "6 months in role/company",
+            "signal": "Sales Navigator visible experience showed Patelco Credit Union Chief Lending Officer from 2018 to 2026, but current company is University Credit Union.",
+            "titleMatched": "Past Patelco Chief Lending Officer only; current target company mismatch",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAACMOkBbYLsuLWv0PsvpqCzXV82KYyTNjw,NAME_SEARCH,HnDX",
+            "profileUrl": null,
+            "requestedAt": null,
+            "status": "not_requested",
+            "blocker": "Current company did not verify as Patelco Credit Union."
+          },
+          {
+            "name": "Michelle Gadker Anderson",
+            "title": "Chief Growth Officer at Peak Credit Union",
+            "company": "Peak Credit Union",
+            "location": "Eugene, Oregon, United States",
+            "tenure": "8 months in role/company",
+            "signal": "Sales Navigator visible result showed credit-union lending executive background but did not verify current Patelco employment.",
+            "titleMatched": "Lending executive background only; current target company mismatch",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/lead/ACwAAAGiUZ0BMyuu5wq29pg7_DwMg53-0RaP7pI,NAME_SEARCH,K9YZ",
+            "profileUrl": null,
+            "requestedAt": null,
+            "status": "not_requested",
+            "blocker": "Current company did not verify as Patelco Credit Union."
+          }
+        ],
+        "additionalVisibleNames": [
+          "David Luu - President & CEO at KeyPoint Credit Union; visible Sales Navigator result, current company mismatch",
+          "Susan Gruber - visible Sales Navigator result after top cards; title not captured in viewport",
+          "Viktoria Earle - visible Sales Navigator result after top cards; title not captured in viewport",
+          "Mandy Jones - visible Sales Navigator result after top cards; title not captured in viewport",
+          "Susan Makris - Chief People Officer at Patelco Credit Union visible from Erin Mendez profile recommendations; not a lending/CEO target"
+        ],
+        "connectionRequests": [
+          {
+            "name": "Erin Mendez",
+            "title": "CEO/President at Patelco Credit Union",
+            "company": "Patelco Credit Union",
+            "titleMatched": "CEO / President",
+            "requestedAt": null,
+            "status": "confirmation_required",
+            "acceptedAt": null,
+            "profileUrl": "https://www.linkedin.com/in/erin-mendez-36ba7b9/",
+            "searchUrl": "https://www.linkedin.com/search/results/people/?keywords=Erin%20Mendez%20Patelco%20Credit%20Union",
+            "salesNavigatorUrl": "https://www.linkedin.com/sales/search/people?keywords=Patelco%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+            "blocker": "Action-time confirmation required before sending a third-party LinkedIn connection request.",
+            "note": "Regular LinkedIn profile was an exact current-company CEO match with a visible Connect action. No invite was sent during this unattended heartbeat."
+          }
+        ],
+        "connectionMonitor": {
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "checkedAt": "2026-06-21T00:25:47-05:00",
+          "acceptedRequestMatches": [],
+          "visibleExistingCreditUnionConnections": [
+            {
+              "name": "Brandon Leonard",
+              "title": "Consumer Lending Relations Advisor",
+              "company": "Veridian Credit Union",
+              "connectedOn": "2026-06-19"
+            },
+            {
+              "name": "Amy White",
+              "title": "VP of Retail Branch Operations",
+              "company": "Heartland Credit Union - Kansas",
+              "connectedOn": "2026-06-16"
+            },
+            {
+              "name": "Eric Burgoon",
+              "title": "Senior Lending Executive",
+              "company": null,
+              "connectedOn": "2026-06-14"
+            },
+            {
+              "name": "Rachel Murphy",
+              "title": "VP of Consumer Lending",
+              "company": null,
+              "connectedOn": "2026-06-12"
+            },
+            {
+              "name": "Jennifer Walker",
+              "title": "Controller",
+              "company": "Heartland Credit Union",
+              "connectedOn": "2026-06-06"
+            },
+            {
+              "name": "Steve O'Donnell, MBA, CCE",
+              "title": "President/CEO",
+              "company": null,
+              "connectedOn": "2026-05-17"
+            }
+          ],
+          "note": "Connections monitor was refreshed. The visible accepted-connections list did not show David Gorman, Mark Sekula, Kevin Johnson, Dietrich Kuhlmann, Aaron Aggerwal, Tim Mislansky, Hank Halter, Charles Goss, or Erin Mendez as newly accepted, so no request was marked accepted."
+        }
+      },
+      "sources": [
+        {
+          "label": "NCUA Research a Credit Union",
+          "url": "https://mapping.ncua.gov/ResearchCreditUnion",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA name search API for Patelco",
+          "url": "https://mapping.ncua.gov/api/Search/GetNameSearch",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA credit union details API for charter 68579",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetCreditUnionDetails/68579",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "NCUA March 2026 call report download endpoint",
+          "url": "https://mapping.ncua.gov/api/CreditUnionDetails/GetDownloadCallReport/68579?isCorpCU=false&cycleDate=03/31/2026",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "U.S. Census geocoder attempted for main office address",
+          "url": "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=3%20Park%20Pl%20Dublin%20CA%2094568&benchmark=Public_AR_Current&format=json",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "OpenStreetMap Nominatim geocode fallback for main office address",
+          "url": "https://nominatim.openstreetmap.org/search?q=3%20Park%20Place%2C%20Dublin%2C%20CA%2094568&format=json&limit=1",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "Patelco leadership page verifying Erin Mendez",
+          "url": "https://www.patelco.org/about-patelco/who-we-are/leadership",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn Sales Navigator people search for Patelco executive and lending leads",
+          "url": "https://www.linkedin.com/sales/search/people?keywords=Patelco%20Credit%20Union%20CEO%20consumer%20lending%20VP",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn profile verified for Erin Mendez",
+          "url": "https://www.linkedin.com/in/erin-mendez-36ba7b9/",
+          "capturedAt": "2026-06-21"
+        },
+        {
+          "label": "LinkedIn connections monitor refreshed",
+          "url": "https://www.linkedin.com/mynetwork/invite-connect/connections/",
+          "capturedAt": "2026-06-21"
+        }
+      ],
+      "dataQuality": [
+        "NCUA details API identified PATELCO charter 68579 as an active California FISCU with March 2026 as the latest available call report cycle.",
+        "NCUA call-report endpoint returned a JSON byte array for the PDF; bytes were decoded before text extraction.",
+        "PDF text extraction captured Statement of Financial Condition loan totals, Statement of Income loan income/expense lines, Schedule A Sections 1 through 8, indirect-loan detail, loan purchase/sale and participation schedules, and Schedule C unfunded commitments.",
+        "Schedule A Section 5 reported $1.48B in total indirect loans, all in new/used vehicle loans.",
+        "Census geocoder returned no address match for 3 Park Pl, Dublin, CA 94568; OpenStreetMap Nominatim returned a building match for Three Sybase Dr / 3 Park Place and those coordinates were used for map display with source caveat.",
+        "Sales Navigator visible top cards were mostly past-Patelco lending/executive leaders now at other credit unions; those were excluded from connection requests because current company did not verify as Patelco.",
+        "NCUA, regular LinkedIn, and Patelco leadership page visibly verified Erin Mendez as Patelco CEO/President. The visible Connect action was not clicked because action-time confirmation is required for third-party LinkedIn invites.",
+        "Connections monitor refresh showed no accepted match for David Gorman, Mark Sekula, Kevin Johnson, Dietrich Kuhlmann, Aaron Aggerwal, Tim Mislansky, Hank Halter, Charles Goss, or Erin Mendez."
       ]
     }
   ]
