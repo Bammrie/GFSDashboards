@@ -1,4 +1,4 @@
-const data = window.POTENTIAL_NEW_CLIENT_DATA || { prospects: [] };
+﻿const data = window.POTENTIAL_NEW_CLIENT_DATA || { prospects: [] };
 const prospects = Array.isArray(data.prospects) ? data.prospects : [];
 let selectedProspectId = prospects[0]?.id || null;
 let map;
@@ -19,6 +19,62 @@ const decimalFormatter = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1
 });
+const stateNames = {
+  AL: 'Alabama',
+  AK: 'Alaska',
+  AZ: 'Arizona',
+  AR: 'Arkansas',
+  CA: 'California',
+  CO: 'Colorado',
+  CT: 'Connecticut',
+  DE: 'Delaware',
+  FL: 'Florida',
+  GA: 'Georgia',
+  HI: 'Hawaii',
+  ID: 'Idaho',
+  IL: 'Illinois',
+  IN: 'Indiana',
+  IA: 'Iowa',
+  KS: 'Kansas',
+  KY: 'Kentucky',
+  LA: 'Louisiana',
+  ME: 'Maine',
+  MD: 'Maryland',
+  MA: 'Massachusetts',
+  MI: 'Michigan',
+  MN: 'Minnesota',
+  MS: 'Mississippi',
+  MO: 'Missouri',
+  MT: 'Montana',
+  NE: 'Nebraska',
+  NV: 'Nevada',
+  NH: 'New Hampshire',
+  NJ: 'New Jersey',
+  NM: 'New Mexico',
+  NY: 'New York',
+  NC: 'North Carolina',
+  ND: 'North Dakota',
+  OH: 'Ohio',
+  OK: 'Oklahoma',
+  OR: 'Oregon',
+  PA: 'Pennsylvania',
+  RI: 'Rhode Island',
+  SC: 'South Carolina',
+  SD: 'South Dakota',
+  TN: 'Tennessee',
+  TX: 'Texas',
+  UT: 'Utah',
+  VT: 'Vermont',
+  VA: 'Virginia',
+  WA: 'Washington',
+  WV: 'West Virginia',
+  WI: 'Wisconsin',
+  WY: 'Wyoming',
+  DC: 'District of Columbia',
+  PR: 'Puerto Rico',
+  VI: 'U.S. Virgin Islands',
+  GU: 'Guam'
+};
 
 function getElement(id) {
   return document.getElementById(id);
@@ -54,6 +110,42 @@ function formatDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+}
+
+function normalizeStateCode(value) {
+  const text = String(value || '').trim();
+  return /^[A-Za-z]{2}$/.test(text) ? text.toUpperCase() : text;
+}
+
+function getProspectState(prospect) {
+  return normalizeStateCode(
+    prospect?.callReport?.creditUnionProfile?.state ||
+      prospect?.callReport?.creditUnionState ||
+      prospect?.profile?.mainOffice?.state ||
+      prospect?.profile?.charterState ||
+      'Unknown'
+  );
+}
+
+function getStateLabel(stateCode) {
+  const code = normalizeStateCode(stateCode);
+  return stateNames[code] ? `${stateNames[code]} (${code})` : code || 'Unknown';
+}
+
+function getProspectsByState() {
+  const groups = new Map();
+  prospects.forEach((prospect) => {
+    const state = getProspectState(prospect);
+    if (!groups.has(state)) groups.set(state, []);
+    groups.get(state).push(prospect);
+  });
+  return [...groups.entries()]
+    .map(([state, items]) => ({
+      state,
+      items,
+      indirectBalance: items.reduce((sum, prospect) => sum + (prospect.callReport?.indirectTotals?.amount || 0), 0)
+    }))
+    .sort((a, b) => getStateLabel(a.state).localeCompare(getStateLabel(b.state)));
 }
 
 function setText(id, value) {
@@ -142,8 +234,10 @@ function renderOverview() {
   );
   const connectionRequests = getAllConnectionRequests();
   const acceptedConnectionRequests = connectionRequests.filter(isAcceptedConnectionRequest);
+  const statesCovered = new Set(prospects.map(getProspectState)).size;
   renderMetricGrid('overview-metrics', [
     { label: 'Prospects researched', value: formatNumber(prospects.length), detail: 'Seeded records in this overview' },
+    { label: 'States covered', value: formatNumber(statesCovered), detail: 'Grouped from NCUA call-report profile state' },
     { label: 'Loan balance reviewed', value: formatCurrency(totalLoanBalance), detail: 'Latest call-report total loans and leases' },
     { label: 'Indirect balance reviewed', value: formatCurrency(totalIndirectBalance), detail: 'Schedule A, Section 5 balances' },
     {
@@ -164,28 +258,41 @@ function renderProspectList() {
     return;
   }
 
-  list.innerHTML = prospects
-    .map((prospect) => {
-      const active = prospect.id === selectedProspectId;
-      const indirect = prospect.callReport?.indirectTotals?.amount;
-      const requests = getConnectionRequests(prospect);
-      const acceptedCount = requests.filter(isAcceptedConnectionRequest).length;
-      const badge = acceptedCount
-        ? `<span class="client-connection-badge client-connection-badge--accepted">&#10003; ${formatNumber(acceptedCount)} accepted</span>`
-        : requests.length
-          ? `<span class="client-connection-badge client-connection-badge--pending">${formatNumber(requests.length)} requested</span>`
-          : '';
+  list.innerHTML = getProspectsByState()
+    .map((group) => {
+      const buttons = group.items
+        .map((prospect) => {
+          const active = prospect.id === selectedProspectId;
+          const indirect = prospect.callReport?.indirectTotals?.amount;
+          const requests = getConnectionRequests(prospect);
+          const acceptedCount = requests.filter(isAcceptedConnectionRequest).length;
+          const badge = acceptedCount
+            ? `<span class="client-connection-badge client-connection-badge--accepted">&#10003; ${formatNumber(acceptedCount)} accepted</span>`
+            : requests.length
+              ? `<span class="client-connection-badge client-connection-badge--pending">${formatNumber(requests.length)} requested</span>`
+              : '';
+          return `
+            <button class="client-prospect-button" type="button" data-prospect-id="${escapeHtml(prospect.id)}" aria-pressed="${active}">
+              <span>
+                <strong>${escapeHtml(prospect.name)}</strong>
+                <small>Charter ${escapeHtml(prospect.charterNumber)} - ${escapeHtml(prospect.priority)}</small>
+              </span>
+              <span class="client-prospect-button__meta">
+                <span class="client-prospect-button__amount">${formatCurrency(indirect)}</span>
+                ${badge}
+              </span>
+            </button>
+          `;
+        })
+        .join('');
       return `
-        <button class="client-prospect-button" type="button" data-prospect-id="${escapeHtml(prospect.id)}" aria-pressed="${active}">
-          <span>
-            <strong>${escapeHtml(prospect.name)}</strong>
-            <small>Charter ${escapeHtml(prospect.charterNumber)} - ${escapeHtml(prospect.priority)}</small>
-          </span>
-          <span class="client-prospect-button__meta">
-            <span class="client-prospect-button__amount">${formatCurrency(indirect)}</span>
-            ${badge}
-          </span>
-        </button>
+        <section class="client-state-group" aria-label="${escapeHtml(getStateLabel(group.state))}">
+          <div class="client-state-group__header">
+            <span>${escapeHtml(getStateLabel(group.state))}</span>
+            <span class="client-state-group__summary">${formatNumber(group.items.length)} CUs / ${formatCurrency(group.indirectBalance)} indirect</span>
+          </div>
+          ${buttons}
+        </section>
       `;
     })
     .join('');
@@ -213,6 +320,11 @@ function renderSelectedProspect() {
 
   renderMetricGrid('selected-metrics', [
     { label: 'Assets', value: formatCurrency(profile.assets), detail: `${formatNumber(profile.members)} members` },
+    {
+      label: 'Call-report state',
+      value: getStateLabel(getProspectState(prospect)),
+      detail: `${callReport.creditUnionProfile?.sourceTable || 'NCUA profile'} ${callReport.creditUnionProfile?.cycleDate || callReport.cycleDate || ''}`.trim()
+    },
     {
       label: 'Total loans',
       value: formatCurrency(totals.totalLoansAndLeases?.amount),
@@ -445,3 +557,4 @@ getElement('prospect-list')?.addEventListener('click', (event) => {
 renderOverview();
 renderProspectList();
 renderSelectedProspect();
+

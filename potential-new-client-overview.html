@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -37,6 +37,33 @@
     .client-prospect-list {
       display: grid;
       gap: 0.65rem;
+    }
+
+    .client-state-group {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .client-state-group + .client-state-group {
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .client-state-group__header {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: baseline;
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .client-state-group__summary {
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
     }
 
     .client-prospect-button {
@@ -443,3 +470,4 @@
   <script type="module" src="potential-new-client-overview.js"></script>
 </body>
 </html>
+
