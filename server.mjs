@@ -8,6 +8,22 @@ import fsSync from 'fs';
 import fs from 'fs/promises';
 import dotenv from 'dotenv';
 import { randomUUID } from 'crypto';
+import {
+  QUOTE_SESSION_COOKIE,
+  QUOTE_SESSION_DURATION_MS,
+  createPasswordRecord,
+  createQuoteSessionToken,
+  hashQuoteSessionToken,
+  normalizeQuoteUsername,
+  parseCookieHeader,
+  validateQuotePassword,
+  verifyQuotePassword
+} from './single-premium-quote/server/quote-auth.mjs';
+import {
+  QUOTE_STATES,
+  defaultQuoteProgramConfig,
+  normalizeQuoteProgramConfig
+} from './single-premium-quote/server/program-config.mjs';
 
 dotenv.config();
 
@@ -34,6 +50,8 @@ const upload = multer({
 
 const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || 'adminpass';
 const DASHBOARD_USERNAME = process.env.DASHBOARD_USERNAME || null;
+const QUOTE_ADMIN_USERNAME = process.env.QUOTE_ADMIN_USERNAME || DASHBOARD_USERNAME || 'admin';
+const QUOTE_ADMIN_PASSWORD = process.env.QUOTE_ADMIN_PASSWORD || DASHBOARD_PASSWORD;
 const PODIUM_CLIENT_ID = process.env.PODIUM_CLIENT_ID || '';
 const PODIUM_CLIENT_SECRET = process.env.PODIUM_CLIENT_SECRET || '';
 const PODIUM_REDIRECT_URI = process.env.PODIUM_REDIRECT_URI || '';
@@ -53,7 +71,13 @@ const PODIUM_TOKEN_SCOPE = process.env.PODIUM_TOKEN_SCOPE || '';
 const PODIUM_EXPIRES_AT = process.env.PODIUM_EXPIRES_AT || '';
 const PODIUM_OAUTH_SEED_FORCE = process.env.PODIUM_OAUTH_SEED_FORCE === 'true';
 
-const PUBLIC_PAGES = new Set(['/', '/index.html', '/quotes.html', '/quotes-workspace.html']);
+const PUBLIC_PAGES = new Set([
+  '/',
+  '/index.html',
+  '/quotes.html',
+  '/quotes-workspace.html',
+  '/single-premium-quote/index.html'
+]);
 const PUBLIC_API_ROUTES = new Set([
   '/api/config',
   '/api/coverage-requests',
@@ -65,7 +89,7 @@ const PUBLIC_API_ROUTES = new Set([
   '/api/account-warranty-configs',
   '/api/podium/oauth/callback'
 ]);
-const PUBLIC_API_PREFIXES = ['/api/loans', '/api/loan-illustrations'];
+const PUBLIC_API_PREFIXES = ['/api/loans', '/api/loan-illustrations', '/api/quote-app'];
 const DATABASE_OPTIONAL_API_ROUTES = new Set(['/account-warranty-configs']);
 
 async function readWarrantyConfigStorage() {
@@ -234,6 +258,63 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   next();
 });
+
+app.use(async (req, res, next) => {
+  const normalizedPath = req.path.replace(/\/+$/, '');
+  const stateByPath = {
+    '/single-premium-quote/missouri': 'MO',
+    '/single-premium-quote/arkansas': 'AR'
+  };
+  const requiredState = stateByPath[normalizedPath];
+  const adminRequired = normalizedPath === '/single-premium-quote/admin';
+
+  if (!requiredState && !adminRequired) {
+    next();
+    return;
+  }
+
+  res.setHeader('Cache-Control', 'no-store');
+
+  if (!databaseReady) {
+    res.status(503).send('The quote application database is not available.');
+    return;
+  }
+
+  try {
+    const user = await resolveQuoteUserFromRequest(req);
+    if (!user) {
+      const returnTo = encodeURIComponent(`${normalizedPath}/`);
+      res.redirect(303, `/single-premium-quote/?returnTo=${returnTo}`);
+      return;
+    }
+    if (adminRequired && user.role !== 'admin') {
+      res.status(403).send('Administrator access is required.');
+      return;
+    }
+    if (requiredState && user.role !== 'admin' && !user.authorizedStates.includes(requiredState)) {
+      res.status(403).send(`Your account is not authorized for ${requiredState} quotes.`);
+      return;
+    }
+
+    req.quoteUser = user;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get(['/single-premium-quote/missouri', '/single-premium-quote/missouri/'], (_req, res) => {
+  res.sendFile(path.join(publicDir, 'single-premium-quote', 'quote.html'));
+});
+
+app.get(['/single-premium-quote/arkansas', '/single-premium-quote/arkansas/'], (_req, res) => {
+  res.sendFile(path.join(publicDir, 'single-premium-quote', 'quote.html'));
+});
+
+app.get(['/single-premium-quote/admin', '/single-premium-quote/admin/'], (_req, res) => {
+  res.sendFile(path.join(publicDir, 'single-premium-quote', 'admin.html'));
+});
+
 app.use(express.static(publicDir));
 
 const REVENUE_TYPES = ['Frontend', 'Backend', 'Commission'];
@@ -1239,6 +1320,43 @@ const callReportSchema = new mongoose.Schema(
 callReportSchema.index({ creditUnion: 1, periodYear: 1, periodMonth: 1 });
 callReportSchema.index({ creditUnion: 1, extractedAt: -1 });
 
+const quoteUserSchema = new mongoose.Schema(
+  {
+    username: { type: String, required: true, unique: true, trim: true, lowercase: true, index: true },
+    displayName: { type: String, required: true, trim: true },
+    passwordHash: { type: String, required: true },
+    passwordSalt: { type: String, required: true },
+    role: { type: String, enum: ['admin', 'user'], default: 'user', index: true },
+    authorizedStates: {
+      type: [{ type: String, enum: QUOTE_STATES }],
+      default: []
+    },
+    active: { type: Boolean, default: true, index: true },
+    lastLoginAt: { type: Date, default: null },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'QuoteUser', default: null }
+  },
+  { timestamps: true }
+);
+
+const quoteSessionSchema = new mongoose.Schema(
+  {
+    tokenHash: { type: String, required: true, unique: true, index: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'QuoteUser', required: true, index: true },
+    expiresAt: { type: Date, required: true, index: { expires: 0 } },
+    lastSeenAt: { type: Date, default: Date.now }
+  },
+  { timestamps: true }
+);
+
+const quoteProgramConfigSchema = new mongoose.Schema(
+  {
+    state: { type: String, enum: QUOTE_STATES, required: true, unique: true, index: true },
+    config: { type: mongoose.Schema.Types.Mixed, required: true },
+    updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'QuoteUser', default: null }
+  },
+  { timestamps: true }
+);
+
 const CallReport = mongoose.model('CallReport', callReportSchema);
 const AccountReview = mongoose.model('AccountReview', accountReviewSchema);
 const AccountNotes = mongoose.model('AccountNotes', accountNotesSchema);
@@ -1249,6 +1367,9 @@ const AccountDocument = mongoose.model('AccountDocument', accountDocumentSchema)
 const Loan = mongoose.model('Loan', loanSchema);
 const LoanIllustration = mongoose.model('LoanIllustration', loanIllustrationSchema);
 const CoverageRequest = mongoose.model('CoverageRequest', coverageRequestSchema);
+const QuoteUser = mongoose.model('QuoteUser', quoteUserSchema);
+const QuoteSession = mongoose.model('QuoteSession', quoteSessionSchema);
+const QuoteProgramConfig = mongoose.model('QuoteProgramConfig', quoteProgramConfigSchema);
 
 await ensureAccountDocumentsStorage();
 
@@ -1257,6 +1378,8 @@ const databaseReady = await initializeDatabase();
 if (databaseReady) {
   await backfillIncomeStreamStatuses();
   await ensureReportingRequirementsForAllStreams();
+  await ensureQuoteProgramConfigs();
+  await ensureInitialQuoteAdmin();
 }
 
 if (!databaseReady) {
@@ -1274,6 +1397,423 @@ app.use('/api', (req, res, next) => {
     return;
   }
   next();
+});
+
+app.use('/api/quote-app', (_req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store');
+  next();
+});
+
+const quoteLoginAttempts = new Map();
+
+function normalizeAuthorizedQuoteStates(value) {
+  return Array.isArray(value) ? [...new Set(value.filter((state) => QUOTE_STATES.includes(state)))] : [];
+}
+
+function formatQuoteUser(user) {
+  const source = user?.toObject ? user.toObject() : user;
+  return {
+    id: source?._id?.toString?.() || source?.id || '',
+    username: source?.username || '',
+    displayName: source?.displayName || '',
+    role: source?.role || 'user',
+    authorizedStates: normalizeAuthorizedQuoteStates(source?.authorizedStates),
+    active: source?.active !== false,
+    lastLoginAt: source?.lastLoginAt || null,
+    createdAt: source?.createdAt || null,
+    updatedAt: source?.updatedAt || null
+  };
+}
+
+function quoteUserCanAccessState(user, state) {
+  return user?.role === 'admin' || normalizeAuthorizedQuoteStates(user?.authorizedStates).includes(state);
+}
+
+function quoteSessionTokenFromRequest(req) {
+  return parseCookieHeader(req.headers.cookie || '')[QUOTE_SESSION_COOKIE] || '';
+}
+
+function requestUsesHttps(req) {
+  const forwardedProto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+  return req.secure || forwardedProto === 'https';
+}
+
+function setQuoteSessionCookie(req, res, token) {
+  res.cookie(QUOTE_SESSION_COOKIE, token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: requestUsesHttps(req),
+    path: '/',
+    maxAge: QUOTE_SESSION_DURATION_MS
+  });
+}
+
+function clearQuoteSessionCookie(req, res) {
+  res.clearCookie(QUOTE_SESSION_COOKIE, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: requestUsesHttps(req),
+    path: '/'
+  });
+}
+
+async function resolveQuoteUserFromRequest(req) {
+  const token = quoteSessionTokenFromRequest(req);
+  if (!token) return null;
+
+  const session = await QuoteSession.findOne({
+    tokenHash: hashQuoteSessionToken(token),
+    expiresAt: { $gt: new Date() }
+  }).populate('user');
+
+  if (!session?.user || session.user.active === false) {
+    if (session) await QuoteSession.deleteOne({ _id: session._id });
+    return null;
+  }
+
+  const now = Date.now();
+  if (!session.lastSeenAt || now - new Date(session.lastSeenAt).getTime() > 5 * 60 * 1000) {
+    session.lastSeenAt = new Date(now);
+    await session.save();
+  }
+
+  return session.user;
+}
+
+async function requireQuoteUser(req, res, next) {
+  try {
+    const user = await resolveQuoteUserFromRequest(req);
+    if (!user) {
+      res.status(401).json({ error: 'Sign in is required.' });
+      return;
+    }
+    req.quoteUser = user;
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function requireQuoteAdmin(req, res, next) {
+  await requireQuoteUser(req, res, () => {
+    if (req.quoteUser.role !== 'admin') {
+      res.status(403).json({ error: 'Administrator access is required.' });
+      return;
+    }
+    next();
+  });
+}
+
+async function ensureQuoteProgramConfigs() {
+  for (const state of QUOTE_STATES) {
+    await QuoteProgramConfig.updateOne(
+      { state },
+      { $setOnInsert: { state, config: defaultQuoteProgramConfig(state) } },
+      { upsert: true }
+    );
+  }
+}
+
+async function ensureInitialQuoteAdmin() {
+  const existingAdmin = await QuoteUser.findOne({ role: 'admin', active: true }).lean();
+  if (existingAdmin) return;
+
+  const username = normalizeQuoteUsername(QUOTE_ADMIN_USERNAME) || 'admin';
+  const passwordRecord = createPasswordRecord(QUOTE_ADMIN_PASSWORD);
+  const existingUser = await QuoteUser.findOne({ username });
+  if (existingUser) {
+    existingUser.displayName = existingUser.displayName || 'Quote Administrator';
+    existingUser.role = 'admin';
+    existingUser.authorizedStates = [...QUOTE_STATES];
+    existingUser.active = true;
+    existingUser.passwordHash = passwordRecord.passwordHash;
+    existingUser.passwordSalt = passwordRecord.passwordSalt;
+    await existingUser.save();
+  } else {
+    await QuoteUser.create({
+      username,
+      displayName: 'Quote Administrator',
+      role: 'admin',
+      authorizedStates: [...QUOTE_STATES],
+      active: true,
+      ...passwordRecord
+    });
+  }
+
+  console.log(`Created the initial quote administrator account "${username}".`);
+  if (!process.env.QUOTE_ADMIN_PASSWORD && DASHBOARD_PASSWORD === 'adminpass') {
+    console.warn(
+      'The quote administrator is using the development password. Set QUOTE_ADMIN_PASSWORD in production.'
+    );
+  }
+}
+
+function quoteLoginAttemptKey(req, username) {
+  return `${req.ip || req.socket?.remoteAddress || 'unknown'}:${username}`;
+}
+
+function quoteLoginIsBlocked(key) {
+  const attempt = quoteLoginAttempts.get(key);
+  if (!attempt) return false;
+  if (attempt.resetAt <= Date.now()) {
+    quoteLoginAttempts.delete(key);
+    return false;
+  }
+  return attempt.count >= 5;
+}
+
+function recordQuoteLoginFailure(key) {
+  const existing = quoteLoginAttempts.get(key);
+  const resetAt = existing?.resetAt > Date.now() ? existing.resetAt : Date.now() + 15 * 60 * 1000;
+  quoteLoginAttempts.set(key, { count: (existing?.count || 0) + 1, resetAt });
+}
+
+app.post('/api/quote-app/auth/login', async (req, res, next) => {
+  try {
+    const username = normalizeQuoteUsername(req.body?.username);
+    const password = String(req.body?.password || '');
+    const attemptKey = quoteLoginAttemptKey(req, username);
+    if (quoteLoginIsBlocked(attemptKey)) {
+      res.status(429).json({ error: 'Too many sign-in attempts. Try again in 15 minutes.' });
+      return;
+    }
+
+    const user = await QuoteUser.findOne({ username, active: true });
+    if (!user || !verifyQuotePassword(password, user.passwordSalt, user.passwordHash)) {
+      recordQuoteLoginFailure(attemptKey);
+      res.status(401).json({ error: 'Username or password is incorrect.' });
+      return;
+    }
+
+    quoteLoginAttempts.delete(attemptKey);
+    const token = createQuoteSessionToken();
+    await QuoteSession.create({
+      tokenHash: hashQuoteSessionToken(token),
+      user: user._id,
+      expiresAt: new Date(Date.now() + QUOTE_SESSION_DURATION_MS)
+    });
+    user.lastLoginAt = new Date();
+    await user.save();
+    setQuoteSessionCookie(req, res, token);
+    res.json({ user: formatQuoteUser(user) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/quote-app/auth/logout', async (req, res, next) => {
+  try {
+    const token = quoteSessionTokenFromRequest(req);
+    if (token) {
+      await QuoteSession.deleteOne({ tokenHash: hashQuoteSessionToken(token) });
+    }
+    clearQuoteSessionCookie(req, res);
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/quote-app/auth/me', requireQuoteUser, (req, res) => {
+  res.json({ user: formatQuoteUser(req.quoteUser) });
+});
+
+app.get('/api/quote-app/config/:state', requireQuoteUser, async (req, res, next) => {
+  try {
+    const state = String(req.params.state || '').toUpperCase();
+    if (!QUOTE_STATES.includes(state)) {
+      res.status(404).json({ error: 'Quote state not found.' });
+      return;
+    }
+    if (!quoteUserCanAccessState(req.quoteUser, state)) {
+      res.status(403).json({ error: `Your account is not authorized for ${state} quotes.` });
+      return;
+    }
+
+    const stored = await QuoteProgramConfig.findOne({ state }).lean();
+    const config = normalizeQuoteProgramConfig(state, stored?.config || defaultQuoteProgramConfig(state));
+    res.json({ config, updatedAt: stored?.updatedAt || null });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/quote-app/admin/users', requireQuoteAdmin, async (_req, res, next) => {
+  try {
+    const users = await QuoteUser.find().sort({ displayName: 1, username: 1 }).lean();
+    res.json({ users: users.map(formatQuoteUser) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/quote-app/admin/users', requireQuoteAdmin, async (req, res, next) => {
+  try {
+    const username = normalizeQuoteUsername(req.body?.username);
+    const displayName = String(req.body?.displayName || '').trim().slice(0, 120);
+    const password = String(req.body?.password || '');
+    const role = req.body?.role === 'admin' ? 'admin' : 'user';
+    const passwordError = validateQuotePassword(password);
+    if (!/^[a-z0-9._-]{3,80}$/.test(username)) {
+      res.status(400).json({
+        error: 'Username must be 3-80 characters and use only letters, numbers, periods, underscores, or dashes.'
+      });
+      return;
+    }
+    if (!displayName) {
+      res.status(400).json({ error: 'Display name is required.' });
+      return;
+    }
+    if (passwordError) {
+      res.status(400).json({ error: passwordError });
+      return;
+    }
+    if (await QuoteUser.exists({ username })) {
+      res.status(409).json({ error: 'That username already exists.' });
+      return;
+    }
+
+    const created = await QuoteUser.create({
+      username,
+      displayName,
+      role,
+      authorizedStates: role === 'admin' ? [...QUOTE_STATES] : normalizeAuthorizedQuoteStates(req.body?.authorizedStates),
+      active: req.body?.active !== false,
+      createdBy: req.quoteUser._id,
+      ...createPasswordRecord(password)
+    });
+    res.status(201).json({ user: formatQuoteUser(created) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch('/api/quote-app/admin/users/:id', requireQuoteAdmin, async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      res.status(404).json({ error: 'User not found.' });
+      return;
+    }
+    const user = await QuoteUser.findById(req.params.id);
+    if (!user) {
+      res.status(404).json({ error: 'User not found.' });
+      return;
+    }
+
+    const nextRole = req.body?.role === undefined ? user.role : req.body.role === 'admin' ? 'admin' : 'user';
+    const nextActive = req.body?.active === undefined ? user.active : req.body.active !== false;
+    if (user.role === 'admin' && user.active && (nextRole !== 'admin' || !nextActive)) {
+      const activeAdminCount = await QuoteUser.countDocuments({ role: 'admin', active: true });
+      if (activeAdminCount <= 1) {
+        res.status(409).json({ error: 'At least one active administrator account is required.' });
+        return;
+      }
+    }
+
+    if (req.body?.username !== undefined) {
+      const username = normalizeQuoteUsername(req.body.username);
+      if (!/^[a-z0-9._-]{3,80}$/.test(username)) {
+        res.status(400).json({ error: 'Username format is invalid.' });
+        return;
+      }
+      const duplicate = await QuoteUser.exists({ username, _id: { $ne: user._id } });
+      if (duplicate) {
+        res.status(409).json({ error: 'That username already exists.' });
+        return;
+      }
+      user.username = username;
+    }
+    if (req.body?.displayName !== undefined) {
+      const displayName = String(req.body.displayName || '').trim().slice(0, 120);
+      if (!displayName) {
+        res.status(400).json({ error: 'Display name is required.' });
+        return;
+      }
+      user.displayName = displayName;
+    }
+
+    user.role = nextRole;
+    user.active = nextActive;
+    user.authorizedStates =
+      nextRole === 'admin' ? [...QUOTE_STATES] : normalizeAuthorizedQuoteStates(req.body?.authorizedStates ?? user.authorizedStates);
+
+    let passwordChanged = false;
+    if (req.body?.password) {
+      const passwordError = validateQuotePassword(req.body.password);
+      if (passwordError) {
+        res.status(400).json({ error: passwordError });
+        return;
+      }
+      const passwordRecord = createPasswordRecord(req.body.password);
+      user.passwordHash = passwordRecord.passwordHash;
+      user.passwordSalt = passwordRecord.passwordSalt;
+      passwordChanged = true;
+    }
+
+    await user.save();
+    if (passwordChanged || !user.active) {
+      await QuoteSession.deleteMany({ user: user._id });
+    }
+    res.json({ user: formatQuoteUser(user) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/quote-app/admin/configs', requireQuoteAdmin, async (_req, res, next) => {
+  try {
+    const storedConfigs = await QuoteProgramConfig.find({ state: { $in: QUOTE_STATES } }).lean();
+    const byState = new Map(storedConfigs.map((entry) => [entry.state, entry]));
+    res.json({
+      configs: QUOTE_STATES.map((state) => {
+        const stored = byState.get(state);
+        return {
+          ...normalizeQuoteProgramConfig(state, stored?.config || defaultQuoteProgramConfig(state)),
+          updatedAt: stored?.updatedAt || null
+        };
+      })
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.put('/api/quote-app/admin/configs/:state', requireQuoteAdmin, async (req, res, next) => {
+  try {
+    const state = String(req.params.state || '').toUpperCase();
+    if (!QUOTE_STATES.includes(state)) {
+      res.status(404).json({ error: 'Quote state not found.' });
+      return;
+    }
+    const config = normalizeQuoteProgramConfig(state, req.body?.config || req.body || {});
+    const stored = await QuoteProgramConfig.findOneAndUpdate(
+      { state },
+      { $set: { config, updatedBy: req.quoteUser._id } },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    ).lean();
+    res.json({ config: { ...config, updatedAt: stored.updatedAt || null } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/quote-app/admin/configs/:state/reset', requireQuoteAdmin, async (req, res, next) => {
+  try {
+    const state = String(req.params.state || '').toUpperCase();
+    if (!QUOTE_STATES.includes(state)) {
+      res.status(404).json({ error: 'Quote state not found.' });
+      return;
+    }
+    const config = defaultQuoteProgramConfig(state);
+    const stored = await QuoteProgramConfig.findOneAndUpdate(
+      { state },
+      { $set: { config, updatedBy: req.quoteUser._id } },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    ).lean();
+    res.json({ config: { ...config, updatedAt: stored.updatedAt || null } });
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.get('/api/credit-unions', async (req, res, next) => {

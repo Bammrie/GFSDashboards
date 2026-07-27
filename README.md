@@ -134,3 +134,24 @@ npm run selfhost:verify -- -PublicUrl https://cu-loan.goodwinefinancialservices.
 ```
 
 If the public advisor works but raw `http://<public-ip>:11434/api/tags` is unreachable, the intended public/private boundary is working.
+
+## State-Specific Payment Protection Quotes
+
+The single-premium quote tool has separate, locked experiences for the two configured programs:
+
+- Missouri: `/single-premium-quote/missouri/`
+- Arkansas: `/single-premium-quote/arkansas/`
+- Administration: `/single-premium-quote/admin/`
+
+Users sign in at `/single-premium-quote/`. Administrators can create or deactivate user accounts, assign Missouri and/or Arkansas access, reset passwords, and manage each state's branding, life rates, disability rate table, coverage limits, unsupported loan types, and gross-factor adjustment.
+
+Quote users, sessions, and state program settings are stored in MongoDB. Sessions use HTTP-only cookies and expire after 12 hours.
+
+The first quote administrator is created automatically when the database starts and has no active quote administrator. Configure it with:
+
+```bash
+QUOTE_ADMIN_USERNAME=admin
+QUOTE_ADMIN_PASSWORD=use-a-long-unique-password
+```
+
+If those variables are omitted, the bootstrap account uses `DASHBOARD_USERNAME` (or `admin`) and `DASHBOARD_PASSWORD`. Set a production-specific `QUOTE_ADMIN_PASSWORD` before launch.

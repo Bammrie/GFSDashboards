@@ -8,19 +8,13 @@ import {
   coverageIncludesDisability,
   coverageIncludesLife
 } from './quote-engine.js';
-import { UNSUPPORTED_LOAN_TYPE_WARNING } from './src/data/csoLimits.js';
+import { CSO_LIMITS, UNSUPPORTED_LOAN_TYPE_WARNING } from './src/data/csoLimits.js';
 import { CSO_RATE_CONFIG } from './src/data/csoRates.js';
-import {
-  loadUserSettings,
-  restoreDefaultSettings,
-  resolveDefaultState,
-  saveLastSelectedState,
-  saveUserSettings
-} from './src/storage/userSettings.js';
 
-const LATEST_QUOTE_STORAGE_KEY = 'premiumQuoteProCsoLatestQuote';
-const SAVED_QUOTES_STORAGE_KEY = 'premiumQuoteProCsoSavedQuotes';
-const SCREEN_NAMES = ['quote', 'results', 'settings'];
+const LOCKED_STATE = window.location.pathname.toLowerCase().includes('/arkansas') ? 'AR' : 'MO';
+const LATEST_QUOTE_STORAGE_KEY = `premiumQuoteProCsoLatestQuote:${LOCKED_STATE}`;
+const SAVED_QUOTES_STORAGE_KEY = `premiumQuoteProCsoSavedQuotes:${LOCKED_STATE}`;
+const SCREEN_NAMES = ['quote', 'results'];
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -69,13 +63,14 @@ const elements = {
   copyStatus: document.getElementById('copy-status'),
   savedQuotesList: document.getElementById('saved-quotes-list'),
   clearSavedQuotes: document.getElementById('clear-saved-quotes'),
-  settingsForm: document.getElementById('settings-form'),
-  settingsRates: document.getElementById('settings-rates'),
-  settingsLimits: document.getElementById('settings-limits'),
-  restoreRates: document.getElementById('restore-rates'),
-  restoreSettings: document.getElementById('restore-settings'),
-  settingsStatus: document.getElementById('settings-status'),
-  defaultStateMode: document.getElementById('default-state-mode'),
+  programOrganizationName: document.getElementById('program-organization-name'),
+  programName: document.getElementById('program-name'),
+  programStateSubtitle: document.getElementById('program-state-subtitle'),
+  programDisclaimer: document.getElementById('program-disclaimer'),
+  headerStateBadge: document.getElementById('header-state-badge'),
+  coverageStateBadge: document.getElementById('coverage-state-badge'),
+  quoteUserName: document.getElementById('quote-user-name'),
+  quoteLogout: document.getElementById('quote-logout'),
   shareModal: document.getElementById('share-modal'),
   borrowerEmail: document.getElementById('borrower-email'),
   borrowerPhone: document.getElementById('borrower-phone'),
@@ -86,7 +81,16 @@ const elements = {
   shareStatus: document.getElementById('share-status')
 };
 
-let settings = loadUserSettings();
+let settings = {
+  authorizedStates: [LOCKED_STATE],
+  rateConfig: { [LOCKED_STATE]: CSO_RATE_CONFIG[LOCKED_STATE] },
+  limits: { [LOCKED_STATE]: CSO_LIMITS[LOCKED_STATE] }
+};
+let program = {
+  organizationName: 'Example Bank',
+  programName: 'Payment Protection Quote',
+  disclaimer: 'This is an estimate and may vary from final closing loan figures.'
+};
 let latestQuote = loadLatestQuote();
 let savedQuotes = loadSavedQuotes();
 
@@ -164,21 +168,18 @@ function todayIso() {
 }
 
 function defaultInputs() {
-  const state = resolveDefaultState(settings);
   return {
     ...DEFAULT_QUOTE_INPUTS,
-    state,
+    state: LOCKED_STATE,
     closingDate: todayIso(),
     daysToFirstPayment: PAYMENT_FREQUENCIES.monthly.defaultDaysToFirstPayment
   };
 }
 
 function populateStateOptions() {
-  const authorizedStates = settings.authorizedStates?.length ? settings.authorizedStates : ['MO'];
-  elements.state.innerHTML = authorizedStates
-    .map((state) => `<option value="${state}">${CSO_RATE_CONFIG[state].stateName}</option>`)
-    .join('');
-  elements.state.disabled = authorizedStates.length === 1;
+  const stateName = settings.rateConfig[LOCKED_STATE]?.stateName || CSO_RATE_CONFIG[LOCKED_STATE].stateName;
+  elements.state.innerHTML = `<option value="${LOCKED_STATE}">${escapeHtml(stateName)}</option>`;
+  elements.state.disabled = true;
 }
 
 function hydrateQuoteForm(inputs = {}) {
@@ -277,7 +278,7 @@ function screenFromHash() {
 function updateConditionalFields() {
   const borrowerType = elements.borrowerType.value;
   const frequency = elements.paymentFrequency.value;
-  const state = elements.state.value || resolveDefaultState(settings);
+  const state = LOCKED_STATE;
   const loanType = elements.loanType.value;
   elements.coBorrowerDobField.hidden = borrowerType === 'single';
   elements.activeStatePill.textContent = state;
@@ -407,7 +408,6 @@ function calculateAndRenderQuote(inputs) {
     limits: settings.limits,
     minimumPremiumAppliesPerProduct: true
   });
-  saveLastSelectedState(result.state);
   saveLatestQuote(inputs, result);
   renderResults();
   setScreen('results');
@@ -417,10 +417,10 @@ function quoteSummaryText(short = false) {
   if (!latestQuote) return '';
   const { result } = latestQuote;
   if (short) {
-    return `Example Bank estimate: ${result.state} ${COVERAGE_TYPES[result.coverageType]}, total premium ${formatCurrency(result.totalPremium)}, regular payment ${formatCurrency(result.regularPayment)}. This is an estimate and may vary from final closing loan figures.`;
+    return `${program.organizationName} estimate: ${result.state} ${COVERAGE_TYPES[result.coverageType]}, total premium ${formatCurrency(result.totalPremium)}, regular payment ${formatCurrency(result.regularPayment)}. ${program.disclaimer}`;
   }
   return [
-    'Example Bank',
+    program.organizationName,
     'Single Premium Credit Insurance Quote',
     '',
     `State: ${result.state} - ${result.stateName}`,
@@ -443,7 +443,7 @@ function quoteSummaryText(short = false) {
     `Final Payment: ${formatCurrency(result.finalPayment)}`,
     `Total of Payments: ${formatCurrency(result.totalPayments)}`,
     '',
-    'This is an estimate and may vary from final closing loan figures.'
+    program.disclaimer
   ].join('\n');
 }
 
@@ -503,63 +503,6 @@ function resetQuoteState() {
   setScreen('quote');
 }
 
-function renderSettings() {
-  elements.settingsForm.querySelectorAll('input[name="authorizedStates"]').forEach((input) => {
-    input.checked = settings.authorizedStates.includes(input.value);
-  });
-  elements.defaultStateMode.value = settings.defaultStateMode;
-  renderSettingsRates();
-  renderSettingsLimits();
-}
-
-function renderSettingsRates() {
-  elements.settingsRates.innerHTML = Object.entries(settings.rateConfig)
-    .map(([state, config]) => `
-      <section class="sp-rate-card">
-        <h4>${state} - ${escapeHtml(config.stateName)}</h4>
-        <div class="sp-profile-summary">
-          <span class="sp-badge">Life</span>
-          <span class="sp-badge">Joint Life</span>
-          <span class="sp-badge">7-Day Retro Disability</span>
-          <span class="sp-badge">Active</span>
-        </div>
-        <p class="sp-footer-note">Pricing values are loaded from the active bank profile and are not displayed in the public quote interface.</p>
-      </section>
-    `)
-    .join('');
-}
-
-function renderSettingsLimits() {
-  elements.settingsLimits.innerHTML = Object.entries(settings.limits)
-    .map(([state, limit]) => `
-      <section class="sp-rate-card">
-        <h4>${state}</h4>
-        <dl class="sp-summary-grid">
-          ${detailRow('Maximum protected loan amount', formatCurrency(limit.maxProtectedLoanAmount))}
-          ${detailRow('Maximum protected term months', `${limit.maxProtectedTermMonths}`)}
-          ${detailRow('Maximum issue age', `${limit.maxIssueAge}`)}
-          ${detailRow('Maximum age at maturity', `${limit.maxAgeAtMaturity}`)}
-          ${detailRow('Maximum monthly disability benefit', formatCurrency(limit.maxMonthlyDisabilityBenefit))}
-          ${detailRow('Minimum disability employment hours', `${limit.minimumDisabilityHoursPerWeek}`)}
-          ${detailRow('Minimum premium', formatCurrency(limit.minimumPremium))}
-        </dl>
-      </section>
-    `)
-    .join('');
-}
-
-function readSettingsForm() {
-  const authorizedStates = Array.from(elements.settingsForm.querySelectorAll('input[name="authorizedStates"]:checked')).map(
-    (input) => input.value
-  );
-  const nextSettings = {
-    ...settings,
-    authorizedStates: authorizedStates.length ? authorizedStates : ['MO'],
-    defaultStateMode: elements.defaultStateMode.value
-  };
-  return nextSettings;
-}
-
 function openShareModal() {
   if (!latestQuote) {
     setStatus(elements.copyStatus, 'Calculate a quote before sharing.', true);
@@ -589,7 +532,7 @@ async function webShareQuote() {
   }
   try {
     await navigator.share({
-      title: 'Example Bank Payment Protection Quote',
+      title: `${program.organizationName} Payment Protection Quote`,
       text: quoteSummaryText()
     });
     setStatus(elements.shareStatus, 'Quote shared.');
@@ -603,10 +546,6 @@ function initializeEvents() {
     button.addEventListener('click', () => setScreen(button.dataset.screenTarget));
   });
   window.addEventListener('hashchange', () => setScreen(screenFromHash(), false));
-  elements.state.addEventListener('change', () => {
-    saveLastSelectedState(elements.state.value);
-    updateConditionalFields();
-  });
   elements.paymentFrequency.addEventListener('change', () => {
     elements.daysToFirstPayment.dataset.userEdited = '';
     updateConditionalFields();
@@ -639,32 +578,76 @@ function initializeEvents() {
     setStorageItem(SAVED_QUOTES_STORAGE_KEY, savedQuotes);
     renderSavedQuotes();
   });
-  elements.settingsForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    settings = readSettingsForm();
-    saveUserSettings(settings);
-    hydrateQuoteForm({ ...readQuoteForm(), state: resolveDefaultState(settings) });
-    renderSettings();
-    setStatus(elements.settingsStatus, 'Settings saved.');
-  });
-  elements.restoreRates.addEventListener('click', () => {
-    settings.rateConfig = JSON.parse(JSON.stringify(CSO_RATE_CONFIG));
-    saveUserSettings(settings);
-    renderSettings();
-    setStatus(elements.settingsStatus, 'Bank defaults restored.');
-  });
-  elements.restoreSettings.addEventListener('click', () => {
-    settings = restoreDefaultSettings();
-    hydrateQuoteForm(defaultInputs());
-    renderSettings();
-    setStatus(elements.settingsStatus, 'All settings restored.');
-  });
+  elements.quoteLogout.addEventListener('click', logout);
 }
 
-function initialize() {
+async function apiJson(url, options = {}) {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    }
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(payload.error || 'Unable to load the quote application.');
+    error.status = response.status;
+    throw error;
+  }
+  return payload;
+}
+
+async function loadProgram() {
+  const [{ user }, { config }] = await Promise.all([
+    apiJson('/api/quote-app/auth/me'),
+    apiJson(`/api/quote-app/config/${LOCKED_STATE}`)
+  ]);
+  settings = {
+    authorizedStates: [LOCKED_STATE],
+    rateConfig: { [LOCKED_STATE]: config.rateConfig },
+    limits: { [LOCKED_STATE]: config.limits }
+  };
+  program = {
+    organizationName: config.organizationName,
+    programName: config.programName,
+    disclaimer: config.disclaimer
+  };
+
+  const stateName = config.stateName || CSO_RATE_CONFIG[LOCKED_STATE].stateName;
+  document.title = `${program.organizationName} | ${stateName} ${program.programName}`;
+  elements.programOrganizationName.textContent = program.organizationName;
+  elements.programName.textContent = program.programName;
+  elements.programStateSubtitle.textContent = `${stateName} loan officer credit insurance estimates.`;
+  elements.programDisclaimer.textContent = program.disclaimer;
+  elements.headerStateBadge.textContent = `${LOCKED_STATE} - ${stateName}`;
+  elements.coverageStateBadge.textContent = `${stateName} Program`;
+  elements.quoteUserName.textContent = user.displayName || user.username;
+}
+
+async function logout() {
+  try {
+    await apiJson('/api/quote-app/auth/logout', { method: 'POST', body: '{}' });
+  } finally {
+    window.location.assign('/single-premium-quote/');
+  }
+}
+
+async function initialize() {
+  try {
+    await loadProgram();
+  } catch (error) {
+    if (error.status === 401 || error.status === 403) {
+      const returnTo = encodeURIComponent(window.location.pathname);
+      window.location.replace(`/single-premium-quote/?returnTo=${returnTo}`);
+      return;
+    }
+    showErrorList(elements.quoteErrors, [error.message]);
+    elements.calculateButton.disabled = true;
+    return;
+  }
   hydrateQuoteForm(latestQuote?.inputs || defaultInputs());
   renderResults();
-  renderSettings();
   initializeEvents();
   setScreen(screenFromHash(), false);
 }
