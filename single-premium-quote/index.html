@@ -4,315 +4,63 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>Example Bank | Payment Protection Quote</title>
+  <title>Payment Protection Quote | Sign In</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="sp-header">
-    <div class="sp-header__inner">
+    <div class="sp-header__inner sp-header__inner--gateway">
       <a class="sp-back-link" href="../index.html">Back</a>
       <div class="sp-brand">
-        <span class="sp-logo-mark" aria-hidden="true">EB</span>
+        <span class="sp-logo-mark" aria-hidden="true">GFS</span>
         <div>
-          <p class="sp-kicker">Example Bank</p>
-          <h1>Payment Protection Quote</h1>
-          <p>Loan officer credit insurance estimates for eligible Missouri and Arkansas loans.</p>
+          <p class="sp-kicker">Goodwine Financial Services</p>
+          <h1>Payment Protection Quotes</h1>
+          <p>Secure, state-specific credit insurance quoting.</p>
         </div>
-      </div>
-      <div class="sp-header-badges" aria-label="Product highlights">
-        <span class="sp-badge sp-badge--light">Payment Protection</span>
-        <span class="sp-badge sp-badge--light">Financed</span>
-        <span class="sp-badge sp-badge--light">MO / AR</span>
       </div>
     </div>
   </header>
 
-  <nav class="sp-screen-nav" aria-label="Example Bank quote screens">
-    <button type="button" class="sp-screen-tab" data-screen-target="quote" aria-current="page">Quote</button>
-    <button type="button" class="sp-screen-tab" data-screen-target="results">Results</button>
-    <button type="button" class="sp-screen-tab" data-screen-target="settings">Admin</button>
-  </nav>
+  <main class="sp-shell sp-auth-shell">
+    <section class="sp-panel sp-auth-card" id="login-panel">
+      <header class="sp-panel__header">
+        <p class="sp-kicker">Authorized Users</p>
+        <h2>Sign in to quote</h2>
+        <p>Use the account provided by your administrator.</p>
+      </header>
 
-  <main class="sp-shell">
-    <section class="sp-panel sp-screen" data-screen="quote" aria-labelledby="quote-heading">
+      <form id="quote-login-form" class="sp-form" autocomplete="on">
+        <label class="sp-field" for="quote-username">
+          <span>Username</span>
+          <input id="quote-username" name="username" autocomplete="username" required />
+        </label>
+        <label class="sp-field" for="quote-password">
+          <span>Password</span>
+          <input id="quote-password" name="password" type="password" autocomplete="current-password" required />
+        </label>
+        <button type="submit" class="sp-button sp-button--primary">Sign In</button>
+        <p id="quote-login-status" class="sp-status" role="status"></p>
+      </form>
+    </section>
+
+    <section class="sp-panel" id="state-gateway" hidden>
       <header class="sp-panel__header sp-panel__header--compact">
         <div>
-          <p class="sp-kicker">Quote Builder</p>
-          <h2 id="quote-heading">Credit Insurance Quote</h2>
+          <p class="sp-kicker">Choose a State</p>
+          <h2>Start a quote</h2>
+          <p id="gateway-welcome"></p>
         </div>
-        <span class="sp-state-pill" id="active-state-pill">MO</span>
+        <button type="button" class="sp-button sp-button--secondary sp-button--compact" id="gateway-logout">Sign Out</button>
       </header>
 
-      <form id="quote-form" class="sp-form" autocomplete="off">
-        <div class="sp-field-grid">
-          <label class="sp-field" for="state">
-            <span>State</span>
-            <select id="state" name="state" required></select>
-          </label>
-
-          <label class="sp-field" for="loan-amount">
-            <span>Loan Amount</span>
-            <span class="sp-currency-field">
-              <span aria-hidden="true">$</span>
-              <input id="loan-amount" name="loanAmount" type="number" inputmode="decimal" min="0.01" step="0.01" required />
-            </span>
-          </label>
-
-          <label class="sp-field" for="loan-fee">
-            <span>Loan Fee</span>
-            <span class="sp-currency-field">
-              <span aria-hidden="true">$</span>
-              <input id="loan-fee" name="loanFee" type="number" inputmode="decimal" min="0" step="0.01" required />
-            </span>
-            <small>Financed loan fee included in amount financed before insurance.</small>
-          </label>
-
-          <label class="sp-field" for="prepaid-fees">
-            <span>Prepaid Fees</span>
-            <span class="sp-currency-field">
-              <span aria-hidden="true">$</span>
-              <input id="prepaid-fees" name="prepaidFees" type="number" inputmode="decimal" min="0" step="0.01" required />
-            </span>
-            <small>Paid outside the financed balance; included in the estimated APR.</small>
-          </label>
-
-          <label class="sp-field" for="interest-rate">
-            <span>Interest Rate</span>
-            <input id="interest-rate" name="interestRate" type="number" inputmode="decimal" min="0" step="0.01" required />
-          </label>
-
-          <label class="sp-field" for="number-of-payments">
-            <span>Number of Payments</span>
-            <input id="number-of-payments" name="numberOfPayments" type="number" inputmode="numeric" min="1" step="1" required />
-          </label>
-
-          <label class="sp-field" for="payment-frequency">
-            <span>Payment Frequency</span>
-            <select id="payment-frequency" name="paymentFrequency">
-              <option value="monthly">Monthly</option>
-              <option value="biweekly">Biweekly</option>
-              <option value="weekly">Weekly</option>
-            </select>
-          </label>
-
-          <label class="sp-field" for="days-to-first-payment">
-            <span>Days to First Payment</span>
-            <input id="days-to-first-payment" name="daysToFirstPayment" type="number" inputmode="numeric" min="0" step="1" required />
-          </label>
-
-          <label class="sp-field" for="closing-date">
-            <span>Closing Date</span>
-            <input id="closing-date" name="closingDate" type="date" required />
-          </label>
-
-          <label class="sp-field" for="borrower-dob">
-            <span>Borrower Date of Birth</span>
-            <input id="borrower-dob" name="borrowerDateOfBirth" type="date" />
-          </label>
-
-          <label class="sp-field" for="borrower-type">
-            <span>Borrower Type</span>
-            <select id="borrower-type" name="borrowerType">
-              <option value="single">Single Borrower</option>
-              <option value="joint">Joint Borrower</option>
-              <option value="coborrower_single">Co-Borrower (Single)</option>
-            </select>
-          </label>
-
-          <label class="sp-field" for="co-borrower-dob" id="co-borrower-dob-field" hidden>
-            <span>Co-Borrower Date of Birth</span>
-            <input id="co-borrower-dob" name="coBorrowerDateOfBirth" type="date" />
-          </label>
-
-          <label class="sp-field" for="loan-type">
-            <span>Loan Type</span>
-            <select id="loan-type" name="loanType">
-              <option value="installment">Installment</option>
-              <option value="interest_only">Interest Only</option>
-              <option value="variable_rate">Variable Rate</option>
-              <option value="first_mortgage">1st Mortgage</option>
-            </select>
-          </label>
-
-          <label class="sp-field" for="coverage-type">
-            <span>Coverage Type</span>
-            <select id="coverage-type" name="coverageType">
-              <option value="life">Credit Life</option>
-              <option value="disability">Credit Disability</option>
-              <option value="both">Life + Disability</option>
-              <option value="none">No Coverage</option>
-            </select>
-          </label>
-        </div>
-
-        <div id="quote-errors" class="sp-alert sp-alert--error" hidden></div>
-
-        <details class="sp-scope-panel">
-          <summary>Coverage Details</summary>
-          <div class="sp-badge-row">
-            <span class="sp-badge">Single Premium</span>
-            <span class="sp-badge">Financed With Loan</span>
-            <span class="sp-badge">MO/AR Supported</span>
-            <span class="sp-badge">Monthly/Weekly/Biweekly Supported</span>
-            <span class="sp-badge">7-Day Retro Disability Default</span>
-          </div>
-          <p>Some states, loan products, and payment schedules may be unavailable based on program setup.</p>
-        </details>
-
-        <div class="sp-actions sp-actions--sticky">
-          <button type="submit" class="sp-button sp-button--primary" id="calculate-button">Calculate Quote</button>
-          <button type="button" class="sp-button sp-button--secondary" id="quote-reset-defaults">Reset</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="sp-panel sp-screen" data-screen="results" aria-labelledby="results-heading" hidden>
-      <header class="sp-panel__header">
-        <p class="sp-kicker">Quote Results</p>
-        <h2 id="results-heading">Quote Summary</h2>
-        <p id="results-intro">Calculate a quote to view results.</p>
-      </header>
-
-      <div id="empty-results" class="sp-empty">
-        <p>No quote has been calculated yet.</p>
-        <button type="button" class="sp-button sp-button--primary" data-screen-target="quote">Start Quote</button>
+      <div class="sp-state-gateway-grid" id="state-links"></div>
+      <div class="sp-actions sp-gateway-admin" id="admin-link-container" hidden>
+        <a class="sp-button sp-button--secondary" href="admin/">Open Administration</a>
       </div>
-
-      <div id="results-content" hidden>
-        <section class="sp-result-hero" aria-label="Premium summary">
-          <div>
-            <span>Total Single Premium</span>
-            <strong id="result-total-premium">$0.00</strong>
-          </div>
-          <dl class="sp-hero-breakdown">
-            <div><dt>Life Premium</dt><dd id="result-life-premium">$0.00</dd></div>
-            <div><dt>Disability Premium</dt><dd id="result-disability-premium">$0.00</dd></div>
-            <div><dt>State</dt><dd id="result-state">MO</dd></div>
-            <div><dt>Borrower Type</dt><dd id="result-borrower-type">Single Borrower</dd></div>
-            <div><dt>Coverage Type</dt><dd id="result-coverage">Life + Disability</dd></div>
-          </dl>
-        </section>
-
-        <section class="sp-result-section" aria-labelledby="finance-details-heading">
-          <h3 id="finance-details-heading">Loan / Finance Details</h3>
-          <dl class="sp-summary-grid" id="finance-summary"></dl>
-        </section>
-
-        <section class="sp-result-section" aria-labelledby="coverage-info-heading">
-          <h3 id="coverage-info-heading">Coverage Information</h3>
-          <div class="sp-summary-grid" id="coverage-summary"></div>
-        </section>
-
-        <section class="sp-result-section" aria-labelledby="cost-info-heading">
-          <h3 id="cost-info-heading">Cost</h3>
-          <dl class="sp-summary-grid" id="cost-summary"></dl>
-        </section>
-
-        <div id="result-warnings" class="sp-warning-stack"></div>
-
-        <p class="sp-disclaimer">This is an estimate and may vary from final closing loan figures.</p>
-
-        <div class="sp-actions">
-          <button type="button" class="sp-button sp-button--primary" id="share-quote">Share Quote</button>
-          <button type="button" class="sp-button sp-button--secondary" id="copy-summary">Copy Quote Summary</button>
-          <button type="button" class="sp-button sp-button--secondary" id="save-quote">Save Quote Card</button>
-          <button type="button" class="sp-button sp-button--secondary" id="reset-quote">Reset Quote</button>
-        </div>
-        <p id="copy-status" class="sp-status" role="status"></p>
-
-        <section class="sp-result-section" aria-labelledby="saved-quotes-heading">
-          <div class="sp-section-header">
-            <h3 id="saved-quotes-heading">Saved Quote Cards</h3>
-            <button type="button" class="sp-text-button" id="clear-saved-quotes">Clear Saved</button>
-          </div>
-          <div id="saved-quotes-list" class="sp-saved-quotes"></div>
-        </section>
-      </div>
-    </section>
-
-    <section class="sp-panel sp-screen" data-screen="settings" aria-labelledby="settings-heading" hidden>
-      <header class="sp-panel__header">
-        <p class="sp-kicker">Admin</p>
-        <h2 id="settings-heading">Program Settings</h2>
-        <p>Local setup for authorized states, coverage limits, and product availability.</p>
-      </header>
-
-      <form id="settings-form" class="sp-form">
-        <section class="sp-config-card">
-          <h3>Authorized States</h3>
-          <label class="sp-checkbox"><input type="checkbox" name="authorizedStates" value="MO" /> Missouri</label>
-          <label class="sp-checkbox"><input type="checkbox" name="authorizedStates" value="AR" /> Arkansas</label>
-          <label class="sp-field" for="default-state-mode">
-            <span>Default State</span>
-            <select id="default-state-mode" name="defaultStateMode">
-              <option value="last">Last selected</option>
-              <option value="MO">Missouri</option>
-              <option value="AR">Arkansas</option>
-            </select>
-          </label>
-        </section>
-
-        <section class="sp-config-card">
-          <div class="sp-section-header">
-            <h3>Pricing Profiles</h3>
-          </div>
-          <div id="settings-rates"></div>
-          <button type="button" class="sp-button sp-button--secondary" id="restore-rates">Restore Bank Defaults</button>
-        </section>
-
-        <section class="sp-config-card">
-          <h3>Coverage Limits</h3>
-          <div id="settings-limits"></div>
-        </section>
-
-        <section class="sp-config-card">
-          <h3>Disability Waiting Period</h3>
-          <label class="sp-checkbox"><input type="checkbox" checked disabled /> 7-Day Retroactive enabled</label>
-        </section>
-
-        <section class="sp-config-card sp-alert sp-alert--warning">
-          Texas is not available in this version.
-        </section>
-
-        <div class="sp-actions">
-          <button type="submit" class="sp-button sp-button--primary">Save Settings</button>
-          <button type="button" class="sp-button sp-button--secondary" id="restore-settings">Restore All Defaults</button>
-        </div>
-        <p id="settings-status" class="sp-status" role="status"></p>
-      </form>
     </section>
   </main>
 
-  <dialog id="share-modal" class="sp-modal">
-    <form method="dialog" class="sp-modal__card">
-      <header class="sp-section-header">
-        <div>
-          <p class="sp-kicker">Share Quote</p>
-          <h2>Send Estimate</h2>
-        </div>
-        <button type="submit" class="sp-icon-button" aria-label="Close share modal">x</button>
-      </header>
-      <label class="sp-field" for="borrower-email">
-        <span>Borrower Email</span>
-        <input id="borrower-email" type="email" placeholder="borrower@example.com" />
-      </label>
-      <label class="sp-field" for="borrower-phone">
-        <span>Borrower Phone</span>
-        <input id="borrower-phone" type="tel" placeholder="5551234567" />
-      </label>
-      <div class="sp-actions">
-        <button type="button" class="sp-button sp-button--secondary" id="modal-copy-summary">Copy Summary</button>
-        <button type="button" class="sp-button sp-button--primary" id="email-quote">Email Quote</button>
-        <button type="button" class="sp-button sp-button--secondary" id="text-quote">Text Quote</button>
-        <button type="button" class="sp-button sp-button--secondary" id="web-share-quote">Share</button>
-      </div>
-      <p id="share-status" class="sp-status" role="status"></p>
-    </form>
-  </dialog>
-
-  <script>
-    window.localStorage.setItem('gfsWorkspace', 'quotes');
-  </script>
-  <script type="module" src="app.js"></script>
+  <script type="module" src="login.js"></script>
 </body>
 </html>
