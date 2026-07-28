@@ -137,21 +137,9 @@ If the public advisor works but raw `http://<public-ip>:11434/api/tags` is unrea
 
 ## State-Specific Payment Protection Quotes
 
-The single-premium quote tool has separate, locked experiences for the two configured programs:
+The quote tool has two public, state-locked experiences:
 
-- Missouri: `/single-premium-quote/missouri/`
-- Arkansas: `/single-premium-quote/arkansas/`
-- Administration: `/single-premium-quote/admin/`
+- Missouri: `https://dashboard.goodwinefinancialservices.com/single-premium-quote/missouri/`
+- Arkansas: `https://dashboard.goodwinefinancialservices.com/single-premium-quote/arkansas/`
 
-Users sign in at `/single-premium-quote/`. Administrators can create or deactivate user accounts, assign Missouri and/or Arkansas access, reset passwords, and manage each state's branding, life rates, disability rate table, coverage limits, unsupported loan types, and gross-factor adjustment.
-
-Quote users, sessions, and state program settings are stored in MongoDB. Sessions use HTTP-only cookies and expire after 12 hours.
-
-The first quote administrator is created automatically when the database starts and has no active quote administrator. Configure it with:
-
-```bash
-QUOTE_ADMIN_USERNAME=admin
-QUOTE_ADMIN_PASSWORD=use-a-long-unique-password
-```
-
-If those variables are omitted, the bootstrap account uses `DASHBOARD_USERNAME` (or `admin`) and `DASHBOARD_PASSWORD`. Set a production-specific `QUOTE_ADMIN_PASSWORD` before launch.
+The URLs are public and do not require a login or database connection. Each page is locked to its state and uses the corresponding static rate and limit configuration in `single-premium-quote/src/data/`.
