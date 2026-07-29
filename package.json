@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node cu-loan-advisor/start-with-ollama-proxy.mjs",
+    "sync:ncua": "node scripts/sync-ncua-active-credit-unions.mjs",
     "selfhost:setup": "powershell -NoProfile -ExecutionPolicy Bypass -File self-host/setup-windows-self-host.ps1",
     "selfhost:start": "powershell -NoProfile -ExecutionPolicy Bypass -File self-host/start-dashboard.ps1",
     "selfhost:verify": "powershell -NoProfile -ExecutionPolicy Bypass -File self-host/verify-self-host.ps1",
