@@ -1,1 +1,2 @@
 Run official NCUA Q1 2025 versus Q1 2026 Louisiana credit union growth comparison.
+Retry with hardened parser.
