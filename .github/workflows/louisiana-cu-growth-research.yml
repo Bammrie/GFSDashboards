@@ -40,16 +40,23 @@ jobs:
               z = zipfile.ZipFile(io.BytesIO(r.content))
               frames = {}
               for name in z.namelist():
-                  if name.lower().endswith(('.txt','.csv')):
-                      raw = z.read(name)
-                      for enc in ('utf-8-sig','latin1'):
-                          try:
-                              df = pd.read_csv(io.BytesIO(raw), encoding=enc, dtype=str, low_memory=False)
-                              break
-                          except UnicodeDecodeError:
-                              continue
-                      df.columns = [norm(c) for c in df.columns]
-                      frames[Path(name).name.upper()] = df
+                  base = Path(name).name.upper()
+                  if not base.endswith(('.TXT','.CSV')):
+                      continue
+                  if not (base.startswith('FOICU') or base.startswith('FS220')) or 'DES' in base:
+                      continue
+                  raw = z.read(name)
+                  df = None
+                  for enc in ('utf-8-sig','latin1'):
+                      try:
+                          df = pd.read_csv(io.BytesIO(raw), encoding=enc, dtype=str, low_memory=False, on_bad_lines='skip')
+                          break
+                      except (UnicodeDecodeError, pd.errors.ParserError):
+                          continue
+                  if df is None or len(df.columns) < 2:
+                      continue
+                  df.columns = [norm(c) for c in df.columns]
+                  frames[base] = df
               return frames
 
           def find_col(cols, candidates):
@@ -60,7 +67,6 @@ jobs:
               return None
 
           def extract(year, frames):
-              # FOICU carries identity/location; account values are located wherever NCUA placed them.
               fo_name = next((n for n in frames if n.startswith('FOICU.') or n == 'FOICU.TXT' or n == 'FOICU.CSV'), None)
               if not fo_name:
                   fo_name = next(n for n in frames if n.startswith('FOICU') and 'DES' not in n)
@@ -84,7 +90,7 @@ jobs:
               base = base[base['State'].astype(str).str.upper().str.strip().eq('LA')]
 
               wanted = {'ACCT_010':'Assets', 'ACCT_083':'Members'}
-              vals = None
+              pieces = []
               for fname, df in frames.items():
                   cu2 = find_col(df.columns, ['CU_NUMBER','CU_NUMBER_','CU_NUM'])
                   found = {code: find_col(df.columns,[code]) for code in wanted}
@@ -93,13 +99,17 @@ jobs:
                       part = df[take].copy()
                       part[cu2] = pd.to_numeric(part[cu2], errors='coerce').astype('Int64')
                       part = part.rename(columns={cu2:'CU Number', **{c:wanted[k] for k,c in found.items() if c}})
-                      vals = part if vals is None else vals.merge(part, on='CU Number', how='outer', suffixes=('','_dup'))
-              if vals is None:
-                  raise RuntimeError(f'No account data found for {year}')
-              # Coalesce duplicate columns if accounts appeared in multiple files.
+                      pieces.append(part)
+              if not pieces:
+                  raise RuntimeError(f'No account data found for {year}; files={list(frames)}')
+              vals = pieces[0]
+              for i, part in enumerate(pieces[1:],1):
+                  vals = vals.merge(part, on='CU Number', how='outer', suffixes=('',f'_{i}'))
               for col in ('Assets','Members'):
-                  matches = [c for c in vals.columns if c == col or c.startswith(col+'_dup')]
-                  if matches:
+                  matches = [c for c in vals.columns if c == col or c.startswith(col+'_')]
+                  if not matches:
+                      vals[col] = pd.NA
+                  else:
                       x = vals[matches[0]]
                       for c in matches[1:]: x = x.fillna(vals[c])
                       vals[col] = x
