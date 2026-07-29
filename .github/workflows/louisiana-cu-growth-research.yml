@@ -1,0 +1,152 @@
+name: Louisiana CU Growth Research
+
+on:
+  pull_request:
+    paths:
+      - '.research/louisiana-cu-growth-trigger.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  build-report-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download and compare official NCUA call reports
+        run: |
+          python -m pip install --quiet pandas openpyxl requests
+          cat > /tmp/compare.py <<'PY'
+          import io, json, re, zipfile
+          from pathlib import Path
+          import pandas as pd
+          import requests
+
+          OUT = Path('research-output')
+          OUT.mkdir(exist_ok=True)
+          BASE = 'https://ncua.gov/files/publications/analysis/call-report-data-{}-03.zip'
+
+          def norm(s):
+              return re.sub(r'[^A-Z0-9]+', '_', str(s).strip().upper()).strip('_')
+
+          def read_zip(year):
+              url = BASE.format(year)
+              r = requests.get(url, headers={'User-Agent':'Mozilla/5.0'}, timeout=180)
+              r.raise_for_status()
+              (OUT / f'call-report-data-{year}-03.zip').write_bytes(r.content)
+              z = zipfile.ZipFile(io.BytesIO(r.content))
+              frames = {}
+              for name in z.namelist():
+                  if name.lower().endswith(('.txt','.csv')):
+                      raw = z.read(name)
+                      for enc in ('utf-8-sig','latin1'):
+                          try:
+                              df = pd.read_csv(io.BytesIO(raw), encoding=enc, dtype=str, low_memory=False)
+                              break
+                          except UnicodeDecodeError:
+                              continue
+                      df.columns = [norm(c) for c in df.columns]
+                      frames[Path(name).name.upper()] = df
+              return frames
+
+          def find_col(cols, candidates):
+              cmap = {norm(c): c for c in cols}
+              for cand in candidates:
+                  if norm(cand) in cmap:
+                      return cmap[norm(cand)]
+              return None
+
+          def extract(year, frames):
+              # FOICU carries identity/location; account values are located wherever NCUA placed them.
+              fo_name = next((n for n in frames if n.startswith('FOICU.') or n == 'FOICU.TXT' or n == 'FOICU.CSV'), None)
+              if not fo_name:
+                  fo_name = next(n for n in frames if n.startswith('FOICU') and 'DES' not in n)
+              fo = frames[fo_name].copy()
+              cu = find_col(fo.columns, ['CU_NUMBER','CU_NUMBER_','CU_NUM'])
+              state = find_col(fo.columns, ['STATE','STATE_CODE'])
+              name = find_col(fo.columns, ['CU_NAME','NAME'])
+              city = find_col(fo.columns, ['CITY','CU_CITY'])
+              charter = find_col(fo.columns, ['CHARTER_TYPE','CU_TYPE'])
+              status = find_col(fo.columns, ['CU_STATUS','STATUS'])
+              if not cu or not state or not name:
+                  raise RuntimeError(f'FOICU columns not found for {year}: {fo.columns.tolist()}')
+              base_cols = [cu,name,state] + ([city] if city else []) + ([charter] if charter else []) + ([status] if status else [])
+              base = fo[base_cols].copy()
+              ren = {cu:'CU Number',name:'Credit Union',state:'State'}
+              if city: ren[city]='City'
+              if charter: ren[charter]='Charter Type'
+              if status: ren[status]='Status'
+              base = base.rename(columns=ren)
+              base['CU Number'] = pd.to_numeric(base['CU Number'], errors='coerce').astype('Int64')
+              base = base[base['State'].astype(str).str.upper().str.strip().eq('LA')]
+
+              wanted = {'ACCT_010':'Assets', 'ACCT_083':'Members'}
+              vals = None
+              for fname, df in frames.items():
+                  cu2 = find_col(df.columns, ['CU_NUMBER','CU_NUMBER_','CU_NUM'])
+                  found = {code: find_col(df.columns,[code]) for code in wanted}
+                  if cu2 and any(found.values()):
+                      take = [cu2] + [c for c in found.values() if c]
+                      part = df[take].copy()
+                      part[cu2] = pd.to_numeric(part[cu2], errors='coerce').astype('Int64')
+                      part = part.rename(columns={cu2:'CU Number', **{c:wanted[k] for k,c in found.items() if c}})
+                      vals = part if vals is None else vals.merge(part, on='CU Number', how='outer', suffixes=('','_dup'))
+              if vals is None:
+                  raise RuntimeError(f'No account data found for {year}')
+              # Coalesce duplicate columns if accounts appeared in multiple files.
+              for col in ('Assets','Members'):
+                  matches = [c for c in vals.columns if c == col or c.startswith(col+'_dup')]
+                  if matches:
+                      x = vals[matches[0]]
+                      for c in matches[1:]: x = x.fillna(vals[c])
+                      vals[col] = x
+              vals = vals[['CU Number','Assets','Members']]
+              for c in ('Assets','Members'):
+                  vals[c] = pd.to_numeric(vals[c].astype(str).str.replace(',','',regex=False), errors='coerce')
+              out = base.merge(vals, on='CU Number', how='left')
+              out['Cycle'] = f'{year}-03-31'
+              return out
+
+          f25, f26 = read_zip(2025), read_zip(2026)
+          d25, d26 = extract(2025, f25), extract(2026, f26)
+          prior = d25[['CU Number','Credit Union','Assets','Members']].rename(columns={'Credit Union':'2025 Name','Assets':'2025 Assets','Members':'2025 Members'})
+          cur = d26.rename(columns={'Assets':'2026 Assets','Members':'2026 Members'})
+          out = cur.merge(prior,on='CU Number',how='left')
+          out['Asset Change'] = out['2026 Assets'] - out['2025 Assets']
+          out['Asset Growth %'] = out['Asset Change'] / out['2025 Assets']
+          out['Member Change'] = out['2026 Members'] - out['2025 Members']
+          out['Member Growth %'] = out['Member Change'] / out['2025 Members']
+          def cat(r):
+              a, m = r['Asset Growth %'], r['Member Growth %']
+              if pd.isna(a) or pd.isna(m): return 'No 2025 Match / New or Changed Charter'
+              if a > 0 and m > 0: return 'Growing Assets & Membership'
+              if a > 0 and m <= 0: return 'Growing Assets Only'
+              if a <= 0 and m > 0: return 'Growing Membership Only'
+              return 'Not Growing Assets or Membership'
+          out['Growth Classification'] = out.apply(cat, axis=1)
+          out = out.sort_values(['Growth Classification','2026 Assets'], ascending=[True,False])
+          cols = ['CU Number','Credit Union','City','State','Charter Type','Status','2025 Assets','2026 Assets','Asset Change','Asset Growth %','2025 Members','2026 Members','Member Change','Member Growth %','Growth Classification']
+          cols = [c for c in cols if c in out.columns]
+          out[cols].to_csv(OUT/'louisiana_credit_union_growth_q1_2025_to_q1_2026.csv',index=False)
+          out[cols].to_excel(OUT/'louisiana_credit_union_growth_raw.xlsx',index=False)
+          summary = {
+              'current_rows': int(len(out)),
+              'matched_rows': int(out['2025 Assets'].notna().sum()),
+              'categories': out['Growth Classification'].value_counts(dropna=False).to_dict(),
+              'total_assets_2025_matched': float(out['2025 Assets'].sum()),
+              'total_assets_2026': float(out['2026 Assets'].sum()),
+              'total_members_2025_matched': float(out['2025 Members'].sum()),
+              'total_members_2026': float(out['2026 Members'].sum()),
+          }
+          (OUT/'summary.json').write_text(json.dumps(summary,indent=2))
+          print(json.dumps(summary,indent=2))
+          PY
+          python /tmp/compare.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: louisiana-cu-growth-data
+          path: research-output/
+          retention-days: 3
