@@ -1,11 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { execFile } from 'child_process';
-import { promisify } from 'util';
-import { tmpdir } from 'os';
+import { inflateRawSync } from 'zlib';
 
-const execFileAsync = promisify(execFile);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..');
@@ -51,25 +48,67 @@ function numberValue(value) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-async function main() {
-  const tempRoot = await fs.mkdtemp(path.join(tmpdir(), 'gfs-ncua-'));
-  const zipPath = path.join(tempRoot, 'call-report.zip');
-  const extractPath = path.join(tempRoot, 'extract');
-  await fs.mkdir(extractPath, { recursive: true });
+function findEndOfCentralDirectory(buffer) {
+  const minimumOffset = Math.max(0, buffer.length - 65_557);
+  for (let offset = buffer.length - 22; offset >= minimumOffset; offset -= 1) {
+    if (buffer.readUInt32LE(offset) === 0x06054b50) return offset;
+  }
+  throw new Error('Downloaded NCUA file is not a valid ZIP archive.');
+}
 
+function readZipEntries(buffer) {
+  const eocdOffset = findEndOfCentralDirectory(buffer);
+  const entryCount = buffer.readUInt16LE(eocdOffset + 10);
+  const centralDirectoryOffset = buffer.readUInt32LE(eocdOffset + 16);
+  const entries = [];
+  let offset = centralDirectoryOffset;
+
+  for (let index = 0; index < entryCount; index += 1) {
+    if (buffer.readUInt32LE(offset) !== 0x02014b50) {
+      throw new Error('NCUA ZIP central directory is malformed.');
+    }
+
+    const compressionMethod = buffer.readUInt16LE(offset + 10);
+    const compressedSize = buffer.readUInt32LE(offset + 20);
+    const fileNameLength = buffer.readUInt16LE(offset + 28);
+    const extraLength = buffer.readUInt16LE(offset + 30);
+    const commentLength = buffer.readUInt16LE(offset + 32);
+    const localHeaderOffset = buffer.readUInt32LE(offset + 42);
+    const fileName = buffer.subarray(offset + 46, offset + 46 + fileNameLength).toString('utf8');
+
+    if (!fileName.endsWith('/')) {
+      if (buffer.readUInt32LE(localHeaderOffset) !== 0x04034b50) {
+        throw new Error(`NCUA ZIP entry ${fileName} has an invalid local header.`);
+      }
+      const localFileNameLength = buffer.readUInt16LE(localHeaderOffset + 26);
+      const localExtraLength = buffer.readUInt16LE(localHeaderOffset + 28);
+      const dataOffset = localHeaderOffset + 30 + localFileNameLength + localExtraLength;
+      const compressed = buffer.subarray(dataOffset, dataOffset + compressedSize);
+      let content;
+      if (compressionMethod === 0) content = Buffer.from(compressed);
+      else if (compressionMethod === 8) content = inflateRawSync(compressed);
+      else throw new Error(`Unsupported ZIP compression method ${compressionMethod} for ${fileName}.`);
+      entries.push({ name: path.basename(fileName), content });
+    }
+
+    offset += 46 + fileNameLength + extraLength + commentLength;
+  }
+
+  return entries;
+}
+
+async function main() {
   const response = await fetch(zipUrl, { headers: { 'User-Agent': 'GFS-Dashboards/1.0' } });
   if (!response.ok) throw new Error(`Unable to download NCUA call report ZIP: ${response.status}`);
-  await fs.writeFile(zipPath, Buffer.from(await response.arrayBuffer()));
-  await execFileAsync('unzip', ['-oq', zipPath, '-d', extractPath]);
+  const zipBuffer = Buffer.from(await response.arrayBuffer());
+  const archiveEntries = readZipEntries(zipBuffer);
 
-  const names = await fs.readdir(extractPath);
-  const textFiles = names.filter((name) => /\.(txt|csv)$/i.test(name));
   const parsedFiles = [];
-  for (const name of textFiles) {
-    const raw = await fs.readFile(path.join(extractPath, name), 'utf8');
+  for (const entry of archiveEntries.filter((item) => /\.(txt|csv)$/i.test(item.name))) {
+    const raw = entry.content.toString('utf8');
     const delimiter = raw.includes('\t') && !raw.includes(',') ? '\t' : ',';
     const rows = parseDelimited(raw, delimiter);
-    if (rows.length) parsedFiles.push({ name, headers: rows[0].map(normalize), rows: rows.slice(1) });
+    if (rows.length) parsedFiles.push({ name: entry.name, headers: rows[0].map(normalize), rows: rows.slice(1) });
   }
 
   const foicu = parsedFiles.find((file) => /^FOICU\.(TXT|CSV)$/i.test(file.name)) || parsedFiles.find((file) => /^FOICU/i.test(file.name));
