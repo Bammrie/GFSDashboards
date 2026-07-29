@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Active Credit Union Directory | GFS Dashboards</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .cu-directory-page .layout { width: min(1800px, 98vw); }
+    .cu-directory-toolbar { display:grid; grid-template-columns:minmax(220px,2fr) repeat(3,minmax(150px,1fr)); gap:.75rem; }
+    .cu-directory-toolbar input,.cu-directory-toolbar select { width:100%; }
+    .cu-directory-table-wrap { overflow:auto; border:1px solid var(--border); background:#fff; }
+    .cu-directory-table { min-width:1180px; }
+    .cu-directory-table tbody tr { cursor:pointer; }
+    .cu-directory-table tbody tr:hover { background:rgba(122,30,44,.05); }
+    .cu-directory-pill { display:inline-flex; padding:.2rem .5rem; border:1px solid var(--border); background:var(--surface-card); font-size:.78rem; font-weight:700; }
+    .cu-directory-actions { display:flex; justify-content:space-between; gap:1rem; align-items:center; flex-wrap:wrap; }
+    .cu-directory-pagination { display:flex; gap:.5rem; align-items:center; }
+    .cu-directory-edit-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.85rem; }
+    .cu-directory-edit-grid .field-group--wide { grid-column:1/-1; }
+    @media (max-width:900px) { .cu-directory-toolbar,.cu-directory-edit-grid { grid-template-columns:1fr; } .cu-directory-edit-grid .field-group--wide { grid-column:auto; } }
+  </style>
+</head>
+<body class="cu-directory-page">
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Active Credit Union Directory</h1>
+        <p class="site-subtitle">Every active U.S. credit union, organized for internal status tracking, notes, and ongoing research.</p>
+      </div>
+      <nav class="header-actions" aria-label="Primary navigation">
+        <div class="header-group" aria-label="Main">
+          <span class="header-group__label">Main</span>
+          <div class="header-group__links">
+            <a href="index.html" class="header-link">Dashboard Home</a>
+            <a href="accounts.html" class="header-link">Accounts</a>
+            <a href="potential-new-client-overview.html" class="header-link">Prospect Research</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <header class="panel__header">
+        <h2 class="panel__title">Directory overview</h2>
+        <p id="directory-meta" class="panel__description">Loading NCUA directory data…</p>
+      </header>
+      <div id="directory-metrics" class="metric-grid"></div>
+    </section>
+
+    <section class="panel">
+      <header class="panel__header">
+        <h2 class="panel__title">Find credit unions</h2>
+        <p class="panel__description">Search by name, charter, city, state, internal status, or assigned owner.</p>
+      </header>
+      <div class="cu-directory-toolbar">
+        <div class="field-group"><label for="directory-search">Search</label><input id="directory-search" type="search" placeholder="Credit union, charter, city…" /></div>
+        <div class="field-group"><label for="directory-state">State</label><select id="directory-state"><option value="">All states</option></select></div>
+        <div class="field-group"><label for="directory-status">GFS status</label><select id="directory-status"><option value="">All statuses</option><option>Unreviewed</option><option>Researching</option><option>Prospect</option><option>Contacted</option><option>Meeting Set</option><option>Proposal</option><option>Client</option><option>Do Not Pursue</option></select></div>
+        <div class="field-group"><label for="directory-sort">Sort</label><select id="directory-sort"><option value="assets-desc">Assets: largest first</option><option value="assets-asc">Assets: smallest first</option><option value="name-asc">Name: A–Z</option><option value="state-asc">State then assets</option></select></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="cu-directory-actions">
+        <div><strong id="directory-count">0</strong> matching credit unions</div>
+        <div class="cu-directory-pagination"><button id="directory-prev" class="secondary-button" type="button">Previous</button><span id="directory-page-label">Page 1</span><button id="directory-next" class="secondary-button" type="button">Next</button></div>
+      </div>
+      <div class="cu-directory-table-wrap">
+        <table class="data-table cu-directory-table">
+          <thead><tr><th>Credit union</th><th>Charter</th><th>Location</th><th class="numeric">Assets</th><th class="numeric">Members</th><th>NCUA status</th><th>GFS status</th><th>Owner</th><th>Updated</th></tr></thead>
+          <tbody id="directory-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="directory-edit-dialog">
+    <form method="dialog" class="dialog-form" id="directory-edit-form">
+      <header class="dialog-header"><div><h2 id="directory-edit-title">Edit credit union</h2><p id="directory-edit-subtitle" class="dialog-subtitle"></p></div><button type="button" class="icon-button" id="directory-edit-close" aria-label="Close">×</button></header>
+      <div class="dialog-body">
+        <div class="cu-directory-edit-grid">
+          <div class="field-group"><label for="edit-gfs-status">GFS status</label><select id="edit-gfs-status"><option>Unreviewed</option><option>Researching</option><option>Prospect</option><option>Contacted</option><option>Meeting Set</option><option>Proposal</option><option>Client</option><option>Do Not Pursue</option></select></div>
+          <div class="field-group"><label for="edit-owner">Owner</label><input id="edit-owner" type="text" placeholder="Blake, Brady, Royce…" /></div>
+          <div class="field-group"><label for="edit-priority">Priority</label><select id="edit-priority"><option value="">Not set</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+          <div class="field-group"><label for="edit-last-contacted">Last contacted</label><input id="edit-last-contacted" type="date" /></div>
+          <div class="field-group field-group--wide"><label for="edit-tags">Tags</label><input id="edit-tags" type="text" placeholder="TruStage, Baton Rouge, GAP opportunity" /></div>
+          <div class="field-group field-group--wide"><label for="edit-notes">Notes</label><textarea id="edit-notes" rows="7" placeholder="Internal comments, relationship history, product opportunity, follow-up…"></textarea></div>
+        </div>
+        <p id="directory-edit-feedback" class="feedback" role="status"></p>
+      </div>
+      <footer class="dialog-actions"><button type="button" class="secondary-button" id="directory-edit-cancel">Cancel</button><button type="submit" class="primary-button">Save changes</button></footer>
+    </form>
+  </dialog>
+
+  <script type="module" src="credit-union-directory.js"></script>
+</body>
+</html>
