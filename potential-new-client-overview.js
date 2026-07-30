@@ -28,10 +28,7 @@ function fillSelects(){
 function initializeMap(){
   if(state.map||!window.L)return;
   state.map=L.map('directory-map-canvas',{preferCanvas:true,zoomControl:true,minZoom:2}).setView([39.5,-98.35],4);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    maxZoom:18,
-    attribution:'&copy; OpenStreetMap contributors'
-  }).addTo(state.map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap contributors'}).addTo(state.map);
   state.mapRenderer=L.canvas({padding:.5});
   state.mapLayer=L.layerGroup().addTo(state.map);
   setTimeout(()=>state.map.invalidateSize(),0);
@@ -39,22 +36,21 @@ function initializeMap(){
 
 function markerStyle(cu){
   const selected=state.selected?.charterNumber===cu.charterNumber;
-  const isClient=cu.salesStatus==='Client';
-  const markerColor=isClient?'#7a1e2c':'#2d7f4f';
-  return {
-    renderer:state.mapRenderer,
-    radius:selected?8:5,
-    weight:selected?3:1.5,
-    color:selected?'#111827':markerColor,
-    fillColor:markerColor,
-    fillOpacity:selected?.98:.82
-  };
+  const markerColor=cu.salesStatus==='Client'?'#7a1e2c':'#2d7f4f';
+  return {renderer:state.mapRenderer,radius:selected?8:5,weight:selected?3:1.5,color:selected?'#111827':markerColor,fillColor:markerColor,fillOpacity:selected?.98:.82};
 }
 
 function renderMap({fit=false}={}){
   initializeMap();
   if(!state.map||!state.mapLayer)return;
   state.mapLayer.clearLayers();
+  const selectedState=$('state-filter').value;
+  if(!selectedState){
+    $('directory-map-status').textContent='Select a state to load Client and Prospect pins.';
+    state.map.setView([39.5,-98.35],4);
+    state.mapHasFit=false;
+    return;
+  }
   const mapped=state.filtered.filter(cu=>mapStatuses.has(cu.salesStatus)&&Number.isFinite(cu.latitude)&&Number.isFinite(cu.longitude));
   const bounds=[];
   mapped.forEach(cu=>{
@@ -62,26 +58,17 @@ function renderMap({fit=false}={}){
     marker.bindPopup(`<div class="directory-map-popup"><strong>${escapeHtml(cu.name)}</strong><span>${escapeHtml(cu.salesStatus)}</span><span>${escapeHtml([cu.street,cu.city,cu.state,cu.zip].filter(Boolean).join(', '))}</span><span>${escapeHtml(money(cu.assets))} assets</span><button type="button" data-map-charter="${escapeHtml(cu.charterNumber)}">Open credit union</button></div>`);
     marker.on('popupopen',event=>{
       const button=event.popup.getElement()?.querySelector('[data-map-charter]');
-      if(button)button.addEventListener('click',()=>{
-        selectCreditUnion(button.dataset.mapCharter);
-        $('credit-union-detail-panel').scrollIntoView({behavior:'smooth',block:'start'});
-        state.map.closePopup();
-      },{once:true});
+      if(button)button.addEventListener('click',()=>{selectCreditUnion(button.dataset.mapCharter);$('credit-union-detail-panel').scrollIntoView({behavior:'smooth',block:'start'});state.map.closePopup();},{once:true});
     });
     marker.on('click',()=>selectCreditUnion(cu.charterNumber,false));
     marker.addTo(state.mapLayer);
     bounds.push([cu.latitude,cu.longitude]);
   });
-  const totalMapped=state.data.filter(cu=>mapStatuses.has(cu.salesStatus)&&Number.isFinite(cu.latitude)&&Number.isFinite(cu.longitude)).length;
   const clients=mapped.filter(cu=>cu.salesStatus==='Client').length;
   const prospects=mapped.filter(cu=>cu.salesStatus==='Prospect').length;
-  $('directory-map-status').textContent=`${count(mapped.length)} pins shown · ${count(clients)} clients · ${count(prospects)} prospects · ${count(totalMapped)} total mapped`;
-  if(bounds.length&&(fit||!state.mapHasFit)){
-    state.map.fitBounds(bounds,{padding:[18,18],maxZoom:10});
-    state.mapHasFit=true;
-  }else if(!bounds.length){
-    state.map.setView([39.5,-98.35],4);
-  }
+  $('directory-map-status').textContent=`${count(mapped.length)} pins shown · ${count(clients)} clients · ${count(prospects)} prospects`;
+  if(bounds.length&&(fit||!state.mapHasFit)){state.map.fitBounds(bounds,{padding:[18,18],maxZoom:10});state.mapHasFit=true;}
+  else if(!bounds.length){state.map.setView([39.5,-98.35],4);}
 }
 
 function applyFilters(){
@@ -89,39 +76,53 @@ function applyFilters(){
   const selectedState=$('state-filter').value;
   const selectedStatus=$('status-filter').value;
   const selectedTrend=$('trend-filter').value;
+  if(!selectedState){
+    state.filtered=[];
+    state.selected=null;
+    renderList();
+    renderSummary();
+    renderDetail();
+    renderMap();
+    return;
+  }
   state.filtered=state.data.filter(cu=>{
-    if(cu.hidden)return false;
-    if(selectedState&&cu.state!==selectedState)return false;
+    if(cu.hidden||cu.state!==selectedState)return false;
     if(selectedStatus&&cu.salesStatus!==selectedStatus)return false;
     if(selectedTrend&&cu.trend!==selectedTrend)return false;
     if(!query)return true;
     return [cu.name,cu.charterNumber,cu.street,cu.city,cu.state,cu.zip,cu.owner,cu.trend,...(cu.tags||[])].join(' ').toLowerCase().includes(query);
   });
+  if(state.selected&&!state.filtered.some(cu=>cu.charterNumber===state.selected.charterNumber))state.selected=null;
   renderList();
   renderSummary();
-  renderMap({fit:Boolean(query||selectedState||selectedStatus||selectedTrend)});
+  renderDetail();
+  renderMap({fit:true});
 }
 
 function renderSummary(){
+  const selectedState=$('state-filter').value;
+  if(!selectedState){
+    $('directory-summary').innerHTML='<span class="directory-chip">Select a state to load the directory</span>';
+    $('result-count').textContent='Select a state to begin.';
+    return;
+  }
   const totalAssets=state.filtered.reduce((sum,cu)=>sum+(Number(cu.assets)||0),0);
-  const states=new Set(state.filtered.map(cu=>cu.state).filter(Boolean)).size;
   const growing=state.filtered.filter(cu=>cu.trend==='Growing').length;
   const declining=state.filtered.filter(cu=>cu.trend==='Declining').length;
-  $('directory-summary').innerHTML=[`${count(state.filtered.length)} shown`,`${count(states)} states / territories`,`${money(totalAssets)} assets`,`${count(growing)} growing`,`${count(declining)} declining`,`NCUA cycle ${state.meta.cycle||'not loaded'}`].map(value=>`<span class="directory-chip">${escapeHtml(value)}</span>`).join('');
-  $('result-count').textContent=`${count(state.filtered.length)} active credit unions match the current filters.`;
+  $('directory-summary').innerHTML=[`${count(state.filtered.length)} shown`,selectedState,`${money(totalAssets)} assets`,`${count(growing)} growing`,`${count(declining)} declining`,`NCUA cycle ${state.meta.cycle||'not loaded'}`].map(value=>`<span class="directory-chip">${escapeHtml(value)}</span>`).join('');
+  $('result-count').textContent=`${count(state.filtered.length)} active credit unions in ${selectedState} match the current filters.`;
 }
 
 function renderList(){
   const list=$('credit-union-list');
+  if(!$('state-filter').value){list.innerHTML='<div class="state-required"><strong>State selection required</strong>Choose a state above to load credit unions.</div>';return;}
   if(!state.filtered.length){list.innerHTML='<div class="empty-state"><p>No credit unions match the current filters.</p></div>';return;}
-  let currentState='';
-  list.innerHTML=state.filtered.map(cu=>{
-    const heading=cu.state!==currentState?`<div class="state-heading">${escapeHtml(cu.state||'Unknown')}</div>`:'';
-    currentState=cu.state;
+  const selectedState=$('state-filter').value;
+  list.innerHTML=`<div class="state-heading">${escapeHtml(selectedState)}</div>`+state.filtered.map(cu=>{
     const assetGrowth=cu.growth?.assets?.fiveYearPct;
     const memberGrowth=cu.growth?.members?.fiveYearPct;
     const trend=cu.trend||'Insufficient history';
-    return `${heading}<button type="button" class="cu-button" data-charter="${escapeHtml(cu.charterNumber)}" aria-pressed="${state.selected?.charterNumber===cu.charterNumber}"><span><strong>${escapeHtml(cu.name)}</strong><small>${escapeHtml([cu.city,cu.state].filter(Boolean).join(', '))}</small><small class="cu-growth"><span class="${growthClass(assetGrowth)}">Assets 5Y ${escapeHtml(signedPercent(assetGrowth))}</span><span class="${growthClass(memberGrowth)}">Members 5Y ${escapeHtml(signedPercent(memberGrowth))}</span></small><span class="status-badge">${escapeHtml(cu.salesStatus||'Unreviewed')}</span> <span class="trend-badge" data-trend="${escapeHtml(trend)}">${escapeHtml(trend)}</span></span><span class="cu-assets">${escapeHtml(money(cu.assets))}</span></button>`;
+    return `<button type="button" class="cu-button" data-charter="${escapeHtml(cu.charterNumber)}" aria-pressed="${state.selected?.charterNumber===cu.charterNumber}"><span><strong>${escapeHtml(cu.name)}</strong><small>${escapeHtml([cu.city,cu.state].filter(Boolean).join(', '))}</small><small class="cu-growth"><span class="${growthClass(assetGrowth)}">Assets 5Y ${escapeHtml(signedPercent(assetGrowth))}</span><span class="${growthClass(memberGrowth)}">Members 5Y ${escapeHtml(signedPercent(memberGrowth))}</span></small><span class="status-badge">${escapeHtml(cu.salesStatus||'Unreviewed')}</span> <span class="trend-badge" data-trend="${escapeHtml(trend)}">${escapeHtml(trend)}</span></span><span class="cu-assets">${escapeHtml(money(cu.assets))}</span></button>`;
   }).join('');
   list.querySelectorAll('[data-charter]').forEach(button=>button.addEventListener('click',()=>selectCreditUnion(button.dataset.charter)));
 }
@@ -177,7 +178,7 @@ function renderDetail(){
   const cu=state.selected;
   $('empty-detail').hidden=Boolean(cu);
   $('credit-union-detail').hidden=!cu;
-  if(!cu)return;
+  if(!cu){$('empty-detail').querySelector('p').textContent=$('state-filter').value?'Select a credit union to review its information.':'Select a state, then choose a credit union to review its information.';return;}
   $('detail-name').textContent=cu.name;
   $('detail-location').textContent=[cu.street,cu.city,cu.state,cu.zip].filter(Boolean).join(', ');
   $('detail-status').textContent=cu.salesStatus||'Unreviewed';
@@ -200,22 +201,20 @@ async function loadDirectory(){
   state.meta=meta;
   state.data=Array.isArray(creditUnions)?creditUnions:[];
   const states=[...new Set(state.data.map(cu=>cu.state).filter(Boolean))].sort();
-  $('state-filter').innerHTML='<option value="">All states</option>'+states.map(value=>`<option>${escapeHtml(value)}</option>`).join('');
+  $('state-filter').innerHTML='<option value="">Select a state</option>'+states.map(value=>`<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
   const historyCycles=Array.isArray(payload.historyCycles)?payload.historyCycles:[];
   const historyLabel=historyCycles.length?` · history ${historyCycles[0]} to ${historyCycles.at(-1)} · projected ${payload.projectionYears||5} years`:'';
-  const mapLabel=` · ${count(payload.geocodedCount||0)} mapped addresses`;
-  $('directory-meta').textContent=payload.generatedAt?`Latest synchronized dataset: ${new Date(payload.generatedAt).toLocaleString()} · ${count(payload.count)} active credit unions${mapLabel}${historyLabel}.`:'No synchronized dataset exists yet. Use Sync NCUA Data.';
-  state.selected=state.selected?state.data.find(cu=>cu.charterNumber===state.selected.charterNumber)||null:null;
+  $('directory-meta').textContent=payload.generatedAt?`Latest synchronized dataset: ${new Date(payload.generatedAt).toLocaleString()} · ${count(payload.count)} active credit unions${historyLabel}. Select a state to begin.`:'No synchronized dataset exists yet. Use Sync NCUA Data.';
+  state.selected=null;
   state.mapHasFit=false;
   applyFilters();
-  renderDetail();
 }
 
 async function syncDirectory(){
   const button=$('sync-button');
   button.disabled=true;
   button.textContent='Syncing and mapping...';
-  $('directory-meta').textContent='Downloading NCUA reports, rebuilding projections, and geocoding all active credit-union main-office addresses...';
+  $('directory-meta').textContent='Downloading NCUA reports, rebuilding projections, and geocoding active credit-union main-office addresses...';
   try{await api('/api/ncua-credit-unions/sync',{method:'POST',body:'{}'});await loadDirectory();}
   catch(error){$('directory-meta').textContent=error.message;}
   finally{button.disabled=false;button.textContent='Sync NCUA Data';}
@@ -231,7 +230,7 @@ async function saveSelected(event){
     Object.assign(state.selected,saved);
     $('save-feedback').textContent='Saved.';
     applyFilters();
-    renderDetail();
+    if(state.selected)renderDetail();
   }catch(error){$('save-feedback').textContent=error.message;}
 }
 
