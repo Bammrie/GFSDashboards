@@ -22,7 +22,7 @@
     .cu-assets{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
     .status-badge{display:inline-flex;margin-top:.35rem;padding:.12rem .4rem;border:1px solid var(--border);font-size:.74rem;font-weight:700}
     .detail-header{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-    .detail-metrics{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:.7rem;margin-top:1rem}
+    .detail-metrics{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:.7rem;margin-top:1rem}
     .detail-card{border:1px solid var(--border);background:var(--surface-card);padding:.75rem}.detail-card span{display:block;color:var(--text-secondary);font-size:.78rem;font-weight:700;text-transform:uppercase}.detail-card strong{display:block;margin-top:.25rem;font-size:1.05rem}
     .edit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;margin-top:1rem}.edit-grid label{display:grid;gap:.3rem;font-weight:700;color:var(--text-secondary)}.edit-grid .wide{grid-column:1/-1}
     .edit-actions{display:flex;justify-content:flex-end;gap:.65rem;align-items:center;margin-top:.8rem}.feedback{margin-right:auto;color:var(--text-secondary)}
@@ -46,7 +46,7 @@
     <section class="panel">
       <header class="panel__header"><h2 class="panel__title">National credit union directory</h2><p id="directory-meta" class="panel__description">Load the latest NCUA call-report directory to begin.</p></header>
       <div class="directory-toolbar">
-        <label>Search<input id="search-input" type="search" placeholder="Name, charter, city, state" /></label>
+        <label>Search<input id="search-input" type="search" placeholder="Name, city, state, owner, or tag" /></label>
         <label>State<select id="state-filter"><option value="">All states</option></select></label>
         <label>Sales status<select id="status-filter"><option value="">All statuses</option></select></label>
         <button id="sync-button" type="button" class="primary-button">Sync NCUA Data</button>
@@ -79,6 +79,6 @@
       </section>
     </section>
   </main>
-  <script type="module" src="potential-new-client-overview.js"></script>
+  <script type="module" src="potential-new-client-overview.js?v=20260730-loan-metrics"></script>
 </body>
 </html>
