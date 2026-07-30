@@ -12,12 +12,14 @@
     .directory-map-panel{padding:0;overflow:hidden}.directory-map-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;padding:1rem 1rem .8rem}.directory-map-header .panel__header{margin:0}.directory-map-status{margin:0;color:var(--text-secondary);font-weight:700;white-space:nowrap}.directory-map-canvas{height:clamp(330px,46vh,620px);width:100%;border-top:1px solid var(--border);background:#e9ecef}.directory-map-popup strong{display:block;font-size:.95rem}.directory-map-popup span{display:block;margin-top:.2rem}.directory-map-popup button{margin-top:.55rem;width:100%;padding:.42rem .55rem;border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
     .directory-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) repeat(3,minmax(135px,190px)) auto;gap:.7rem;align-items:end}
     .directory-toolbar label{display:grid;gap:.3rem;font-weight:700;color:var(--text-secondary)}
-    .directory-toolbar input,.directory-toolbar select,.edit-grid input,.edit-grid select,.edit-grid textarea{width:100%;padding:.65rem;border:1px solid var(--border);background:#fff;color:var(--text-primary)}
+    .directory-toolbar input,.directory-toolbar select,.edit-grid input,.edit-grid select,.edit-grid textarea{width:100%;padding:.65rem;border:1px solid #b9b9b9;background:#fff;color:#222;-webkit-text-fill-color:#222;color-scheme:light}
+    .directory-toolbar select option,.edit-grid select option{background:#fff;color:#222}
     .directory-summary{display:flex;gap:.65rem;flex-wrap:wrap;margin-top:.9rem}
     .directory-chip{border:1px solid var(--border);background:var(--surface-card);padding:.4rem .65rem;font-weight:700}
     .directory-grid{display:grid;grid-template-columns:minmax(340px,.82fr) minmax(0,1.45fr);gap:1rem;align-items:start}
     .directory-list{display:grid;gap:.5rem;max-height:76vh;overflow:auto;padding-right:.25rem}
-    .state-heading{position:sticky;top:0;z-index:1;background:var(--surface);padding:.55rem 0 .35rem;font-size:.82rem;font-weight:800;text-transform:uppercase;color:var(--text-secondary);border-bottom:1px solid var(--border)}
+    .state-heading{position:sticky;top:0;z-index:1;background:#fff;padding:.55rem .65rem .35rem;font-size:.82rem;font-weight:800;text-transform:uppercase;color:#7a1e2c;border:1px solid #d7d7d7;border-bottom:2px solid #7a1e2c}
+    .state-required{padding:1rem;border:1px solid #d7d7d7;background:#fff;color:#333;font-weight:700}.state-required strong{display:block;color:#7a1e2c;margin-bottom:.25rem}
     .cu-button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8rem;width:100%;text-align:left;border:1px solid var(--border);background:var(--surface-card);padding:.8rem;cursor:pointer;color:var(--text-primary)}
     .cu-button[aria-pressed="true"]{border-color:var(--accent);background:rgba(122,30,44,.09)}
     .cu-button strong,.cu-button small{display:block}.cu-button small{margin-top:.2rem;color:var(--text-secondary)}
@@ -62,17 +64,17 @@
   <main class="layout">
     <section id="potential-client-map" class="panel directory-map-panel" aria-labelledby="potential-client-map-title">
       <div class="directory-map-header">
-        <header class="panel__header"><h2 id="potential-client-map-title" class="panel__title">Client and prospect map</h2><p class="panel__description">Only marked accounts appear here: Clients in maroon and Prospects in green. Directory filters also update these pins.</p></header>
-        <p id="directory-map-status" class="directory-map-status">Loading clients and prospects...</p>
+        <header class="panel__header"><h2 id="potential-client-map-title" class="panel__title">Client and prospect map</h2><p class="panel__description">Select a state to view marked accounts. Clients appear in maroon and Prospects in green.</p></header>
+        <p id="directory-map-status" class="directory-map-status">Select a state to load pins.</p>
       </div>
       <div id="directory-map-canvas" class="directory-map-canvas" role="application" aria-label="Map of clients and prospective credit unions"></div>
     </section>
 
     <section class="panel">
-      <header class="panel__header"><h2 class="panel__title">National credit union directory</h2><p id="directory-meta" class="panel__description">Load the latest NCUA directory and same-quarter history to begin.</p></header>
+      <header class="panel__header"><h2 class="panel__title">National credit union directory</h2><p id="directory-meta" class="panel__description">Choose a state to load its active credit unions.</p></header>
       <div class="directory-toolbar">
-        <label>Search<input id="search-input" type="search" placeholder="Name, charter, city, state, owner, or tag" /></label>
-        <label>State<select id="state-filter"><option value="">All states</option></select></label>
+        <label>Search<input id="search-input" type="search" placeholder="Name, charter, city, owner, or tag" /></label>
+        <label>State<select id="state-filter" required><option value="">Select a state</option></select></label>
         <label>Sales status<select id="status-filter"><option value="">All statuses</option></select></label>
         <label>5-year trend<select id="trend-filter"><option value="">All trends</option><option>Growing</option><option>Declining</option><option>Mixed</option><option>Stable</option><option>Insufficient history</option></select></label>
         <button id="sync-button" type="button" class="primary-button">Sync NCUA Data</button>
@@ -82,23 +84,21 @@
 
     <section class="directory-grid">
       <aside class="panel">
-        <header class="panel__header"><h2 class="panel__title">Credit unions</h2><p id="result-count" class="panel__description"></p></header>
-        <div id="credit-union-list" class="directory-list"></div>
+        <header class="panel__header"><h2 class="panel__title">Credit unions</h2><p id="result-count" class="panel__description">Select a state to begin.</p></header>
+        <div id="credit-union-list" class="directory-list"><div class="state-required"><strong>State selection required</strong>Choose a state above to load credit unions.</div></div>
       </aside>
 
       <section class="panel" id="credit-union-detail-panel">
-        <div id="empty-detail" class="empty-state"><p>Select a credit union to review its growth, projection, and sales information.</p></div>
+        <div id="empty-detail" class="empty-state"><p>Select a state, then choose a credit union to review its information.</p></div>
         <div id="credit-union-detail" hidden>
           <header class="detail-header"><div><h2 id="detail-name" class="panel__title"></h2><p id="detail-location" class="panel__description"></p></div><div class="detail-badges"><span id="detail-status" class="status-badge"></span><span id="detail-trend" class="trend-badge"></span></div></header>
           <div id="detail-metrics" class="detail-metrics"></div>
-
           <section class="history-section" aria-labelledby="history-title">
             <header class="history-header"><div><h3 id="history-title">Five-year performance and five-year projection</h3><p id="history-caption"></p></div></header>
             <div id="growth-summary" class="growth-grid"></div>
             <div id="history-charts" class="history-charts"></div>
             <div id="history-table" class="history-table-wrap"></div>
           </section>
-
           <form id="edit-form">
             <div class="edit-grid">
               <label>Sales status<select id="edit-status"></select></label>
@@ -114,15 +114,6 @@
     </section>
   </main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script>
-    // The directory contains thousands of map points. Reuse one Canvas renderer
-    // instead of allocating a separate full-size canvas for every marker.
-    if(window.L){
-      const createCanvasRenderer=window.L.canvas.bind(window.L);
-      const sharedCanvasRenderer=createCanvasRenderer({padding:.25});
-      window.L.canvas=()=>sharedCanvasRenderer;
-    }
-  </script>
-  <script type="module" src="potential-new-client-overview.js?v=20260730-client-prospect-map"></script>
+  <script type="module" src="potential-new-client-overview.js?v=20260730-state-required-contrast-fix"></script>
 </body>
 </html>
