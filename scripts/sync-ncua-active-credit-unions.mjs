@@ -48,6 +48,11 @@ function numberValue(value) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+function isExplicitlyInactive(value) {
+  const status = String(value || '').trim().toLowerCase();
+  return /inactive|liquidat|closed|merged|failed/.test(status);
+}
+
 function findEndOfCentralDirectory(buffer) {
   const minimumOffset = Math.max(0, buffer.length - 65_557);
   for (let offset = buffer.length - 22; offset >= minimumOffset; offset -= 1) {
@@ -64,10 +69,7 @@ function readZipEntries(buffer) {
   let offset = centralDirectoryOffset;
 
   for (let index = 0; index < entryCount; index += 1) {
-    if (buffer.readUInt32LE(offset) !== 0x02014b50) {
-      throw new Error('NCUA ZIP central directory is malformed.');
-    }
-
+    if (buffer.readUInt32LE(offset) !== 0x02014b50) throw new Error('NCUA ZIP central directory is malformed.');
     const compressionMethod = buffer.readUInt16LE(offset + 10);
     const compressedSize = buffer.readUInt32LE(offset + 20);
     const fileNameLength = buffer.readUInt16LE(offset + 28);
@@ -77,9 +79,7 @@ function readZipEntries(buffer) {
     const fileName = buffer.subarray(offset + 46, offset + 46 + fileNameLength).toString('utf8');
 
     if (!fileName.endsWith('/')) {
-      if (buffer.readUInt32LE(localHeaderOffset) !== 0x04034b50) {
-        throw new Error(`NCUA ZIP entry ${fileName} has an invalid local header.`);
-      }
+      if (buffer.readUInt32LE(localHeaderOffset) !== 0x04034b50) throw new Error(`NCUA ZIP entry ${fileName} has an invalid local header.`);
       const localFileNameLength = buffer.readUInt16LE(localHeaderOffset + 26);
       const localExtraLength = buffer.readUInt16LE(localHeaderOffset + 28);
       const dataOffset = localHeaderOffset + 30 + localFileNameLength + localExtraLength;
@@ -90,19 +90,15 @@ function readZipEntries(buffer) {
       else throw new Error(`Unsupported ZIP compression method ${compressionMethod} for ${fileName}.`);
       entries.push({ name: path.basename(fileName), content });
     }
-
     offset += 46 + fileNameLength + extraLength + commentLength;
   }
-
   return entries;
 }
 
 async function main() {
   const response = await fetch(zipUrl, { headers: { 'User-Agent': 'GFS-Dashboards/1.0' } });
   if (!response.ok) throw new Error(`Unable to download NCUA call report ZIP: ${response.status}`);
-  const zipBuffer = Buffer.from(await response.arrayBuffer());
-  const archiveEntries = readZipEntries(zipBuffer);
-
+  const archiveEntries = readZipEntries(Buffer.from(await response.arrayBuffer()));
   const parsedFiles = [];
   for (const entry of archiveEntries.filter((item) => /\.(txt|csv)$/i.test(item.name))) {
     const raw = entry.content.toString('utf8');
@@ -113,7 +109,6 @@ async function main() {
 
   const foicu = parsedFiles.find((file) => /^FOICU\.(TXT|CSV)$/i.test(file.name)) || parsedFiles.find((file) => /^FOICU/i.test(file.name));
   if (!foicu) throw new Error('FOICU identity file was not found in the NCUA archive.');
-
   const cuIndex = findColumn(foicu.headers, ['CU_NUMBER', 'CU_NUM']);
   const nameIndex = findColumn(foicu.headers, ['CU_NAME', 'NAME']);
   const stateIndex = findColumn(foicu.headers, ['STATE', 'STATE_CODE']);
@@ -142,24 +137,26 @@ async function main() {
 
   const creditUnions = foicu.rows.map((row) => {
     const charterNumber = String(row[cuIndex] || '').trim();
-    const status = statusIndex >= 0 ? String(row[statusIndex] || '').trim() : 'Active';
+    const rawStatus = statusIndex >= 0 ? String(row[statusIndex] || '').trim() : '';
     const financials = financialsByCu.get(charterNumber) || {};
     return {
       charterNumber,
       name: String(row[nameIndex] || '').trim(),
       state: String(row[stateIndex] || '').trim().toUpperCase(),
       city: cityIndex >= 0 ? String(row[cityIndex] || '').trim() : '',
-      status,
+      status: isExplicitlyInactive(rawStatus) ? rawStatus : 'Active',
       charterType: typeIndex >= 0 ? String(row[typeIndex] || '').trim() : '',
       street: streetIndex >= 0 ? String(row[streetIndex] || '').trim() : '',
       zip: zipIndex >= 0 ? String(row[zipIndex] || '').trim() : '',
       assets: financials.assets ?? null,
-      members: financials.members ?? null
+      members: financials.members ?? null,
+      _inactive: isExplicitlyInactive(rawStatus)
     };
-  }).filter((cu) => cu.charterNumber && cu.name)
-    .filter((cu) => !cu.status || /active/i.test(cu.status))
+  }).filter((cu) => cu.charterNumber && cu.name && !cu._inactive)
+    .map(({ _inactive, ...cu }) => cu)
     .sort((a, b) => a.state.localeCompare(b.state) || (b.assets || 0) - (a.assets || 0) || a.name.localeCompare(b.name));
 
+  if (creditUnions.length < 4000) throw new Error(`NCUA sync produced only ${creditUnions.length} records; refusing to replace the directory with an incomplete dataset.`);
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
   await fs.writeFile(outputPath, JSON.stringify({ generatedAt: new Date().toISOString(), cycle: latestCycle, sourceUrl: zipUrl, count: creditUnions.length, creditUnions }, null, 2));
   console.log(`Saved ${creditUnions.length} active credit unions to ${outputPath}`);
