@@ -72,11 +72,15 @@ function locateHeaderRow(rows) {
   throw new Error('Could not locate the header row in the NCUA active credit union spreadsheet.');
 }
 
-function findIndex(headers, candidates) {
-  const lookup = new Map(headers.map((header, index) => [normalize(header), index]));
-  for (const candidate of candidates) {
-    const index = lookup.get(normalize(candidate));
-    if (Number.isInteger(index)) return index;
+function findIndex(headers, candidates, predicate = null) {
+  const normalizedCandidates = candidates.map(normalize);
+  for (const candidate of normalizedCandidates) {
+    const index = headers.indexOf(candidate);
+    if (index >= 0) return index;
+  }
+  if (predicate) {
+    const index = headers.findIndex(predicate);
+    if (index >= 0) return index;
   }
   return -1;
 }
@@ -97,16 +101,49 @@ async function main() {
 
   const charterIndex = findIndex(headers, ['CU_NUMBER', 'CHARTER_NUMBER', 'CHARTER_NO', 'CHARTER']);
   const nameIndex = findIndex(headers, ['CU_NAME', 'CREDIT_UNION_NAME', 'CREDIT_UNION']);
-  const stateIndex = findIndex(headers, ['STATE', 'STATE_CODE']);
-  const cityIndex = findIndex(headers, ['CITY', 'CU_CITY']);
-  const streetIndex = findIndex(headers, ['ADDRESS', 'STREET', 'PHYSICAL_ADDRESS']);
-  const zipIndex = findIndex(headers, ['ZIP', 'ZIP_CODE', 'ZIPCODE']);
-  const typeIndex = findIndex(headers, ['CHARTER_TYPE', 'CU_TYPE', 'TYPE']);
-  const assetsIndex = findIndex(headers, ['ASSETS', 'TOTAL_ASSETS', 'ASSET_SIZE']);
-  const membersIndex = findIndex(headers, ['MEMBERS', 'NUMBER_OF_MEMBERS', 'TOTAL_MEMBERS']);
+  const stateIndex = findIndex(
+    headers,
+    ['STATE', 'STATE_CODE', 'STATE_MAILING_ADDRESS', 'MAILING_STATE'],
+    (header) => header.includes('STATE') && header.includes('MAILING')
+  );
+  const cityIndex = findIndex(
+    headers,
+    ['CITY', 'CU_CITY', 'CITY_MAILING_ADDRESS', 'MAILING_CITY'],
+    (header) => header.includes('CITY') && header.includes('MAILING')
+  );
+  const streetIndex = findIndex(
+    headers,
+    ['ADDRESS', 'STREET', 'PHYSICAL_ADDRESS', 'STREET_MAILING_ADDRESS', 'MAILING_ADDRESS'],
+    (header) => header.includes('STREET') && header.includes('MAILING')
+  );
+  const zipIndex = findIndex(
+    headers,
+    ['ZIP', 'ZIP_CODE', 'ZIPCODE', 'ZIP_CODE_MAILING_ADDRESS', 'MAILING_ZIP'],
+    (header) => header.includes('ZIP') && header.includes('MAILING')
+  );
+  const typeIndex = findIndex(
+    headers,
+    ['CHARTER_TYPE', 'CU_TYPE', 'TYPE', 'CREDIT_UNION_TYPE'],
+    (header) => header.includes('CREDIT_UNION') && header.includes('TYPE')
+  );
+  const assetsIndex = findIndex(
+    headers,
+    ['ASSETS', 'TOTAL_ASSETS', 'ASSET_SIZE'],
+    (header) => header === 'TOTAL_ASSETS' || (header.includes('TOTAL') && header.includes('ASSET') && !header.includes('GROWTH'))
+  );
+  const membersIndex = findIndex(
+    headers,
+    ['MEMBERS', 'NUMBER_OF_MEMBERS', 'TOTAL_MEMBERS', 'MEMBER_COUNT', 'TOTAL_NUMBER_OF_MEMBERS'],
+    (header) => header.includes('MEMBER') && !header.includes('GROWTH') && !header.includes('RATIO')
+  );
 
   if ([charterIndex, nameIndex, stateIndex, assetsIndex].some((index) => index < 0)) {
-    throw new Error(`Required NCUA active-list columns were not found. Headers: ${headers.join(', ')}`);
+    throw new Error(`Required NCUA active-list columns were not found. Missing: ${[
+      ['charter', charterIndex],
+      ['name', nameIndex],
+      ['state', stateIndex],
+      ['assets', assetsIndex]
+    ].filter(([, index]) => index < 0).map(([label]) => label).join(', ')}.`);
   }
 
   const creditUnions = dataRows.map((row) => ({
@@ -136,6 +173,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(error?.stack || error);
+  console.error(error?.message || error);
   process.exitCode = 1;
 });
