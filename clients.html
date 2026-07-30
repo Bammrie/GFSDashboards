@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Clients | GFS Dashboards</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .clients-page .layout{width:min(1800px,98vw)}
+    .client-overview-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+    .client-overview-header .panel__header{margin:0}
+    .client-overview-actions{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+    .client-data-meta{margin:0;color:var(--text-secondary);font-weight:700}
+    .client-kpi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+    .client-kpi{position:relative;overflow:hidden;border:1px solid var(--border);background:linear-gradient(135deg,#fff 0%,#f8f2f3 100%);padding:1.25rem 1.35rem;min-height:168px}
+    .client-kpi::after{content:"";position:absolute;right:-45px;bottom:-80px;width:180px;height:180px;border:28px solid rgba(122,30,44,.08);transform:rotate(18deg)}
+    .client-kpi-label{display:block;color:var(--text-secondary);font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .client-kpi-value{display:block;margin-top:.65rem;color:var(--accent);font-size:clamp(2rem,4.2vw,3.5rem);line-height:1;font-weight:850;letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+    .client-kpi-note{display:block;margin-top:.75rem;color:var(--text-secondary);font-size:.86rem;max-width:520px}
+    .trajectory-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+    .trajectory-header .panel__header{margin:0}
+    .trajectory-controls{display:flex;gap:.45rem;flex-wrap:wrap}
+    .trajectory-control{border:1px solid #b8b8b8;background:#fff;color:#222;padding:.55rem .75rem;font:inherit;font-weight:750;cursor:pointer}
+    .trajectory-control[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:#fff}
+    .trajectory-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin-top:1rem}
+    .trajectory-summary-card{border:1px solid var(--border);background:var(--surface-card);padding:.75rem .85rem}
+    .trajectory-summary-card span{display:block;color:var(--text-secondary);font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+    .trajectory-summary-value{display:block!important;margin-top:.28rem;color:var(--text-primary);font-size:1.15rem!important;font-weight:850!important;text-transform:none!important;letter-spacing:0!important;font-variant-numeric:tabular-nums}
+    .trajectory-chart-wrap{margin-top:1rem;border:1px solid var(--border);background:linear-gradient(180deg,#fff,#faf7f8);padding:.75rem;overflow:auto}
+    .trajectory-chart{display:block;width:100%;min-width:780px;height:auto;aspect-ratio:1000/360;overflow:visible}
+    .trajectory-gridline{stroke:rgba(17,17,17,.13);stroke-width:1}
+    .trajectory-axis-label{fill:#535353;font-size:18px;font-weight:650}
+    .trajectory-axis-label--x{font-size:16px}
+    .trajectory-area{fill:rgba(122,30,44,.1)}
+    .trajectory-line{fill:none;stroke:var(--accent);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+    .trajectory-point{fill:#fff;stroke:var(--accent);stroke-width:4}
+    .trajectory-coverage{margin:.75rem 0 0;color:var(--text-secondary);font-size:.82rem}
+    .client-list-header{display:flex;justify-content:space-between;gap:1rem;align-items:end;flex-wrap:wrap}
+    .client-list-header .panel__header{margin:0}
+    .client-search-label{display:grid;gap:.3rem;min-width:min(360px,100%);font-weight:750;color:var(--text-secondary)}
+    .client-search-label input{width:100%;padding:.65rem;border:1px solid #b9b9b9;background:#fff;color:#222;-webkit-text-fill-color:#222;color-scheme:light}
+    .client-result-count{margin:.8rem 0 0;color:var(--text-secondary);font-weight:700}
+    .client-table-wrap{margin-top:1rem;overflow:auto;border:1px solid var(--border)}
+    .client-table{width:100%;border-collapse:collapse;min-width:1180px}
+    .client-table th,.client-table td{padding:.72rem .75rem;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+    .client-table th{position:sticky;top:0;z-index:1;background:#f2edef;color:#4a1c24;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+    .client-table td.numeric,.client-table th.numeric{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .client-table tbody tr:last-child td{border-bottom:0}
+    .client-table tbody tr:hover{background:rgba(122,30,44,.045)}
+    .client-name{display:block;color:var(--accent);font-size:.95rem}
+    .client-meta-line{display:block;margin-top:.18rem;color:var(--text-secondary);font-size:.74rem}
+    .growth-up{color:#1f673d!important;font-weight:800}.growth-down{color:#8b2424!important;font-weight:800}.growth-flat{color:#555!important;font-weight:800}
+    .client-empty{margin-top:1rem;padding:1rem;border:1px dashed #aaa;background:#fafafa;color:#333}
+    @media(max-width:900px){.client-kpi-grid,.trajectory-summary{grid-template-columns:1fr}.client-overview-header,.trajectory-header,.client-list-header{display:grid}.client-overview-actions{align-items:flex-start}.client-search-label{min-width:0}.client-kpi{min-height:145px}.trajectory-chart-wrap{padding:.35rem}}
+  </style>
+</head>
+<body class="clients-page">
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Dashboard</h1>
+        <p class="site-subtitle">Current clients, combined lending totals, and aggregate five-year NCUA growth.</p>
+      </div>
+      <nav class="header-actions" aria-label="Dashboard navigation">
+        <div class="header-group"><span class="header-group__label">Views</span><div class="header-group__links"><a href="potential-new-client-overview.html" class="header-link">Dashboard</a><a href="clients.html" class="header-link" aria-current="page">Clients</a></div></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <div class="client-overview-header">
+        <header class="panel__header"><h2 class="panel__title">Clients</h2><p class="panel__description">Every active credit union currently classified as Client in the Dashboard.</p></header>
+        <div class="client-overview-actions"><p id="client-data-meta" class="client-data-meta">Loading client data…</p><button id="refresh-clients" type="button" class="primary-button">Refresh Data</button></div>
+      </div>
+    </section>
+
+    <section class="client-kpi-grid" aria-label="Client loan totals">
+      <article class="panel client-kpi"><span class="client-kpi-label">Total Client Loans</span><strong id="total-client-loans" class="client-kpi-value">—</strong><span id="total-client-loans-note" class="client-kpi-note">Loading current NCUA balances…</span></article>
+      <article class="panel client-kpi"><span class="client-kpi-label">Indirect Loans</span><strong id="total-indirect-loans" class="client-kpi-value">—</strong><span id="total-indirect-loans-note" class="client-kpi-note">Loading reported indirect auto balances…</span></article>
+    </section>
+
+    <section class="panel" aria-labelledby="trajectory-title">
+      <div class="trajectory-header">
+        <header class="panel__header"><h2 id="trajectory-title" class="panel__title">Five-Year Client Loans Trajectory</h2><p class="panel__description">Aggregate same-quarter NCUA history for the credit unions currently classified as Client.</p></header>
+        <div class="trajectory-controls" role="group" aria-label="Trajectory metric"><button type="button" class="trajectory-control" data-metric="loans" aria-pressed="true">Loans</button><button type="button" class="trajectory-control" data-metric="assets" aria-pressed="false">Assets</button><button type="button" class="trajectory-control" data-metric="members" aria-pressed="false">Members</button></div>
+      </div>
+      <div class="trajectory-summary">
+        <div class="trajectory-summary-card"><span id="trajectory-start-label">Starting period</span><strong id="trajectory-start" class="trajectory-summary-value">—</strong></div>
+        <div class="trajectory-summary-card"><span id="trajectory-current-label">Current period</span><strong id="trajectory-current" class="trajectory-summary-value">—</strong></div>
+        <div class="trajectory-summary-card"><span>Five-year growth</span><strong id="trajectory-growth" class="trajectory-summary-value">—</strong></div>
+      </div>
+      <div class="trajectory-chart-wrap"><svg id="trajectory-chart" class="trajectory-chart" role="img"></svg><div id="trajectory-empty" class="client-empty" hidden><p>Not enough history is available to chart this metric.</p></div></div>
+      <p id="trajectory-coverage" class="trajectory-coverage"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="client-list-title">
+      <div class="client-list-header">
+        <header class="panel__header"><h2 id="client-list-title" class="panel__title">Current Client Accounts</h2><p class="panel__description">Sorted by current total loans.</p></header>
+        <label class="client-search-label">Search clients<input id="client-search" type="search" placeholder="Name, charter, city, owner, or tag" /></label>
+      </div>
+      <p id="client-result-count" class="client-result-count">Loading clients…</p>
+      <div id="client-table-wrap" class="client-table-wrap" hidden>
+        <table class="client-table">
+          <thead><tr><th>Client</th><th>Location</th><th class="numeric">Assets</th><th class="numeric">Loans</th><th class="numeric">Indirect Loans</th><th class="numeric">Indirect Auto Share</th><th class="numeric">Loans 5Y</th><th class="numeric">Assets 5Y</th></tr></thead>
+          <tbody id="client-table-body"></tbody>
+        </table>
+      </div>
+      <div id="client-list-empty" class="client-empty" hidden><p>No credit unions are currently classified as Client.</p></div>
+    </section>
+  </main>
+  <script type="module" src="clients.js?v=20260730-client-portfolio"></script>
+</body>
+</html>
