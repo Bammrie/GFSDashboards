@@ -9,6 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const directoryPath = process.env.NCUA_DIRECTORY_STORAGE_PATH || path.join(repoRoot, 'data', 'ncua-active-credit-unions.json');
 const overridesPath = process.env.NCUA_DIRECTORY_OVERRIDES_PATH || path.join(repoRoot, 'data', 'ncua-credit-union-overrides.json');
 const syncScriptPath = path.join(repoRoot, 'scripts', 'sync-ncua-active-credit-unions.mjs');
+let syncPromise = null;
 
 async function readJson(filePath, fallback) {
   try {
@@ -31,20 +32,15 @@ function sanitizeOverride(input = {}) {
   if (typeof input.owner === 'string') result.owner = input.owner.trim().slice(0, 120);
   if (typeof input.notes === 'string') result.notes = input.notes.trim().slice(0, 10000);
   if (typeof input.hidden === 'boolean') result.hidden = input.hidden;
-  if (Array.isArray(input.tags)) {
-    result.tags = input.tags.map((tag) => String(tag).trim()).filter(Boolean).slice(0, 25);
-  }
+  if (Array.isArray(input.tags)) result.tags = input.tags.map((tag) => String(tag).trim()).filter(Boolean).slice(0, 25);
   result.updatedAt = new Date().toISOString();
   return result;
 }
 
 function runSync() {
-  return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [syncScriptPath], {
-      cwd: repoRoot,
-      env: process.env,
-      stdio: ['ignore', 'pipe', 'pipe']
-    });
+  if (syncPromise) return syncPromise;
+  syncPromise = new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [syncScriptPath], { cwd: repoRoot, env: process.env, stdio: ['ignore', 'pipe', 'pipe'] });
     let stdout = '';
     let stderr = '';
     child.stdout.on('data', (chunk) => { stdout += chunk; });
@@ -54,7 +50,15 @@ function runSync() {
       if (code === 0) resolve(stdout.trim());
       else reject(new Error(stderr.trim() || stdout.trim() || `NCUA sync exited with code ${code}`));
     });
-  });
+  }).finally(() => { syncPromise = null; });
+  return syncPromise;
+}
+
+async function ensureDirectory() {
+  const directory = await readJson(directoryPath, { count: 0, creditUnions: [] });
+  if ((directory.count || directory.creditUnions?.length || 0) >= 4000) return directory;
+  await runSync();
+  return readJson(directoryPath, { count: 0, creditUnions: [] });
 }
 
 function registerRoutes(app) {
@@ -62,18 +66,19 @@ function registerRoutes(app) {
   app.locals.ncuaDirectoryRoutesInstalled = true;
 
   app.get('/api/ncua-credit-unions', async (_req, res) => {
-    const directory = await readJson(directoryPath, { generatedAt: null, cycle: null, count: 0, creditUnions: [] });
-    const overrides = await readJson(overridesPath, {});
-    const creditUnions = (directory.creditUnions || []).map((creditUnion) => ({
-      ...creditUnion,
-      salesStatus: 'Unreviewed',
-      owner: '',
-      notes: '',
-      tags: [],
-      hidden: false,
-      ...(overrides[creditUnion.charterNumber] || {})
-    }));
-    res.json({ ...directory, count: creditUnions.length, creditUnions });
+    try {
+      const directory = await ensureDirectory();
+      const overrides = await readJson(overridesPath, {});
+      const creditUnions = (directory.creditUnions || []).map((creditUnion) => ({
+        ...creditUnion,
+        salesStatus: 'Unreviewed', owner: '', notes: '', tags: [], hidden: false,
+        ...(overrides[creditUnion.charterNumber] || {})
+      }));
+      res.json({ ...directory, count: creditUnions.length, creditUnions });
+    } catch (error) {
+      console.error('Unable to load NCUA directory', error);
+      res.status(500).json({ error: error.message || 'Unable to load NCUA directory.' });
+    }
   });
 
   app.patch('/api/ncua-credit-unions/:charterNumber', async (req, res) => {
@@ -101,6 +106,8 @@ export function installNcuaDirectory(express) {
   const originalListen = express.application.listen;
   express.application.listen = function patchedListen(...args) {
     registerRoutes(this);
+    ensureDirectory().then((directory) => console.log(`NCUA directory ready with ${directory.count || 0} records.`))
+      .catch((error) => console.error('NCUA directory startup sync failed', error));
     return originalListen.apply(this, args);
   };
 }
