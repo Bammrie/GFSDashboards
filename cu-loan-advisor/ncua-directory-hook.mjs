@@ -9,7 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const directoryPath = process.env.NCUA_DIRECTORY_STORAGE_PATH || path.join(repoRoot, 'data', 'ncua-active-credit-unions.json');
 const overridesPath = process.env.NCUA_DIRECTORY_OVERRIDES_PATH || path.join(repoRoot, 'data', 'ncua-credit-union-overrides.json');
 const syncScriptPath = path.join(repoRoot, 'scripts', 'sync-ncua-active-credit-unions.mjs');
-const requiredSchemaVersion = 2;
+const requiredSchemaVersion = 3;
 const installMarker = Symbol.for('gfs.ncua-directory-hook-installed');
 let syncPromise = null;
 
@@ -97,7 +97,15 @@ function registerRoutes(app) {
     try {
       const message = await runSync();
       const directory = await readJson(directoryPath, { count: 0 });
-      res.json({ ok: true, message, count: directory.count || 0, generatedAt: directory.generatedAt || null, cycle: directory.cycle || null });
+      res.json({
+        ok: true,
+        message,
+        count: directory.count || 0,
+        generatedAt: directory.generatedAt || null,
+        cycle: directory.cycle || null,
+        historyCycles: directory.historyCycles || [],
+        projectionYears: directory.projectionYears || 0
+      });
     } catch (error) {
       console.error('NCUA directory sync failed', error);
       res.status(500).json({ error: error.message || 'NCUA directory sync failed.' });
@@ -127,8 +135,12 @@ export function installNcuaDirectory(express) {
     // Fallback for server entrypoints that do not define a catch-all route.
     registerRoutes(this);
     const server = originalListen.apply(this, args);
-    ensureDirectory().then((directory) => console.log(`NCUA directory ready with ${directory.count || 0} records.`))
-      .catch((error) => console.error('NCUA directory startup sync failed', error));
+    ensureDirectory().then((directory) => {
+      const historyLabel = Array.isArray(directory.historyCycles) && directory.historyCycles.length
+        ? ` with history from ${directory.historyCycles[0]} through ${directory.historyCycles.at(-1)}`
+        : '';
+      console.log(`NCUA directory ready with ${directory.count || 0} records${historyLabel}.`);
+    }).catch((error) => console.error('NCUA directory startup sync failed', error));
     return server;
   };
 }

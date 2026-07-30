@@ -1,0 +1,48 @@
+name: Validate NCUA directory history
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/ncua-*.mjs'
+      - 'cu-loan-advisor/ncua-directory-hook.mjs'
+      - 'potential-new-client-overview.*'
+      - '.github/workflows/ncua-directory-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm install --ignore-scripts
+      - name: Syntax and projection tests
+        run: |
+          node --check scripts/ncua-projection.mjs
+          node --check scripts/sync-ncua-active-credit-unions.mjs
+          node --check cu-loan-advisor/ncua-directory-hook.mjs
+          node --check potential-new-client-overview.js
+          node --test scripts/ncua-projection.test.mjs
+      - name: Download and validate six same-quarter NCUA reports
+        env:
+          NCUA_DIRECTORY_STORAGE_PATH: ${{ runner.temp }}/ncua-active-credit-unions.json
+        run: |
+          node scripts/sync-ncua-active-credit-unions.mjs
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs/promises';
+          const payload = JSON.parse(await fs.readFile(process.env.NCUA_DIRECTORY_STORAGE_PATH, 'utf8'));
+          if (payload.schemaVersion !== 3) throw new Error(`Unexpected schema ${payload.schemaVersion}`);
+          if (payload.count < 4000) throw new Error(`Only ${payload.count} active credit unions`);
+          if (payload.historyCycles?.length !== 6) throw new Error('Expected six actual same-quarter observations');
+          if (payload.projectionYears !== 5) throw new Error('Expected a five-year projection');
+          const complete = payload.creditUnions.filter((cu) => cu.history?.length === 6 && cu.projection?.length === 5).length;
+          if (complete < 3000) throw new Error(`Only ${complete} credit unions have complete history and projections`);
+          console.log(`Validated ${payload.count} credit unions; ${complete} include six actual observations and five projected observations.`);
+          NODE
