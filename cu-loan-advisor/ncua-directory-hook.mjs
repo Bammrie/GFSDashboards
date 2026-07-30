@@ -9,6 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const directoryPath = process.env.NCUA_DIRECTORY_STORAGE_PATH || path.join(repoRoot, 'data', 'ncua-active-credit-unions.json');
 const overridesPath = process.env.NCUA_DIRECTORY_OVERRIDES_PATH || path.join(repoRoot, 'data', 'ncua-credit-union-overrides.json');
 const syncScriptPath = path.join(repoRoot, 'scripts', 'sync-ncua-active-credit-unions.mjs');
+const requiredSchemaVersion = 2;
 const installMarker = Symbol.for('gfs.ncua-directory-hook-installed');
 let syncPromise = null;
 
@@ -57,7 +58,8 @@ function runSync() {
 
 async function ensureDirectory() {
   const directory = await readJson(directoryPath, { count: 0, creditUnions: [] });
-  if ((directory.count || directory.creditUnions?.length || 0) >= 4000) return directory;
+  const count = directory.count || directory.creditUnions?.length || 0;
+  if (count >= 4000 && Number(directory.schemaVersion || 0) >= requiredSchemaVersion) return directory;
   await runSync();
   return readJson(directoryPath, { count: 0, creditUnions: [] });
 }
