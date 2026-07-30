@@ -114,6 +114,15 @@
     </section>
   </main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script type="module" src="potential-new-client-overview.js?v=20260730-address-map"></script>
+  <script>
+    // The directory contains thousands of map points. Reuse one Canvas renderer
+    // instead of allocating a separate full-size canvas for every marker.
+    if(window.L){
+      const createCanvasRenderer=window.L.canvas.bind(window.L);
+      const sharedCanvasRenderer=createCanvasRenderer({padding:.25});
+      window.L.canvas=()=>sharedCanvasRenderer;
+    }
+  </script>
+  <script type="module" src="potential-new-client-overview.js?v=20260730-address-map-mobile-fix"></script>
 </body>
 </html>
