@@ -3,10 +3,12 @@ const state = { data: [], filtered: [], selected: null, meta: {} };
 const $ = (id) => document.getElementById(id);
 const currency = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
 const number = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+const percentage = new Intl.NumberFormat('en-US',{maximumFractionDigits:1});
 
 function escapeHtml(value){return String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function money(value){return Number.isFinite(value)?currency.format(value):'-';}
 function count(value){return Number.isFinite(value)?number.format(value):'-';}
+function percent(value){return Number.isFinite(value)?`${percentage.format(value)}%`:'-';}
 function api(path, options={}){return fetch(path,{headers:{'Content-Type':'application/json',...(options.headers||{})},...options}).then(async response=>{const body=await response.json().catch(()=>({}));if(!response.ok)throw new Error(body.error||`Request failed (${response.status})`);return body;});}
 
 function fillSelects(){
@@ -48,7 +50,7 @@ function renderList(){
   list.innerHTML=state.filtered.map(cu=>{
     const heading=cu.state!==currentState?`<div class="state-heading">${escapeHtml(cu.state||'Unknown')}</div>`:'';
     currentState=cu.state;
-    return `${heading}<button type="button" class="cu-button" data-charter="${escapeHtml(cu.charterNumber)}" aria-pressed="${state.selected?.charterNumber===cu.charterNumber}"><span><strong>${escapeHtml(cu.name)}</strong><small>${escapeHtml([cu.city,cu.state].filter(Boolean).join(', '))} · Charter ${escapeHtml(cu.charterNumber)}</small><span class="status-badge">${escapeHtml(cu.salesStatus||'Unreviewed')}</span></span><span class="cu-assets">${escapeHtml(money(cu.assets))}</span></button>`;
+    return `${heading}<button type="button" class="cu-button" data-charter="${escapeHtml(cu.charterNumber)}" aria-pressed="${state.selected?.charterNumber===cu.charterNumber}"><span><strong>${escapeHtml(cu.name)}</strong><small>${escapeHtml([cu.city,cu.state].filter(Boolean).join(', '))}</small><span class="status-badge">${escapeHtml(cu.salesStatus||'Unreviewed')}</span></span><span class="cu-assets">${escapeHtml(money(cu.assets))}</span></button>`;
   }).join('');
   list.querySelectorAll('[data-charter]').forEach(button=>button.addEventListener('click',()=>selectCreditUnion(button.dataset.charter)));
 }
@@ -69,9 +71,11 @@ function renderDetail(){
   $('detail-status').textContent=cu.salesStatus||'Unreviewed';
   $('detail-metrics').innerHTML=[
     ['Assets',money(cu.assets)],
-    ['Members',count(cu.members)],
-    ['Charter',cu.charterNumber],
-    ['Charter type',cu.charterType||'-']
+    ['Loans',money(cu.loans)],
+    ['Total Auto',money(cu.totalAuto)],
+    ['Indirect Auto',money(cu.indirectAuto)],
+    ['Direct Auto %',percent(cu.directAutoPercent)],
+    ['Mortgage (1st Lien)',money(cu.firstLienMortgage)]
   ].map(([label,value])=>`<div class="detail-card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join('');
   $('edit-status').value=cu.salesStatus||'Unreviewed';
   $('edit-owner').value=cu.owner||'';
@@ -98,7 +102,7 @@ async function syncDirectory(){
   const button=$('sync-button');
   button.disabled=true;
   button.textContent='Syncing...';
-  $('directory-meta').textContent='Downloading and processing the latest configured NCUA call-report archive...';
+  $('directory-meta').textContent='Downloading and processing the latest configured NCUA active list and call-report lending data...';
   try{await api('/api/ncua-credit-unions/sync',{method:'POST',body:'{}'});await loadDirectory();}
   catch(error){$('directory-meta').textContent=error.message;}
   finally{button.disabled=false;button.textContent='Sync NCUA Data';}
