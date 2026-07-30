@@ -2,16 +2,32 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
+import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..');
 const directoryPath = process.env.NCUA_DIRECTORY_STORAGE_PATH || path.join(repoRoot, 'data', 'ncua-active-credit-unions.json');
-const overridesPath = process.env.NCUA_DIRECTORY_OVERRIDES_PATH || path.join(repoRoot, 'data', 'ncua-credit-union-overrides.json');
+const legacyOverridesPath = process.env.NCUA_DIRECTORY_OVERRIDES_PATH || path.join(repoRoot, 'data', 'ncua-credit-union-overrides.json');
 const syncScriptPath = path.join(repoRoot, 'scripts', 'sync-ncua-directory-with-geocodes.mjs');
 const requiredSchemaVersion = 4;
 const installMarker = Symbol.for('gfs.ncua-directory-hook-installed');
+const allowedStatuses = new Set(['', 'Radar', 'Prospect', 'Client', 'Off-Limits']);
 let syncPromise = null;
+let legacyMigrationPromise = null;
+
+const directoryAccountSchema = new mongoose.Schema(
+  {
+    charterNumber: { type: String, required: true, unique: true, immutable: true, index: true, trim: true },
+    salesStatus: { type: String, enum: ['', 'Radar', 'Prospect', 'Client', 'Off-Limits'], default: '', index: true },
+    notes: { type: String, default: '', maxlength: 10000 },
+    tags: [{ type: String, trim: true, maxlength: 120 }]
+  },
+  { timestamps: true, collection: 'ncua_directory_accounts' }
+);
+
+const NcuaDirectoryAccount = mongoose.models.NcuaDirectoryAccount
+  || mongoose.model('NcuaDirectoryAccount', directoryAccountSchema);
 
 async function readJson(filePath, fallback) {
   try {
@@ -22,21 +38,64 @@ async function readJson(filePath, fallback) {
   }
 }
 
-async function writeJson(filePath, value) {
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.writeFile(filePath, JSON.stringify(value, null, 2));
+function sanitizeAccount(input = {}) {
+  const salesStatus = typeof input.salesStatus === 'string' ? input.salesStatus.trim() : '';
+  return {
+    salesStatus: allowedStatuses.has(salesStatus) ? salesStatus : '',
+    notes: typeof input.notes === 'string' ? input.notes.trim().slice(0, 10000) : '',
+    tags: Array.isArray(input.tags)
+      ? [...new Set(input.tags.map((tag) => String(tag).trim()).filter(Boolean))].slice(0, 25)
+      : []
+  };
 }
 
-function sanitizeOverride(input = {}) {
-  const allowedStatuses = new Set(['Unreviewed', 'Researching', 'Prospect', 'Contacted', 'Meeting Set', 'Client', 'Not a Fit']);
-  const result = {};
-  if (allowedStatuses.has(input.salesStatus)) result.salesStatus = input.salesStatus;
-  if (typeof input.owner === 'string') result.owner = input.owner.trim().slice(0, 120);
-  if (typeof input.notes === 'string') result.notes = input.notes.trim().slice(0, 10000);
-  if (typeof input.hidden === 'boolean') result.hidden = input.hidden;
-  if (Array.isArray(input.tags)) result.tags = input.tags.map((tag) => String(tag).trim()).filter(Boolean).slice(0, 25);
-  result.updatedAt = new Date().toISOString();
-  return result;
+function mapLegacyStatus(value) {
+  const status = String(value || '').trim();
+  if (allowedStatuses.has(status)) return status;
+  if (status === 'Client') return 'Client';
+  if (status === 'Prospect' || status === 'Contacted' || status === 'Meeting Set') return 'Prospect';
+  if (status === 'Researching') return 'Radar';
+  if (status === 'Not a Fit') return 'Off-Limits';
+  return '';
+}
+
+function requireMongo() {
+  if (mongoose.connection.readyState !== 1) {
+    const error = new Error('MongoDB is not connected. Directory notes and statuses cannot be read or saved.');
+    error.statusCode = 503;
+    throw error;
+  }
+}
+
+async function migrateLegacyOverrides() {
+  requireMongo();
+  if (legacyMigrationPromise) return legacyMigrationPromise;
+  legacyMigrationPromise = (async () => {
+    const legacy = await readJson(legacyOverridesPath, {});
+    const entries = Object.entries(legacy || {}).filter(([charterNumber]) => String(charterNumber || '').trim());
+    if (!entries.length) return 0;
+
+    const operations = entries.map(([charterNumber, value]) => {
+      const sanitized = sanitizeAccount({
+        salesStatus: mapLegacyStatus(value?.salesStatus),
+        notes: value?.notes,
+        tags: value?.tags
+      });
+      return {
+        updateOne: {
+          filter: { charterNumber: String(charterNumber).trim() },
+          update: { $setOnInsert: { charterNumber: String(charterNumber).trim() }, $set: sanitized },
+          upsert: true
+        }
+      };
+    });
+    await NcuaDirectoryAccount.bulkWrite(operations, { ordered: false });
+    console.log(`Migrated ${operations.length} legacy NCUA directory account records into MongoDB.`);
+    return operations.length;
+  })().finally(() => {
+    legacyMigrationPromise = null;
+  });
+  return legacyMigrationPromise;
 }
 
 function runSync() {
@@ -70,27 +129,51 @@ function registerRoutes(app) {
 
   app.get('/api/ncua-credit-unions', async (_req, res) => {
     try {
-      const directory = await ensureDirectory();
-      const overrides = await readJson(overridesPath, {});
-      const creditUnions = (directory.creditUnions || []).map((creditUnion) => ({
-        ...creditUnion,
-        salesStatus: 'Unreviewed', owner: '', notes: '', tags: [], hidden: false,
-        ...(overrides[creditUnion.charterNumber] || {})
-      }));
+      requireMongo();
+      await migrateLegacyOverrides();
+      const [directory, savedAccounts] = await Promise.all([
+        ensureDirectory(),
+        NcuaDirectoryAccount.find().lean()
+      ]);
+      const savedByCharter = new Map(savedAccounts.map((record) => [record.charterNumber, record]));
+      const creditUnions = (directory.creditUnions || []).map((creditUnion) => {
+        const saved = savedByCharter.get(String(creditUnion.charterNumber));
+        return {
+          ...creditUnion,
+          salesStatus: saved?.salesStatus || '',
+          notes: saved?.notes || '',
+          tags: Array.isArray(saved?.tags) ? saved.tags : []
+        };
+      });
       res.json({ ...directory, count: creditUnions.length, creditUnions });
     } catch (error) {
       console.error('Unable to load NCUA directory', error);
-      res.status(500).json({ error: error.message || 'Unable to load NCUA directory.' });
+      res.status(error?.statusCode || 500).json({ error: error.message || 'Unable to load NCUA directory.' });
     }
   });
 
   app.patch('/api/ncua-credit-unions/:charterNumber', async (req, res) => {
-    const charterNumber = String(req.params.charterNumber || '').trim();
-    if (!charterNumber) return res.status(400).json({ error: 'Charter number is required.' });
-    const overrides = await readJson(overridesPath, {});
-    overrides[charterNumber] = { ...(overrides[charterNumber] || {}), ...sanitizeOverride(req.body || {}) };
-    await writeJson(overridesPath, overrides);
-    res.json({ charterNumber, ...overrides[charterNumber] });
+    try {
+      requireMongo();
+      const charterNumber = String(req.params.charterNumber || '').trim();
+      if (!charterNumber) return res.status(400).json({ error: 'Charter number is required.' });
+      const account = sanitizeAccount(req.body || {});
+      const saved = await NcuaDirectoryAccount.findOneAndUpdate(
+        { charterNumber },
+        { $setOnInsert: { charterNumber }, $set: account },
+        { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true, lean: true }
+      );
+      res.json({
+        charterNumber: saved.charterNumber,
+        salesStatus: saved.salesStatus || '',
+        notes: saved.notes || '',
+        tags: Array.isArray(saved.tags) ? saved.tags : [],
+        updatedAt: saved.updatedAt || null
+      });
+    } catch (error) {
+      console.error('Unable to save NCUA directory account', error);
+      res.status(error?.statusCode || 500).json({ error: error.message || 'Unable to save directory account.' });
+    }
   });
 
   app.post('/api/ncua-credit-unions/sync', async (_req, res) => {
