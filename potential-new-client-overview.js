@@ -4,7 +4,7 @@ const metricDefinitions = [
   { key: 'members', label: 'Members', formatter: count },
   { key: 'loans', label: 'Loans', formatter: money }
 ];
-const state = { data: [], filtered: [], selected: null, meta: {} };
+const state = { data: [], filtered: [], selected: null, meta: {}, map: null, mapLayer: null, mapHasFit: false };
 const $ = (id) => document.getElementById(id);
 const currency = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
 const number = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
@@ -24,6 +24,60 @@ function fillSelects(){
   $('status-filter').innerHTML='<option value="">All statuses</option>'+statuses.map(v=>`<option>${v}</option>`).join('');
 }
 
+function initializeMap(){
+  if(state.map||!window.L)return;
+  state.map=L.map('directory-map-canvas',{preferCanvas:true,zoomControl:true,minZoom:2}).setView([39.5,-98.35],4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:18,
+    attribution:'&copy; OpenStreetMap contributors'
+  }).addTo(state.map);
+  state.mapLayer=L.layerGroup().addTo(state.map);
+  setTimeout(()=>state.map.invalidateSize(),0);
+}
+
+function markerStyle(cu){
+  const selected=state.selected?.charterNumber===cu.charterNumber;
+  const growing=cu.trend==='Growing';
+  const declining=cu.trend==='Declining';
+  return {
+    renderer:L.canvas(),
+    radius:selected?7:4,
+    weight:selected?3:1,
+    color:selected?'#111827':growing?'#1f673d':declining?'#8b2424':'#7a1e2c',
+    fillColor:growing?'#2d7f4f':declining?'#a33939':'#7a1e2c',
+    fillOpacity:selected?.95:.72
+  };
+}
+
+function renderMap({fit=false}={}){
+  initializeMap();
+  if(!state.map||!state.mapLayer)return;
+  state.mapLayer.clearLayers();
+  const mapped=state.filtered.filter(cu=>Number.isFinite(cu.latitude)&&Number.isFinite(cu.longitude));
+  const bounds=[];
+  mapped.forEach(cu=>{
+    const marker=L.circleMarker([cu.latitude,cu.longitude],markerStyle(cu));
+    marker.bindPopup(`<div class="directory-map-popup"><strong>${escapeHtml(cu.name)}</strong><span>${escapeHtml([cu.street,cu.city,cu.state,cu.zip].filter(Boolean).join(', '))}</span><span>${escapeHtml(money(cu.assets))} assets</span><button type="button" data-map-charter="${escapeHtml(cu.charterNumber)}">Open credit union</button></div>`);
+    marker.on('popupopen',event=>{
+      const button=event.popup.getElement()?.querySelector('[data-map-charter]');
+      if(button)button.addEventListener('click',()=>{
+        selectCreditUnion(button.dataset.mapCharter);
+        $('credit-union-detail-panel').scrollIntoView({behavior:'smooth',block:'start'});
+        state.map.closePopup();
+      },{once:true});
+    });
+    marker.on('click',()=>selectCreditUnion(cu.charterNumber,false));
+    marker.addTo(state.mapLayer);
+    bounds.push([cu.latitude,cu.longitude]);
+  });
+  const totalMapped=state.data.filter(cu=>Number.isFinite(cu.latitude)&&Number.isFinite(cu.longitude)).length;
+  $('directory-map-status').textContent=`${count(mapped.length)} pins shown · ${count(totalMapped)} mapped addresses`;
+  if(bounds.length&&(fit||!state.mapHasFit)){
+    state.map.fitBounds(bounds,{padding:[18,18],maxZoom:10});
+    state.mapHasFit=true;
+  }
+}
+
 function applyFilters(){
   const query=$('search-input').value.trim().toLowerCase();
   const selectedState=$('state-filter').value;
@@ -35,10 +89,11 @@ function applyFilters(){
     if(selectedStatus&&cu.salesStatus!==selectedStatus)return false;
     if(selectedTrend&&cu.trend!==selectedTrend)return false;
     if(!query)return true;
-    return [cu.name,cu.charterNumber,cu.city,cu.state,cu.owner,cu.trend,...(cu.tags||[])].join(' ').toLowerCase().includes(query);
+    return [cu.name,cu.charterNumber,cu.street,cu.city,cu.state,cu.zip,cu.owner,cu.trend,...(cu.tags||[])].join(' ').toLowerCase().includes(query);
   });
   renderList();
   renderSummary();
+  renderMap({fit:Boolean(query||selectedState||selectedStatus||selectedTrend)});
 }
 
 function renderSummary(){
@@ -46,14 +101,7 @@ function renderSummary(){
   const states=new Set(state.filtered.map(cu=>cu.state).filter(Boolean)).size;
   const growing=state.filtered.filter(cu=>cu.trend==='Growing').length;
   const declining=state.filtered.filter(cu=>cu.trend==='Declining').length;
-  $('directory-summary').innerHTML=[
-    `${count(state.filtered.length)} shown`,
-    `${count(states)} states / territories`,
-    `${money(totalAssets)} assets`,
-    `${count(growing)} growing`,
-    `${count(declining)} declining`,
-    `NCUA cycle ${state.meta.cycle||'not loaded'}`
-  ].map(value=>`<span class="directory-chip">${escapeHtml(value)}</span>`).join('');
+  $('directory-summary').innerHTML=[`${count(state.filtered.length)} shown`,`${count(states)} states / territories`,`${money(totalAssets)} assets`,`${count(growing)} growing`,`${count(declining)} declining`,`NCUA cycle ${state.meta.cycle||'not loaded'}`].map(value=>`<span class="directory-chip">${escapeHtml(value)}</span>`).join('');
   $('result-count').textContent=`${count(state.filtered.length)} active credit unions match the current filters.`;
 }
 
@@ -72,10 +120,11 @@ function renderList(){
   list.querySelectorAll('[data-charter]').forEach(button=>button.addEventListener('click',()=>selectCreditUnion(button.dataset.charter)));
 }
 
-function selectCreditUnion(charter){
+function selectCreditUnion(charter,rerenderMap=true){
   state.selected=state.data.find(cu=>cu.charterNumber===charter)||null;
   renderList();
   renderDetail();
+  if(rerenderMap)renderMap();
 }
 
 function renderGrowthSummary(cu){
@@ -91,27 +140,18 @@ function chartMarkup(cu, definition){
   const actual=(cu.history||[]).filter(row=>Number.isFinite(row?.[definition.key]));
   const projected=(cu.projection||[]).filter(row=>Number.isFinite(row?.[definition.key]));
   const series=[...actual,...projected];
-  if(actual.length<2||!series.length){return `<article class="chart-card"><h4>${escapeHtml(definition.label)}</h4><p>Not enough history to chart.</p></article>`;}
-  const width=360;
-  const height=126;
-  const pad=12;
+  if(actual.length<2||!series.length)return `<article class="chart-card"><h4>${escapeHtml(definition.label)}</h4><p>Not enough history to chart.</p></article>`;
+  const width=360,height=126,pad=12;
   const values=series.map(row=>row[definition.key]);
-  let min=Math.min(...values);
-  let max=Math.max(...values);
-  if(min===max){min-=1;max+=1;}
-  const x=(index)=>pad+((width-(pad*2))*(index/Math.max(series.length-1,1)));
-  const y=(value)=>height-pad-(((value-min)/(max-min))*(height-(pad*2)));
+  let min=Math.min(...values),max=Math.max(...values);if(min===max){min-=1;max+=1;}
+  const x=index=>pad+((width-(pad*2))*(index/Math.max(series.length-1,1)));
+  const y=value=>height-pad-(((value-min)/(max-min))*(height-(pad*2)));
   const actualPath=actual.map((row,index)=>`${index?'L':'M'} ${x(index).toFixed(2)} ${y(row[definition.key]).toFixed(2)}`).join(' ');
   const bridge=[actual.at(-1),...projected];
-  const projectedPath=bridge.map((row,index)=>{
-    const seriesIndex=(actual.length-1)+index;
-    return `${index?'L':'M'} ${x(seriesIndex).toFixed(2)} ${y(row[definition.key]).toFixed(2)}`;
-  }).join(' ');
+  const projectedPath=bridge.map((row,index)=>`${index?'L':'M'} ${x((actual.length-1)+index).toFixed(2)} ${y(row[definition.key]).toFixed(2)}`).join(' ');
   const actualPoints=actual.map((row,index)=>`<circle class="chart-point" cx="${x(index).toFixed(2)}" cy="${y(row[definition.key]).toFixed(2)}" r="3.2"></circle>`).join('');
-  const projectedPoints=projected.map((row,index)=>{const seriesIndex=actual.length+index;return `<circle class="chart-projected-point" cx="${x(seriesIndex).toFixed(2)}" cy="${y(row[definition.key]).toFixed(2)}" r="3.2"></circle>`;}).join('');
-  const from=cycleLabel(actual[0]?.cycle);
-  const through=cycleLabel(projected.at(-1)?.cycle||actual.at(-1)?.cycle);
-  return `<article class="chart-card"><h4>${escapeHtml(definition.label)}</h4><p>${escapeHtml(from)} actual through ${escapeHtml(through)} projected</p><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(definition.label)} actual and projected trend"><line class="chart-baseline" x1="${pad}" y1="${height-pad}" x2="${width-pad}" y2="${height-pad}"></line><path class="chart-actual" d="${actualPath}"></path>${projected.length?`<path class="chart-projected" d="${projectedPath}"></path>`:''}${actualPoints}${projectedPoints}</svg></article>`;
+  const projectedPoints=projected.map((row,index)=>`<circle class="chart-projected-point" cx="${x(actual.length+index).toFixed(2)}" cy="${y(row[definition.key]).toFixed(2)}" r="3.2"></circle>`).join('');
+  return `<article class="chart-card"><h4>${escapeHtml(definition.label)}</h4><p>${escapeHtml(cycleLabel(actual[0]?.cycle))} actual through ${escapeHtml(cycleLabel(projected.at(-1)?.cycle||actual.at(-1)?.cycle))} projected</p><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeHtml(definition.label)} actual and projected trend"><line class="chart-baseline" x1="${pad}" y1="${height-pad}" x2="${width-pad}" y2="${height-pad}"></line><path class="chart-actual" d="${actualPath}"></path>${projected.length?`<path class="chart-projected" d="${projectedPath}"></path>`:''}${actualPoints}${projectedPoints}</svg></article>`;
 }
 
 function renderHistory(cu){
@@ -123,10 +163,7 @@ function renderHistory(cu){
   $('history-caption').textContent=`Actual NCUA reports: ${cycleLabel(firstCycle)} through ${cycleLabel(latestCycle)}. Projection through ${cycleLabel(projectionCycle)}. ${method}`;
   renderGrowthSummary(cu);
   $('history-charts').innerHTML=metricDefinitions.map(definition=>chartMarkup(cu,definition)).join('');
-  const rows=[
-    ...(cu.history||[]).map(row=>({...row,type:'Actual'})),
-    ...(cu.projection||[]).map(row=>({...row,type:'Projection'}))
-  ];
+  const rows=[...(cu.history||[]).map(row=>({...row,type:'Actual'})),...(cu.projection||[]).map(row=>({...row,type:'Projection'}))];
   $('history-table').innerHTML=`<table class="history-table"><thead><tr><th>Period</th><th>Type</th><th>Assets</th><th>Members</th><th>Loans</th></tr></thead><tbody>${rows.map(row=>`<tr class="${row.type==='Projection'?'projection-row':''}"><td>${escapeHtml(cycleLabel(row.cycle))}</td><td>${escapeHtml(row.type)}</td><td>${escapeHtml(money(row.assets))}</td><td>${escapeHtml(count(row.members))}</td><td>${escapeHtml(money(row.loans))}</td></tr>`).join('')}</tbody></table>`;
 }
 
@@ -140,14 +177,7 @@ function renderDetail(){
   $('detail-status').textContent=cu.salesStatus||'Unreviewed';
   $('detail-trend').textContent=cu.trend||'Insufficient history';
   $('detail-trend').dataset.trend=cu.trend||'Insufficient history';
-  $('detail-metrics').innerHTML=[
-    ['Assets',money(cu.assets)],
-    ['Loans',money(cu.loans)],
-    ['Total Auto',money(cu.totalAuto)],
-    ['Indirect Auto',money(cu.indirectAuto)],
-    ['Direct Auto %',percent(cu.directAutoPercent)],
-    ['Mortgage (1st Lien)',money(cu.firstLienMortgage)]
-  ].map(([label,value])=>`<div class="detail-card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join('');
+  $('detail-metrics').innerHTML=[['Assets',money(cu.assets)],['Loans',money(cu.loans)],['Total Auto',money(cu.totalAuto)],['Indirect Auto',money(cu.indirectAuto)],['Direct Auto %',percent(cu.directAutoPercent)],['Mortgage (1st Lien)',money(cu.firstLienMortgage)]].map(([label,value])=>`<div class="detail-card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join('');
   renderHistory(cu);
   $('edit-status').value=cu.salesStatus||'Unreviewed';
   $('edit-owner').value=cu.owner||'';
@@ -158,7 +188,7 @@ function renderDetail(){
 }
 
 async function loadDirectory(){
-  $('directory-meta').textContent='Loading the current NCUA directory, five-year history, and projections...';
+  $('directory-meta').textContent='Loading the current NCUA directory, mapped addresses, five-year history, and projections...';
   const payload=await api('/api/ncua-credit-unions');
   const {creditUnions,...meta}=payload;
   state.meta=meta;
@@ -167,8 +197,10 @@ async function loadDirectory(){
   $('state-filter').innerHTML='<option value="">All states</option>'+states.map(value=>`<option>${escapeHtml(value)}</option>`).join('');
   const historyCycles=Array.isArray(payload.historyCycles)?payload.historyCycles:[];
   const historyLabel=historyCycles.length?` · history ${historyCycles[0]} to ${historyCycles.at(-1)} · projected ${payload.projectionYears||5} years`:'';
-  $('directory-meta').textContent=payload.generatedAt?`Latest synchronized dataset: ${new Date(payload.generatedAt).toLocaleString()} · ${count(payload.count)} active credit unions${historyLabel}.`:'No synchronized dataset exists yet. Use Sync NCUA Data.';
+  const mapLabel=` · ${count(payload.geocodedCount||0)} mapped addresses`;
+  $('directory-meta').textContent=payload.generatedAt?`Latest synchronized dataset: ${new Date(payload.generatedAt).toLocaleString()} · ${count(payload.count)} active credit unions${mapLabel}${historyLabel}.`:'No synchronized dataset exists yet. Use Sync NCUA Data.';
   state.selected=state.selected?state.data.find(cu=>cu.charterNumber===state.selected.charterNumber)||null:null;
+  state.mapHasFit=false;
   applyFilters();
   renderDetail();
 }
@@ -176,8 +208,8 @@ async function loadDirectory(){
 async function syncDirectory(){
   const button=$('sync-button');
   button.disabled=true;
-  button.textContent='Syncing 5 years...';
-  $('directory-meta').textContent='Downloading the current NCUA report plus the five matching prior-year reports, then rebuilding growth and projections...';
+  button.textContent='Syncing and mapping...';
+  $('directory-meta').textContent='Downloading NCUA reports, rebuilding projections, and geocoding all active credit-union main-office addresses...';
   try{await api('/api/ncua-credit-unions/sync',{method:'POST',body:'{}'});await loadDirectory();}
   catch(error){$('directory-meta').textContent=error.message;}
   finally{button.disabled=false;button.textContent='Sync NCUA Data';}
@@ -186,13 +218,7 @@ async function syncDirectory(){
 async function saveSelected(event){
   event.preventDefault();
   if(!state.selected)return;
-  const payload={
-    salesStatus:$('edit-status').value,
-    owner:$('edit-owner').value,
-    tags:$('edit-tags').value.split(',').map(v=>v.trim()).filter(Boolean),
-    notes:$('edit-notes').value,
-    hidden:$('edit-hidden').value==='true'
-  };
+  const payload={salesStatus:$('edit-status').value,owner:$('edit-owner').value,tags:$('edit-tags').value.split(',').map(v=>v.trim()).filter(Boolean),notes:$('edit-notes').value,hidden:$('edit-hidden').value==='true'};
   $('save-feedback').textContent='Saving...';
   try{
     const saved=await api(`/api/ncua-credit-unions/${encodeURIComponent(state.selected.charterNumber)}`,{method:'PATCH',body:JSON.stringify(payload)});
@@ -204,7 +230,8 @@ async function saveSelected(event){
 }
 
 fillSelects();
+initializeMap();
 ['search-input','state-filter','status-filter','trend-filter'].forEach(id=>$(id).addEventListener(id==='search-input'?'input':'change',applyFilters));
 $('sync-button').addEventListener('click',syncDirectory);
 $('edit-form').addEventListener('submit',saveSelected);
-loadDirectory().catch(error=>{$('directory-meta').textContent=error.message;});
+loadDirectory().catch(error=>{$('directory-meta').textContent=error.message;$('directory-map-status').textContent='Map unavailable.';});

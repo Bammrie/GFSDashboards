@@ -8,8 +8,8 @@ const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..');
 const directoryPath = process.env.NCUA_DIRECTORY_STORAGE_PATH || path.join(repoRoot, 'data', 'ncua-active-credit-unions.json');
 const overridesPath = process.env.NCUA_DIRECTORY_OVERRIDES_PATH || path.join(repoRoot, 'data', 'ncua-credit-union-overrides.json');
-const syncScriptPath = path.join(repoRoot, 'scripts', 'sync-ncua-active-credit-unions.mjs');
-const requiredSchemaVersion = 3;
+const syncScriptPath = path.join(repoRoot, 'scripts', 'sync-ncua-directory-with-geocodes.mjs');
+const requiredSchemaVersion = 4;
 const installMarker = Symbol.for('gfs.ncua-directory-hook-installed');
 let syncPromise = null;
 
@@ -104,7 +104,8 @@ function registerRoutes(app) {
         generatedAt: directory.generatedAt || null,
         cycle: directory.cycle || null,
         historyCycles: directory.historyCycles || [],
-        projectionYears: directory.projectionYears || 0
+        projectionYears: directory.projectionYears || 0,
+        geocodedCount: directory.geocodedCount || 0
       });
     } catch (error) {
       console.error('NCUA directory sync failed', error);
@@ -122,8 +123,6 @@ export function installNcuaDirectory(express) {
   if (express.application[installMarker]) return;
   express.application[installMarker] = true;
 
-  // The dashboard registers app.get('*') before app.listen(). Insert the NCUA
-  // routes immediately before that fallback so API GETs are not served index.html.
   const originalGet = express.application.get;
   express.application.get = function patchedGet(routePath, ...handlers) {
     if (isCatchAllRoute(routePath)) registerRoutes(this);
@@ -132,14 +131,14 @@ export function installNcuaDirectory(express) {
 
   const originalListen = express.application.listen;
   express.application.listen = function patchedListen(...args) {
-    // Fallback for server entrypoints that do not define a catch-all route.
     registerRoutes(this);
     const server = originalListen.apply(this, args);
     ensureDirectory().then((directory) => {
       const historyLabel = Array.isArray(directory.historyCycles) && directory.historyCycles.length
         ? ` with history from ${directory.historyCycles[0]} through ${directory.historyCycles.at(-1)}`
         : '';
-      console.log(`NCUA directory ready with ${directory.count || 0} records${historyLabel}.`);
+      const mapLabel = directory.geocodedCount ? ` and ${directory.geocodedCount} mapped addresses` : '';
+      console.log(`NCUA directory ready with ${directory.count || 0} records${historyLabel}${mapLabel}.`);
     }).catch((error) => console.error('NCUA directory startup sync failed', error));
     return server;
   };
