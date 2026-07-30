@@ -9,6 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const directoryPath = process.env.NCUA_DIRECTORY_STORAGE_PATH || path.join(repoRoot, 'data', 'ncua-active-credit-unions.json');
 const overridesPath = process.env.NCUA_DIRECTORY_OVERRIDES_PATH || path.join(repoRoot, 'data', 'ncua-credit-union-overrides.json');
 const syncScriptPath = path.join(repoRoot, 'scripts', 'sync-ncua-active-credit-unions.mjs');
+const installMarker = Symbol.for('gfs.ncua-directory-hook-installed');
 let syncPromise = null;
 
 async function readJson(filePath, fallback) {
@@ -102,12 +103,30 @@ function registerRoutes(app) {
   });
 }
 
+function isCatchAllRoute(routePath) {
+  if (routePath === '*' || routePath === '/*') return true;
+  return Array.isArray(routePath) && routePath.some((item) => item === '*' || item === '/*');
+}
+
 export function installNcuaDirectory(express) {
+  if (express.application[installMarker]) return;
+  express.application[installMarker] = true;
+
+  // The dashboard registers app.get('*') before app.listen(). Insert the NCUA
+  // routes immediately before that fallback so API GETs are not served index.html.
+  const originalGet = express.application.get;
+  express.application.get = function patchedGet(routePath, ...handlers) {
+    if (isCatchAllRoute(routePath)) registerRoutes(this);
+    return originalGet.call(this, routePath, ...handlers);
+  };
+
   const originalListen = express.application.listen;
   express.application.listen = function patchedListen(...args) {
+    // Fallback for server entrypoints that do not define a catch-all route.
     registerRoutes(this);
+    const server = originalListen.apply(this, args);
     ensureDirectory().then((directory) => console.log(`NCUA directory ready with ${directory.count || 0} records.`))
       .catch((error) => console.error('NCUA directory startup sync failed', error));
-    return originalListen.apply(this, args);
+    return server;
   };
 }
