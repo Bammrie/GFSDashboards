@@ -62,10 +62,10 @@
   <main class="layout">
     <section id="potential-client-map" class="panel directory-map-panel" aria-labelledby="potential-client-map-title">
       <div class="directory-map-header">
-        <header class="panel__header"><h2 id="potential-client-map-title" class="panel__title">Active credit union map</h2><p class="panel__description">All mapped NCUA main-office addresses. Directory filters update the pins below.</p></header>
-        <p id="directory-map-status" class="directory-map-status">Loading mapped addresses...</p>
+        <header class="panel__header"><h2 id="potential-client-map-title" class="panel__title">Client and prospect map</h2><p class="panel__description">Only marked accounts appear here: Clients in maroon and Prospects in green. Directory filters also update these pins.</p></header>
+        <p id="directory-map-status" class="directory-map-status">Loading clients and prospects...</p>
       </div>
-      <div id="directory-map-canvas" class="directory-map-canvas" role="application" aria-label="Map of active U.S. credit union addresses"></div>
+      <div id="directory-map-canvas" class="directory-map-canvas" role="application" aria-label="Map of clients and prospective credit unions"></div>
     </section>
 
     <section class="panel">
@@ -123,6 +123,6 @@
       window.L.canvas=()=>sharedCanvasRenderer;
     }
   </script>
-  <script type="module" src="potential-new-client-overview.js?v=20260730-address-map-mobile-fix"></script>
+  <script type="module" src="potential-new-client-overview.js?v=20260730-client-prospect-map"></script>
 </body>
 </html>
