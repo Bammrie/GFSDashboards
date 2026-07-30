@@ -4,7 +4,8 @@ const metricDefinitions = [
   { key: 'members', label: 'Members', formatter: count },
   { key: 'loans', label: 'Loans', formatter: money }
 ];
-const state = { data: [], filtered: [], selected: null, meta: {}, map: null, mapLayer: null, mapHasFit: false };
+const mapStatuses = new Set(['Client','Prospect']);
+const state = { data: [], filtered: [], selected: null, meta: {}, map: null, mapLayer: null, mapRenderer: null, mapHasFit: false };
 const $ = (id) => document.getElementById(id);
 const currency = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
 const number = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
@@ -31,21 +32,22 @@ function initializeMap(){
     maxZoom:18,
     attribution:'&copy; OpenStreetMap contributors'
   }).addTo(state.map);
+  state.mapRenderer=L.canvas({padding:.5});
   state.mapLayer=L.layerGroup().addTo(state.map);
   setTimeout(()=>state.map.invalidateSize(),0);
 }
 
 function markerStyle(cu){
   const selected=state.selected?.charterNumber===cu.charterNumber;
-  const growing=cu.trend==='Growing';
-  const declining=cu.trend==='Declining';
+  const isClient=cu.salesStatus==='Client';
+  const markerColor=isClient?'#7a1e2c':'#2d7f4f';
   return {
-    renderer:L.canvas(),
-    radius:selected?7:4,
-    weight:selected?3:1,
-    color:selected?'#111827':growing?'#1f673d':declining?'#8b2424':'#7a1e2c',
-    fillColor:growing?'#2d7f4f':declining?'#a33939':'#7a1e2c',
-    fillOpacity:selected?.95:.72
+    renderer:state.mapRenderer,
+    radius:selected?8:5,
+    weight:selected?3:1.5,
+    color:selected?'#111827':markerColor,
+    fillColor:markerColor,
+    fillOpacity:selected?.98:.82
   };
 }
 
@@ -53,11 +55,11 @@ function renderMap({fit=false}={}){
   initializeMap();
   if(!state.map||!state.mapLayer)return;
   state.mapLayer.clearLayers();
-  const mapped=state.filtered.filter(cu=>Number.isFinite(cu.latitude)&&Number.isFinite(cu.longitude));
+  const mapped=state.filtered.filter(cu=>mapStatuses.has(cu.salesStatus)&&Number.isFinite(cu.latitude)&&Number.isFinite(cu.longitude));
   const bounds=[];
   mapped.forEach(cu=>{
     const marker=L.circleMarker([cu.latitude,cu.longitude],markerStyle(cu));
-    marker.bindPopup(`<div class="directory-map-popup"><strong>${escapeHtml(cu.name)}</strong><span>${escapeHtml([cu.street,cu.city,cu.state,cu.zip].filter(Boolean).join(', '))}</span><span>${escapeHtml(money(cu.assets))} assets</span><button type="button" data-map-charter="${escapeHtml(cu.charterNumber)}">Open credit union</button></div>`);
+    marker.bindPopup(`<div class="directory-map-popup"><strong>${escapeHtml(cu.name)}</strong><span>${escapeHtml(cu.salesStatus)}</span><span>${escapeHtml([cu.street,cu.city,cu.state,cu.zip].filter(Boolean).join(', '))}</span><span>${escapeHtml(money(cu.assets))} assets</span><button type="button" data-map-charter="${escapeHtml(cu.charterNumber)}">Open credit union</button></div>`);
     marker.on('popupopen',event=>{
       const button=event.popup.getElement()?.querySelector('[data-map-charter]');
       if(button)button.addEventListener('click',()=>{
@@ -70,11 +72,15 @@ function renderMap({fit=false}={}){
     marker.addTo(state.mapLayer);
     bounds.push([cu.latitude,cu.longitude]);
   });
-  const totalMapped=state.data.filter(cu=>Number.isFinite(cu.latitude)&&Number.isFinite(cu.longitude)).length;
-  $('directory-map-status').textContent=`${count(mapped.length)} pins shown · ${count(totalMapped)} mapped addresses`;
+  const totalMapped=state.data.filter(cu=>mapStatuses.has(cu.salesStatus)&&Number.isFinite(cu.latitude)&&Number.isFinite(cu.longitude)).length;
+  const clients=mapped.filter(cu=>cu.salesStatus==='Client').length;
+  const prospects=mapped.filter(cu=>cu.salesStatus==='Prospect').length;
+  $('directory-map-status').textContent=`${count(mapped.length)} pins shown · ${count(clients)} clients · ${count(prospects)} prospects · ${count(totalMapped)} total mapped`;
   if(bounds.length&&(fit||!state.mapHasFit)){
     state.map.fitBounds(bounds,{padding:[18,18],maxZoom:10});
     state.mapHasFit=true;
+  }else if(!bounds.length){
+    state.map.setView([39.5,-98.35],4);
   }
 }
 
