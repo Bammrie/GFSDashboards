@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Prospects | GFS Dashboards</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .prospects-page .layout{width:min(1800px,98vw)}
+    .prospect-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+    .prospect-header .panel__header{margin:0}
+    .prospect-actions{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+    .prospect-data-meta{margin:0;color:var(--text-secondary);font-weight:700}
+    .prospect-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
+    .prospect-kpi{position:relative;overflow:hidden;min-height:145px;padding:1.1rem 1.2rem;border:1px solid var(--border);background:linear-gradient(135deg,#fff 0%,#f8f2f3 100%)}
+    .prospect-kpi::after{content:"";position:absolute;right:-38px;bottom:-72px;width:150px;height:150px;border:24px solid rgba(122,30,44,.07);transform:rotate(18deg)}
+    .prospect-kpi--green{background:linear-gradient(135deg,#fff 0%,#edf8f1 100%)}
+    .prospect-kpi--green::after{border-color:rgba(45,127,79,.09)}
+    .prospect-kpi--radar{background:linear-gradient(135deg,#fff 0%,#fff8e8 100%)}
+    .prospect-kpi--radar::after{border-color:rgba(150,112,42,.09)}
+    .prospect-kpi-label{display:block;color:var(--text-secondary);font-size:.76rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+    .prospect-kpi-value{display:block;margin-top:.6rem;color:var(--accent);font-size:clamp(1.8rem,3.2vw,3rem);line-height:1;font-weight:850;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+    .prospect-kpi--green .prospect-kpi-value{color:#1f673d}
+    .prospect-kpi--radar .prospect-kpi-value{color:#765314}
+    .prospect-kpi-note{display:block;margin-top:.7rem;color:var(--text-secondary);font-size:.82rem}
+    .prospect-toolbar{display:grid;grid-template-columns:minmax(260px,1fr) minmax(180px,260px);gap:.8rem;align-items:end}
+    .prospect-toolbar label{display:grid;gap:.3rem;color:var(--text-secondary);font-weight:750}
+    .prospect-toolbar input,.prospect-toolbar select{width:100%;padding:.68rem;border:1px solid #b9b9b9;background:#fff;color:#222;-webkit-text-fill-color:#222;color-scheme:light}
+    .account-section{overflow:hidden}
+    .account-section--prospect{border-top:5px solid #2d7f4f}
+    .account-section--radar{border-top:5px solid #96702a}
+    .account-section-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-end;flex-wrap:wrap}
+    .account-section-header .panel__header{margin:0}
+    .account-result-count{margin:0;color:var(--text-secondary);font-weight:750}
+    .account-table-wrap{margin-top:1rem;overflow:auto;border:1px solid var(--border)}
+    .account-table{width:100%;border-collapse:collapse;min-width:1420px}
+    .account-table th,.account-table td{padding:.75rem;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+    .account-table th{position:sticky;top:0;z-index:1;background:#f2edef;color:#4a1c24;font-size:.71rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+    .account-section--prospect .account-table th{background:#edf8f1;color:#1f673d}
+    .account-section--radar .account-table th{background:#fff8e8;color:#765314}
+    .account-table td.numeric,.account-table th.numeric{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .account-table tbody tr:last-child td{border-bottom:0}
+    .account-table tbody tr:hover{background:rgba(122,30,44,.04)}
+    .account-name{display:block;color:var(--accent);font-size:.98rem;font-weight:800;text-decoration:none}
+    .account-name:hover{text-decoration:underline}
+    .account-meta,.account-note{display:block;margin-top:.2rem;color:var(--text-secondary);font-size:.75rem;line-height:1.35}
+    .account-note{max-width:470px}
+    .account-tags{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.38rem}
+    .account-tags span{padding:.12rem .38rem;border:1px solid var(--border);background:#fff;font-size:.68rem;font-weight:750}
+    .status-pill{display:inline-flex;margin-top:.38rem;padding:.14rem .42rem;border:1px solid;font-size:.69rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+    .status-pill--prospect{border-color:#2d7f4f;background:#edf8f1;color:#1f673d}
+    .status-pill--radar{border-color:#96702a;background:#fff8e8;color:#765314}
+    .growth-up{color:#1f673d!important;font-weight:800}.growth-down{color:#8b2424!important;font-weight:800}.growth-flat{color:#555!important;font-weight:800}
+    .account-empty{margin-top:1rem;padding:1rem;border:1px dashed #aaa;background:#fafafa;color:#333}
+    @media(max-width:1100px){.prospect-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.prospect-kpi-grid,.prospect-toolbar{grid-template-columns:1fr}.prospect-header,.account-section-header{display:grid}.prospect-actions{align-items:flex-start}.prospect-kpi{min-height:128px}}
+  </style>
+</head>
+<body class="prospects-page">
+  <header class="site-header">
+    <div class="header-content">
+      <div class="branding">
+        <h1 class="site-title">Dashboard</h1>
+        <p class="site-subtitle">Active sales opportunities, organized by Prospect and Radar status.</p>
+      </div>
+      <nav class="header-actions" aria-label="Dashboard navigation">
+        <div class="header-group"><span class="header-group__label">Views</span><div class="header-group__links"><a href="potential-new-client-overview.html" class="header-link">Dashboard</a><a href="credit-union-prospects.html" class="header-link" aria-current="page">Prospects</a><a href="clients.html" class="header-link">Clients</a></div></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <div class="prospect-header">
+        <header class="panel__header"><h2 class="panel__title">Prospects</h2><p class="panel__description">Accounts classified as Prospect appear first. Radar accounts are listed in a separate section below.</p></header>
+        <div class="prospect-actions"><p id="prospect-data-meta" class="prospect-data-meta">Preparing Prospect and Radar accounts…</p><button id="refresh-prospects" type="button" class="primary-button">Refresh Data</button></div>
+      </div>
+    </section>
+
+    <section class="prospect-kpi-grid" aria-label="Prospect and Radar totals">
+      <article class="panel prospect-kpi prospect-kpi--green"><span class="prospect-kpi-label">Prospect Accounts</span><strong id="prospect-count" class="prospect-kpi-value">—</strong><span class="prospect-kpi-note">Accounts actively classified as Prospect.</span></article>
+      <article class="panel prospect-kpi prospect-kpi--green"><span class="prospect-kpi-label">Prospect Loans</span><strong id="prospect-loans" class="prospect-kpi-value">—</strong><span class="prospect-kpi-note">Combined current loans across Prospect accounts.</span></article>
+      <article class="panel prospect-kpi prospect-kpi--radar"><span class="prospect-kpi-label">Radar Accounts</span><strong id="radar-count" class="prospect-kpi-value">—</strong><span class="prospect-kpi-note">Accounts being monitored or researched.</span></article>
+      <article class="panel prospect-kpi prospect-kpi--radar"><span class="prospect-kpi-label">Radar Loans</span><strong id="radar-loans" class="prospect-kpi-value">—</strong><span class="prospect-kpi-note">Combined current loans across Radar accounts.</span></article>
+    </section>
+
+    <section class="panel">
+      <div class="prospect-toolbar">
+        <label>Search accounts<input id="prospect-search" type="search" placeholder="Name, charter, city, tag, or note" /></label>
+        <label>State<select id="prospect-state-filter"><option value="">All states</option></select></label>
+      </div>
+    </section>
+
+    <section class="panel account-section account-section--prospect" aria-labelledby="prospect-list-title">
+      <div class="account-section-header">
+        <header class="panel__header"><h2 id="prospect-list-title" class="panel__title">Prospect Accounts</h2><p class="panel__description">Primary active opportunities, sorted by current total loans.</p></header>
+        <p id="prospect-result-count" class="account-result-count">Preparing Prospect accounts…</p>
+      </div>
+      <div id="prospect-table-wrap" class="account-table-wrap" hidden>
+        <table class="account-table">
+          <thead><tr><th>Account</th><th>Location</th><th class="numeric">Assets</th><th class="numeric">Loans</th><th class="numeric">Total Auto</th><th class="numeric">Indirect Auto</th><th class="numeric">Direct Auto %</th><th class="numeric">Loans 5Y</th><th class="numeric">Assets 5Y</th></tr></thead>
+          <tbody id="prospect-table-body"></tbody>
+        </table>
+      </div>
+      <div id="prospect-empty" class="account-empty" hidden><p>No accounts are currently classified as Prospect.</p></div>
+    </section>
+
+    <section class="panel account-section account-section--radar" aria-labelledby="radar-list-title">
+      <div class="account-section-header">
+        <header class="panel__header"><h2 id="radar-list-title" class="panel__title">Radar Accounts</h2><p class="panel__description">Accounts being monitored or researched before being advanced to Prospect.</p></header>
+        <p id="radar-result-count" class="account-result-count">Preparing Radar accounts…</p>
+      </div>
+      <div id="radar-table-wrap" class="account-table-wrap" hidden>
+        <table class="account-table">
+          <thead><tr><th>Account</th><th>Location</th><th class="numeric">Assets</th><th class="numeric">Loans</th><th class="numeric">Total Auto</th><th class="numeric">Indirect Auto</th><th class="numeric">Direct Auto %</th><th class="numeric">Loans 5Y</th><th class="numeric">Assets 5Y</th></tr></thead>
+          <tbody id="radar-table-body"></tbody>
+        </table>
+      </div>
+      <div id="radar-empty" class="account-empty" hidden><p>No accounts are currently classified as Radar.</p></div>
+    </section>
+  </main>
+
+  <script src="clients-cache-bootstrap.js?v=20260731-shared-directory-cache"></script>
+  <script type="module" src="prospects.js?v=20260731-prospect-radar-page"></script>
+</body>
+</html>

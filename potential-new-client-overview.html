@@ -44,12 +44,12 @@
   <header class="site-header">
     <div class="header-content">
       <div class="branding"><h1 class="site-title">Dashboard</h1><p class="site-subtitle">Every active U.S. credit union, with five years of NCUA history, growth trends, projections, and shared sales notes.</p></div>
-      <nav class="header-actions" aria-label="Dashboard navigation"><div class="header-group"><span class="header-group__label">Views</span><div class="header-group__links"><a href="potential-new-client-overview.html" class="header-link" aria-current="page">Dashboard</a><a href="clients.html" class="header-link">Clients</a></div></div></nav>
+      <nav class="header-actions" aria-label="Dashboard navigation"><div class="header-group"><span class="header-group__label">Views</span><div class="header-group__links"><a href="potential-new-client-overview.html" class="header-link" aria-current="page">Dashboard</a><a href="credit-union-prospects.html" class="header-link">Prospects</a><a href="clients.html" class="header-link">Clients</a></div></div></nav>
     </div>
   </header>
   <main class="layout">
     <section id="potential-client-map" class="panel directory-map-panel" aria-labelledby="potential-client-map-title">
-      <div class="directory-map-header"><header class="panel__header"><h2 id="potential-client-map-title" class="panel__title">Client and prospect map</h2><p class="panel__description">Marked accounts load automatically. Clients appear in maroon and Prospects in green.</p></header><p id="directory-map-status" class="directory-map-status">Loading saved map pins…</p></div>
+      <div class="directory-map-header"><header class="panel__header"><h2 id="potential-client-map-title" class="panel__title">Client and prospect map</h2><p class="panel__description">Marked accounts load automatically. Clients appear in maroon and Prospects in green with large, high-contrast markers.</p></header><p id="directory-map-status" class="directory-map-status">Loading saved map pins…</p></div>
       <div id="directory-map-canvas" class="directory-map-canvas" role="application" aria-label="Map of clients and prospective credit unions"></div>
     </section>
     <section class="panel">
@@ -84,6 +84,7 @@
     </section>
   </main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script type="module" src="potential-new-client-overview.js?v=20260731-show-all-saved"></script>
+  <script src="dashboard-enhancements.js?v=20260731-visible-map-prospects"></script>
+  <script type="module" src="potential-new-client-overview.js?v=20260731-visible-map-prospects"></script>
 </body>
 </html>
