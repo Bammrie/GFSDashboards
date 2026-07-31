@@ -187,7 +187,7 @@ function renderDetail() {
 }
 
 async function loadDirectory() {
-  $('directory-meta').textContent = 'Loading the current NCUA directory, mapped addresses, five-year history, and MongoDB account records...';
+  $('directory-meta').textContent = 'Loading saved directory…';
   const payload = await api('/api/ncua-credit-unions');
   const { creditUnions, ...meta } = payload;
   state.meta = meta;
@@ -196,20 +196,10 @@ async function loadDirectory() {
   $('state-filter').innerHTML = '<option value="">Select a state</option>' + states.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
   const historyCycles = Array.isArray(payload.historyCycles) ? payload.historyCycles : [];
   const historyLabel = historyCycles.length ? ` · history ${historyCycles[0]} to ${historyCycles.at(-1)} · projected ${payload.projectionYears || 5} years` : '';
-  $('directory-meta').textContent = payload.generatedAt ? `Latest synchronized dataset: ${new Date(payload.generatedAt).toLocaleString()} · ${count(payload.count)} active credit unions${historyLabel}. Notes and statuses are stored in MongoDB by charter number.` : 'No synchronized dataset exists yet. Use Sync NCUA Data.';
+  $('directory-meta').textContent = payload.generatedAt ? `Saved dataset: ${new Date(payload.generatedAt).toLocaleString()} · ${count(payload.count)} active credit unions${historyLabel}.` : 'Saved directory is unavailable.';
   state.selected = null;
   state.mapHasFit = false;
   applyFilters();
-}
-
-async function syncDirectory() {
-  const button = $('sync-button');
-  button.disabled = true;
-  button.textContent = 'Syncing and mapping...';
-  $('directory-meta').textContent = 'Downloading NCUA reports, rebuilding projections, and geocoding active credit-union main-office addresses...';
-  try { await api('/api/ncua-credit-unions/sync', { method: 'POST', body: '{}' }); await loadDirectory(); }
-  catch (error) { $('directory-meta').textContent = error.message; }
-  finally { button.disabled = false; button.textContent = 'Sync NCUA Data'; }
 }
 
 async function saveSelected(event) {
@@ -233,6 +223,5 @@ async function saveSelected(event) {
 fillSelects();
 initializeMap();
 ['search-input', 'state-filter', 'status-filter', 'trend-filter'].forEach((id) => $(id).addEventListener(id === 'search-input' ? 'input' : 'change', applyFilters));
-$('sync-button').addEventListener('click', syncDirectory);
 $('edit-form').addEventListener('submit', saveSelected);
 loadDirectory().catch((error) => { $('directory-meta').textContent = error.message; $('directory-map-status').textContent = 'Map unavailable.'; });
