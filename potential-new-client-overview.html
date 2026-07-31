@@ -10,7 +10,7 @@
   <style>
     .directory-page .layout{width:min(1800px,98vw)}
     .directory-map-panel{padding:0;overflow:hidden}.directory-map-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;padding:1rem 1rem .8rem}.directory-map-header .panel__header{margin:0}.directory-map-status{margin:0;color:var(--text-secondary);font-weight:700;white-space:nowrap}.directory-map-canvas{height:clamp(330px,46vh,620px);width:100%;border-top:1px solid var(--border);background:#e9ecef}.directory-map-popup strong{display:block;font-size:.95rem}.directory-map-popup span{display:block;margin-top:.2rem}.directory-map-popup button{margin-top:.55rem;width:100%;padding:.42rem .55rem;border:1px solid var(--accent);background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
-    .directory-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) repeat(3,minmax(135px,190px)) auto;gap:.7rem;align-items:end}
+    .directory-toolbar{display:grid;grid-template-columns:minmax(220px,1fr) repeat(3,minmax(135px,190px));gap:.7rem;align-items:end}
     .directory-toolbar label{display:grid;gap:.3rem;font-weight:700;color:var(--text-secondary)}
     .directory-toolbar input,.directory-toolbar select,.edit-grid input,.edit-grid select,.edit-grid textarea{width:100%;padding:.65rem;border:1px solid #b9b9b9;background:#fff;color:#222;-webkit-text-fill-color:#222;color-scheme:light}
     .directory-toolbar select option,.edit-grid select option{background:#fff;color:#222}
@@ -37,7 +37,7 @@
     .edit-grid{display:grid;grid-template-columns:minmax(180px,.4fr) minmax(0,1.6fr);gap:.8rem;margin-top:1rem}.edit-grid label{display:grid;gap:.3rem;font-weight:700;color:var(--text-secondary)}.edit-grid .wide{grid-column:1/-1}
     .persistence-note{grid-column:1/-1;margin:0;padding:.7rem .8rem;border-left:4px solid var(--accent);background:rgba(122,30,44,.06);color:var(--text-secondary);font-weight:700}
     .edit-actions{display:flex;justify-content:flex-end;gap:.65rem;align-items:center;margin-top:.8rem}.feedback{margin-right:auto;color:var(--text-secondary)}
-    @media(max-width:1180px){.directory-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.directory-toolbar label:first-child{grid-column:1/-1}.directory-toolbar button{width:100%}}
+    @media(max-width:1180px){.directory-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.directory-toolbar label:first-child{grid-column:1/-1}}
     @media(max-width:900px){.directory-map-header{display:block}.directory-map-status{margin-top:.4rem;white-space:normal}.directory-toolbar,.directory-grid,.detail-metrics,.growth-grid,.history-charts,.edit-grid{grid-template-columns:1fr}.directory-list{max-height:none}.edit-grid .wide,.persistence-note,.directory-toolbar label:first-child{grid-column:auto}.growth-stat.wide{grid-column:auto}}
   </style>
 </head>
@@ -54,13 +54,12 @@
       <div id="directory-map-canvas" class="directory-map-canvas" role="application" aria-label="Map of clients and prospective credit unions"></div>
     </section>
     <section class="panel">
-      <header class="panel__header"><h2 class="panel__title">National credit union directory</h2><p id="directory-meta" class="panel__description">Choose a state to load its active credit unions.</p></header>
+      <header class="panel__header"><h2 class="panel__title">National credit union directory</h2><p id="directory-meta" class="panel__description">Loading saved directory…</p></header>
       <div class="directory-toolbar">
         <label>Search<input id="search-input" type="search" placeholder="Name, charter, city, or tag" /></label>
         <label>State<select id="state-filter" required><option value="">Select a state</option></select></label>
         <label>Account status<select id="status-filter"><option value="">All statuses</option></select></label>
         <label>5-year trend<select id="trend-filter"><option value="">All trends</option><option>Growing</option><option>Declining</option><option>Mixed</option><option>Stable</option><option>Insufficient history</option></select></label>
-        <button id="sync-button" type="button" class="primary-button">Sync NCUA Data</button>
       </div>
       <div id="directory-summary" class="directory-summary"></div>
     </section>
@@ -77,7 +76,7 @@
               <label>Account status<select id="edit-status"></select></label>
               <label>Tags<input id="edit-tags" type="text" placeholder="GAP, VSC, TruStage, Louisiana" /></label>
               <label class="wide">Notes<textarea id="edit-notes" rows="9" placeholder="Add research, relationship notes, next steps, product opportunities, or reasons not to pursue."></textarea></label>
-              <p class="persistence-note">Charter number, account status, notes, and tags are stored in MongoDB. Accounts always remain visible.</p>
+              <p class="persistence-note">Charter number, account status, notes, tags, NCUA history, projections, and map coordinates are stored in MongoDB.</p>
             </div>
             <div class="edit-actions"><span id="save-feedback" class="feedback"></span><button type="submit" class="primary-button">Save Changes</button></div>
           </form>
@@ -86,6 +85,6 @@
     </section>
   </main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script type="module" src="potential-new-client-overview.js?v=20260730-mongodb-directory-records"></script>
+  <script type="module" src="potential-new-client-overview.js?v=20260731-persisted-directory"></script>
 </body>
 </html>
