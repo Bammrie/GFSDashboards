@@ -77,13 +77,13 @@
     <section class="panel">
       <div class="client-overview-header">
         <header class="panel__header"><h2 class="panel__title">Clients</h2><p class="panel__description">Every active credit union currently classified as Client in the Dashboard.</p></header>
-        <div class="client-overview-actions"><p id="client-data-meta" class="client-data-meta">Loading client data…</p><button id="refresh-clients" type="button" class="primary-button">Refresh Data</button></div>
+        <div class="client-overview-actions"><p id="client-data-meta" class="client-data-meta">Preparing latest client snapshot…</p><button id="refresh-clients" type="button" class="primary-button">Refresh Data</button></div>
       </div>
     </section>
 
     <section class="client-kpi-grid" aria-label="Client loan totals">
-      <article class="panel client-kpi"><span class="client-kpi-label">Total Client Loans</span><strong id="total-client-loans" class="client-kpi-value">—</strong><span id="total-client-loans-note" class="client-kpi-note">Loading current NCUA balances…</span></article>
-      <article class="panel client-kpi"><span class="client-kpi-label">Indirect Loans</span><strong id="total-indirect-loans" class="client-kpi-value">—</strong><span id="total-indirect-loans-note" class="client-kpi-note">Loading reported indirect auto balances…</span></article>
+      <article class="panel client-kpi"><span class="client-kpi-label">Total Client Loans</span><strong id="total-client-loans" class="client-kpi-value">—</strong><span id="total-client-loans-note" class="client-kpi-note">Preparing latest stored balances…</span></article>
+      <article class="panel client-kpi"><span class="client-kpi-label">Indirect Loans</span><strong id="total-indirect-loans" class="client-kpi-value">—</strong><span id="total-indirect-loans-note" class="client-kpi-note">Preparing latest stored indirect balances…</span></article>
     </section>
 
     <section class="panel" aria-labelledby="trajectory-title">
@@ -105,7 +105,7 @@
         <header class="panel__header"><h2 id="client-list-title" class="panel__title">Current Client Accounts</h2><p class="panel__description">Sorted by current total loans.</p></header>
         <label class="client-search-label">Search clients<input id="client-search" type="search" placeholder="Name, charter, city, owner, or tag" /></label>
       </div>
-      <p id="client-result-count" class="client-result-count">Loading clients…</p>
+      <p id="client-result-count" class="client-result-count">Preparing clients…</p>
       <div id="client-table-wrap" class="client-table-wrap" hidden>
         <table class="client-table">
           <thead><tr><th>Client</th><th>Location</th><th class="numeric">Assets</th><th class="numeric">Loans</th><th class="numeric">Indirect Loans</th><th class="numeric">Indirect Auto Share</th><th class="numeric">Loans 5Y</th><th class="numeric">Assets 5Y</th></tr></thead>
@@ -115,7 +115,8 @@
       <div id="client-list-empty" class="client-empty" hidden><p>No credit unions are currently classified as Client.</p></div>
     </section>
   </main>
-  <script type="module" src="clients.js?v=20260730-client-portfolio"></script>
+  <script src="clients-snapshot.js?v=20260731-client-snapshot"></script>
+  <script type="module" src="clients.js?v=20260731-client-snapshot"></script>
   <script type="module" src="clients-projection.js?v=20260730-five-year-projection"></script>
   <script type="module" src="clients-direct-auto-ranking.js?v=20260731-direct-auto-ranking"></script>
 </body>
