@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
+import { gzipSync, gunzipSync } from 'zlib';
 import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -13,8 +14,14 @@ const syncScriptPath = path.join(repoRoot, 'scripts', 'sync-ncua-directory-with-
 const requiredSchemaVersion = 4;
 const installMarker = Symbol.for('gfs.ncua-directory-hook-installed');
 const allowedStatuses = new Set(['', 'Radar', 'Prospect', 'Client', 'Off-Limits']);
+const snapshotKey = 'active-directory';
+const snapshotEncoding = 'gzip-json-v1';
+const maxCompressedSnapshotBytes = 14 * 1024 * 1024;
 let syncPromise = null;
 let legacyMigrationPromise = null;
+let directoryLoadPromise = null;
+let directoryCache = null;
+let snapshotSaveQueue = Promise.resolve();
 
 const directoryAccountSchema = new mongoose.Schema(
   {
@@ -28,12 +35,16 @@ const directoryAccountSchema = new mongoose.Schema(
 
 const directorySnapshotSchema = new mongoose.Schema(
   {
-    key: { type: String, required: true, unique: true, index: true, default: 'active-directory' },
+    key: { type: String, required: true, unique: true, index: true, default: snapshotKey },
     schemaVersion: { type: Number, required: true },
     generatedAt: { type: Date, default: null },
     cycle: { type: String, default: null },
     count: { type: Number, required: true, default: 0 },
-    payload: { type: mongoose.Schema.Types.Mixed, required: true }
+    payloadEncoding: { type: String, default: null },
+    payloadGzip: { type: Buffer, default: null },
+    payloadBytes: { type: Number, default: null },
+    compressedBytes: { type: Number, default: null },
+    payload: { type: mongoose.Schema.Types.Mixed, default: undefined }
   },
   { timestamps: true, collection: 'ncua_directory_snapshots', minimize: false }
 );
@@ -117,30 +128,85 @@ async function migrateLegacyOverrides() {
   return legacyMigrationPromise;
 }
 
-async function readStoredDirectory() {
-  requireMongo();
-  const snapshot = await NcuaDirectorySnapshot.findOne({ key: 'active-directory' }).lean();
-  return snapshot?.payload && directoryIsReady(snapshot.payload) ? snapshot.payload : null;
+function mongoBuffer(value) {
+  if (!value) return null;
+  if (Buffer.isBuffer(value)) return value;
+  if (Array.isArray(value?.data)) return Buffer.from(value.data);
+  const source = value?.buffer ?? value;
+  return Buffer.isBuffer(source) ? source : Buffer.from(source);
 }
 
-async function saveStoredDirectory(directory) {
+async function readStoredDirectory() {
+  requireMongo();
+  const snapshot = await NcuaDirectorySnapshot.findOne({ key: snapshotKey }).lean();
+  if (!snapshot) return null;
+
+  if (snapshot.payloadEncoding === snapshotEncoding && snapshot.payloadGzip) {
+    try {
+      const compressed = mongoBuffer(snapshot.payloadGzip);
+      const directory = JSON.parse(gunzipSync(compressed).toString('utf8'));
+      if (directoryIsReady(directory)) return { directory, format: snapshotEncoding };
+      console.warn('Stored NCUA directory snapshot is incomplete and will be rebuilt.');
+    } catch (error) {
+      console.error('Unable to decode the stored NCUA directory snapshot.', error);
+    }
+  }
+
+  if (snapshot.payload && directoryIsReady(snapshot.payload)) {
+    return { directory: snapshot.payload, format: 'legacy-json' };
+  }
+
+  return null;
+}
+
+async function saveStoredDirectoryNow(directory) {
   requireMongo();
   if (!directoryIsReady(directory)) throw new Error('Refusing to persist an incomplete NCUA directory snapshot.');
+
+  const serialized = Buffer.from(JSON.stringify(directory));
+  const compressed = gzipSync(serialized);
+  if (compressed.length > maxCompressedSnapshotBytes) {
+    throw new Error(`Compressed NCUA directory snapshot is too large to store safely (${compressed.length} bytes).`);
+  }
+
   await NcuaDirectorySnapshot.findOneAndUpdate(
-    { key: 'active-directory' },
+    { key: snapshotKey },
     {
       $set: {
         schemaVersion: Number(directory.schemaVersion || requiredSchemaVersion),
         generatedAt: directory.generatedAt ? new Date(directory.generatedAt) : null,
         cycle: directory.cycle || null,
         count: Number(directory.count || directory.creditUnions?.length || 0),
-        payload: directory
+        payloadEncoding: snapshotEncoding,
+        payloadGzip: compressed,
+        payloadBytes: serialized.length,
+        compressedBytes: compressed.length
       },
-      $setOnInsert: { key: 'active-directory' }
+      $unset: { payload: 1 },
+      $setOnInsert: { key: snapshotKey }
     },
     { upsert: true, runValidators: true, setDefaultsOnInsert: true }
   );
+
+  directoryCache = directory;
+  console.log(`Stored compressed NCUA directory snapshot (${serialized.length} bytes -> ${compressed.length} bytes).`);
   return directory;
+}
+
+function saveStoredDirectory(directory) {
+  const pendingSave = snapshotSaveQueue.then(() => saveStoredDirectoryNow(directory));
+  snapshotSaveQueue = pendingSave.catch(() => undefined);
+  return pendingSave;
+}
+
+async function persistDirectorySafely(directory, context) {
+  try {
+    await saveStoredDirectory(directory);
+    return true;
+  } catch (error) {
+    console.error(`Unable to persist ${context}; continuing with the available directory data.`, error);
+    return false;
+  }
 }
 
 function runSync() {
@@ -160,24 +226,45 @@ function runSync() {
   return syncPromise;
 }
 
-async function syncAndPersistDirectory() {
-  await runSync();
+async function rebuildDirectory() {
+  const message = await runSync();
   const directory = await readJson(directoryPath, { count: 0, creditUnions: [] });
-  await saveStoredDirectory(directory);
-  return directory;
+  if (!directoryIsReady(directory)) throw new Error('NCUA sync completed without a complete directory dataset.');
+  directoryCache = directory;
+  const persisted = await persistDirectorySafely(directory, 'the synchronized NCUA directory snapshot');
+  return { directory, message, persisted };
 }
 
-async function ensureDirectory() {
-  const stored = await readStoredDirectory();
-  if (stored) return stored;
+async function loadDirectory() {
+  try {
+    const stored = await readStoredDirectory();
+    if (stored?.directory) {
+      directoryCache = stored.directory;
+      if (stored.format === 'legacy-json') {
+        void persistDirectorySafely(stored.directory, 'the legacy NCUA directory snapshot migration');
+      }
+      return stored.directory;
+    }
+  } catch (error) {
+    console.error('Unable to read the stored NCUA directory snapshot; checking local data instead.', error);
+  }
 
   const localDirectory = await readJson(directoryPath, { count: 0, creditUnions: [] });
   if (directoryIsReady(localDirectory)) {
-    await saveStoredDirectory(localDirectory);
+    directoryCache = localDirectory;
+    await persistDirectorySafely(localDirectory, 'the local NCUA directory snapshot');
     return localDirectory;
   }
 
-  return syncAndPersistDirectory();
+  const rebuilt = await rebuildDirectory();
+  return rebuilt.directory;
+}
+
+async function ensureDirectory() {
+  if (directoryIsReady(directoryCache)) return directoryCache;
+  if (directoryLoadPromise) return directoryLoadPromise;
+  directoryLoadPromise = loadDirectory().finally(() => { directoryLoadPromise = null; });
+  return directoryLoadPromise;
 }
 
 function registerRoutes(app) {
@@ -236,11 +323,10 @@ function registerRoutes(app) {
 
   app.post('/api/ncua-credit-unions/sync', async (_req, res) => {
     try {
-      const message = await runSync();
-      const directory = await readJson(directoryPath, { count: 0, creditUnions: [] });
-      await saveStoredDirectory(directory);
+      const { message, directory, persisted } = await rebuildDirectory();
       res.json({
         ok: true,
+        persisted,
         message,
         count: directory.count || 0,
         generatedAt: directory.generatedAt || null,
