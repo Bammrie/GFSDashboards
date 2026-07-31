@@ -44,13 +44,6 @@ function renderMap({ fit = false } = {}) {
   initializeMap();
   if (!state.map || !state.mapLayer) return;
   state.mapLayer.clearLayers();
-  const selectedState = $('state-filter').value;
-  if (!selectedState) {
-    $('directory-map-status').textContent = 'Select a state to load Client and Prospect pins.';
-    state.map.setView([39.5, -98.35], 4);
-    state.mapHasFit = false;
-    return;
-  }
   const mapped = state.filtered.filter((cu) => mapStatuses.has(cu.salesStatus) && Number.isFinite(cu.latitude) && Number.isFinite(cu.longitude));
   const bounds = [];
   mapped.forEach((cu) => {
@@ -68,7 +61,7 @@ function renderMap({ fit = false } = {}) {
   const prospects = mapped.filter((cu) => cu.salesStatus === 'Prospect').length;
   $('directory-map-status').textContent = `${count(mapped.length)} pins shown · ${count(clients)} clients · ${count(prospects)} prospects`;
   if (bounds.length && (fit || !state.mapHasFit)) { state.map.fitBounds(bounds, { padding: [18, 18], maxZoom: 10 }); state.mapHasFit = true; }
-  else if (!bounds.length) state.map.setView([39.5, -98.35], 4);
+  else if (!bounds.length) { state.map.setView([39.5, -98.35], 4); state.mapHasFit = false; }
 }
 
 function applyFilters() {
@@ -76,48 +69,39 @@ function applyFilters() {
   const selectedState = $('state-filter').value;
   const selectedStatus = $('status-filter').value;
   const selectedTrend = $('trend-filter').value;
-  if (!selectedState) {
-    state.filtered = [];
-    state.selected = null;
-    renderList(); renderSummary(); renderDetail(); renderMap();
-    return;
-  }
   state.filtered = state.data.filter((cu) => {
-    if (cu.state !== selectedState) return false;
+    if (selectedState && cu.state !== selectedState) return false;
     if (selectedStatus && cu.salesStatus !== selectedStatus) return false;
     if (selectedTrend && cu.trend !== selectedTrend) return false;
     if (!query) return true;
     return [cu.name, cu.charterNumber, cu.street, cu.city, cu.state, cu.zip, cu.trend, ...(cu.tags || [])].join(' ').toLowerCase().includes(query);
   });
   if (state.selected && !state.filtered.some((cu) => cu.charterNumber === state.selected.charterNumber)) state.selected = null;
-  renderList(); renderSummary(); renderDetail(); renderMap({ fit: true });
+  renderList(); renderSummary(); renderDetail(); renderMap({ fit: Boolean(selectedState || selectedStatus || selectedTrend || query) });
 }
 
 function renderSummary() {
   const selectedState = $('state-filter').value;
-  if (!selectedState) {
-    $('directory-summary').innerHTML = '<span class="directory-chip">Select a state to load the directory</span>';
-    $('result-count').textContent = 'Select a state to begin.';
-    return;
-  }
   const totalAssets = state.filtered.reduce((sum, cu) => sum + (Number(cu.assets) || 0), 0);
   const growing = state.filtered.filter((cu) => cu.trend === 'Growing').length;
   const declining = state.filtered.filter((cu) => cu.trend === 'Declining').length;
-  $('directory-summary').innerHTML = [`${count(state.filtered.length)} shown`, selectedState, `${money(totalAssets)} assets`, `${count(growing)} growing`, `${count(declining)} declining`, `NCUA cycle ${state.meta.cycle || 'not loaded'}`].map((value) => `<span class="directory-chip">${escapeHtml(value)}</span>`).join('');
-  $('result-count').textContent = `${count(state.filtered.length)} active credit unions in ${selectedState} match the current filters.`;
+  const scope = selectedState || `${new Set(state.filtered.map((cu) => cu.state).filter(Boolean)).size} states / territories`;
+  $('directory-summary').innerHTML = [`${count(state.filtered.length)} shown`, scope, `${money(totalAssets)} assets`, `${count(growing)} growing`, `${count(declining)} declining`, `NCUA cycle ${state.meta.cycle || 'not loaded'}`].map((value) => `<span class="directory-chip">${escapeHtml(value)}</span>`).join('');
+  $('result-count').textContent = `${count(state.filtered.length)} active credit unions match the current filters.`;
 }
 
 function renderList() {
   const list = $('credit-union-list');
-  if (!$('state-filter').value) { list.innerHTML = '<div class="state-required"><strong>State selection required</strong>Choose a state above to load credit unions.</div>'; return; }
   if (!state.filtered.length) { list.innerHTML = '<div class="empty-state"><p>No credit unions match the current filters.</p></div>'; return; }
-  const selectedState = $('state-filter').value;
-  list.innerHTML = `<div class="state-heading">${escapeHtml(selectedState)}</div>` + state.filtered.map((cu) => {
+  let currentState = '';
+  list.innerHTML = state.filtered.map((cu) => {
+    const stateHeading = cu.state !== currentState ? `<div class="state-heading">${escapeHtml(cu.state || 'Unknown')}</div>` : '';
+    currentState = cu.state;
     const assetGrowth = cu.growth?.assets?.fiveYearPct;
     const memberGrowth = cu.growth?.members?.fiveYearPct;
     const trend = cu.trend || 'Insufficient history';
     const status = cu.salesStatus || 'Blank';
-    return `<button type="button" class="cu-button" data-charter="${escapeHtml(cu.charterNumber)}" aria-pressed="${state.selected?.charterNumber === cu.charterNumber}"><span><strong>${escapeHtml(cu.name)}</strong><small>${escapeHtml([cu.city, cu.state].filter(Boolean).join(', '))}</small><small>Charter ${escapeHtml(cu.charterNumber)}</small><small class="cu-growth"><span class="${growthClass(assetGrowth)}">Assets 5Y ${escapeHtml(signedPercent(assetGrowth))}</span><span class="${growthClass(memberGrowth)}">Members 5Y ${escapeHtml(signedPercent(memberGrowth))}</span></small><span class="status-badge">${escapeHtml(status)}</span> <span class="trend-badge" data-trend="${escapeHtml(trend)}">${escapeHtml(trend)}</span></span><span class="cu-assets">${escapeHtml(money(cu.assets))}</span></button>`;
+    return `${stateHeading}<button type="button" class="cu-button" data-charter="${escapeHtml(cu.charterNumber)}" aria-pressed="${state.selected?.charterNumber === cu.charterNumber}"><span><strong>${escapeHtml(cu.name)}</strong><small>${escapeHtml([cu.city, cu.state].filter(Boolean).join(', '))}</small><small>Charter ${escapeHtml(cu.charterNumber)}</small><small class="cu-growth"><span class="${growthClass(assetGrowth)}">Assets 5Y ${escapeHtml(signedPercent(assetGrowth))}</span><span class="${growthClass(memberGrowth)}">Members 5Y ${escapeHtml(signedPercent(memberGrowth))}</span></small><span class="status-badge">${escapeHtml(status)}</span> <span class="trend-badge" data-trend="${escapeHtml(trend)}">${escapeHtml(trend)}</span></span><span class="cu-assets">${escapeHtml(money(cu.assets))}</span></button>`;
   }).join('');
   list.querySelectorAll('[data-charter]').forEach((button) => button.addEventListener('click', () => selectCreditUnion(button.dataset.charter)));
 }
@@ -172,7 +156,7 @@ function renderDetail() {
   const cu = state.selected;
   $('empty-detail').hidden = Boolean(cu);
   $('credit-union-detail').hidden = !cu;
-  if (!cu) { $('empty-detail').querySelector('p').textContent = $('state-filter').value ? 'Select a credit union to review its information.' : 'Select a state, then choose a credit union to review its information.'; return; }
+  if (!cu) { $('empty-detail').querySelector('p').textContent = 'Select a credit union to review its information.'; return; }
   $('detail-name').textContent = cu.name;
   $('detail-location').textContent = [cu.street, cu.city, cu.state, cu.zip].filter(Boolean).join(', ');
   $('detail-status').textContent = cu.salesStatus || 'Blank';
@@ -193,10 +177,11 @@ async function loadDirectory() {
   state.meta = meta;
   state.data = Array.isArray(creditUnions) ? creditUnions : [];
   const states = [...new Set(state.data.map((cu) => cu.state).filter(Boolean))].sort();
-  $('state-filter').innerHTML = '<option value="">Select a state</option>' + states.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+  $('state-filter').innerHTML = '<option value="">All states</option>' + states.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
   const historyCycles = Array.isArray(payload.historyCycles) ? payload.historyCycles : [];
   const historyLabel = historyCycles.length ? ` · history ${historyCycles[0]} to ${historyCycles.at(-1)} · projected ${payload.projectionYears || 5} years` : '';
   $('directory-meta').textContent = payload.generatedAt ? `Saved dataset: ${new Date(payload.generatedAt).toLocaleString()} · ${count(payload.count)} active credit unions${historyLabel}.` : 'Saved directory is unavailable.';
+  state.data.sort((a, b) => String(a.state || '').localeCompare(String(b.state || '')) || String(a.name || '').localeCompare(String(b.name || '')));
   state.selected = null;
   state.mapHasFit = false;
   applyFilters();
