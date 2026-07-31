@@ -26,8 +26,22 @@ const directoryAccountSchema = new mongoose.Schema(
   { timestamps: true, collection: 'ncua_directory_accounts' }
 );
 
+const directorySnapshotSchema = new mongoose.Schema(
+  {
+    key: { type: String, required: true, unique: true, index: true, default: 'active-directory' },
+    schemaVersion: { type: Number, required: true },
+    generatedAt: { type: Date, default: null },
+    cycle: { type: String, default: null },
+    count: { type: Number, required: true, default: 0 },
+    payload: { type: mongoose.Schema.Types.Mixed, required: true }
+  },
+  { timestamps: true, collection: 'ncua_directory_snapshots', minimize: false }
+);
+
 const NcuaDirectoryAccount = mongoose.models.NcuaDirectoryAccount
   || mongoose.model('NcuaDirectoryAccount', directoryAccountSchema);
+const NcuaDirectorySnapshot = mongoose.models.NcuaDirectorySnapshot
+  || mongoose.model('NcuaDirectorySnapshot', directorySnapshotSchema);
 
 async function readJson(filePath, fallback) {
   try {
@@ -36,6 +50,11 @@ async function readJson(filePath, fallback) {
     if (error?.code !== 'ENOENT') console.warn(`Unable to read ${filePath}`, error);
     return fallback;
   }
+}
+
+function directoryIsReady(directory) {
+  const count = Number(directory?.count || directory?.creditUnions?.length || 0);
+  return count >= 4000 && Number(directory?.schemaVersion || 0) >= requiredSchemaVersion;
 }
 
 function sanitizeAccount(input = {}) {
@@ -61,7 +80,7 @@ function mapLegacyStatus(value) {
 
 function requireMongo() {
   if (mongoose.connection.readyState !== 1) {
-    const error = new Error('MongoDB is not connected. Directory notes and statuses cannot be read or saved.');
+    const error = new Error('MongoDB is not connected. Directory data cannot be read or saved.');
     error.statusCode = 503;
     throw error;
   }
@@ -98,6 +117,32 @@ async function migrateLegacyOverrides() {
   return legacyMigrationPromise;
 }
 
+async function readStoredDirectory() {
+  requireMongo();
+  const snapshot = await NcuaDirectorySnapshot.findOne({ key: 'active-directory' }).lean();
+  return snapshot?.payload && directoryIsReady(snapshot.payload) ? snapshot.payload : null;
+}
+
+async function saveStoredDirectory(directory) {
+  requireMongo();
+  if (!directoryIsReady(directory)) throw new Error('Refusing to persist an incomplete NCUA directory snapshot.');
+  await NcuaDirectorySnapshot.findOneAndUpdate(
+    { key: 'active-directory' },
+    {
+      $set: {
+        schemaVersion: Number(directory.schemaVersion || requiredSchemaVersion),
+        generatedAt: directory.generatedAt ? new Date(directory.generatedAt) : null,
+        cycle: directory.cycle || null,
+        count: Number(directory.count || directory.creditUnions?.length || 0),
+        payload: directory
+      },
+      $setOnInsert: { key: 'active-directory' }
+    },
+    { upsert: true, runValidators: true, setDefaultsOnInsert: true }
+  );
+  return directory;
+}
+
 function runSync() {
   if (syncPromise) return syncPromise;
   syncPromise = new Promise((resolve, reject) => {
@@ -115,12 +160,24 @@ function runSync() {
   return syncPromise;
 }
 
-async function ensureDirectory() {
-  const directory = await readJson(directoryPath, { count: 0, creditUnions: [] });
-  const count = directory.count || directory.creditUnions?.length || 0;
-  if (count >= 4000 && Number(directory.schemaVersion || 0) >= requiredSchemaVersion) return directory;
+async function syncAndPersistDirectory() {
   await runSync();
-  return readJson(directoryPath, { count: 0, creditUnions: [] });
+  const directory = await readJson(directoryPath, { count: 0, creditUnions: [] });
+  await saveStoredDirectory(directory);
+  return directory;
+}
+
+async function ensureDirectory() {
+  const stored = await readStoredDirectory();
+  if (stored) return stored;
+
+  const localDirectory = await readJson(directoryPath, { count: 0, creditUnions: [] });
+  if (directoryIsReady(localDirectory)) {
+    await saveStoredDirectory(localDirectory);
+    return localDirectory;
+  }
+
+  return syncAndPersistDirectory();
 }
 
 function registerRoutes(app) {
@@ -145,6 +202,7 @@ function registerRoutes(app) {
           tags: Array.isArray(saved?.tags) ? saved.tags : []
         };
       });
+      res.setHeader('Cache-Control', 'private, max-age=60, stale-while-revalidate=300');
       res.json({ ...directory, count: creditUnions.length, creditUnions });
     } catch (error) {
       console.error('Unable to load NCUA directory', error);
@@ -179,7 +237,8 @@ function registerRoutes(app) {
   app.post('/api/ncua-credit-unions/sync', async (_req, res) => {
     try {
       const message = await runSync();
-      const directory = await readJson(directoryPath, { count: 0 });
+      const directory = await readJson(directoryPath, { count: 0, creditUnions: [] });
+      await saveStoredDirectory(directory);
       res.json({
         ok: true,
         message,
@@ -222,7 +281,7 @@ export function installNcuaDirectory(express) {
         : '';
       const mapLabel = directory.geocodedCount ? ` and ${directory.geocodedCount} mapped addresses` : '';
       console.log(`NCUA directory ready with ${directory.count || 0} records${historyLabel}${mapLabel}.`);
-    }).catch((error) => console.error('NCUA directory startup sync failed', error));
+    }).catch((error) => console.error('NCUA directory startup preparation failed', error));
     return server;
   };
 }
