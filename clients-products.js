@@ -64,7 +64,7 @@ function ensureHeader() {
   header.dataset.clientProductsHeader = 'true';
   header.scope = 'col';
   header.textContent = 'Client Products';
-  headerRow.appendChild(header);
+  headerRow.insertBefore(header, headerRow.children[1] || null);
 }
 
 function charterFromRow(row) {
@@ -116,7 +116,7 @@ function renderProductCell(row) {
     cell = document.createElement('td');
     cell.className = 'client-products-cell';
     cell.dataset.clientProductsCell = 'true';
-    row.appendChild(cell);
+    row.insertBefore(cell, row.children[1] || null);
   }
 
   const clientName = row.querySelector('.client-name')?.textContent?.trim() || '';
