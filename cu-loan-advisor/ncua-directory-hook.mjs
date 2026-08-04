@@ -267,6 +267,10 @@ async function ensureDirectory() {
   return directoryLoadPromise;
 }
 
+export async function ensureNcuaDirectory() {
+  return ensureDirectory();
+}
+
 function registerRoutes(app) {
   if (app.locals.ncuaDirectoryRoutesInstalled) return;
   app.locals.ncuaDirectoryRoutesInstalled = true;

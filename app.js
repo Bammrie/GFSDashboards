@@ -8970,7 +8970,7 @@ async function bootstrap() {
   try {
     const tasks = [loadCreditUnions(), loadAccountWarrantyConfigs(), loadAppConfig()];
     if (hasAccountSurface && !hasQuoteSurface) {
-      tasks.push(loadIncomeStreams(), loadAccountReviewData(), loadAccountNotes(), loadAccountTrainingLogs(), loadAccountChangeLog());
+      tasks.push(loadIncomeStreams(), loadAccountReviewData(), loadAccountNotes(), loadAccountChangeLog());
     }
     if (selectors.quotesDirectoryBody) {
       tasks.push(loadCoverageRequestSummary());
