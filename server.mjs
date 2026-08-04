@@ -8,8 +8,15 @@ import fsSync from 'fs';
 import fs from 'fs/promises';
 import dotenv from 'dotenv';
 import { randomUUID } from 'crypto';
+import { installNcuaDirectory } from './ncua/ncua-directory-hook.mjs';
+import { installNcuaClientProducts } from './ncua/ncua-client-products-hook.mjs';
+import { installNcuaClientTrainingLog } from './ncua/ncua-client-training-log-hook.mjs';
 
 dotenv.config();
+
+installNcuaDirectory(express);
+installNcuaClientProducts(express);
+installNcuaClientTrainingLog(express);
 
 mongoose.set('strictQuery', true);
 mongoose.set('bufferCommands', false);

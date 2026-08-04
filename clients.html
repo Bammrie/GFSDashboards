@@ -89,17 +89,21 @@
     .client-empty{margin-top:1rem;padding:1rem;border:1px dashed #aaa;background:#fafafa;color:#333}
     @media(max-width:900px){.client-kpi-grid,.trajectory-summary,.client-training-form-grid{grid-template-columns:1fr}.client-overview-header,.trajectory-header,.client-list-header{display:grid}.client-overview-actions{align-items:flex-start}.client-search-label{min-width:0}.client-kpi{min-height:145px}.trajectory-chart-wrap{padding:.35rem}.client-training-dialog__body{padding:.8rem}}
   </style>
+  <link rel="stylesheet" href="dashboard-theme.css?v=20260804-maroon-ledger" />
 </head>
-<body class="clients-page">
+<body class="clients-page dashboard-shell">
   <header class="site-header">
-    <div class="header-content">
-      <div class="branding">
-        <h1 class="site-title">Dashboard</h1>
-        <p class="site-subtitle">Current clients, combined lending totals, and aggregate five-year NCUA growth.</p>
-      </div>
-      <nav class="header-actions" aria-label="Dashboard navigation">
-        <div class="header-group"><span class="header-group__label">Views</span><div class="header-group__links"><a href="potential-new-client-overview.html" class="header-link">Dashboard</a><a href="credit-union-prospects.html" class="header-link">Prospects</a><a href="clients.html" class="header-link" aria-current="page">Clients</a></div></div>
+    <div class="dashboard-header-content">
+      <a class="dashboard-brand" href="potential-new-client-overview.html" aria-label="GFS Dashboard home">
+        <img src="dashboard-logo.png" alt="GFS" />
+        <span class="dashboard-brand__title">GFS Dashboard</span>
+      </a>
+      <nav class="dashboard-nav" aria-label="Dashboard navigation">
+        <a href="potential-new-client-overview.html">Map</a>
+        <a href="clients.html" aria-current="page">Clients</a>
+        <a href="credit-union-prospects.html">Prospects</a>
       </nav>
+      <div class="dashboard-organization">Goodwine Financial Services</div>
     </div>
   </header>
 

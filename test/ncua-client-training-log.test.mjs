@@ -5,7 +5,7 @@ import {
   combineLegacyTrainingEntry,
   institutionIdentityKeys,
   resolveInstitutionCharter
-} from '../cu-loan-advisor/ncua-client-training-log-hook.mjs';
+} from '../ncua/ncua-client-training-log-hook.mjs';
 
 test('combines all three legacy training boxes into one labeled update', () => {
   assert.equal(

@@ -48,7 +48,7 @@ function initializeMap() {
 
 function markerStyle(cu) {
   const selected = state.selected?.charterNumber === cu.charterNumber;
-  const markerColor = cu.salesStatus === 'Client' ? '#7a1e2c' : '#2d7f4f';
+  const markerColor = cu.salesStatus === 'Client' ? '#781f35' : '#c99a20';
   return { renderer: state.mapRenderer, radius: selected ? 8 : 5, weight: selected ? 3 : 1.5, color: selected ? '#111827' : markerColor, fillColor: markerColor, fillOpacity: selected ? .98 : .82 };
 }
 
