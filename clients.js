@@ -284,8 +284,9 @@ function renderClientTable() {
       ? `<span class="client-meta-line">${escapeHtml(client.tags.join(' · '))}</span>`
       : '';
 
-    return `<tr>
+    return `<tr data-client-charter="${escapeHtml(client.charterNumber)}" data-client-name="${escapeHtml(client.name)}">
       <td><strong class="client-name">${escapeHtml(client.name)}</strong><span class="client-meta-line">Charter ${escapeHtml(client.charterNumber)}</span>${owner}${tags}</td>
+      <td class="client-training-cell" data-client-training-cell><button type="button" class="client-training-button" data-open-client-training>Open Log</button><span class="client-training-count" data-client-training-count>Loading…</span></td>
       <td>${escapeHtml([client.city, client.state].filter(Boolean).join(', ') || '—')}</td>
       <td class="numeric">${escapeHtml(money(numericValue(client.assets)))}</td>
       <td class="numeric">${escapeHtml(money(numericValue(client.loans)))}</td>

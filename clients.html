@@ -55,9 +55,39 @@
     .client-table tbody tr:hover{background:rgba(122,30,44,.045)}
     .client-name{display:block;color:var(--accent);font-size:.95rem}
     .client-meta-line{display:block;margin-top:.18rem;color:var(--text-secondary);font-size:.74rem}
+    .client-training-cell{min-width:142px}
+    .client-training-button{width:100%;border:1px solid var(--accent);background:#fff;color:var(--accent);padding:.52rem .65rem;font:inherit;font-size:.78rem;font-weight:800;cursor:pointer}
+    .client-training-button:hover{background:var(--accent);color:#fff}
+    .client-training-count{display:block;margin-top:.3rem;color:var(--text-secondary);font-size:.71rem;font-weight:700;text-align:center}
+    .client-training-migration-status{margin:.7rem 0 0;padding:.65rem .75rem;border:1px solid #d7b36b;background:#fff9e8;color:#65480f;font-size:.8rem;font-weight:750}
+    .client-training-dialog{width:min(900px,calc(100vw - 2rem));max-height:calc(100vh - 2rem);padding:0;border:1px solid #9f8e91;background:#fff;color:var(--text-primary);box-shadow:0 28px 80px rgba(0,0,0,.35)}
+    .client-training-dialog::backdrop{background:rgba(14,10,11,.72)}
+    .client-training-dialog__header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;padding:1.15rem 1.25rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#711b29,#321017);color:#fff}
+    .client-training-dialog__eyebrow{display:block;margin-bottom:.28rem;font-size:.72rem;font-weight:850;text-transform:uppercase;letter-spacing:.08em;opacity:.82}
+    .client-training-dialog__title{margin:0;color:#fff;font-size:1.35rem}
+    .client-training-dialog__subtitle{margin:.25rem 0 0;color:rgba(255,255,255,.78);font-size:.82rem}
+    .client-training-close{flex:0 0 auto;width:38px;height:38px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-size:1.35rem;line-height:1;cursor:pointer}
+    .client-training-dialog__body{padding:1.2rem;overflow:auto;max-height:calc(100vh - 9rem)}
+    .client-training-form{display:grid;gap:.85rem;padding:1rem;border:1px solid var(--border);background:#faf7f8}
+    .client-training-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+    .client-training-form label{display:grid;gap:.32rem;color:#4f3b3f;font-size:.78rem;font-weight:800}
+    .client-training-form select,.client-training-form input,.client-training-form textarea{width:100%;padding:.7rem;border:1px solid #aaa;background:#fff;color:#222;-webkit-text-fill-color:#222;color-scheme:light;font:inherit}
+    .client-training-form textarea{resize:vertical;min-height:130px}
+    .client-training-form-actions{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+    .client-training-feedback{margin:0;min-height:1.2em;color:var(--text-secondary);font-size:.8rem;font-weight:750}
+    .client-training-feedback[data-state="error"]{color:#8b2424}.client-training-feedback[data-state="saved"]{color:#1f673d}
+    .client-training-history-heading{margin:1.2rem 0 .75rem;font-size:1.02rem;color:#3c1c22}
+    .client-training-history{display:grid;gap:.75rem}
+    .client-training-entry{padding:.9rem 1rem;border:1px solid var(--border);border-left:4px solid var(--accent);background:#fff}
+    .client-training-entry__header{display:flex;justify-content:space-between;gap:.75rem;align-items:flex-start;flex-wrap:wrap}
+    .client-training-entry__trainer{color:#3c1c22;font-weight:850}
+    .client-training-entry__date{color:var(--text-secondary);font-size:.78rem;font-weight:750}
+    .client-training-entry__source{display:inline-block;margin-left:.4rem;padding:.16rem .35rem;background:#f2edef;color:#6d2632;font-size:.64rem;font-weight:850;text-transform:uppercase;letter-spacing:.05em}
+    .client-training-entry__notes{margin:.65rem 0 0;color:#2b2526;white-space:pre-wrap;line-height:1.5;font-size:.86rem}
+    .client-training-history-empty{padding:.9rem;border:1px dashed #aaa;background:#fafafa;color:var(--text-secondary)}
     .growth-up{color:#1f673d!important;font-weight:800}.growth-down{color:#8b2424!important;font-weight:800}.growth-flat{color:#555!important;font-weight:800}
     .client-empty{margin-top:1rem;padding:1rem;border:1px dashed #aaa;background:#fafafa;color:#333}
-    @media(max-width:900px){.client-kpi-grid,.trajectory-summary{grid-template-columns:1fr}.client-overview-header,.trajectory-header,.client-list-header{display:grid}.client-overview-actions{align-items:flex-start}.client-search-label{min-width:0}.client-kpi{min-height:145px}.trajectory-chart-wrap{padding:.35rem}}
+    @media(max-width:900px){.client-kpi-grid,.trajectory-summary,.client-training-form-grid{grid-template-columns:1fr}.client-overview-header,.trajectory-header,.client-list-header{display:grid}.client-overview-actions{align-items:flex-start}.client-search-label{min-width:0}.client-kpi{min-height:145px}.trajectory-chart-wrap{padding:.35rem}.client-training-dialog__body{padding:.8rem}}
   </style>
 </head>
 <body class="clients-page">
@@ -106,17 +136,38 @@
         <label class="client-search-label">Search clients<input id="client-search" type="search" placeholder="Name, charter, city, owner, or tag" /></label>
       </div>
       <p id="client-result-count" class="client-result-count">Preparing clients…</p>
+      <p id="client-training-migration-status" class="client-training-migration-status" hidden></p>
       <div id="client-table-wrap" class="client-table-wrap" hidden>
         <table class="client-table">
-          <thead><tr><th>Client</th><th>Location</th><th class="numeric">Assets</th><th class="numeric">Loans</th><th class="numeric">Indirect Loans</th><th class="numeric">Indirect Auto Share</th><th class="numeric">Loans 5Y</th><th class="numeric">Assets 5Y</th></tr></thead>
+          <thead><tr><th>Client</th><th>Training</th><th>Location</th><th class="numeric">Assets</th><th class="numeric">Loans</th><th class="numeric">Indirect Loans</th><th class="numeric">Indirect Auto Share</th><th class="numeric">Loans 5Y</th><th class="numeric">Assets 5Y</th></tr></thead>
           <tbody id="client-table-body"></tbody>
         </table>
       </div>
       <div id="client-list-empty" class="client-empty" hidden><p>No credit unions are currently classified as Client.</p></div>
     </section>
   </main>
+
+  <dialog id="client-training-dialog" class="client-training-dialog" aria-labelledby="client-training-dialog-title">
+    <header class="client-training-dialog__header">
+      <div><span class="client-training-dialog__eyebrow">Client Training Log</span><h2 id="client-training-dialog-title" class="client-training-dialog__title">Training Log</h2><p id="client-training-dialog-subtitle" class="client-training-dialog__subtitle"></p></div>
+      <button id="client-training-close" type="button" class="client-training-close" aria-label="Close training log">×</button>
+    </header>
+    <div class="client-training-dialog__body">
+      <form id="client-training-form" class="client-training-form">
+        <div class="client-training-form-grid">
+          <label>Team member<select id="client-training-trainer" required><option value="">Select team member</option><option value="Brady">Brady</option><option value="Blake">Blake</option><option value="Royce">Royce</option></select></label>
+          <label>Visit date<input id="client-training-visit-date" type="date" required /></label>
+        </div>
+        <label>Training update<textarea id="client-training-notes" rows="6" maxlength="30000" placeholder="Capture the visit, what changed, and any follow-up work in one update." required></textarea></label>
+        <div class="client-training-form-actions"><button id="client-training-submit" type="submit" class="primary-button">Save Training Update</button><p id="client-training-feedback" class="client-training-feedback" role="status" aria-live="polite"></p></div>
+      </form>
+      <h3 class="client-training-history-heading">Training History</h3>
+      <div id="client-training-history" class="client-training-history" aria-live="polite"></div>
+    </div>
+  </dialog>
   <script src="clients-cache-bootstrap.js?v=20260731-client-cache"></script>
   <script type="module" src="clients.js?v=20260731-client-cache"></script>
+  <script type="module" src="clients-training-log.js?v=20260804-client-training-log"></script>
   <script type="module" src="clients-projection.js?v=20260730-five-year-projection"></script>
   <script type="module" src="clients-direct-auto-ranking.js?v=20260731-direct-auto-ranking"></script>
 </body>
