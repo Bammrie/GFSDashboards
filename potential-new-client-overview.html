@@ -39,17 +39,26 @@
     @media(max-width:1180px){.directory-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.directory-toolbar label:first-child{grid-column:1/-1}}
     @media(max-width:900px){.directory-map-header{display:block}.directory-map-status{margin-top:.4rem;white-space:normal}.directory-toolbar,.directory-grid,.detail-metrics,.growth-grid,.history-charts,.edit-grid{grid-template-columns:1fr}.directory-list{max-height:none}.edit-grid .wide,.persistence-note,.directory-toolbar label:first-child{grid-column:auto}.growth-stat.wide{grid-column:auto}}
   </style>
+  <link rel="stylesheet" href="dashboard-theme.css?v=20260804-maroon-ledger" />
 </head>
-<body class="directory-page">
+<body class="directory-page dashboard-shell">
   <header class="site-header">
-    <div class="header-content">
-      <div class="branding"><h1 class="site-title">Dashboard</h1><p class="site-subtitle">Every active U.S. credit union, with five years of NCUA history, growth trends, projections, and shared sales notes.</p></div>
-      <nav class="header-actions" aria-label="Dashboard navigation"><div class="header-group"><span class="header-group__label">Views</span><div class="header-group__links"><a href="potential-new-client-overview.html" class="header-link" aria-current="page">Dashboard</a><a href="credit-union-prospects.html" class="header-link">Prospects</a><a href="clients.html" class="header-link">Clients</a></div></div></nav>
+    <div class="dashboard-header-content">
+      <a class="dashboard-brand" href="potential-new-client-overview.html" aria-label="GFS Dashboard home">
+        <img src="dashboard-logo.png" alt="GFS" />
+        <span class="dashboard-brand__title">GFS Dashboard</span>
+      </a>
+      <nav class="dashboard-nav" aria-label="Dashboard navigation">
+        <a href="potential-new-client-overview.html" aria-current="page">Map</a>
+        <a href="clients.html">Clients</a>
+        <a href="credit-union-prospects.html">Prospects</a>
+      </nav>
+      <div class="dashboard-organization">Goodwine Financial Services</div>
     </div>
   </header>
   <main class="layout">
     <section id="potential-client-map" class="panel directory-map-panel" aria-labelledby="potential-client-map-title">
-      <div class="directory-map-header"><header class="panel__header"><h2 id="potential-client-map-title" class="panel__title">Client and prospect map</h2><p class="panel__description">Marked accounts load automatically. Clients appear in maroon and Prospects in green with large, high-contrast markers.</p></header><p id="directory-map-status" class="directory-map-status">Loading saved map pins…</p></div>
+      <div class="directory-map-header"><header class="panel__header"><h2 id="potential-client-map-title" class="panel__title">Client and prospect map</h2><p class="panel__description">Marked accounts load automatically. Clients appear in maroon and Prospects in gold with large, high-contrast markers.</p></header><p id="directory-map-status" class="directory-map-status">Loading saved map pins…</p></div>
       <div id="directory-map-canvas" class="directory-map-canvas" role="application" aria-label="Map of clients and prospective credit unions"></div>
     </section>
     <section class="panel">

@@ -1,0 +1,407 @@
+/* Dashboard-only visual system. Other GFS workspaces continue to use styles.css unchanged. */
+body.dashboard-shell {
+  --dashboard-maroon: #781f35;
+  --dashboard-maroon-dark: #5f1729;
+  --dashboard-maroon-soft: #f5ecef;
+  --dashboard-gold: #c99a20;
+  --dashboard-ink: #19212d;
+  --dashboard-muted: #586270;
+  --dashboard-line: #aeb7c1;
+  --dashboard-line-soft: #d9dee4;
+  --accent: var(--dashboard-maroon);
+  --accent-strong: var(--dashboard-maroon-dark);
+  --panel-bg: #fff;
+  --panel-border: var(--dashboard-line);
+  --panel-shadow: none;
+  background: #f7f8fa;
+  color: var(--dashboard-ink);
+}
+
+body.dashboard-shell .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  min-height: 72px;
+  background: var(--dashboard-maroon);
+  border: 0;
+  border-bottom: 3px solid var(--dashboard-gold);
+}
+
+body.dashboard-shell .dashboard-header-content {
+  display: grid;
+  grid-template-columns: minmax(260px, auto) 1fr minmax(190px, auto);
+  align-items: stretch;
+  width: 100%;
+  min-height: 69px;
+  margin: 0;
+}
+
+body.dashboard-shell .dashboard-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  padding: .45rem 1.35rem .4rem 1rem;
+  background: #fff;
+  border-right: 1px solid rgba(255,255,255,.28);
+  color: var(--dashboard-ink);
+  text-decoration: none;
+}
+
+body.dashboard-shell .dashboard-brand img {
+  width: 154px;
+  height: 52px;
+  object-fit: contain;
+}
+
+body.dashboard-shell .dashboard-brand__title {
+  padding-left: 1rem;
+  border-left: 1px solid #c8ccd1;
+  font-size: 1rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+body.dashboard-shell .dashboard-nav {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+body.dashboard-shell .dashboard-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 126px;
+  padding: 0 1.3rem;
+  border-right: 1px solid rgba(255,255,255,.2);
+  color: rgba(255,255,255,.88);
+  font-size: .85rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+body.dashboard-shell .dashboard-nav a:hover,
+body.dashboard-shell .dashboard-nav a:focus-visible {
+  background: rgba(255,255,255,.09);
+  color: #fff;
+  outline: 0;
+}
+
+body.dashboard-shell .dashboard-nav a[aria-current='page'] {
+  position: relative;
+  background: var(--dashboard-maroon-dark);
+  color: #fff;
+}
+
+body.dashboard-shell .dashboard-nav a[aria-current='page']::after {
+  position: absolute;
+  right: 18%;
+  bottom: 0;
+  left: 18%;
+  height: 4px;
+  background: var(--dashboard-gold);
+  content: '';
+}
+
+body.dashboard-shell .dashboard-organization {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: .75rem 1.25rem;
+  border-left: 1px solid rgba(255,255,255,.2);
+  color: #fff;
+  font-size: .75rem;
+  font-weight: 750;
+  line-height: 1.35;
+  text-align: right;
+}
+
+body.dashboard-shell .layout,
+body.dashboard-shell.clients-page .layout,
+body.dashboard-shell.prospects-page .layout,
+body.dashboard-shell.directory-page .layout {
+  width: min(1880px, 99vw);
+  gap: .85rem;
+  padding: .85rem;
+}
+
+body.dashboard-shell .panel {
+  --text-primary: var(--dashboard-ink);
+  --text-secondary: var(--dashboard-muted);
+  --surface-card: #f3f5f7;
+  --surface-highlight: var(--dashboard-maroon-soft);
+  --border: var(--dashboard-line-soft);
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid var(--dashboard-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.dashboard-shell .panel__header {
+  margin-bottom: .75rem;
+}
+
+body.dashboard-shell .panel__title {
+  color: var(--dashboard-maroon);
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  font-weight: 800;
+}
+
+body.dashboard-shell .panel__description {
+  margin-top: .3rem;
+  color: var(--dashboard-muted);
+  font-size: .82rem;
+  line-height: 1.35;
+}
+
+body.dashboard-shell .primary-button,
+body.dashboard-shell .secondary-button,
+body.dashboard-shell .trajectory-control {
+  min-height: 38px;
+  padding: .55rem .9rem;
+  border: 1px solid var(--dashboard-maroon);
+  border-radius: 0;
+  background: var(--dashboard-maroon);
+  box-shadow: none;
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 800;
+  transform: none;
+}
+
+body.dashboard-shell .secondary-button,
+body.dashboard-shell .trajectory-control:not([aria-pressed='true']) {
+  background: #fff;
+  color: var(--dashboard-maroon);
+}
+
+body.dashboard-shell .primary-button:hover,
+body.dashboard-shell .primary-button:focus-visible,
+body.dashboard-shell .secondary-button:hover,
+body.dashboard-shell .secondary-button:focus-visible,
+body.dashboard-shell .trajectory-control:hover,
+body.dashboard-shell .trajectory-control:focus-visible {
+  background: var(--dashboard-maroon-dark);
+  box-shadow: none;
+  color: #fff;
+  transform: none;
+  outline: 2px solid rgba(120,31,53,.18);
+  outline-offset: 1px;
+}
+
+body.dashboard-shell input:not([type='checkbox']):not([type='radio']),
+body.dashboard-shell select,
+body.dashboard-shell textarea,
+body.dashboard-shell .directory-toolbar input,
+body.dashboard-shell .directory-toolbar select,
+body.dashboard-shell .edit-grid input,
+body.dashboard-shell .edit-grid select,
+body.dashboard-shell .edit-grid textarea,
+body.dashboard-shell .prospect-toolbar input,
+body.dashboard-shell .prospect-toolbar select,
+body.dashboard-shell .client-search-label input {
+  min-height: 38px;
+  padding: .5rem .65rem;
+  border: 1px solid var(--dashboard-line);
+  border-radius: 0;
+  background: #fff;
+  box-shadow: none;
+  color: var(--dashboard-ink);
+  font-size: .82rem;
+}
+
+body.dashboard-shell input:not([type='checkbox']):not([type='radio']):focus-visible,
+body.dashboard-shell select:focus-visible,
+body.dashboard-shell textarea:focus-visible {
+  border-color: var(--dashboard-maroon);
+  box-shadow: 0 0 0 2px rgba(120,31,53,.14);
+  outline: none;
+}
+
+body.dashboard-shell .client-kpi-grid,
+body.dashboard-shell .prospect-kpi-grid {
+  gap: .85rem;
+}
+
+body.dashboard-shell .client-kpi,
+body.dashboard-shell .prospect-kpi,
+body.dashboard-shell .prospect-kpi--green,
+body.dashboard-shell .prospect-kpi--radar {
+  min-height: 118px;
+  padding: .9rem 1rem;
+  background: #fff;
+  border: 1px solid var(--dashboard-line);
+}
+
+body.dashboard-shell .client-kpi::after,
+body.dashboard-shell .prospect-kpi::after,
+body.dashboard-shell .prospect-kpi--green::after,
+body.dashboard-shell .prospect-kpi--radar::after {
+  display: none;
+}
+
+body.dashboard-shell .client-kpi-label,
+body.dashboard-shell .prospect-kpi-label {
+  color: var(--dashboard-ink);
+  font-size: .72rem;
+  letter-spacing: .035em;
+}
+
+body.dashboard-shell .client-kpi-value,
+body.dashboard-shell .prospect-kpi-value,
+body.dashboard-shell .prospect-kpi--green .prospect-kpi-value {
+  color: var(--dashboard-maroon);
+  font-size: clamp(1.65rem, 2.7vw, 2.5rem);
+}
+
+body.dashboard-shell .prospect-kpi--radar .prospect-kpi-value {
+  color: #8a6414;
+}
+
+body.dashboard-shell .trajectory-chart-wrap,
+body.dashboard-shell .directory-map-canvas {
+  background: #fff;
+  border-color: var(--dashboard-line);
+}
+
+body.dashboard-shell .client-table-wrap,
+body.dashboard-shell .account-table-wrap,
+body.dashboard-shell .history-table-wrap {
+  border: 1px solid var(--dashboard-line);
+}
+
+body.dashboard-shell .client-table,
+body.dashboard-shell .account-table,
+body.dashboard-shell .history-table-wrap table {
+  border-collapse: collapse;
+}
+
+body.dashboard-shell .client-table th,
+body.dashboard-shell .client-table td,
+body.dashboard-shell .account-table th,
+body.dashboard-shell .account-table td,
+body.dashboard-shell .history-table-wrap th,
+body.dashboard-shell .history-table-wrap td {
+  padding: .58rem .65rem;
+  border-right: 1px solid var(--dashboard-line-soft);
+  border-bottom: 1px solid var(--dashboard-line-soft);
+  font-size: .78rem;
+}
+
+body.dashboard-shell .client-table th,
+body.dashboard-shell .account-table th,
+body.dashboard-shell .account-section--prospect .account-table th,
+body.dashboard-shell .account-section--radar .account-table th,
+body.dashboard-shell .history-table-wrap th {
+  background: #eef1f4;
+  color: var(--dashboard-ink);
+  font-weight: 850;
+  letter-spacing: .025em;
+}
+
+body.dashboard-shell .account-section--prospect {
+  border-top: 4px solid var(--dashboard-maroon);
+}
+
+body.dashboard-shell .account-section--radar {
+  border-top: 4px solid var(--dashboard-gold);
+}
+
+body.dashboard-shell .status-pill--prospect {
+  border-color: var(--dashboard-maroon);
+  background: var(--dashboard-maroon-soft);
+  color: var(--dashboard-maroon);
+}
+
+body.dashboard-shell .status-pill--radar {
+  border-color: #9b721a;
+  background: #fff8e7;
+  color: #765314;
+}
+
+body.dashboard-shell .growth-up,
+body.dashboard-shell .client-name,
+body.dashboard-shell .account-name,
+body.dashboard-shell .state-heading {
+  color: var(--dashboard-maroon) !important;
+}
+
+body.dashboard-shell .directory-grid {
+  gap: .85rem;
+}
+
+body.dashboard-shell .directory-chip,
+body.dashboard-shell .trajectory-summary-card,
+body.dashboard-shell .growth-stat,
+body.dashboard-shell .metric-card {
+  background: #fff;
+  border: 1px solid var(--dashboard-line);
+  border-radius: 0;
+}
+
+body.dashboard-shell .cu-button {
+  background: #fff;
+  border-color: var(--dashboard-line);
+  border-radius: 0;
+}
+
+body.dashboard-shell .cu-button:hover,
+body.dashboard-shell .cu-button[aria-pressed='true'] {
+  background: var(--dashboard-maroon-soft);
+  border-color: var(--dashboard-maroon);
+}
+
+body.dashboard-shell .persistence-note {
+  border-left-color: var(--dashboard-maroon);
+  background: var(--dashboard-maroon-soft);
+}
+
+body.dashboard-shell .leaflet-popup-content-wrapper,
+body.dashboard-shell .leaflet-popup-tip {
+  border-radius: 0;
+}
+
+@media (max-width: 980px) {
+  body.dashboard-shell .dashboard-header-content {
+    grid-template-columns: 1fr;
+  }
+
+  body.dashboard-shell .dashboard-brand {
+    justify-content: center;
+    border-right: 0;
+  }
+
+  body.dashboard-shell .dashboard-nav {
+    justify-content: center;
+  }
+
+  body.dashboard-shell .dashboard-nav a {
+    min-width: 0;
+    flex: 1 1 0;
+    min-height: 48px;
+  }
+
+  body.dashboard-shell .dashboard-organization {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  body.dashboard-shell .dashboard-brand__title {
+    display: none;
+  }
+
+  body.dashboard-shell .dashboard-brand img {
+    width: 130px;
+  }
+
+  body.dashboard-shell .dashboard-nav a {
+    padding: 0 .55rem;
+    font-size: .75rem;
+  }
+}
