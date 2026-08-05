@@ -5,6 +5,8 @@ import { spawn } from 'child_process';
 import { gzipSync, gunzipSync } from 'zlib';
 import mongoose from 'mongoose';
 
+import { mergeCustomCreditUnionDirectory } from './custom-credit-unions.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..');
@@ -268,7 +270,7 @@ async function ensureDirectory() {
 }
 
 export async function ensureNcuaDirectory() {
-  return ensureDirectory();
+  return mergeCustomCreditUnionDirectory(await ensureDirectory());
 }
 
 function registerRoutes(app) {
@@ -280,7 +282,7 @@ function registerRoutes(app) {
       requireMongo();
       await migrateLegacyOverrides();
       const [directory, savedAccounts] = await Promise.all([
-        ensureDirectory(),
+        ensureNcuaDirectory(),
         NcuaDirectoryAccount.find().lean()
       ]);
       const savedByCharter = new Map(savedAccounts.map((record) => [record.charterNumber, record]));
@@ -288,9 +290,11 @@ function registerRoutes(app) {
         const saved = savedByCharter.get(String(creditUnion.charterNumber));
         return {
           ...creditUnion,
-          salesStatus: saved?.salesStatus || '',
-          notes: saved?.notes || '',
-          tags: Array.isArray(saved?.tags) ? saved.tags : []
+          salesStatus: saved?.salesStatus ?? creditUnion.salesStatus ?? '',
+          notes: saved?.notes ?? creditUnion.notes ?? '',
+          tags: Array.isArray(saved?.tags)
+            ? saved.tags
+            : (Array.isArray(creditUnion.tags) ? creditUnion.tags : [])
         };
       });
       res.setHeader('Cache-Control', 'private, max-age=60, stale-while-revalidate=300');
@@ -328,11 +332,13 @@ function registerRoutes(app) {
   app.post('/api/ncua-credit-unions/sync', async (_req, res) => {
     try {
       const { message, directory, persisted } = await rebuildDirectory();
+      const mergedDirectory = mergeCustomCreditUnionDirectory(directory);
       res.json({
         ok: true,
         persisted,
         message,
-        count: directory.count || 0,
+        count: mergedDirectory.count || 0,
+        customCreditUnionCount: mergedDirectory.customCreditUnionCount || 0,
         generatedAt: directory.generatedAt || null,
         cycle: directory.cycle || null,
         historyCycles: directory.historyCycles || [],
@@ -365,12 +371,15 @@ export function installNcuaDirectory(express) {
   express.application.listen = function patchedListen(...args) {
     registerRoutes(this);
     const server = originalListen.apply(this, args);
-    ensureDirectory().then((directory) => {
+    ensureNcuaDirectory().then((directory) => {
       const historyLabel = Array.isArray(directory.historyCycles) && directory.historyCycles.length
         ? ` with history from ${directory.historyCycles[0]} through ${directory.historyCycles.at(-1)}`
         : '';
       const mapLabel = directory.geocodedCount ? ` and ${directory.geocodedCount} mapped addresses` : '';
-      console.log(`NCUA directory ready with ${directory.count || 0} records${historyLabel}${mapLabel}.`);
+      const customLabel = directory.customCreditUnionCount
+        ? `, including ${directory.customCreditUnionCount} custom client records`
+        : '';
+      console.log(`Credit-union directory ready with ${directory.count || 0} records${customLabel}${historyLabel}${mapLabel}.`);
     }).catch((error) => console.error('NCUA directory startup preparation failed', error));
     return server;
   };
