@@ -1,6 +1,9 @@
 import { createHash } from 'crypto';
 import mongoose from 'mongoose';
-import { ensureNcuaDirectory } from './ncua-directory-hook.mjs';
+import {
+  ensureNcuaDirectory,
+  resolveCreditUnionSalesStatus
+} from './ncua-directory-hook.mjs';
 
 const installMarker = Symbol.for('gfs.ncua-client-training-log-hook-installed');
 const allowedTrainers = new Set(['Brady', 'Blake', 'Royce']);
@@ -171,10 +174,42 @@ function serializeAccount(record) {
   };
 }
 
+function directoryStatusByCharter(directory) {
+  return new Map(
+    (Array.isArray(directory?.creditUnions) ? directory.creditUnions : [])
+      .map((creditUnion) => [
+        normalizeCharterNumber(creditUnion?.charterNumber),
+        resolveCreditUnionSalesStatus('', creditUnion?.salesStatus)
+      ])
+      .filter(([charterNumber, salesStatus]) => charterNumber && salesStatus)
+  );
+}
+
+async function repairDirectoryDefinedClientStatuses(directory) {
+  const charterNumbers = [...directoryStatusByCharter(directory)]
+    .filter(([, salesStatus]) => salesStatus === 'Client')
+    .map(([charterNumber]) => charterNumber);
+  if (!charterNumbers.length) return 0;
+
+  const result = await NcuaDirectoryClientTraining.updateMany(
+    {
+      charterNumber: { $in: charterNumbers },
+      $or: [
+        { salesStatus: { $exists: false } },
+        { salesStatus: null },
+        { salesStatus: '' }
+      ]
+    },
+    { $set: { salesStatus: 'Client' } }
+  );
+  return Number(result.modifiedCount || 0);
+}
+
 async function migrateLegacyTrainingLogs(directory) {
   if (migrationPromise) return migrationPromise;
 
   migrationPromise = (async () => {
+    await repairDirectoryDefinedClientStatuses(directory);
     const AccountTrainingLog = mongoose.models.AccountTrainingLog;
     const CreditUnion = mongoose.models.CreditUnion;
     if (!AccountTrainingLog || !CreditUnion) {
@@ -194,6 +229,7 @@ async function migrateLegacyTrainingLogs(directory) {
     const accountNames = new Map(legacyAccounts.map((account) => [String(account._id), account.name]));
     const preferredCharters = new Set(currentClients.map((record) => normalizeCharterNumber(record.charterNumber)).filter(Boolean));
     const identityIndex = buildInstitutionIdentityIndex(directory?.creditUnions || []);
+    const defaultStatuses = directoryStatusByCharter(directory);
     const entriesByCharter = new Map();
     const unmatchedAccounts = [];
     let legacyEntries = 0;
@@ -238,10 +274,13 @@ async function migrateLegacyTrainingLogs(directory) {
 
     let migratedEntries = 0;
     for (const [charterNumber, entries] of entriesByCharter) {
+      const insertDefaults = { charterNumber };
+      const directoryStatus = defaultStatuses.get(charterNumber);
+      if (directoryStatus) insertDefaults.salesStatus = directoryStatus;
       await NcuaDirectoryClientTraining.updateOne(
         { charterNumber },
         {
-          $setOnInsert: { charterNumber },
+          $setOnInsert: insertDefaults,
           $set: { 'trainingMigration.version': migrationVersion, 'trainingMigration.checkedAt': new Date() }
         },
         { upsert: true, setDefaultsOnInsert: true }
@@ -312,10 +351,20 @@ function registerRoutes(app) {
         return;
       }
 
-      const client = await NcuaDirectoryClientTraining.findOne({ charterNumber, salesStatus: 'Client' })
-        .select('charterNumber')
-        .lean();
-      if (!client) {
+      const [directory, client] = await Promise.all([
+        ensureNcuaDirectory(),
+        NcuaDirectoryClientTraining.findOne({ charterNumber })
+          .select('charterNumber salesStatus')
+          .lean()
+      ]);
+      const directoryClient = (directory.creditUnions || []).find(
+        (creditUnion) => normalizeCharterNumber(creditUnion?.charterNumber) === charterNumber
+      );
+      const effectiveStatus = resolveCreditUnionSalesStatus(
+        client?.salesStatus,
+        directoryClient?.salesStatus
+      );
+      if (effectiveStatus !== 'Client') {
         res.status(404).json({ error: 'This credit union is not currently classified as a Client.' });
         return;
       }
@@ -331,9 +380,13 @@ function registerRoutes(app) {
         createdAt: new Date()
       };
       const updated = await NcuaDirectoryClientTraining.findOneAndUpdate(
-        { charterNumber, salesStatus: 'Client' },
-        { $push: { trainingEntries: entry } },
-        { new: true, runValidators: true }
+        { charterNumber },
+        {
+          $setOnInsert: { charterNumber },
+          $set: { salesStatus: 'Client' },
+          $push: { trainingEntries: entry }
+        },
+        { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true }
       ).lean();
 
       res.setHeader('Cache-Control', 'no-store');
