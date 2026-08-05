@@ -81,6 +81,14 @@ function sanitizeAccount(input = {}) {
   };
 }
 
+export function resolveCreditUnionSalesStatus(savedStatus, directoryStatus = '') {
+  const saved = typeof savedStatus === 'string' ? savedStatus.trim() : '';
+  if (saved && allowedStatuses.has(saved)) return saved;
+
+  const fallback = typeof directoryStatus === 'string' ? directoryStatus.trim() : '';
+  return allowedStatuses.has(fallback) ? fallback : '';
+}
+
 function mapLegacyStatus(value) {
   const status = String(value || '').trim();
   if (allowedStatuses.has(status)) return status;
@@ -290,7 +298,7 @@ function registerRoutes(app) {
         const saved = savedByCharter.get(String(creditUnion.charterNumber));
         return {
           ...creditUnion,
-          salesStatus: saved?.salesStatus ?? creditUnion.salesStatus ?? '',
+          salesStatus: resolveCreditUnionSalesStatus(saved?.salesStatus, creditUnion.salesStatus),
           notes: saved?.notes ?? creditUnion.notes ?? '',
           tags: Array.isArray(saved?.tags)
             ? saved.tags

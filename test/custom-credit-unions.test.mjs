@@ -6,6 +6,7 @@ import {
   mapCustomCreditUnion,
   mergeCustomCreditUnionDirectory
 } from '../ncua/custom-credit-unions.mjs';
+import { resolveCreditUnionSalesStatus } from '../ncua/ncua-directory-hook.mjs';
 
 test('maps Eastex ASI report fields into the dashboard schema', () => {
   const eastex = customCreditUnions.find((creditUnion) => creditUnion.charterNumber === '97098');
@@ -69,6 +70,12 @@ test('merges custom clients without changing NCUA history-cycle metadata', () =>
   assert.ok(directory.creditUnions.some((creditUnion) => creditUnion.charterNumber === '123'));
   assert.ok(directory.creditUnions.some((creditUnion) => creditUnion.charterNumber === '97098'));
   assert.ok(directory.creditUnions.some((creditUnion) => creditUnion.charterNumber === '97089'));
+});
+
+test('keeps custom clients visible when a shared Mongo record has a blank status', () => {
+  assert.equal(resolveCreditUnionSalesStatus('', 'Client'), 'Client');
+  assert.equal(resolveCreditUnionSalesStatus(undefined, 'Client'), 'Client');
+  assert.equal(resolveCreditUnionSalesStatus('Prospect', 'Client'), 'Prospect');
 });
 
 test('validates required custom report fields', () => {
