@@ -1,4 +1,4 @@
-const CACHE_KEY = 'gfs-client-dashboard-api-cache-v1';
+const CACHE_KEY = 'gfs-client-dashboard-api-cache-v2';
 const nativeFetch = window.fetch.bind(window);
 
 function readCache() {
