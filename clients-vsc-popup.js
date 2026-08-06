@@ -56,11 +56,14 @@ const numeric = Number(cleaned);
 return Number.isFinite(numeric) && numeric >= 0 ? numeric : null;
 }
 function readVscEntries(dialog) {
+const headerCells = [...dialog.querySelectorAll('#client-production-history thead th')];
+const explicitVscIndex = headerCells.findIndex((cell) => /VSC/i.test(cell.textContent || ''));
+const vscValueIndex = explicitVscIndex >= 0 ? explicitVscIndex : 1;
 const entries = [...dialog.querySelectorAll('#client-production-history tbody tr')]
 .map((row) => {
 const cells = [...row.cells];
 const month = parseMonthLabel(cells[0]?.textContent);
-const vscPoliciesSold = parseCount(cells[3]?.textContent);
+const vscPoliciesSold = parseCount(cells[vscValueIndex]?.textContent);
 return month && Number.isFinite(vscPoliciesSold)
 ? { month, vscPoliciesSold }
 : null;
@@ -196,8 +199,6 @@ details.remove();
 }
 dialog.querySelector('#vsc-popup-analytics')?.remove();
 dialog.querySelector('.vsc-popup-range-control')?.remove();
-const title = dialog.querySelector('#client-production-dialog-title');
-if (title) title.textContent = 'Monthly Production';
 dialog.classList.remove('vsc-option-one-popup');
 delete dialog.dataset.vscAccountName;
 delete dialog.dataset.vscCharter;
