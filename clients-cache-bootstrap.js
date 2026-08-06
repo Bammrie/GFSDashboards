@@ -60,13 +60,34 @@ window.fetch = async function cachedClientFetch(input, init) {
   return response;
 };
 
+function loadVscPopupAssets() {
+  if (!document.querySelector('link[data-vsc-popup-styles]')) {
+    const popupStyles = document.createElement('link');
+    popupStyles.rel = 'stylesheet';
+    popupStyles.href = 'clients-vsc-popup.css?v=20260806-option-1';
+    popupStyles.dataset.vscPopupStyles = 'true';
+    document.head.appendChild(popupStyles);
+  }
+
+  if (document.querySelector('script[data-vsc-popup-loader]')) return;
+  const popupScript = document.createElement('script');
+  popupScript.src = 'clients-vsc-popup.js?v=20260806-option-1';
+  popupScript.dataset.vscPopupLoader = 'true';
+  document.head.appendChild(popupScript);
+}
+
 function loadClientProductsScript() {
-  if (document.querySelector('script[data-client-products-loader]')) return;
+  const existingScript = document.querySelector('script[data-client-products-loader]');
+  if (existingScript) {
+    loadVscPopupAssets();
+    return;
+  }
 
   const clientProductsScript = document.createElement('script');
   clientProductsScript.type = 'module';
-  clientProductsScript.src = 'clients-products.js?v=20260806-vsc-production-history';
+  clientProductsScript.src = 'clients-products.js?v=20260806-option-1-popup';
   clientProductsScript.dataset.clientProductsLoader = 'true';
+  clientProductsScript.addEventListener('load', loadVscPopupAssets, { once: true });
   document.head.appendChild(clientProductsScript);
 }
 
