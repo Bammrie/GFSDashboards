@@ -63,7 +63,7 @@ window.fetch = async function cachedClientFetch(input, init) {
 if (!document.querySelector('script[data-client-products-loader]')) {
   const clientProductsScript = document.createElement('script');
   clientProductsScript.type = 'module';
-  clientProductsScript.src = 'clients-products.js?v=20260803-client-product-checklist';
+  clientProductsScript.src = 'clients-products.js?v=20260806-client-production-ledger';
   clientProductsScript.dataset.clientProductsLoader = 'true';
   document.head.appendChild(clientProductsScript);
 }

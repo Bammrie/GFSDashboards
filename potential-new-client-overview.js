@@ -1,3 +1,6 @@
+const clientMapEmbedMode = new URLSearchParams(window.location.search).get('embed') === 'clients-map';
+if (clientMapEmbedMode) document.documentElement.classList.add('clients-map-embed');
+
 const statuses = ['', 'Radar', 'Prospect', 'Client', 'Off-Limits'];
 const metricDefinitions = [
   { key: 'assets', label: 'Assets', formatter: money },

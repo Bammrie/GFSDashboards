@@ -44,8 +44,9 @@ function directAutoBalance(client) {
 function installDirectAutoSection() {
   if (document.getElementById('direct-auto-ranking')) return;
 
+  const dialogBody = document.getElementById('direct-auto-dialog-body');
   const clientList = document.querySelector('[aria-labelledby="client-list-title"]');
-  if (!clientList) return;
+  if (!dialogBody && !clientList) return;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -81,7 +82,8 @@ function installDirectAutoSection() {
     <div id="direct-auto-ranking-list" class="direct-auto-ranking"></div>
     <div id="direct-auto-ranking-empty" class="direct-auto-empty" hidden>No direct auto balances are available for current clients.</div>
   `;
-  clientList.parentNode.insertBefore(section, clientList);
+  if (dialogBody) dialogBody.appendChild(section);
+  else clientList.parentNode.insertBefore(section, clientList);
 }
 
 async function loadDirectAutoRanking() {
