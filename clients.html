@@ -53,18 +53,24 @@
     .client-search-label input{width:100%;padding:.65rem;border:1px solid #b9b9b9;background:#fff;color:#222;-webkit-text-fill-color:#222;color-scheme:light}
     .client-result-count{margin:.8rem 0 0;color:var(--text-secondary);font-weight:700}
     .client-table-wrap{margin-top:1rem;overflow:auto;border:1px solid var(--border)}
-    .client-table{width:100%;border-collapse:collapse;min-width:1180px}
-    .client-table th,.client-table td{padding:.72rem .75rem;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+    .client-table{width:100%;border-collapse:collapse;min-width:1120px}
+    .client-table th,.client-table td{padding:.44rem .55rem;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}
     .client-table th{position:sticky;top:0;z-index:1;background:#f2edef;color:#4a1c24;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
     .client-table td.numeric,.client-table th.numeric{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
     .client-table tbody tr:last-child td{border-bottom:0}
     .client-table tbody tr:hover{background:rgba(122,30,44,.045)}
-    .client-name{display:block;color:var(--accent);font-size:.95rem}
-    .client-meta-line{display:block;margin-top:.18rem;color:var(--text-secondary);font-size:.74rem}
-    .client-training-cell{min-width:142px}
-    .client-training-button{width:100%;border:1px solid var(--accent);background:#fff;color:var(--accent);padding:.52rem .65rem;font:inherit;font-size:.78rem;font-weight:800;cursor:pointer}
+    .client-account-cell{min-width:330px}
+    .client-name{display:block;color:var(--accent);font-size:.88rem;line-height:1.15}
+    .client-identity-line{display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;margin-top:.14rem;color:var(--text-secondary);font-size:.68rem;line-height:1.2}
+    .client-identity-line span+span::before{content:"·";margin-right:.35rem;color:#a89296}
+    .client-account-facts{display:grid;grid-template-columns:minmax(115px,1fr) repeat(2,minmax(90px,.72fr));gap:.35rem;margin-top:.36rem}
+    .client-account-fact{display:grid;gap:.05rem;min-width:0;padding:.22rem .32rem;border-left:2px solid #d8c8cb;background:#faf7f8}
+    .client-account-fact span{overflow:hidden;color:var(--text-secondary);font-size:.59rem;font-weight:800;letter-spacing:.045em;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}
+    .client-account-fact strong{overflow:hidden;color:#2c2022;font-size:.7rem;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+    .client-training-cell{width:104px;min-width:104px}
+    .client-training-button{width:100%;border:1px solid var(--accent);background:#fff;color:var(--accent);padding:.34rem .45rem;font:inherit;font-size:.7rem;font-weight:800;cursor:pointer}
     .client-training-button:hover{background:var(--accent);color:#fff}
-    .client-training-count{display:block;margin-top:.3rem;color:var(--text-secondary);font-size:.71rem;font-weight:700;text-align:center}
+    .client-training-count{display:block;margin-top:.18rem;color:var(--text-secondary);font-size:.64rem;font-weight:700;text-align:center}
     .client-training-migration-status{margin:.7rem 0 0;padding:.65rem .75rem;border:1px solid #d7b36b;background:#fff9e8;color:#65480f;font-size:.8rem;font-weight:750}
     .client-insight-dialog{width:min(1240px,calc(100vw - 2rem));max-width:none;max-height:calc(100vh - 2rem);padding:0;border:1px solid #9f8e91;background:#fff;color:var(--text-primary);box-shadow:0 28px 80px rgba(0,0,0,.35)}
     .client-insight-dialog--map{width:min(1500px,calc(100vw - 2rem))}
@@ -152,7 +158,7 @@
       <p id="client-training-migration-status" class="client-training-migration-status" hidden></p>
       <div id="client-table-wrap" class="client-table-wrap" hidden>
         <table class="client-table">
-          <thead><tr><th>Client</th><th>Training</th><th>Location</th><th class="numeric">Assets</th><th class="numeric">Loans</th><th class="numeric">Indirect Loans</th><th class="numeric">Indirect Auto Share</th><th class="numeric">Loans 5Y</th><th class="numeric">Assets 5Y</th></tr></thead>
+          <thead><tr><th>Account</th><th>Training</th><th class="numeric">Indirect Loans</th><th class="numeric">Indirect Auto Share</th><th class="numeric">Loans 5Y</th><th class="numeric">Assets 5Y</th></tr></thead>
           <tbody id="client-table-body"></tbody>
         </table>
       </div>
@@ -219,7 +225,7 @@
   </dialog>
   <script src="clients-insight-dialogs.js?v=20260806-client-insight-popups"></script>
   <script src="clients-cache-bootstrap.js?v=20260804-custom-asi-clients"></script>
-  <script type="module" src="clients.js?v=20260731-client-cache"></script>
+  <script type="module" src="clients.js?v=20260806-compact-product-columns"></script>
   <script type="module" src="clients-training-log.js?v=20260804-client-training-log"></script>
   <script type="module" src="clients-projection.js?v=20260730-five-year-projection"></script>
   <script type="module" src="clients-direct-auto-ranking.js?v=20260806-client-insight-popups"></script>

@@ -1,9 +1,9 @@
 const PRODUCT_OPTIONS = Object.freeze(['MOB Coverage', 'GAP', 'VSC', 'CPI']);
 const PRODUCT_ENDPOINT = '/api/ncua-client-products';
 const PRODUCT_PRODUCTION_FIELDS = Object.freeze([
-  Object.freeze({ product: 'MOB Coverage', field: 'mobPremiumCollected', label: 'MOB premium collected', unit: 'currency', step: '0.01' }),
-  Object.freeze({ product: 'GAP', field: 'gapPoliciesSold', label: 'GAP policies sold', unit: 'count', step: '1' }),
-  Object.freeze({ product: 'VSC', field: 'vscPoliciesSold', label: 'VSC policies sold', unit: 'count', step: '1' })
+  Object.freeze({ product: 'MOB Coverage', columnLabel: 'MOB', field: 'mobPremiumCollected', label: 'MOB premium collected', historyLabel: 'Premium Collected', unit: 'currency', step: '0.01' }),
+  Object.freeze({ product: 'VSC', columnLabel: 'VSC', field: 'vscPoliciesSold', label: 'VSC policies sold', historyLabel: 'Policies Sold', unit: 'count', step: '1' }),
+  Object.freeze({ product: 'GAP', columnLabel: 'GAP', field: 'gapPoliciesSold', label: 'GAP policies sold', historyLabel: 'Policies Sold', unit: 'count', step: '1' })
 ]);
 const TRACKED_PRODUCTS = new Set(PRODUCT_PRODUCTION_FIELDS.map(({ product }) => product));
 
@@ -16,7 +16,8 @@ const productState = {
   saving: new Set(),
   messages: new Map(),
   activeProductionCharter: '',
-  activeProductionName: ''
+  activeProductionName: '',
+  activeProductionProduct: ''
 };
 
 function escapeHtml(value) {
@@ -67,24 +68,18 @@ function installStyles() {
   const style = document.createElement('style');
   style.id = 'client-products-styles';
   style.textContent = `
-    .client-table.client-table--with-products{min-width:1540px}
-    .client-products-header{min-width:330px}
-    .client-products-cell{min-width:330px}
-    .client-product-grid{display:grid;grid-template-columns:repeat(2,minmax(138px,1fr));gap:.42rem .55rem}
-    .client-product-option{display:flex;align-items:center;gap:.45rem;min-height:34px;padding:.36rem .48rem;border:1px solid #c9c9c9;background:#fff;color:#222;font-size:.77rem;font-weight:750;cursor:pointer;user-select:none}
-    .client-product-option:hover{border-color:var(--accent);background:rgba(122,30,44,.035)}
-    .client-product-option:has(input:checked){border-color:var(--accent);background:rgba(122,30,44,.09);color:#4a1c24}
-    .client-product-option input{width:18px;height:18px;flex:0 0 auto;margin:0;accent-color:var(--accent);cursor:pointer}
-    .client-product-option input:disabled{cursor:wait}
-    .client-production-action{display:flex;align-items:center;justify-content:space-between;gap:.65rem;margin-top:.5rem;padding:.45rem .55rem;border:1px solid #d3c2c5;background:#fbf7f7}
-    .client-production-action__summary{display:grid;gap:.1rem;color:#4a1c24;font-size:.7rem;font-weight:750}
-    .client-production-action__summary small{color:var(--text-secondary);font-size:.65rem;font-weight:650}
+    .client-table.client-table--with-products{min-width:1260px}
+    .client-product-header{width:118px;min-width:118px;text-align:center!important}
+    .client-product-cell{width:118px;min-width:118px;padding-left:.34rem!important;padding-right:.34rem!important;text-align:center}
+    .client-product-toggle{display:grid;place-items:center;gap:.08rem;width:100%;min-height:42px;padding:.28rem .34rem;border:1px solid #a93d45;background:#a93d45;color:#fff;font:inherit;font-size:.67rem;font-weight:850;line-height:1.05;cursor:pointer;transition:background-color .15s,border-color .15s,box-shadow .15s;user-select:none}
+    .client-product-toggle:hover,.client-product-toggle:focus-visible{box-shadow:0 0 0 2px rgba(122,30,44,.18)}
+    .client-product-toggle[data-active="true"]{border-color:#28784a;background:#28784a}
+    .client-product-toggle[data-active="true"]:hover,.client-product-toggle[data-active="true"]:focus-visible{border-color:#1e5d39;background:#1e5d39}
+    .client-product-toggle:disabled{cursor:wait;opacity:.68}
+    .client-product-toggle__state{font-size:.68rem;letter-spacing:.015em}
+    .client-product-toggle__detail{display:block;max-width:100%;overflow:hidden;font-size:.56rem;font-weight:700;opacity:.88;text-overflow:ellipsis;white-space:nowrap}
     .client-production-button{min-height:31px;padding:.32rem .62rem;border:1px solid var(--accent);background:var(--accent);color:#fff;font:inherit;font-size:.7rem;font-weight:800;cursor:pointer}
     .client-production-button:hover{background:#54151f}
-    .client-product-status{display:block;min-height:1.1em;margin-top:.4rem;color:var(--text-secondary);font-size:.71rem;font-weight:700}
-    .client-product-status[data-state="saving"]{color:#765314}
-    .client-product-status[data-state="saved"]{color:#1f673d}
-    .client-product-status[data-state="error"]{color:#8b2424}
     .client-production-dialog{width:min(900px,calc(100vw - 2rem));max-height:calc(100vh - 2rem);padding:0;border:1px solid #b9a7aa;background:#fff;color:#222;box-shadow:0 24px 65px rgba(55,16,24,.28)}
     .client-production-dialog::backdrop{background:rgba(24,12,15,.55)}
     .client-production-dialog__header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1.1rem 1.25rem;border-bottom:4px solid var(--accent);background:#f8f4f4}
@@ -109,7 +104,7 @@ function installStyles() {
     .client-production-history th{background:#f4eeee;color:#4a1c24;font-size:.67rem;letter-spacing:.04em;text-transform:uppercase}
     .client-production-history td.numeric,.client-production-history th.numeric{text-align:right}
     .client-production-empty{margin:0;padding:1rem;color:var(--text-secondary);font-size:.78rem}
-    @media(max-width:900px){.client-products-header,.client-products-cell{min-width:300px}.client-product-grid{grid-template-columns:1fr}}
+    @media(max-width:900px){.client-product-header,.client-product-cell{min-width:108px;width:108px}}
     @media(max-width:760px){.client-production-form-grid{grid-template-columns:1fr}.client-production-dialog__header,.client-production-dialog__body{padding-left:.85rem;padding-right:.85rem}}
   `;
   document.head.appendChild(style);
@@ -121,19 +116,27 @@ function ensureHeader() {
   if (!table || !headerRow) return;
 
   table.classList.add('client-table--with-products');
-  if (headerRow.querySelector('[data-client-products-header]')) return;
+  if (headerRow.querySelector('[data-client-product-header]')) return;
 
-  const header = document.createElement('th');
-  header.className = 'client-products-header';
-  header.dataset.clientProductsHeader = 'true';
-  header.scope = 'col';
-  header.textContent = 'Client Products';
-  headerRow.insertBefore(header, headerRow.children[1] || null);
+  const anchor = headerRow.children[1] || null;
+  PRODUCT_PRODUCTION_FIELDS.forEach(({ product, columnLabel }) => {
+    const header = document.createElement('th');
+    header.className = 'client-product-header';
+    header.dataset.clientProductHeader = product;
+    header.scope = 'col';
+    header.textContent = columnLabel;
+    headerRow.insertBefore(header, anchor);
+  });
 }
 
 function charterFromRow(row) {
   if (row.dataset.clientProductsCharter) return row.dataset.clientProductsCharter;
-  const charterLine = [...row.querySelectorAll('.client-meta-line')]
+  const dataCharter = normalizeCharterNumber(row.dataset.clientCharter);
+  if (dataCharter) {
+    row.dataset.clientProductsCharter = dataCharter;
+    return dataCharter;
+  }
+  const charterLine = [...row.querySelectorAll('.client-identity-line, .client-meta-line')]
     .map((element) => element.textContent || '')
     .find((text) => /\bCharter\b/i.test(text));
   const match = String(charterLine || row.textContent || '').match(/\bCharter\s+([A-Za-z0-9-]+)/i);
@@ -142,60 +145,52 @@ function charterFromRow(row) {
   return charterNumber;
 }
 
-function statusFor(charterNumber) {
-  if (productState.saving.has(charterNumber)) {
-    return { text: 'Saving to MongoDB…', state: 'saving' };
-  }
-  if (productState.messages.has(charterNumber)) {
-    return productState.messages.get(charterNumber);
-  }
-  if (productState.loadError) {
-    return { text: productState.loadError, state: 'error' };
-  }
-  if (!productState.loaded) {
-    return { text: 'Loading saved product relationships…', state: 'saving' };
-  }
-  return { text: 'Selections save automatically.', state: '' };
+function formatProductionValue(field, value) {
+  if (!Number.isFinite(Number(value))) return '';
+  return field.unit === 'currency'
+    ? productionCurrency.format(Number(value))
+    : `${Number(value).toLocaleString('en-US')} sold`;
 }
 
-function productCellMarkup(charterNumber, clientName) {
+function productCellMarkup(charterNumber, clientName, definition) {
   const selectedProducts = new Set(productState.productsByCharter.get(charterNumber) || []);
-  const trackedProducts = PRODUCT_PRODUCTION_FIELDS.filter(({ product }) => selectedProducts.has(product));
   const productionEntries = productState.productionByCharter.get(charterNumber) || [];
+  const active = selectedProducts.has(definition.product);
   const disabled = !productState.loaded || productState.saving.has(charterNumber) || Boolean(productState.loadError);
-  const status = statusFor(charterNumber);
-  const options = PRODUCT_OPTIONS.map((product) => {
-    const checked = selectedProducts.has(product) ? ' checked' : '';
-    const disabledAttribute = disabled ? ' disabled' : '';
-    return `<label class="client-product-option"><input type="checkbox" data-client-product="${escapeHtml(product)}" data-charter="${escapeHtml(charterNumber)}"${checked}${disabledAttribute}><span>${escapeHtml(product)}</span></label>`;
-  }).join('');
-  const latestMonth = productionEntries[0]?.month || '';
-  const productionAction = trackedProducts.length
-    ? `<div class="client-production-action"><span class="client-production-action__summary">Monthly production<small>${productionEntries.length ? `${productionEntries.length} month${productionEntries.length === 1 ? '' : 's'} saved${latestMonth ? ` · latest ${escapeHtml(latestMonth)}` : ''}` : 'No production entered yet'}</small></span><button type="button" class="client-production-button" data-open-client-production data-charter="${escapeHtml(charterNumber)}">Enter Production</button></div>`
-    : '';
+  const latest = productionEntries.find((entry) => Object.hasOwn(entry, definition.field));
+  const savedValue = latest ? formatProductionValue(definition, latest[definition.field]) : '';
+  const message = productState.messages.get(charterNumber);
+  let stateLabel = active ? 'Active' : 'Not Active';
+  let detail = active ? (latest ? `${latest.month} · ${savedValue}` : 'Open reporting') : 'Click to activate';
+  if (!productState.loaded) detail = 'Loading…';
+  if (productState.saving.has(charterNumber)) detail = 'Saving…';
+  if (productState.loadError) detail = 'Unavailable';
+  if (message?.state === 'error') detail = 'Save failed';
 
-  return `<div class="client-product-grid" role="group" aria-label="Client products for ${escapeHtml(clientName || `charter ${charterNumber}`)}">${options}</div>${productionAction}<span class="client-product-status" data-client-product-status data-state="${escapeHtml(status.state)}">${escapeHtml(status.text)}</span>`;
+  const label = `${definition.columnLabel} for ${clientName || `charter ${charterNumber}`}: ${stateLabel}. ${active ? 'Open production reporting.' : 'Activate product and open production reporting.'}`;
+  return `<button type="button" class="client-product-toggle" data-client-product-button data-product="${escapeHtml(definition.product)}" data-charter="${escapeHtml(charterNumber)}" data-active="${active}" aria-pressed="${active}" aria-label="${escapeHtml(label)}"${disabled ? ' disabled' : ''}><span class="client-product-toggle__state">${active ? '✓ Active' : '✕ Not Active'}</span><span class="client-product-toggle__detail">${escapeHtml(detail)}</span></button>`;
 }
 
-function renderProductCell(row) {
+function renderProductCellsForRow(row) {
   const charterNumber = charterFromRow(row);
   if (!charterNumber) return;
-
-  let cell = row.querySelector(':scope > [data-client-products-cell]');
-  if (!cell) {
-    cell = document.createElement('td');
-    cell.className = 'client-products-cell';
-    cell.dataset.clientProductsCell = 'true';
-    row.insertBefore(cell, row.children[1] || null);
-  }
-
   const clientName = row.querySelector('.client-name')?.textContent?.trim() || '';
-  cell.innerHTML = productCellMarkup(charterNumber, clientName);
+  const anchor = row.querySelector('[data-client-training-cell]') || row.children[1] || null;
+  PRODUCT_PRODUCTION_FIELDS.forEach((definition) => {
+    let cell = [...row.children].find((candidate) => candidate.dataset?.clientProductCell === definition.product);
+    if (!cell) {
+      cell = document.createElement('td');
+      cell.className = 'client-product-cell';
+      cell.dataset.clientProductCell = definition.product;
+      row.insertBefore(cell, anchor);
+    }
+    cell.innerHTML = productCellMarkup(charterNumber, clientName, definition);
+  });
 }
 
 function renderProductCells() {
   ensureHeader();
-  document.querySelectorAll('#client-table-body > tr').forEach(renderProductCell);
+  document.querySelectorAll('#client-table-body > tr').forEach(renderProductCellsForRow);
 }
 
 function rowForCharter(charterNumber) {
@@ -206,7 +201,7 @@ function rowForCharter(charterNumber) {
 function setTemporaryMessage(charterNumber, text, state, duration = 2600) {
   productState.messages.set(charterNumber, { text, state });
   const row = rowForCharter(charterNumber);
-  if (row) renderProductCell(row);
+  if (row) renderProductCellsForRow(row);
 
   if (!duration) return;
   window.setTimeout(() => {
@@ -214,7 +209,7 @@ function setTemporaryMessage(charterNumber, text, state, duration = 2600) {
     if (!current || current.text !== text || current.state !== state) return;
     productState.messages.delete(charterNumber);
     const activeRow = rowForCharter(charterNumber);
-    if (activeRow) renderProductCell(activeRow);
+    if (activeRow) renderProductCellsForRow(activeRow);
   }, duration);
 }
 
@@ -309,6 +304,7 @@ function ensureProductionDialog() {
   dialog.addEventListener('close', () => {
     productState.activeProductionCharter = '';
     productState.activeProductionName = '';
+    productState.activeProductionProduct = '';
   });
   return dialog;
 }
@@ -333,23 +329,25 @@ function populateProductionInputs() {
   }
 }
 
-function productionHistoryMarkup(entries) {
-  if (!entries.length) return '<p class="client-production-empty">No monthly production has been saved for this client.</p>';
-  const rows = entries.map((entry) => `<tr>
-    <td>${escapeHtml(productionMonthLabel(entry.month))}</td>
-    <td class="numeric">${Object.hasOwn(entry, 'mobPremiumCollected') ? escapeHtml(productionCurrency.format(entry.mobPremiumCollected)) : '—'}</td>
-    <td class="numeric">${Object.hasOwn(entry, 'gapPoliciesSold') ? escapeHtml(Number(entry.gapPoliciesSold).toLocaleString('en-US')) : '—'}</td>
-    <td class="numeric">${Object.hasOwn(entry, 'vscPoliciesSold') ? escapeHtml(Number(entry.vscPoliciesSold).toLocaleString('en-US')) : '—'}</td>
-  </tr>`).join('');
-  return `<div class="client-production-history-wrap"><table class="client-production-history"><thead><tr><th>Month</th><th class="numeric">MOB Premium</th><th class="numeric">GAP Policies</th><th class="numeric">VSC Policies</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+function productionHistoryMarkup(entries, fields) {
+  const relevantEntries = entries.filter((entry) => fields.some(({ field }) => Object.hasOwn(entry, field)));
+  if (!relevantEntries.length) return '<p class="client-production-empty">No monthly production has been saved for this product.</p>';
+  const headerCells = fields.map(({ historyLabel }) => `<th class="numeric">${escapeHtml(historyLabel)}</th>`).join('');
+  const rows = relevantEntries.map((entry) => {
+    const valueCells = fields.map((definition) => `<td class="numeric">${Object.hasOwn(entry, definition.field) ? escapeHtml(formatProductionValue(definition, entry[definition.field])) : '—'}</td>`).join('');
+    return `<tr><td>${escapeHtml(productionMonthLabel(entry.month))}</td>${valueCells}</tr>`;
+  }).join('');
+  return `<div class="client-production-history-wrap"><table class="client-production-history"><thead><tr><th>Month</th>${headerCells}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 function renderProductionDialog(month = currentProductionMonth()) {
   const charterNumber = productState.activeProductionCharter;
   if (!charterNumber) return;
   const selectedProducts = new Set(productState.productsByCharter.get(charterNumber) || []);
-  const fields = PRODUCT_PRODUCTION_FIELDS.filter(({ product }) => selectedProducts.has(product));
+  const fields = PRODUCT_PRODUCTION_FIELDS.filter(({ product }) => product === productState.activeProductionProduct && selectedProducts.has(product));
+  if (!fields.length) return;
   const dialog = ensureProductionDialog();
+  dialog.querySelector('#client-production-dialog-title').textContent = `${fields[0].columnLabel} Monthly Production`;
   dialog.querySelector('#client-production-dialog-subtitle').textContent = `${productState.activeProductionName || 'Client'} · Charter ${charterNumber}`;
 
   const fieldMarkup = fields.map(({ field, label, unit, step }) => {
@@ -357,15 +355,16 @@ function renderProductionDialog(month = currentProductionMonth()) {
     return `<label>${escapeHtml(label)}<input type="number" inputmode="decimal" min="0" step="${escapeHtml(step)}" data-production-field="${escapeHtml(field)}" placeholder="${prefix}" /></label>`;
   }).join('');
   dialog.querySelector('#client-production-form-grid').innerHTML = `<label>Production month<input id="client-production-month" type="month" value="${escapeHtml(month)}" required /></label>${fieldMarkup}`;
-  dialog.querySelector('#client-production-history').innerHTML = productionHistoryMarkup(productState.productionByCharter.get(charterNumber) || []);
+  dialog.querySelector('#client-production-history').innerHTML = productionHistoryMarkup(productState.productionByCharter.get(charterNumber) || [], fields);
   populateProductionInputs();
 }
 
-function openProductionDialog(charterNumber, clientName = '') {
+function openProductionDialog(charterNumber, clientName = '', product = '') {
   const selectedProducts = productState.productsByCharter.get(charterNumber) || [];
-  if (!selectedProducts.some((product) => TRACKED_PRODUCTS.has(product))) return;
+  if (!TRACKED_PRODUCTS.has(product) || !selectedProducts.includes(product)) return;
   productState.activeProductionCharter = charterNumber;
   productState.activeProductionName = clientName;
+  productState.activeProductionProduct = product;
   const dialog = ensureProductionDialog();
   renderProductionDialog();
   if (!dialog.open) dialog.showModal();
@@ -403,7 +402,7 @@ async function saveClientProduction() {
     productState.productionByCharter.set(charterNumber, sanitizeProductionEntries(body.clientProductProduction));
     const savedMonth = monthInput.value;
     const row = rowForCharter(charterNumber);
-    if (row) renderProductCell(row);
+    if (row) renderProductCellsForRow(row);
     renderProductionDialog(savedMonth);
     const refreshedFeedback = document.getElementById('client-production-feedback');
     refreshedFeedback.textContent = `${productionMonthLabel(savedMonth)} production saved to MongoDB.`;
@@ -417,23 +416,20 @@ async function saveClientProduction() {
   }
 }
 
-function checkedProductsForRow(row) {
-  const checked = new Set(
-    [...row.querySelectorAll('[data-client-product]:checked')]
-      .map((input) => input.dataset.clientProduct)
-  );
-  return PRODUCT_OPTIONS.filter((product) => checked.has(product));
-}
-
-async function saveClientProducts(row, charterNumber, productToOpen = '') {
+async function activateClientProduct(row, charterNumber, productToOpen) {
   if (!productState.loaded || productState.saving.has(charterNumber)) return;
 
   const previousProducts = [...(productState.productsByCharter.get(charterNumber) || [])];
-  const nextProducts = checkedProductsForRow(row);
+  if (previousProducts.includes(productToOpen)) {
+    const clientName = row.querySelector('.client-name')?.textContent?.trim() || '';
+    openProductionDialog(charterNumber, clientName, productToOpen);
+    return;
+  }
+  const nextProducts = sanitizeProducts([...previousProducts, productToOpen]);
   productState.productsByCharter.set(charterNumber, nextProducts);
   productState.messages.delete(charterNumber);
   productState.saving.add(charterNumber);
-  renderProductCell(row);
+  renderProductCellsForRow(row);
 
   try {
     const response = await fetch(`${PRODUCT_ENDPOINT}/${encodeURIComponent(charterNumber)}`, {
@@ -452,7 +448,7 @@ async function saveClientProducts(row, charterNumber, productToOpen = '') {
     setTemporaryMessage(charterNumber, 'Saved to MongoDB.', 'saved');
     if (TRACKED_PRODUCTS.has(productToOpen) && productState.productsByCharter.get(charterNumber)?.includes(productToOpen)) {
       const clientName = row.querySelector('.client-name')?.textContent?.trim() || '';
-      openProductionDialog(charterNumber, clientName);
+      openProductionDialog(charterNumber, clientName, productToOpen);
     }
   } catch (error) {
     productState.productsByCharter.set(charterNumber, previousProducts);
@@ -465,25 +461,14 @@ function installTableObserver() {
   const tableBody = document.getElementById('client-table-body');
   if (!tableBody) return;
 
-  tableBody.addEventListener('change', (event) => {
-    const input = event.target.closest('[data-client-product]');
-    if (!input) return;
-    const row = input.closest('tr');
-    if (!row) return;
-    const charterNumber = normalizeCharterNumber(input.dataset.charter || charterFromRow(row));
-    if (!charterNumber) return;
-    saveClientProducts(row, charterNumber, input.checked ? input.dataset.clientProduct : '');
-  });
-
   tableBody.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-open-client-production]');
+    const button = event.target.closest('[data-client-product-button]');
     if (!button) return;
     const row = button.closest('tr');
     if (!row) return;
     const charterNumber = normalizeCharterNumber(button.dataset.charter || charterFromRow(row));
     if (!charterNumber) return;
-    const clientName = row.querySelector('.client-name')?.textContent?.trim() || '';
-    openProductionDialog(charterNumber, clientName);
+    activateClientProduct(row, charterNumber, button.dataset.product || '');
   });
 
   const observer = new MutationObserver(() => renderProductCells());
