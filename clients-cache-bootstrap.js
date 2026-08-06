@@ -71,7 +71,7 @@ function loadVscPopupAssets() {
 
   if (document.querySelector('script[data-vsc-popup-loader]')) return;
   const popupScript = document.createElement('script');
-  popupScript.src = 'clients-vsc-popup.js?v=20260806-option-1';
+  popupScript.src = 'clients-vsc-popup.js?v=20260806-option-1-compact-columns';
   popupScript.dataset.vscPopupLoader = 'true';
   document.head.appendChild(popupScript);
 }
@@ -85,7 +85,7 @@ function loadClientProductsScript() {
 
   const clientProductsScript = document.createElement('script');
   clientProductsScript.type = 'module';
-  clientProductsScript.src = 'clients-products.js?v=20260806-option-1-popup';
+  clientProductsScript.src = 'clients-products.js?v=20260806-compact-product-columns';
   clientProductsScript.dataset.clientProductsLoader = 'true';
   clientProductsScript.addEventListener('load', loadVscPopupAssets, { once: true });
   document.head.appendChild(clientProductsScript);
