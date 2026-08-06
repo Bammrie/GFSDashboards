@@ -60,10 +60,28 @@ window.fetch = async function cachedClientFetch(input, init) {
   return response;
 };
 
-if (!document.querySelector('script[data-client-products-loader]')) {
+function loadClientProductsScript() {
+  if (document.querySelector('script[data-client-products-loader]')) return;
+
   const clientProductsScript = document.createElement('script');
   clientProductsScript.type = 'module';
-  clientProductsScript.src = 'clients-products.js?v=20260806-client-production-ledger';
+  clientProductsScript.src = 'clients-products.js?v=20260806-vsc-production-history';
   clientProductsScript.dataset.clientProductsLoader = 'true';
   document.head.appendChild(clientProductsScript);
 }
+
+function loadVscProductionSeedThenProducts() {
+  if (document.querySelector('script[data-vsc-production-seed-loader]')) {
+    loadClientProductsScript();
+    return;
+  }
+
+  const seedScript = document.createElement('script');
+  seedScript.src = 'vsc-production-seed.js?v=20260806-vsc-production-history';
+  seedScript.dataset.vscProductionSeedLoader = 'true';
+  seedScript.onload = loadClientProductsScript;
+  seedScript.onerror = loadClientProductsScript;
+  document.head.appendChild(seedScript);
+}
+
+loadVscProductionSeedThenProducts();
