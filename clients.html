@@ -12,6 +12,12 @@
     .client-overview-header .panel__header{margin:0}
     .client-overview-actions{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
     .client-data-meta{margin:0;color:var(--text-secondary);font-weight:700}
+    .client-insight-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
+    .client-insight-button{display:grid;grid-template-columns:1fr auto;gap:.2rem .75rem;align-items:center;width:100%;min-height:88px;padding:.85rem 1rem;border:1px solid #b99399;background:linear-gradient(135deg,#fff 0%,#faf4f5 100%);color:var(--text-primary);font:inherit;text-align:left;cursor:pointer}
+    .client-insight-button:hover,.client-insight-button:focus-visible{border-color:var(--accent);background:#fff;box-shadow:0 6px 18px rgba(77,18,27,.11)}
+    .client-insight-button__label{color:var(--accent);font-size:.9rem;font-weight:850}
+    .client-insight-button__description{color:var(--text-secondary);font-size:.74rem;font-weight:650;line-height:1.35}
+    .client-insight-button__arrow{grid-column:2;grid-row:1/3;color:var(--accent);font-size:1.3rem;font-weight:900}
     .client-kpi-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
     .client-kpi{position:relative;overflow:hidden;border:1px solid var(--border);background:linear-gradient(135deg,#fff 0%,#f8f2f3 100%);padding:1.25rem 1.35rem;min-height:168px}
     .client-kpi::after{content:"";position:absolute;right:-45px;bottom:-80px;width:180px;height:180px;border:28px solid rgba(122,30,44,.08);transform:rotate(18deg)}
@@ -20,7 +26,7 @@
     .client-kpi-note{display:block;margin-top:.75rem;color:var(--text-secondary);font-size:.86rem;max-width:520px}
     .trajectory-header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;flex-wrap:wrap}
     .trajectory-header .panel__header{margin:0}
-    .trajectory-controls{display:flex;gap:.45rem;flex-wrap:wrap}
+    .trajectory-controls{display:flex;gap:.45rem;flex-wrap:wrap;margin-left:auto}
     .trajectory-control{border:1px solid #b8b8b8;background:#fff;color:#222;padding:.55rem .75rem;font:inherit;font-weight:750;cursor:pointer}
     .trajectory-control[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:#fff}
     .trajectory-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin-top:1rem}
@@ -60,6 +66,18 @@
     .client-training-button:hover{background:var(--accent);color:#fff}
     .client-training-count{display:block;margin-top:.3rem;color:var(--text-secondary);font-size:.71rem;font-weight:700;text-align:center}
     .client-training-migration-status{margin:.7rem 0 0;padding:.65rem .75rem;border:1px solid #d7b36b;background:#fff9e8;color:#65480f;font-size:.8rem;font-weight:750}
+    .client-insight-dialog{width:min(1240px,calc(100vw - 2rem));max-width:none;max-height:calc(100vh - 2rem);padding:0;border:1px solid #9f8e91;background:#fff;color:var(--text-primary);box-shadow:0 28px 80px rgba(0,0,0,.35)}
+    .client-insight-dialog--map{width:min(1500px,calc(100vw - 2rem))}
+    .client-insight-dialog::backdrop{background:rgba(14,10,11,.72)}
+    .client-insight-dialog__header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;padding:1.05rem 1.2rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#711b29,#321017);color:#fff}
+    .client-insight-dialog__eyebrow{display:block;margin-bottom:.24rem;font-size:.68rem;font-weight:850;text-transform:uppercase;letter-spacing:.08em;opacity:.82}
+    .client-insight-dialog__title{margin:0;color:#fff;font-size:1.3rem}
+    .client-insight-dialog__subtitle{margin:.3rem 0 0;color:rgba(255,255,255,.8);font-size:.8rem;line-height:1.4}
+    .client-insight-dialog__close{flex:0 0 auto;width:38px;height:38px;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-size:1.35rem;line-height:1;cursor:pointer}
+    .client-insight-dialog__body{padding:1.1rem;overflow:auto;max-height:calc(100vh - 8.5rem)}
+    .client-insight-dialog__body--map{padding:0;overflow:hidden}
+    .client-insight-dialog__body>.panel{margin:0;border:0;box-shadow:none;padding:0}
+    .client-map-frame{display:block;width:100%;height:clamp(520px,76vh,900px);border:0;background:#eef1f4}
     .client-training-dialog{width:min(900px,calc(100vw - 2rem));max-height:calc(100vh - 2rem);padding:0;border:1px solid #9f8e91;background:#fff;color:var(--text-primary);box-shadow:0 28px 80px rgba(0,0,0,.35)}
     .client-training-dialog::backdrop{background:rgba(14,10,11,.72)}
     .client-training-dialog__header{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;padding:1.15rem 1.25rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#711b29,#321017);color:#fff}
@@ -87,7 +105,7 @@
     .client-training-history-empty{padding:.9rem;border:1px dashed #aaa;background:#fafafa;color:var(--text-secondary)}
     .growth-up{color:#1f673d!important;font-weight:800}.growth-down{color:#8b2424!important;font-weight:800}.growth-flat{color:#555!important;font-weight:800}
     .client-empty{margin-top:1rem;padding:1rem;border:1px dashed #aaa;background:#fafafa;color:#333}
-    @media(max-width:900px){.client-kpi-grid,.trajectory-summary,.client-training-form-grid{grid-template-columns:1fr}.client-overview-header,.trajectory-header,.client-list-header{display:grid}.client-overview-actions{align-items:flex-start}.client-search-label{min-width:0}.client-kpi{min-height:145px}.trajectory-chart-wrap{padding:.35rem}.client-training-dialog__body{padding:.8rem}}
+    @media(max-width:900px){.client-insight-actions,.client-kpi-grid,.trajectory-summary,.client-training-form-grid{grid-template-columns:1fr}.client-overview-header,.trajectory-header,.client-list-header{display:grid}.client-overview-actions{align-items:flex-start}.client-search-label{min-width:0}.client-kpi{min-height:145px}.trajectory-chart-wrap{padding:.35rem}.client-insight-dialog__body,.client-training-dialog__body{padding:.8rem}.client-insight-dialog__body--map{padding:0}.client-map-frame{height:78vh}}
   </style>
   <link rel="stylesheet" href="dashboard-theme.css?v=20260804-maroon-ledger" />
 </head>
@@ -113,25 +131,16 @@
         <header class="panel__header"><h2 class="panel__title">Clients</h2><p class="panel__description">Every active credit union currently classified as Client in the Dashboard.</p></header>
         <div class="client-overview-actions"><p id="client-data-meta" class="client-data-meta">Preparing latest client snapshot…</p><button id="refresh-clients" type="button" class="primary-button">Refresh Data</button></div>
       </div>
+      <div class="client-insight-actions" aria-label="Client analytics">
+        <button type="button" class="client-insight-button" data-client-dialog-target="client-map-dialog" aria-haspopup="dialog" aria-controls="client-map-dialog" aria-expanded="false"><span class="client-insight-button__label">Client and Prospect Map</span><span class="client-insight-button__description">View every marked client and prospect by location.</span><span class="client-insight-button__arrow" aria-hidden="true">↗</span></button>
+        <button type="button" class="client-insight-button" data-client-dialog-target="client-trajectory-dialog" aria-haspopup="dialog" aria-controls="client-trajectory-dialog" aria-expanded="false"><span class="client-insight-button__label">Five-Year Client Loans Trajectory</span><span class="client-insight-button__description">Review aggregate history and the five-year projection.</span><span class="client-insight-button__arrow" aria-hidden="true">↗</span></button>
+        <button type="button" class="client-insight-button" data-client-dialog-target="client-direct-auto-dialog" aria-haspopup="dialog" aria-controls="client-direct-auto-dialog" aria-expanded="false"><span class="client-insight-button__label">Direct Auto Lenders</span><span class="client-insight-button__description">Compare the top current-client direct auto balances.</span><span class="client-insight-button__arrow" aria-hidden="true">↗</span></button>
+      </div>
     </section>
 
     <section class="client-kpi-grid" aria-label="Client loan totals">
       <article class="panel client-kpi"><span class="client-kpi-label">Total Client Loans</span><strong id="total-client-loans" class="client-kpi-value">—</strong><span id="total-client-loans-note" class="client-kpi-note">Preparing latest stored balances…</span></article>
       <article class="panel client-kpi"><span class="client-kpi-label">Indirect Loans</span><strong id="total-indirect-loans" class="client-kpi-value">—</strong><span id="total-indirect-loans-note" class="client-kpi-note">Preparing latest stored indirect balances…</span></article>
-    </section>
-
-    <section class="panel" aria-labelledby="trajectory-title">
-      <div class="trajectory-header">
-        <header class="panel__header"><h2 id="trajectory-title" class="panel__title">Five-Year Client Loans Trajectory + Projection</h2><p class="panel__description">Aggregate same-quarter NCUA history plus a five-year projection based on the historical compound annual growth rate.</p></header>
-        <div class="trajectory-controls" role="group" aria-label="Trajectory metric"><button type="button" class="trajectory-control" data-metric="loans" aria-pressed="true">Loans</button><button type="button" class="trajectory-control" data-metric="assets" aria-pressed="false">Assets</button><button type="button" class="trajectory-control" data-metric="members" aria-pressed="false">Members</button></div>
-      </div>
-      <div class="trajectory-summary">
-        <div class="trajectory-summary-card"><span id="trajectory-start-label">Starting period</span><strong id="trajectory-start" class="trajectory-summary-value">—</strong></div>
-        <div class="trajectory-summary-card"><span id="trajectory-current-label">Current period</span><strong id="trajectory-current" class="trajectory-summary-value">—</strong></div>
-        <div class="trajectory-summary-card"><span>Five-year growth</span><strong id="trajectory-growth" class="trajectory-summary-value">—</strong></div>
-      </div>
-      <div class="trajectory-chart-wrap"><svg id="trajectory-chart" class="trajectory-chart" role="img"></svg><div id="trajectory-empty" class="client-empty" hidden><p>Not enough history is available to chart this metric.</p></div></div>
-      <p id="trajectory-coverage" class="trajectory-coverage"></p>
     </section>
 
     <section class="panel" aria-labelledby="client-list-title">
@@ -151,6 +160,45 @@
     </section>
   </main>
 
+  <dialog id="client-map-dialog" class="client-insight-dialog client-insight-dialog--map" aria-labelledby="client-map-dialog-title">
+    <header class="client-insight-dialog__header">
+      <div><span class="client-insight-dialog__eyebrow">Client Analytics</span><h2 id="client-map-dialog-title" class="client-insight-dialog__title">Client and Prospect Map</h2><p class="client-insight-dialog__subtitle">Clients appear in maroon and Prospects in gold.</p></div>
+      <button type="button" class="client-insight-dialog__close" data-client-dialog-close aria-label="Close client and prospect map">×</button>
+    </header>
+    <div class="client-insight-dialog__body client-insight-dialog__body--map">
+      <iframe id="client-map-frame" class="client-map-frame" title="Interactive client and prospect map" data-src="potential-new-client-overview.html?embed=clients-map"></iframe>
+    </div>
+  </dialog>
+
+  <dialog id="client-trajectory-dialog" class="client-insight-dialog" aria-labelledby="trajectory-title">
+    <header class="client-insight-dialog__header">
+      <div><span class="client-insight-dialog__eyebrow">Client Analytics</span><h2 id="trajectory-title" class="client-insight-dialog__title">Five-Year Client Loans Trajectory</h2><p class="client-insight-dialog__subtitle">Aggregate same-quarter NCUA history plus a five-year projection based on the historical compound annual growth rate.</p></div>
+      <button type="button" class="client-insight-dialog__close" data-client-dialog-close aria-label="Close five-year client trajectory">×</button>
+    </header>
+    <div class="client-insight-dialog__body">
+      <section aria-labelledby="trajectory-title">
+        <div class="trajectory-header">
+          <div class="trajectory-controls" role="group" aria-label="Trajectory metric"><button type="button" class="trajectory-control" data-metric="loans" aria-pressed="true">Loans</button><button type="button" class="trajectory-control" data-metric="assets" aria-pressed="false">Assets</button><button type="button" class="trajectory-control" data-metric="members" aria-pressed="false">Members</button></div>
+        </div>
+        <div class="trajectory-summary">
+          <div class="trajectory-summary-card"><span id="trajectory-start-label">Starting period</span><strong id="trajectory-start" class="trajectory-summary-value">—</strong></div>
+          <div class="trajectory-summary-card"><span id="trajectory-current-label">Current period</span><strong id="trajectory-current" class="trajectory-summary-value">—</strong></div>
+          <div class="trajectory-summary-card"><span>Five-year growth</span><strong id="trajectory-growth" class="trajectory-summary-value">—</strong></div>
+        </div>
+        <div class="trajectory-chart-wrap"><svg id="trajectory-chart" class="trajectory-chart" role="img"></svg><div id="trajectory-empty" class="client-empty" hidden><p>Not enough history is available to chart this metric.</p></div></div>
+        <p id="trajectory-coverage" class="trajectory-coverage"></p>
+      </section>
+    </div>
+  </dialog>
+
+  <dialog id="client-direct-auto-dialog" class="client-insight-dialog" aria-labelledby="client-direct-auto-dialog-title">
+    <header class="client-insight-dialog__header">
+      <div><span class="client-insight-dialog__eyebrow">Client Analytics</span><h2 id="client-direct-auto-dialog-title" class="client-insight-dialog__title">Direct Auto Lenders</h2><p class="client-insight-dialog__subtitle">Current clients ranked by estimated direct auto loan balance.</p></div>
+      <button type="button" class="client-insight-dialog__close" data-client-dialog-close aria-label="Close direct auto lenders">×</button>
+    </header>
+    <div id="direct-auto-dialog-body" class="client-insight-dialog__body"></div>
+  </dialog>
+
   <dialog id="client-training-dialog" class="client-training-dialog" aria-labelledby="client-training-dialog-title">
     <header class="client-training-dialog__header">
       <div><span class="client-training-dialog__eyebrow">Client Training Log</span><h2 id="client-training-dialog-title" class="client-training-dialog__title">Training Log</h2><p id="client-training-dialog-subtitle" class="client-training-dialog__subtitle"></p></div>
@@ -169,10 +217,11 @@
       <div id="client-training-history" class="client-training-history" aria-live="polite"></div>
     </div>
   </dialog>
+  <script src="clients-insight-dialogs.js?v=20260806-client-insight-popups"></script>
   <script src="clients-cache-bootstrap.js?v=20260804-custom-asi-clients"></script>
   <script type="module" src="clients.js?v=20260731-client-cache"></script>
   <script type="module" src="clients-training-log.js?v=20260804-client-training-log"></script>
   <script type="module" src="clients-projection.js?v=20260730-five-year-projection"></script>
-  <script type="module" src="clients-direct-auto-ranking.js?v=20260731-direct-auto-ranking"></script>
+  <script type="module" src="clients-direct-auto-ranking.js?v=20260806-client-insight-popups"></script>
 </body>
 </html>

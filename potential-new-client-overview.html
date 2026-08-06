@@ -36,6 +36,12 @@
     .edit-grid{display:grid;grid-template-columns:minmax(180px,.4fr) minmax(0,1.6fr);gap:.8rem;margin-top:1rem}.edit-grid label{display:grid;gap:.3rem;font-weight:700;color:var(--text-secondary)}.edit-grid .wide{grid-column:1/-1}
     .persistence-note{grid-column:1/-1;margin:0;padding:.7rem .8rem;border-left:4px solid var(--accent);background:rgba(122,30,44,.06);color:var(--text-secondary);font-weight:700}
     .edit-actions{display:flex;justify-content:flex-end;gap:.65rem;align-items:center;margin-top:.8rem}.feedback{margin-right:auto;color:var(--text-secondary)}
+    html.clients-map-embed body{margin:0;background:#fff;overflow:hidden}
+    html.clients-map-embed .site-header,html.clients-map-embed main.layout>:not(#potential-client-map){display:none!important}
+    html.clients-map-embed main.layout{width:100%!important;max-width:none;margin:0;padding:0}
+    html.clients-map-embed #potential-client-map{margin:0;border:0;box-shadow:none}
+    html.clients-map-embed .directory-map-canvas{height:calc(100vh - 82px);min-height:420px}
+    html.clients-map-embed .directory-map-popup button{display:none}
     @media(max-width:1180px){.directory-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.directory-toolbar label:first-child{grid-column:1/-1}}
     @media(max-width:900px){.directory-map-header{display:block}.directory-map-status{margin-top:.4rem;white-space:normal}.directory-toolbar,.directory-grid,.detail-metrics,.growth-grid,.history-charts,.edit-grid{grid-template-columns:1fr}.directory-list{max-height:none}.edit-grid .wide,.persistence-note,.directory-toolbar label:first-child{grid-column:auto}.growth-stat.wide{grid-column:auto}}
   </style>
@@ -94,6 +100,6 @@
   </main>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="dashboard-enhancements.js?v=20260731-visible-map-prospects"></script>
-  <script type="module" src="potential-new-client-overview.js?v=20260731-visible-map-prospects"></script>
+  <script type="module" src="potential-new-client-overview.js?v=20260806-client-map-popup"></script>
 </body>
 </html>
