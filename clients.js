@@ -279,17 +279,16 @@ function renderClientTable() {
       : null;
     const loanGrowth = numericValue(client.growth?.loans?.fiveYearPct);
     const assetGrowth = numericValue(client.growth?.assets?.fiveYearPct);
-    const owner = client.owner ? `<span class="client-meta-line">Owner: ${escapeHtml(client.owner)}</span>` : '';
-    const tags = Array.isArray(client.tags) && client.tags.length
-      ? `<span class="client-meta-line">${escapeHtml(client.tags.join(' · '))}</span>`
-      : '';
+    const identityParts = [
+      `Charter ${escapeHtml(client.charterNumber)}`,
+      client.owner ? `Owner: ${escapeHtml(client.owner)}` : '',
+      Array.isArray(client.tags) && client.tags.length ? escapeHtml(client.tags.join(', ')) : ''
+    ].filter(Boolean).map((part) => `<span>${part}</span>`).join('');
+    const location = [client.city, client.state].filter(Boolean).join(', ') || '—';
 
     return `<tr data-client-charter="${escapeHtml(client.charterNumber)}" data-client-name="${escapeHtml(client.name)}">
-      <td><strong class="client-name">${escapeHtml(client.name)}</strong><span class="client-meta-line">Charter ${escapeHtml(client.charterNumber)}</span>${owner}${tags}</td>
+      <td class="client-account-cell"><strong class="client-name">${escapeHtml(client.name)}</strong><span class="client-identity-line">${identityParts}</span><span class="client-account-facts"><span class="client-account-fact"><span>Location</span><strong>${escapeHtml(location)}</strong></span><span class="client-account-fact"><span>Assets</span><strong>${escapeHtml(money(numericValue(client.assets)))}</strong></span><span class="client-account-fact"><span>Loans</span><strong>${escapeHtml(money(numericValue(client.loans)))}</strong></span></span></td>
       <td class="client-training-cell" data-client-training-cell><button type="button" class="client-training-button" data-open-client-training>Open Log</button><span class="client-training-count" data-client-training-count>Loading…</span></td>
-      <td>${escapeHtml([client.city, client.state].filter(Boolean).join(', ') || '—')}</td>
-      <td class="numeric">${escapeHtml(money(numericValue(client.assets)))}</td>
-      <td class="numeric">${escapeHtml(money(numericValue(client.loans)))}</td>
       <td class="numeric">${escapeHtml(money(indirectAuto))}</td>
       <td class="numeric">${escapeHtml(Number.isFinite(indirectShare) ? `${percentage.format(indirectShare)}%` : '—')}</td>
       <td class="numeric ${growthClass(loanGrowth)}">${escapeHtml(signedPercent(loanGrowth))}</td>
