@@ -1,0 +1,36 @@
+name: Validate client product production
+
+on:
+  pull_request:
+    paths:
+      - 'clients-products.js'
+      - 'clients-cache-bootstrap.js'
+      - 'ncua/**'
+      - 'test/**'
+      - 'server.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/client-products-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Syntax checks
+        run: |
+          node --check ncua/mob-production-seed.mjs
+          node --check ncua/ncua-client-products-hook.mjs
+          node --check clients-products.js
+      - name: Client product tests
+        run: node --test test/ncua-client-products.test.mjs test/mob-production-seed.test.mjs
