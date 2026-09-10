@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Quote Visitor Log | Goodwine Financial Services</title>
+  <style>
+    :root { color-scheme: light; font-family: Arial, sans-serif; color: #262226; background: #f5f4f3; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    header { background: #681f35; color: white; padding: 24px max(20px, calc((100vw - 1150px)/2)); }
+    header p { margin: 0 0 8px; font-size: 13px; letter-spacing: .04em; }
+    h1 { margin: 0; font-size: 28px; }
+    main { max-width: 1190px; margin: auto; padding: 24px 20px 40px; }
+    .intro { margin-top: 0; line-height: 1.6; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+    .card { background: white; padding: 20px; border: 1px solid #dedad9; }
+    .card h2 { font-size: 15px; margin: 0 0 12px; }
+    .number { font-size: 36px; font-weight: bold; color: #681f35; }
+    .caption { margin: 8px 0 0; font-size: 13px; color: #625d60; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 24px 0 12px; }
+    select, button { font: inherit; padding: 9px 12px; border: 1px solid #bcb5b8; border-radius: 4px; background: white; }
+    button { background: #681f35; color: white; border-color: #681f35; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: wait; }
+    .table-wrap { overflow-x: auto; border: 1px solid #dedad9; background: white; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    caption { text-align: left; padding: 16px; font-weight: bold; }
+    th, td { padding: 12px; border-top: 1px solid #e8e3e5; text-align: right; }
+    th { background: #f3ecef; font-size: 13px; }
+    th:first-child, td:first-child { text-align: left; }
+    small { display: block; margin-top: 4px; color: #6b6065; }
+    .note, #status { font-size: 13px; line-height: 1.6; color: #625d60; }
+    #error { background: #fff0e3; color: #772e00; padding: 14px; line-height: 1.5; }
+    [hidden] { display: none !important; }
+    @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } h1 { font-size: 24px; } }
+  </style>
+  <script src="quote-usage-dashboard.js" defer></script>
+</head>
+<body>
+  <header><p>GOODWINE FINANCIAL SERVICES</p><h1>Insurance Quote Visitor Log</h1></header>
+  <main>
+    <p class="intro">Daily use of the Missouri and Arkansas premium calculators. All days run from midnight to midnight Central Time.</p>
+    <p id="error" role="alert" hidden></p>
+    <section class="cards" aria-label="Yesterday's unique visitors">
+      <article class="card"><h2>Missouri · Yesterday</h2><div class="number" id="mo-count">—</div><p class="caption">Unique browsers</p></article>
+      <article class="card"><h2>Arkansas · Yesterday</h2><div class="number" id="ar-count">—</div><p class="caption">Unique browsers</p></article>
+      <article class="card"><h2>Both programs · Yesterday</h2><div class="number" id="all-count">—</div><p class="caption">Unique browsers, counting overlap once</p></article>
+    </section>
+    <div class="toolbar">
+      <label for="days">Show</label>
+      <select id="days"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select>
+      <button id="refresh" type="button">Refresh</button>
+      <span id="status" role="status">Loading visitor log…</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <caption>Daily visitor totals</caption>
+        <thead><tr><th scope="col">Date</th><th scope="col">MO visitors</th><th scope="col">MO page views</th><th scope="col">AR visitors</th><th scope="col">AR page views</th><th scope="col">Combined visitors</th><th scope="col">Total page views</th></tr></thead>
+        <tbody id="daily-rows"></tbody>
+      </table>
+    </div>
+    <p class="note" id="tracking-start"></p>
+    <p class="note">Visitors are estimated from anonymous browser cookies. Repeat page loads increase page views but count as one visitor per browser each day. Someone using two devices can count twice; people sharing a browser count once. Browsers with cleared or blocked cookies may count again. Known bots and prefetches are excluded.</p>
+    <p class="note">This log records visits, not completed quotes or insurance sales. It does not collect names, IP addresses, or loan details. The first tracking day and the current day are partial days.</p>
+  </main>
+</body>
+</html>
