@@ -11,6 +11,7 @@ import { randomUUID } from 'crypto';
 import { installNcuaDirectory } from './ncua/ncua-directory-hook.mjs';
 import { installNcuaClientProducts } from './ncua/ncua-client-products-hook.mjs';
 import { installNcuaClientTrainingLog } from './ncua/ncua-client-training-log-hook.mjs';
+import { createQuoteUsage, createMongoUsageStore } from './quote-usage.mjs';
 
 dotenv.config();
 
@@ -33,6 +34,9 @@ const ACCOUNT_DOCUMENTS_STORAGE_PATH =
 const ACCOUNT_DOCUMENT_TYPES = new Set(['gap_waiver', 'production_documents', 'other', 'debt_waiver']);
 
 const app = express();
+const quoteUsage = createQuoteUsage({ store: createMongoUsageStore(mongoose) });
+// Dedicated read-only bearer authentication; all other dashboard authentication stays below.
+app.get('/api/quote-usage/report', quoteUsage.privateReport);
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -248,12 +252,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get(['/single-premium-quote/missouri', '/single-premium-quote/missouri/'], (_req, res) => {
+app.get('/api/quote-usage/daily', quoteUsage.dashboardReport);
+
+app.get(['/single-premium-quote/missouri', '/single-premium-quote/missouri/'], quoteUsage.track('MO'), (_req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.sendFile(path.join(publicDir, 'single-premium-quote', 'quote.html'));
 });
 
-app.get(['/single-premium-quote/arkansas', '/single-premium-quote/arkansas/'], (_req, res) => {
+app.get(['/single-premium-quote/arkansas', '/single-premium-quote/arkansas/'], quoteUsage.track('AR'), (_req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.sendFile(path.join(publicDir, 'single-premium-quote', 'quote.html'));
 });

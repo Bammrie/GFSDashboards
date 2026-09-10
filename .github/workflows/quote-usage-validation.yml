@@ -1,0 +1,33 @@
+name: Validate quote visitor tracking
+
+on:
+  pull_request:
+    paths:
+      - 'quote-usage*'
+      - 'server.mjs'
+      - 'single-premium-quote/**'
+      - 'test/quote-usage*'
+      - 'package*.json'
+      - '.github/workflows/quote-usage-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Syntax and quote regression tests
+        run: |
+          node --check server.mjs
+          node --check quote-usage.mjs
+          node --check quote-usage-dashboard.js
+          node --test test/quote-usage.test.mjs test/single-premium-quote-engine.test.mjs single-premium-quote/tests/csoGrossPay.test.js
