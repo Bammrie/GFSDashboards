@@ -60,9 +60,29 @@
         <tbody id="daily-rows"></tbody>
       </table>
     </div>
+    <h2>Where visits come from</h2>
+    <p class="note" id="source-status"></p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Date / program</th><th>Source</th><th>Medium / campaign</th><th>Credit union tag</th><th>Approximate location</th><th>Browsers</th><th>Page views</th></tr></thead>
+      <tbody id="source-rows"></tbody>
+    </table></div>
+    <p class="note">Sources describe each page visit. A browser can appear in multiple source rows; do not add these rows to calculate unique visitors. Direct / unknown includes bookmarks, typed links, and visits whose referral information was withheld. Location is approximate and can reflect a mobile network or VPN. Older visits have no source history.</p>
+    <h2>Create a tracking link</h2>
+    <form id="link-builder" class="toolbar">
+      <label>Program <select id="link-state"><option value="missouri">Missouri</option><option value="arkansas">Arkansas</option></select></label>
+      <label>Credit union <input id="link-cu" maxlength="80" placeholder="e.g. 4u-cu"></label>
+      <label>Source <input id="link-source" maxlength="80" required placeholder="e.g. september-mailer"></label>
+      <label>Medium <select id="link-medium"><option value="email">Email</option><option value="qr">QR code</option><option value="website">Website</option></select></label>
+      <label>Campaign <input id="link-campaign" maxlength="80" placeholder="e.g. fall-2026"></label>
+      <button type="submit">Create link</button>
+    </form>
+    <label for="tracking-link">Your tracking link</label>
+    <input id="tracking-link" readonly style="width:100%;padding:12px;margin:10px 0" placeholder="Create a link above, then copy it here.">
+    <p class="note">Use this link in your email, website, or QR code. Use organization and campaign labels only, never member names or loan information. Forwarded links keep their original tags and do not identify the individual visitor.</p>
+    <p class="note">Approximate locations use GeoLite data created by <a href="https://www.maxmind.com/">MaxMind</a>. IP addresses are processed locally for lookup and are not saved in this visitor log.</p>
     <p class="note" id="tracking-start"></p>
     <p class="note">Visitors are estimated from anonymous browser cookies. Repeat page loads increase page views but count as one visitor per browser each day. Someone using two devices can count twice; people sharing a browser count once. Browsers with cleared or blocked cookies may count again. Known bots and prefetches are excluded.</p>
-    <p class="note">This log records visits, not completed quotes or insurance sales. It does not collect names, IP addresses, or loan details. The first tracking day and the current day are partial days.</p>
+    <p class="note">This log records visits, not completed quotes or insurance sales. It does not store names, IP addresses, or loan details. The first tracking day and the current day are partial days.</p>
   </main>
 </body>
 </html>
