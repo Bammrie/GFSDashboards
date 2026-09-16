@@ -170,3 +170,23 @@ test('empty days after activation correctly show zero, while the start day stays
   assert.equal(data.daily[2].partialDay, true);
   assert.equal(data.daily[3].tracked, false);
 });
+
+test('source recording failures preserve base counts and successful calculator response', async (t) => {
+  const store = memoryStore();
+  store.recordSource = async () => { throw new Error('source write failed'); };
+  const h = await harness(t, store);
+  const response = await h.get('/single-premium-quote/missouri/?utm_source=test');
+  assert.equal(await response.text(), 'unchanged calculator');
+  const { data } = await h.report();
+  assert.equal(data.daily[0].combined.pageViews, 1);
+  assert.equal(data.health.recordingErrorsSinceRestart, 1);
+});
+
+test('source read failure is explicit while daily report remains available', async (t) => {
+  const store = memoryStore();
+  store.readSources = async () => { throw new Error('source read failed'); };
+  const h = await harness(t, store);
+  const { data } = await h.report();
+  assert.deepEqual(data.attribution, { unavailable: true });
+  assert.equal(data.daily[0].combined.pageViews, 0);
+});

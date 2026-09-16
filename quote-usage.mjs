@@ -1,5 +1,7 @@
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 
+import { visitAttribution } from './quote-usage-sources.mjs';
+
 export const USAGE_TIMEZONE = 'America/Chicago';
 export const VISITOR_COOKIE = 'gfs_quote_visitor';
 // The bearer credential is stored privately in the daily-report automation, never in Git.
@@ -34,7 +36,7 @@ export function validReportToken(header, digest) {
   return Boolean(match && timingSafeEqual(Buffer.from(hash(match[1]), 'hex'), Buffer.from(digest, 'hex')));
 }
 
-export function buildDailyReport({ now, days, startedAt, groups, combined, recordingErrorsSinceRestart = 0 }) {
+export function buildDailyReport({ now, days, startedAt, groups, combined, recordingErrorsSinceRestart = 0, attribution = null }) {
   const today = centralDay(now);
   const firstDay = centralDay(new Date(startedAt));
   const stateCounts = new Map(groups.map((row) => [`${row._id.day}:${row._id.state}`, row]));
@@ -59,7 +61,7 @@ export function buildDailyReport({ now, days, startedAt, groups, combined, recor
     timezone: USAGE_TIMEZONE, generatedAt: now.toISOString(), trackingStartedAt: new Date(startedAt).toISOString(),
     metric: 'Unique browsers per Central Time day',
     note: 'A browser visiting both programs counts once in the combined daily total. Reloads add page views. Shared browsers count once; different devices or cleared/blocked cookies may count separately. Known bots and prefetches are excluded. No historical traffic before tracking began is available.',
-    health: { storage: 'connected', recordingErrorsSinceRestart }, daily
+    health: { storage: 'connected', recordingErrorsSinceRestart }, daily, attribution
   };
 }
 
@@ -69,6 +71,13 @@ export function createMongoUsageStore(mongoose) {
     pageViews: Number, firstSeenAt: Date, lastSeenAt: Date
   }, { collection: 'quote_usage_daily', bufferCommands: false, versionKey: false });
   dailySchema.index({ day: 1, state: 1 });
+  const sourceSchema = new mongoose.Schema({
+    _id: String, day: String, state: String, visitorHash: String,
+    source: String, medium: String, campaign: String, creditUnion: String, referrer: String,
+    country: String, region: String, city: String, pageViews: Number
+  }, { collection: 'quote_usage_sources', bufferCommands: false, versionKey: false });
+  sourceSchema.index({ day: 1, state: 1 });
+  const Sources = mongoose.models.QuoteUsageSources || mongoose.model('QuoteUsageSources', sourceSchema);
   const metaSchema = new mongoose.Schema({ _id: String, startedAt: Date }, {
     collection: 'quote_usage_meta', bufferCommands: false, versionKey: false
   });
@@ -81,9 +90,11 @@ export function createMongoUsageStore(mongoose) {
     onConnected(callback) { mongoose.connection.on('connected', callback); },
     async start(now) {
       assertAvailable();
-      try {
-        await Meta.updateOne({ _id: 'tracking' }, { $setOnInsert: { startedAt: now } }, { upsert: true, maxTimeMS: 3000 });
-      } catch (error) { if (error?.code !== 11000) throw error; }
+      for (const id of ['tracking', 'sources']) {
+        try {
+          await Meta.updateOne({ _id: id }, { $setOnInsert: { startedAt: now } }, { upsert: true, maxTimeMS: 3000 });
+        } catch (error) { if (error?.code !== 11000) throw error; }
+      }
     },
     async record(visit) {
       assertAvailable();
@@ -99,6 +110,35 @@ export function createMongoUsageStore(mongoose) {
         if (error?.code !== 11000) throw error;
         await Daily.updateOne({ _id: id }, update, { maxTimeMS: 3000 });
       }
+    },
+    async recordSource(visit) {
+      assertAvailable();
+      const { day, state, visitorHash, attribution } = visit;
+      const id = hash(JSON.stringify([day, state, visitorHash, attribution]));
+      const update = { $setOnInsert: { day, state, visitorHash, ...attribution }, $inc: { pageViews: 1 } };
+      try {
+        await Sources.updateOne({ _id: id }, update, { upsert: true, maxTimeMS: 3000 });
+      } catch (error) {
+        if (error?.code !== 11000) throw error;
+        await Sources.updateOne({ _id: id }, update, { maxTimeMS: 3000 });
+      }
+    },
+    async readSources(fromDay, toDay) {
+      assertAvailable();
+      const [meta, rows] = await Promise.all([
+        Meta.findById('sources').maxTimeMS(3000).lean(),
+        Sources.aggregate([
+          { $match: { day: { $gte: fromDay, $lte: toDay } } },
+          { $group: { _id: {
+            day: '$day', state: '$state', source: '$source', medium: '$medium', campaign: '$campaign',
+            creditUnion: '$creditUnion', referrer: '$referrer', country: '$country', region: '$region', city: '$city'
+          }, visitors: { $addToSet: '$visitorHash' }, pageViews: { $sum: '$pageViews' } } },
+          { $project: { _id: 0, details: '$_id', uniqueBrowsers: { $size: '$visitors' }, pageViews: 1 } },
+          { $sort: { 'details.day': -1, pageViews: -1 } },
+          { $limit: 1001 }
+        ]).option({ maxTimeMS: 3000 })
+      ]);
+      return { startedAt: meta?.startedAt || null, rows: rows.slice(0, 1000), truncated: rows.length > 1000 };
     },
     async read(fromDay, toDay) {
       assertAvailable();
@@ -148,7 +188,10 @@ export function createQuoteUsage({ store, now = () => new Date(), logger = conso
       const at = now();
       const days = Number(value);
       const data = await store.read(dayOffset(centralDay(at), 1 - days), centralDay(at));
-      res.json(buildDailyReport({ ...data, now: at, days, recordingErrorsSinceRestart }));
+      let attribution = null;
+      try { attribution = await store.readSources?.(dayOffset(centralDay(at), 1 - days), centralDay(at)); }
+      catch { attribution = { unavailable: true }; }
+      res.json(buildDailyReport({ ...data, attribution, now: at, days, recordingErrorsSinceRestart }));
     } catch {
       res.status(503).json({ error: 'Visitor reporting is temporarily unavailable. This is not a zero-visitor result.' });
     }
@@ -176,7 +219,13 @@ export function createQuoteUsage({ store, now = () => new Date(), logger = conso
           res.once('finish', () => {
             if (![200, 304].includes(res.statusCode)) return;
             // Never delay a page response or let a storage failure interrupt quoting.
-            Promise.resolve().then(() => store.record(visit)).catch(() => {
+            Promise.resolve().then(async () => {
+              await store.record(visit);
+              if (store.recordSource) {
+                const attribution = await visitAttribution(req);
+                await store.recordSource({ ...visit, attribution });
+              }
+            }).catch(() => {
               recordingErrorsSinceRestart += 1;
               warn();
             });

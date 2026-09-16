@@ -19,6 +19,26 @@ async function loadUsage() {
       ? 'Sign in with the existing dashboard credentials to view this log.'
       : 'Visitor reporting is temporarily unavailable. Missing data does not mean there were zero visitors.');
     const data = await response.json();
+    const sourceRows = document.getElementById('source-rows');
+    sourceRows.replaceChildren();
+    const attribution = data.attribution;
+    document.getElementById('source-status').textContent = attribution?.unavailable
+      ? 'Source reporting is temporarily unavailable. Daily totals are shown separately.'
+      : attribution?.startedAt
+        ? `Source tracking began ${new Date(attribution.startedAt).toLocaleString('en-US', { timeZone: data.timezone, timeZoneName: 'short' })}. ${attribution.truncated ? 'Showing the first 1,000 source rows; select fewer days for more detail.' : 'Showing sources for the selected date range.'}`
+        : 'Source tracking has not initialized yet.';
+    for (const entry of attribution?.rows || []) {
+      const d = entry.details;
+      const tr = document.createElement('tr');
+      const values = [dateLabel(d.day) + ' · ' + d.state, d.source,
+        [d.medium, d.campaign].filter(Boolean).join(' / ') || '—', d.creditUnion || '—',
+        [d.city, d.region, d.country].filter(Boolean).join(', ') || 'Unknown',
+        number(entry.uniqueBrowsers), number(entry.pageViews)];
+      for (const value of values) {
+        const td = document.createElement('td'); td.textContent = value; tr.append(td);
+      }
+      sourceRows.append(tr);
+    }
     const yesterday = data.daily[1];
     document.getElementById('mo-count').textContent = number(yesterday?.missouri.uniqueBrowsers);
     document.getElementById('ar-count').textContent = number(yesterday?.arkansas.uniqueBrowsers);
@@ -62,3 +82,14 @@ async function loadUsage() {
 refresh.addEventListener('click', loadUsage);
 days.addEventListener('change', loadUsage);
 loadUsage();
+
+document.getElementById('link-builder').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const url = new URL(`/single-premium-quote/${document.getElementById('link-state').value}/`, location.origin);
+  for (const [field, param] of [['cu', 'cu'], ['source', 'utm_source'], ['medium', 'utm_medium'], ['campaign', 'utm_campaign']]) {
+    const value = document.getElementById(`link-${field}`).value.replace(/[^a-zA-Z0-9 ._()-]/g, '').trim().slice(0, 80);
+    if (value) url.searchParams.set(param, value);
+  }
+  const output = document.getElementById('tracking-link');
+  output.value = url.href; output.focus(); output.select();
+});
